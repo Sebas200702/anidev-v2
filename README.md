@@ -1,9 +1,10 @@
 <div align="center">
 	<img src="./public/favicon.svg" alt="AniDev logo" width="92" />
 
-	# AniDev 
+    # AniDev
 
-	**Astro + TypeScript app for anime and music APIs, image optimization, and auth.**
+    **Astro + TypeScript app for anime and music APIs, image optimization, and auth.**
+
 </div>
 
 AniDev v2 currently includes a server-rendered Astro app, domain-driven API modules (`anime`, `music`), Turso + Drizzle persistence, Upstash Redis caching, and Better Auth mounted on Astro API routes.
@@ -30,13 +31,13 @@ AniDev v2 currently includes a server-rendered Astro app, domain-driven API modu
 
 ## Quick Start
 
-1) Install dependencies
+1. Install dependencies
 
 ```bash
 npm install
 ```
 
-2) Create local env file
+2. Create local env file
 
 ```bash
 # macOS / Linux
@@ -46,9 +47,9 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-3) Fill required variables in `.env`
+3. Fill required variables in `.env`
 
-4) Run development server
+4. Run development server
 
 ```bash
 npm run dev
@@ -63,30 +64,30 @@ App runs on `http://localhost:4321` by default.
 
 Defined and validated in `src/config/env.ts`:
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `NODE_ENV` | No | `development`, `test`, or `production` |
-| `TURSO_DATABASE_URL` | Yes | Turso LibSQL database URL |
-| `TURSO_AUTH_TOKEN` | Yes | Turso auth token |
-| `BETTER_AUTH_SECRET` | Yes | Better Auth secret (min 32 chars) |
-| `BETTER_AUTH_URL` | Yes | App base URL used by Better Auth |
-| `UPSTASH_REDIS_REST_URL` | Yes | Upstash Redis REST URL |
-| `UPSTASH_REDIS_REST_TOKEN` | Yes | Upstash Redis REST token |
-| `SENTRY_DSN` | No | Sentry DSN |
-| `LOG_LEVEL` | No | `trace`, `debug`, `info`, `warn`, `error`, `fatal` |
+| Variable                   | Required | Description                                        |
+| -------------------------- | -------- | -------------------------------------------------- |
+| `NODE_ENV`                 | No       | `development`, `test`, or `production`             |
+| `TURSO_DATABASE_URL`       | Yes      | Turso LibSQL database URL                          |
+| `TURSO_AUTH_TOKEN`         | Yes      | Turso auth token                                   |
+| `BETTER_AUTH_SECRET`       | Yes      | Better Auth secret (min 32 chars)                  |
+| `BETTER_AUTH_URL`          | Yes      | App base URL used by Better Auth                   |
+| `UPSTASH_REDIS_REST_URL`   | Yes      | Upstash Redis REST URL                             |
+| `UPSTASH_REDIS_REST_TOKEN` | Yes      | Upstash Redis REST token                           |
+| `SENTRY_DSN`               | No       | Sentry DSN                                         |
+| `LOG_LEVEL`                | No       | `trace`, `debug`, `info`, `warn`, `error`, `fatal` |
 
 ## Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start local Astro dev server |
-| `npm run build` | Build production output |
-| `npm run preview` | Run built app locally |
+| Command                 | Purpose                                |
+| ----------------------- | -------------------------------------- |
+| `npm run dev`           | Start local Astro dev server           |
+| `npm run build`         | Build production output                |
+| `npm run preview`       | Run built app locally                  |
 | `npm run auth:generate` | Generate Better Auth schema/migrations |
-| `npm run auth:migrate` | Run Better Auth migrations |
-| `npm run db:generate` | Generate Drizzle migrations |
-| `npm run db:migrate` | Apply Drizzle migrations |
-| `npm run format` | Format project with Prettier |
+| `npm run auth:migrate`  | Run Better Auth migrations             |
+| `npm run db:generate`   | Generate Drizzle migrations            |
+| `npm run db:migrate`    | Apply Drizzle migrations               |
+| `npm run format`        | Format project with Prettier           |
 
 ## Better Auth
 
