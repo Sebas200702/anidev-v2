@@ -1,0 +1,47 @@
+---
+import type { AnimeDetails } from '@/domains/anime/types/anime-details'
+import Picture from '@/ui/components/media/picture.astro'
+interface Props {
+  animeDetails: AnimeDetails
+}
+const { animeDetails } = Astro.props
+---
+
+<>
+  <div class="group">
+    <div class="fixed h-[40vh] w-full overflow-hidden md:h-[60vh]">
+      <Picture
+        imageUrl={animeDetails.bannerImageUrl}
+        smallImageUrl={animeDetails.bannerImageUrl}
+        imageStyles=" w-full h-full object-cover object-center "
+        alt={`banner image of ${animeDetails.title}`}
+        isBanner
+      />
+    </div>
+  </div>
+  <article
+    class="z-10 grid grid-cols-1 pt-26 md:mb-20 md:grid-cols-3 md:gap-6 md:px-20 md:pt-[35dvh] xl:grid-cols-5"
+  >
+    <aside
+      class="anime-aside top-28 z-50 flex h-min w-full flex-col gap-8 px-20 md:row-span-2 md:items-start md:px-0 xl:sticky"
+    >
+      <Picture
+        imageUrl={animeDetails.imageUrl}
+        smallImageUrl={animeDetails.smallImageUrl}
+        imageStyles="aspect-[225/330] w-full rounded-lg object-cover object-center transition-all ease-in-out overflow-hidden"
+        alt={`cover image of ${animeDetails.title}`}
+      />
+    </aside>
+    <header
+      class="anime-header relative z-10 my-4 flex w-full flex-col justify-center gap-6 px-4 md:col-span-2 md:gap-8 md:px-0 xl:col-span-4 xl:mt-0"
+    >
+      <h1
+        class="title mx-auto max-w-[30ch] text-center text-pretty md:mx-0 md:text-left md:text-wrap"
+      >
+        {animeDetails.title}
+      </h1>
+    </header>
+    <div class="col-span-1 flex flex-col gap-6 md:col-span-2 xl:col-span-3">
+    </div>
+  </article>
+</>
