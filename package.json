@@ -15,6 +15,12 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:prerelease": "standard-version --prerelease",
+    "release:first": "standard-version --first-release",
+    "release:dry": "standard-version --dry-run",
     "format": "prettier --write . "
   },
   "dependencies": {

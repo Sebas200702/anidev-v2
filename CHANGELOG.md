@@ -7,31 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
-- Added domain-driven application structure under `src/core`, `src/domains`, `src/services`, and `src/ui`.
-- Added Better Auth integration with Drizzle adapter and Astro catch-all auth route in `src/pages/api/auth/[...all].ts`.
-- Added anime API endpoints for details, full payload, staff, and characters under `src/pages/api/anime/[malId]/*`.
-- Added music API endpoint in `src/pages/api/music/[id].ts`.
-- Added image proxy endpoint and optimization service with Sharp fallback and cache support.
-- Added Turso/Drizzle schema set for auth, anime, character, staff, producer, episode, music, and relationship tables.
-- Added Redis cache client, generic `withCache` helper, and domain caches for anime and music.
-- Added shared HTTP validation/response pipeline with Zod middleware and typed API response schemas.
-- Added centralized error model and HTTP error mapping with Pino logging and Sentry integration hooks.
-- Added anime detail route and UI primitives, including media and base layout components.
-- Added `.env.example`, formatting/editor support files, and new public assets (`og-image.png`, `placeholder.webp`, `favicon.png`).
+- Introduced layered architecture under `src/config`, `src/core`, `src/domains`, `src/services`, and `src/ui`.
+- Added Better Auth server setup with Drizzle adapter and catch-all route `src/pages/api/auth/[...all].ts`.
+- Added Turso/Drizzle schemas for auth, anime, music, and related entities.
+- Added Redis cache client plus domain cache helpers for anime and music.
+- Added anime and music domain modules (repositories, services, mappers, schemas, and types).
+- Added API endpoints for anime details/full/staff/characters, music details, and image proxy optimization.
+- Added new UI shell and pages (`src/ui/layouts/base.astro`, media component, `/anime/[malId]/[slug]` route).
+- Added project env/template and assets: `.env.example`, `public/og-image.png`, `public/placeholder.webp`, and `public/favicon.png`.
+- Added local automation metadata for Copilot skills/agents under `.agents` and `.github/agents`.
 
 ### Changed
-- Changed Astro runtime setup to server output with Node standalone adapter, React integration, Tailwind Vite plugin, and `@` alias resolution.
-- Changed TypeScript configuration for React JSX and path aliases.
-- Changed `package.json` scripts to include Better Auth CLI generation/migration plus DB migration workflow.
-- Changed root page composition to use shared layout and metadata config.
-- Changed README to reflect current architecture, setup process, environment variables, and API endpoints.
-- Changed favicon assets and related public metadata resources.
+- Updated Astro runtime to Node standalone server mode with React + Tailwind Vite plugin and `@` alias resolution.
+- Updated TypeScript and tooling configuration (`tsconfig.json`, Prettier, lockfile, and `package.json` scripts).
+- Updated landing page and metadata wiring to use shared base layout and centralized config values.
+- Updated favicon resources and public branding assets.
 
 ### Removed
-- Removed Astro starter files and assets: `src/assets/astro.svg`, `src/assets/background.svg`, `src/components/Welcome.astro`, and `src/layouts/Layout.astro`.
+- Removed Astro starter assets/components: `src/assets/*`, `src/components/Welcome.astro`, and `src/layouts/Layout.astro`.
 
 ### Fixed
-- Fixed Better Auth server configuration to use `baseURL` and explicit Drizzle schema mapping (`user`, `session`, `account`, `verification`).
+- Corrected Better Auth configuration to use `baseURL` and explicit Drizzle auth schema mapping (`user`, `session`, `account`, `verification`).
+
+### Documentation
+- Updated README to reflect the current architecture, setup flow, environment variables, and API routes.
+- Initialized and populated this changelog.
 
 ## [0.0.1] - 2026-03-12
 
