@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@import 'tailwind-animations';
+
+@theme {
+  --color-Primary-950: #121212;
+  --color-Primary-900: #3d3d3d;
+  --color-Primary-800: #454545;
+  --color-Primary-700: #4f4f4f;
+  --color-Primary-600: #5d5d5d;
+  --color-Primary-500: #6d6d6d;
+  --color-Primary-400: #888888;
+  --color-Primary-300: #b0b0b0;
+  --color-Primary-200: #d1d1d1;
+  --color-Primary-100: #e7e7e7;
+  --color-Primary-50: #f6f6f6;
+  --color-Complementary: #1c1c1c;
+
+  --color-enfasisColor: var(--enfasis-dynamic);
+}
+
+
+
+.button-primary {
+  @apply border-enfasisColor bg-enfasisColor md:hover:border-enfasisColor/80 md:hover:text-enfasisColor cursor-pointer items-center justify-center rounded-md border-2 p-1 text-white transition-all duration-300 ease-in-out md:hover:bg-transparent md:hover:shadow-md xl:p-2;
+}
+.button-secondary {
+  @apply cursor-pointer items-center justify-center rounded-md border-2 bg-transparent p-1 text-white transition-all duration-300 ease-in-out md:hover:opacity-50 md:hover:shadow-md xl:p-2;
+}
+.custom-scrollbar {
+  @apply overflow-x-hidden overflow-y-auto scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent;
+}
+
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.title {
+  @apply text-[32px] font-bold md:text-start xl:text-[50px];
+}
+.subtitle {
+  @apply text-[24px] font-bold md:text-[32px];
+}
+.text-lxx {
+  @apply text-[20px] font-bold xl:text-[28px];
+}
+.text-lx {
+  @apply text-[18px] font-bold xl:text-[24px];
+}
+.text-l {
+  @apply text-[16px] font-medium xl:text-[20px];
+}
+.text-m {
+  @apply text-[14px] font-normal xl:text-[16px];
+}
+.text-s {
+  @apply text-[12px] font-normal xl:text-[14px];
+}
+.text-sx {
+  @apply text-[10px] font-normal xl:text-[12px];
+}
+.text-sxx {
+  @apply text-[10px] font-light;
+}
+
+* {
+  color-scheme: dark;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'aside header'
+    'aside main'
+    'aside footer';
+  height: 100dvh;
+  max-width: 100dvw;
+  font-family: 'Nunito', sans-serif;
+  scroll-timeline: --scrollApp;
+}
+
+@media (max-width: 768px) {
+  #app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-areas:
+      'header'
+      'main'
+      'footer'
+      'aside';
+  }
+}

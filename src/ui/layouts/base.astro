@@ -1,0 +1,103 @@
+---
+import { AstroFont } from 'astro-font'
+import '@/styles/global.css'
+import { ClientRouter } from 'astro:transitions'
+
+interface Props {
+  title: string
+  imageUrl: string
+  description: string
+  url: string
+}
+const { title, imageUrl, description, url } = Astro.props
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="16x16" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="google-site-verification"
+      content="MMmywKMxZRfBscGxXQPHrZB_8q2Gre3c8Lb4VglQ3Lw"
+    />
+
+    <meta name="description" content={description} />
+    <meta property="og:image" name="og:image" content={imageUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:site" content={url} />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+    default-src 'self';
+    connect-src 'self' data: blob: https://a.animethemes.moe https://v.animethemes.moe  https://i.ytimg.com https://o4510429009674240.ingest.us.sentry.io;
+    script-src
+      'self'
+      'unsafe-inline'
+      https://cdn.jsdelivr.net
+      https://www.gstatic.com
+      http://www.gstatic.com;
+    frame-src 'self' https://www.youtube.com/ https://www.youtube-nocookie.com/;
+    style-src 'self' 'unsafe-inline';
+    media-src 'self' blob: https://a.animethemes.moe https://v.animethemes.moe;
+    font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
+    img-src
+      'self'
+      data:
+      blob:
+      https://i.ytimg.com
+      https://coffee-advanced-tern-335.mypinata.cloud
+      https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev
+      https://lh3.googleusercontent.com/
+      https://anidev.app
+      https://www.youtube.com/;
+    worker-src 'self' blob:;
+  "
+    />
+
+    <AstroFont
+      config={[
+        {
+          src: [],
+          name: 'Nunito',
+          googleFontsURL:
+            'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap&',
+          preload: true,
+          display: 'swap',
+          selector: 'body',
+          fallback: 'sans-serif',
+        },
+      ]}
+    />
+    <link rel="canonical" href={url} />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <div id="modal-root"></div>
+    <div
+      id="app"
+      class="bg-Primary-950 text-Primary-50 no-scrollbar max-w-dvw overflow-x-hidden overflow-y-scroll"
+    >
+      <aside class="h-16 [grid-area:aside] md:h-full"></aside>
+      <header class="h-full max-w-dvw [grid-area:header]"></header>
+
+      <main
+        id="layout-player-container"
+        class="relative flex max-w-dvw flex-col [grid-area:main]"
+      >
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

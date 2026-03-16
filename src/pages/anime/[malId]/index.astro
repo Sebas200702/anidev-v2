@@ -1,0 +1,17 @@
+---
+import { animeService } from '@/domains/anime/services/anime'
+
+const { malId } = Astro.params
+
+if (!malId || isNaN(Number(malId))) {
+  return Astro.redirect('/404')
+}
+
+const anime = await animeService.getAnimeDetails(Number(malId))
+
+if (!anime?.slug) {
+  return Astro.redirect('/404')
+}
+
+return Astro.redirect(`/anime/${malId}/${anime.slug}`, 301)
+---

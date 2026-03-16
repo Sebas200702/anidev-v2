@@ -1,0 +1,28 @@
+---
+import { animeService } from '@/domains/anime/services/anime'
+import AnimeDetails from '@/domains/anime/ui/components/animeDetails.astro'
+import Base from '@/ui/layouts/base.astro'
+import { config } from '@/config'
+
+const { malId } = Astro.params
+
+if (!malId || isNaN(Number(malId))) {
+  return Astro.redirect('/404')
+}
+
+const animeDetails = await animeService.getAnimeDetails(Number(malId))
+
+if (!animeDetails) {
+  return Astro.redirect('/404')
+}
+const metadata = {
+  title: `${animeDetails.title} - AniDev`,
+  description: animeDetails.synopsis,
+  imageUrl: animeDetails.imageUrl,
+  url: animeDetails.url,
+}
+---
+
+<Base {...metadata}>
+  <AnimeDetails animeDetails={animeDetails} />
+</Base>

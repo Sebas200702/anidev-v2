@@ -1,0 +1,56 @@
+---
+interface Props {
+  imageStyles: string
+  smallImageUrl: string
+  imageUrl: string
+  alt?: string
+  isBanner?: boolean
+}
+const { imageStyles, smallImageUrl, imageUrl, alt, isBanner } = Astro.props
+
+const imageProxyUrl = ({
+  url,
+  width,
+  quality = 75,
+  format = 'webp',
+}: {
+  url: string
+  width?: number
+  quality?: number
+  format?: string
+}) => {
+  const params = new URLSearchParams({
+    url,
+    q: String(quality),
+    fm: format,
+  })
+
+  if (typeof width === 'number') {
+    params.set('w', String(width))
+  }
+
+  return `/api/proxy?${params.toString()}`
+}
+---
+
+<figure class={`${imageStyles} overflow-hidden relative`}>
+  <img
+    class="absolute inset-0 h-full w-full object-cover object-center blur-lg filter"
+    src={imageProxyUrl({ url: smallImageUrl, width: 20 })}
+    alt={alt}
+    aria-hidden="true"
+    decoding="async"
+    fetch-priority="low"
+    loading="eager"
+  />
+  <img
+    class="relative h-full w-full object-cover object-center"
+    src={imageProxyUrl({ url: imageUrl, width: isBanner ? 1920 : undefined })}
+    alt={alt}
+    width={isBanner ? 1920 : undefined}
+    height={isBanner ? 1080 : undefined}
+    loading={isBanner ? 'eager' : 'lazy'}
+    fetch-priority={isBanner ? 'high' : 'low'}
+    decoding="async"
+  />
+</figure>
