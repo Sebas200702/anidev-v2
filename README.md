@@ -1,22 +1,27 @@
 <div align="center">
-	<img src="./public/favicon.svg" alt="AniDev logo" width="92" />
+  <img src="./public/favicon.svg" alt="AniDev logo" width="92" />
 
-    # AniDev
+# AniDev
 
-    **Astro + TypeScript app for anime and music APIs, image optimization, and auth.**
+**Astro + TypeScript platform for anime and music APIs, image optimization, and authentication.**
 
 </div>
 
-AniDev v2 currently includes a server-rendered Astro app, domain-driven API modules (`anime`, `music`), Turso + Drizzle persistence, Upstash Redis caching, and Better Auth mounted on Astro API routes.
+AniDev  is a modern, server-rendered Astro application designed for high-performance anime and music data APIs, with robust authentication, image proxying, and a clean, domain-driven architecture. Built for extensibility and reliability, it leverages Turso (LibSQL), Drizzle ORM, Upstash Redis, and Better Auth for a seamless developer and user experience.
 
-## Highlights
+---
 
-- Server-side Astro app (`@astrojs/node`, standalone mode)
-- Domain-based architecture (`src/domains/*`) with repositories, services, mappers and schemas
-- Typed request validation with Zod + shared API response shape
-- Centralized error mapping (`400/401/403/404/500`) with Sentry integration points
-- Better Auth with Drizzle adapter and SQLite-compatible schema
-- Image proxy endpoint with optimization (`sharp`) and cached fallbacks
+## Features
+
+- **Server-side Astro 6** with standalone Node.js output
+- **Domain-driven modules** for anime, music, auth, and more (`src/domains/*`)
+- **Typed API validation** using Zod and shared response schemas
+- **Centralized error handling** with Sentry integration
+- **Better Auth**: secure, extensible authentication (Drizzle adapter, SQLite schema)
+- **Image proxy endpoint** with `sharp` optimization and Redis caching
+- **Clean, modular codebase** for easy extension and maintenance
+
+---
 
 ## Tech Stack
 
@@ -26,43 +31,47 @@ AniDev v2 currently includes a server-rendered Astro app, domain-driven API modu
 - **Cache:** Upstash Redis
 - **Auth:** Better Auth
 - **Validation:** Zod
-- **Logging / Monitoring:** Pino + Sentry
+- **Logging/Monitoring:** Pino, Sentry
 - **Styling:** Tailwind CSS v4
+
+---
 
 ## Quick Start
 
-1. Install dependencies
+1. **Install dependencies**
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-2. Create local env file
+2. **Copy and configure environment variables**
 
-```bash
-# macOS / Linux
-cp .env.example .env
+   ```bash
+   # macOS / Linux
+   cp .env.example .env
 
-# Windows PowerShell
-Copy-Item .env.example .env
-```
+   # Windows PowerShell
+   Copy-Item .env.example .env
+   ```
 
-3. Fill required variables in `.env`
+   Edit `.env` and fill in all required variables.
 
-4. Run development server
+3. **Run the development server**
 
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
-App runs on `http://localhost:4321` by default.
+   The app will be available at [http://localhost:4321](http://localhost:4321).
 
 > [!IMPORTANT]
-> This project validates env vars at startup. Missing or invalid values in `.env` will fail fast.
+> Environment variables are validated at startup. Missing or invalid values will cause the app to fail fast.
+
+---
 
 ## Environment Variables
 
-Defined and validated in `src/config/env.ts`:
+All variables are defined and validated in [`src/config/env.ts`](src/config/env.ts):
 
 | Variable                   | Required | Description                                        |
 | -------------------------- | -------- | -------------------------------------------------- |
@@ -75,6 +84,8 @@ Defined and validated in `src/config/env.ts`:
 | `UPSTASH_REDIS_REST_TOKEN` | Yes      | Upstash Redis REST token                           |
 | `SENTRY_DSN`               | No       | Sentry DSN                                         |
 | `LOG_LEVEL`                | No       | `trace`, `debug`, `info`, `warn`, `error`, `fatal` |
+
+---
 
 ## Scripts
 
@@ -89,13 +100,15 @@ Defined and validated in `src/config/env.ts`:
 | `npm run db:migrate`    | Apply Drizzle migrations               |
 | `npm run format`        | Format project with Prettier           |
 
-## Better Auth
+---
 
-- Config file: `src/core/auth/better-auth.ts`
-- Astro handler mount: `src/pages/api/auth/[...all].ts`
-- Auth routes are exposed under: `/api/auth/*`
+## Authentication (Better Auth)
 
-Quick health check:
+- **Config:** [`src/core/auth/better-auth.ts`](src/core/auth/better-auth.ts)
+- **Astro handler:** [`src/pages/api/auth/[...all].ts`](src/pages/api/auth/[...all].ts)
+- **API routes:** `/api/auth/*`
+
+Health check:
 
 ```http
 GET /api/auth/ok
@@ -108,7 +121,9 @@ Expected response:
 ```
 
 > [!NOTE]
-> Better Auth CLI commands are already wired with `--config src/core/auth/better-auth.ts`.
+> Better Auth CLI commands are preconfigured with the correct config path.
+
+---
 
 ## API Endpoints
 
@@ -131,6 +146,8 @@ Expected response:
 
 - `ALL /api/auth/*`
 
+---
+
 ## Project Structure
 
 ```text
@@ -144,16 +161,20 @@ src/
 └── ui/          # layouts and UI components
 ```
 
-## Current UI Routes
+---
 
-- `/` (base page)
-- `/anime/:malId` (redirects to slug route)
-- `/anime/:malId/:slug` (anime details page)
+## UI Routes
+
+- `/` — base page
+- `/anime/:malId` — redirects to slug route
+- `/anime/:malId/:slug` — anime details page
+
+---
 
 ## Notes
 
 > [!TIP]
-> The API layer uses a common validation/error pipeline (`withZodValidation` + `mapErrorToHttp`) to keep responses consistent.
+> The API layer uses a common validation/error pipeline (`withZodValidation` + `mapErrorToHttp`) for consistent responses.
 
 > [!NOTE]
-> Image optimization uses caching and graceful fallback to `public/placeholder.webp` when source fetch fails.
+> Image optimization is cached and falls back to `public/placeholder.webp` if the source fetch fails.
