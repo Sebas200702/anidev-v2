@@ -4,6 +4,7 @@ export enum CacheKeyPrefix {
   AnimeDetails = 'anime:details',
   AnimeCharacters = 'anime:characters',
   MusicDetails = 'music:details',
+  UserProfile = 'user:profile',
 }
 
 export enum CacheTtl {
