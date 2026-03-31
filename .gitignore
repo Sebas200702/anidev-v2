@@ -3,6 +3,9 @@ dist/
 
 # generated types
 .astro/
+.github/
+.agents/
+.vscode/
 
 # dependencies
 node_modules/
@@ -22,7 +25,3 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-
-.github/*
-.agents/*
-.vscode/*
