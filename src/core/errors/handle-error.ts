@@ -65,7 +65,8 @@ export function mapErrorToHttp(error: unknown): HttpErrorResponse {
       error.code === ErrorCodes.ANIME_NOT_FOUND ||
       error.code === ErrorCodes.MUSIC_NOT_FOUND ||
       error.code === ErrorCodes.WATCH_STATE_NOT_FOUND ||
-      error.code === ErrorCodes.COLLECTION_NOT_FOUND
+      error.code === ErrorCodes.COLLECTION_NOT_FOUND ||
+      error.code === ErrorCodes.USER_NOT_FOUND
     ) {
       logger.warn({ error }, 'Domain error - not found')
       return {
