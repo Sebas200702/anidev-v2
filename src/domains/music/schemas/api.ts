@@ -1,4 +1,4 @@
-import {z} from 'zod'
+import { z } from 'zod'
 import { createApiResponseSchema } from '@/core/http/schemas/api-response'
 import { musicDetailsSchema } from '@/domains/music/schemas/music-details'
 export const getMusicSchema = z.object({
@@ -7,5 +7,5 @@ export const getMusicSchema = z.object({
   }),
 })
 
-export const musicDetailsResponseSchema = createApiResponseSchema(
-  musicDetailsSchema)
+export const musicDetailsResponseSchema =
+  createApiResponseSchema(musicDetailsSchema)
