@@ -45,7 +45,9 @@ export const mapAnimeDetails = ({
       media.find((m) => m.mediaType === 'poster' && m.size === 'large')?.src ||
       `${config.baseUrl}/placeholder.webp`,
     synopsis: anime.synopsis || 'No synopsis available.',
-    trailerUrl: media.find((m) => m.mediaType === 'trailer')?.src || '',
+    trailerUrl:
+      media.find((m) => m.mediaType === 'trailer')?.src ||
+      `${config.baseUrl}/placeholder.webp`,
     slug: normalizeString({
       string: anime.title,
       separator: '-',
