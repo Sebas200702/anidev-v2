@@ -5,8 +5,9 @@ export const animeCardSchema = z.object({
   title: z.string(),
   year: z.number(),
   status: z.string(),
-  genres: z.array(z.string()),
+  score: z.number().nullable(),
+  type: z.string(),
   imageUrl: z.url(),
   smallImageUrl: z.url(),
-  altText: z.string(),
+  altImageText: z.string(),
 })
