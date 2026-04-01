@@ -1,6 +1,7 @@
 export enum CacheKeyPrefix {
   AnimeFull = 'anime:full',
   AnimeStaff = 'anime:staff',
+  AnimeList = 'anime:list',
   AnimeDetails = 'anime:details',
   AnimeCharacters = 'anime:characters',
   MusicDetails = 'music:details',
