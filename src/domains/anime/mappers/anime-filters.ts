@@ -16,7 +16,8 @@ export const mapAnimeFilters = (params: AnimeFiltersParams): AnimeFilters => {
     status: toArray(params.status),
     rating: toArray(params.rating),
     type: toArray(params.type),
-    year: params.year ? params.year : undefined,
+    year: params.year,
+    query: params.query,
     page: params.page,
     limit: params.limit,
   }
