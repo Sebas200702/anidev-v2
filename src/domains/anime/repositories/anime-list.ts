@@ -41,8 +41,8 @@ export const animeListRepository = {
           anime,
         })
         .from(anime)
-        .innerJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
-        .innerJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
+        .leftJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
+        .leftJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
         .where(
           and(
             ...filters,
@@ -88,8 +88,8 @@ export const animeListRepository = {
           count: countDistinct(anime.malId),
         })
         .from(anime)
-        .innerJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
-        .innerJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
+        .leftJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
+        .leftJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
         .where(
           and(
             ...filters,
