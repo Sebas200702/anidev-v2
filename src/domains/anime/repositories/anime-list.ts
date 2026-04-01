@@ -37,7 +37,7 @@ export const animeListRepository = {
       }
 
       const result = await db
-        .select({
+        .selectDistinct({
           anime,
         })
         .from(anime)
@@ -84,7 +84,7 @@ export const animeListRepository = {
       }
 
       const result = await db
-        .select({
+        .selectDistinct({
           count: countDistinct(anime.malId),
         })
         .from(anime)
