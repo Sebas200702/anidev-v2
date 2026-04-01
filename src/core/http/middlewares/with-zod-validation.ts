@@ -2,6 +2,7 @@ import type { APIContext } from 'astro'
 import type { ZodType } from 'zod'
 import { ValidationError } from '@/core/errors/errors'
 import { ErrorCodes } from '@/core/errors/error-codes'
+import { mapErrorToHttp } from '@/core/errors/handle-error'
 
 type ValidatedHandler<T> = (
   context: APIContext & { validated: T }
@@ -24,11 +25,24 @@ export function withZodValidation<T>(schema: ZodType<T>) {
       const result = schema.safeParse(data)
 
       if (!result.success) {
-        throw new ValidationError(
+        const error = new ValidationError(
           ErrorCodes.VALIDATION_ERROR,
           'Invalid request',
           { issues: result.error.issues }
         )
+
+        const { status, body } = mapErrorToHttp(error)
+        const payload = {
+          data: null,
+          status,
+          error: body.message ?? 'Unexpected error',
+          meta: body.meta ?? {},
+        }
+
+        return new Response(JSON.stringify(payload), {
+          status,
+          headers: { 'Content-Type': 'application/json' },
+        })
       }
 
       return handler({
