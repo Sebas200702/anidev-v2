@@ -31,3 +31,16 @@ export const mapAnimeCard = ({
     altImageText: `Image for ${anime.title}`,
   }
 }
+
+export const mapAnimeListToCards = ({
+  animeList,
+  mediaList,
+}: {
+  animeList: AnimeDB[]
+  mediaList: AnimeMediaDB[]
+}): AnimeCard[] => {
+  return animeList.map((anime) => {
+    const animeMedia = mediaList.filter((m) => m.animeId === anime.malId)
+    return mapAnimeCard({ anime, animeMedia })
+  })
+}
