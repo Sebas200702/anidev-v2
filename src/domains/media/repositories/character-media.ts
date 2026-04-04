@@ -8,7 +8,7 @@ export const characterMediaRepository = {
   async getMediaByCharacterIds(characterIds: number[]): Promise<MediaAsset[]> {
     if (!characterIds.length) return []
     try {
-      return db
+      return await db
         .select()
         .from(characterMedia)
         .where(inArray(characterMedia.characterId, characterIds))
