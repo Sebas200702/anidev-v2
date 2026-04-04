@@ -1,29 +1,29 @@
-import { config } from '@/config'
 import type { AnimeCard } from '@/domains/anime/types/anime-card'
-import type { AnimeDB, AnimeMediaDB } from '@/domains/anime/types/anime-db'
+import type { AnimeDB } from '@/domains/anime/types/anime-db'
+import { buildMediaUrl } from '@/domains/media/mappers/media-url'
 
-export const mapAnimeCard = ({
-  anime,
-  animeMedia,
-}: {
-  anime: AnimeDB
-  animeMedia: AnimeMediaDB[]
-}): AnimeCard => {
+export const mapAnimeCard = ({ anime }: { anime: AnimeDB }): AnimeCard => {
+  const imageUrl = buildMediaUrl({
+    entity: 'anime',
+    entity_id: anime.malId,
+    type: 'poster',
+    size: 'large',
+    source: 'myanimelist',
+  })
+
+  const smallImageUrl = buildMediaUrl({
+    entity: 'anime',
+    entity_id: anime.malId,
+    type: 'poster',
+    size: 'small',
+    source: 'myanimelist',
+  })
+
   return {
     malId: anime.malId,
     title: anime.title,
-    imageUrl:
-      animeMedia.find((m) => m.mediaType === 'poster' && m.size === 'large')
-        ?.src ||
-      animeMedia.find((m) => m.mediaType === 'poster' && m.size === 'default')
-        ?.src ||
-      `${config.baseUrl}/placeholder.webp`,
-    smallImageUrl:
-      animeMedia.find((m) => m.mediaType === 'poster' && m.size === 'small')
-        ?.src ||
-      animeMedia.find((m) => m.mediaType === 'poster' && m.size === 'default')
-        ?.src ||
-      `${config.baseUrl}/placeholder.webp`,
+    imageUrl,
+    smallImageUrl,
     score: anime.score,
     type: anime.type || 'Unknown',
     status: anime.status || 'Unknown',
@@ -32,15 +32,6 @@ export const mapAnimeCard = ({
   }
 }
 
-export const mapAnimeListToCards = ({
-  animeList,
-  mediaList,
-}: {
-  animeList: AnimeDB[]
-  mediaList: AnimeMediaDB[]
-}): AnimeCard[] => {
-  return animeList.map((anime) => {
-    const animeMedia = mediaList.filter((m) => m.animeId === anime.malId)
-    return mapAnimeCard({ anime, animeMedia })
-  })
+export const mapAnimeListToCards = ({ animeList }: { animeList: AnimeDB[] }): AnimeCard[] => {
+  return animeList.map((anime) => mapAnimeCard({ anime }))
 }

@@ -1,10 +1,10 @@
-import { animeRepository } from '@/domains/anime/repositories/anime'
-import { animeMediaRepository } from '@/domains/anime/repositories/anime-media'
-import { animeTaxonomyRepository } from '@/domains/anime/repositories/anime-taxonomy'
+import { withCache } from '@/core/cache'
+import { animeDetailsCache } from '@/domains/anime/cache/anime-cache'
 import { animeNotFound } from '@/domains/anime/errors'
 import { mapAnimeDetails } from '@/domains/anime/mappers/anime'
-import { animeDetailsCache } from '@/domains/anime/cache/anime-cache'
-import { withCache } from '@/core/cache'
+import { animeRepository } from '@/domains/anime/repositories/anime'
+import { animeTaxonomyRepository } from '@/domains/anime/repositories/anime-taxonomy'
+import { animeMediaRepository } from '@/domains/media/repositories/anime-media'
 
 export const animeService = {
   async getAnimeDetails(malId: number) {

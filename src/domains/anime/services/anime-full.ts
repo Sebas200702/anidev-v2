@@ -1,14 +1,14 @@
-import { animeTitleRepository } from '@/domains/anime/repositories/anime-title'
-import { animeRelationsRepository } from '@/domains/anime/repositories/anime-relations'
-import { animeExternalRepository } from '@/domains/anime/repositories/anime-external'
-import { animeMusicRepository } from '@/domains/music/repositories/anime-music'
-import { mapAnimeToFullDetails } from '@/domains/anime/mappers/anime-full'
-import { animeFullCache } from '@/domains/anime/cache/anime-full-cache'
 import { withCache } from '@/core/cache'
-import { animeRepository } from '@/domains/anime/repositories/anime'
-import { animeMediaRepository } from '@/domains/anime/repositories/anime-media'
-import { animeTaxonomyRepository } from '@/domains/anime/repositories/anime-taxonomy'
+import { animeFullCache } from '@/domains/anime/cache/anime-full-cache'
 import { animeNotFound } from '@/domains/anime/errors'
+import { mapAnimeToFullDetails } from '@/domains/anime/mappers/anime-full'
+import { animeRepository } from '@/domains/anime/repositories/anime'
+import { animeExternalRepository } from '@/domains/anime/repositories/anime-external'
+import { animeRelationsRepository } from '@/domains/anime/repositories/anime-relations'
+import { animeTaxonomyRepository } from '@/domains/anime/repositories/anime-taxonomy'
+import { animeTitleRepository } from '@/domains/anime/repositories/anime-title'
+import { animeMediaRepository } from '@/domains/media/repositories/anime-media'
+import { animeMusicRepository } from '@/domains/music/repositories/anime-music'
 
 export const animeFullService = {
   async getAnimeFullByMalId(malId: number) {

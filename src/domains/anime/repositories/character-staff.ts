@@ -1,10 +1,9 @@
 import { db } from '@/core/db/client'
-import { characterVoiceActor } from '@/core/db/schemas/character-relations'
-import { staff } from '@/core/db/schemas/staff'
-import { inArray } from 'drizzle-orm'
-import { dbError } from '@/core/errors/db-errors'
-import type { CharacterVoiceActorDB } from '../types/anime-db'
 import { dbConfig } from '@/core/db/config'
+import { characterVoiceActor } from '@/core/db/schemas/character-relations'
+import { dbError } from '@/core/errors/db-errors'
+import { inArray } from 'drizzle-orm'
+import type { CharacterVoiceActorDB } from '../types/anime-db'
 
 export const characterStaffRepository = {
   async getVoicesByCharacterIds(characterIds: number[]) {
