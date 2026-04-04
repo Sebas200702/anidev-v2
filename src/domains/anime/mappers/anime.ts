@@ -1,13 +1,14 @@
+import { config } from '@/config'
+import { normalizeString } from '@/core/utils/string/normalize'
 import type {
+  AnimeDB,
+  DemographicDB,
   GenreDB,
   ThemeDB,
-  DemographicDB,
-  AnimeMediaDB,
-  AnimeDB,
 } from '@/domains/anime/types/anime-db'
 import type { AnimeDetails } from '@/domains/anime/types/anime-details'
-import { normalizeString } from '@/core/utils/string/normalize'
-import { config } from '@/config'
+import { buildMediaUrl } from '@/domains/media/mappers/media-url'
+import type { MediaAsset } from '@/domains/media/types/media'
 export const mapAnimeDetails = ({
   genres,
   themes,
@@ -18,9 +19,28 @@ export const mapAnimeDetails = ({
   genres: GenreDB[]
   themes: ThemeDB[]
   demographics: DemographicDB[]
-  media: AnimeMediaDB[]
+  media: MediaAsset[]
   anime: AnimeDB
 }): AnimeDetails => {
+  const imageUrl = buildMediaUrl({
+    entity: 'anime',
+    type: 'poster',
+    size: 'large',
+    entity_id: anime.malId,
+    source: 'myanimelist',
+  })
+  const smallImageUrl = buildMediaUrl({
+    entity: 'anime',
+    type: 'poster',
+    size: 'small',
+    entity_id: anime.malId,
+    source: 'myanimelist',
+  })
+  const bannerImageUrl = buildMediaUrl({
+    entity: 'anime',
+    type: 'banner',
+    entity_id: anime.malId,
+  })
   return {
     malId: anime.malId,
     title: anime.title,
@@ -29,21 +49,10 @@ export const mapAnimeDetails = ({
     genres: genres.map((g) => g.name),
     themes: themes.map((t) => t.name),
     demographics: demographics.map((d) => d.name),
-    imageUrl:
-      media.find((m) => m.mediaType === 'poster' && m.size === 'large')?.src ||
-      media.find((m) => m.mediaType === 'poster' && m.size === 'default')
-        ?.src ||
-      `${config.baseUrl}/placeholder.webp`,
+    imageUrl,
+    smallImageUrl,
+    bannerImageUrl,
 
-    smallImageUrl:
-      media.find((m) => m.mediaType === 'poster' && m.size === 'small')?.src ||
-      media.find((m) => m.mediaType === 'poster' && m.size === 'default')
-        ?.src ||
-      `${config.baseUrl}/placeholder.webp`,
-    bannerImageUrl:
-      media.find((m) => m.mediaType === 'banner')?.src ||
-      media.find((m) => m.mediaType === 'poster' && m.size === 'large')?.src ||
-      `${config.baseUrl}/placeholder.webp`,
     synopsis: anime.synopsis || 'No synopsis available.',
     trailerUrl:
       media.find((m) => m.mediaType === 'trailer')?.src ||

@@ -1,11 +1,7 @@
 import { db } from '@/core/db/client'
 import { character } from '@/core/db/schemas/character'
 import { eq, inArray } from 'drizzle-orm'
-import type {
-  CharacterDB,
-  CharacterMediaDB,
-} from '@/domains/anime/types/anime-db'
-import { characterMedia } from '@/core/db/schemas/character-media'
+import type { CharacterDB } from '@/domains/anime/types/anime-db'
 import { dbError } from '@/core/errors/db-errors'
 export const characterRepository = {
   async getByMalId(malId: number): Promise<CharacterDB | undefined> {
@@ -26,20 +22,6 @@ export const characterRepository = {
       return db.select().from(character).where(inArray(character.malId, malIds))
     } catch (error) {
       throw dbError('[GET_MANY_BY_MAL_IDS]', { malIds }, error)
-    }
-  },
-  async getMediaByCharacterIds(
-    characterIds: number[]
-  ): Promise<CharacterMediaDB[]> {
-    try {
-      if (!characterIds.length) return []
-
-      return db
-        .select()
-        .from(characterMedia)
-        .where(inArray(characterMedia.characterId, characterIds))
-    } catch (error) {
-      throw dbError('[GET_MEDIA_BY_CHARACTER_IDS]', { characterIds }, error)
     }
   },
 }
