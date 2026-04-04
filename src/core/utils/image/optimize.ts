@@ -7,7 +7,13 @@ export type OptimizeOptions = {
   width?: number
   quality?: number
   format?: ImageFormat
-  source?: 'myanimelist' | 'anilist' | 'kitsu' | 'thetvdb' | 'custom' | 'youtube'
+  source?:
+    | 'myanimelist'
+    | 'anilist'
+    | 'kitsu'
+    | 'thetvdb'
+    | 'custom'
+    | 'youtube'
 }
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
