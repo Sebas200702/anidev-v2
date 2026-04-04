@@ -41,10 +41,10 @@ const buildKey = (
   options: OptimizeOptions
 ): string => {
   if (typeof params === 'string') {
-    return `optimized:url:${params}:w${options.width ?? 'auto'}:q${options.quality ?? 'auto'}:f${options.format ?? 'webp '}s:${options.source ?? ''}`
+    return `optimized:url:${params}:w${options.width ?? 'auto'}:q${options.quality ?? 'auto'}:f${options.format ?? 'webp'}:s${options.source ?? ''}`
   }
 
-  return `optimized:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:w${options.width ?? 'auto'}:q${options.quality ?? 'auto'}:f${options.format ?? 'webp'} s:${options.source ?? ''}`
+  return `optimized:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:w${options.width ?? 'auto'}:q${options.quality ?? 'auto'}:f${options.format ?? 'webp'}:s${options.source ?? ''}`
 }
 
 export const mediaCache = {
