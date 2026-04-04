@@ -1,3 +1,4 @@
+import { mediaServiceConfig } from '@/domains/media/config'
 import sharp from 'sharp'
 
 export type ImageFormat = 'webp' | 'avif'
@@ -6,6 +7,7 @@ export type OptimizeOptions = {
   width?: number
   quality?: number
   format?: ImageFormat
+  source?: 'myanimelist' | 'anilist' | 'kitsu' | 'thetvdb' | 'custom' | 'youtube'
 }
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
@@ -52,3 +54,12 @@ export async function optimizeImageBuffer(
 
   return { buffer: optimizedBuffer, mimeType }
 }
+
+export const normalizeOptimizeOptions = (
+  options: OptimizeOptions = {}
+): OptimizeOptions => ({
+  width: options.width,
+  quality: options.quality ?? mediaServiceConfig.defaultQuality,
+  format: options.format ?? mediaServiceConfig.defaultFormat,
+  source: options.source,
+})
