@@ -79,7 +79,7 @@ All variables are defined and validated in [`src/config/env.ts`](src/config/env.
 | `TURSO_DATABASE_URL`       | Yes      | Turso LibSQL database URL                          |
 | `TURSO_AUTH_TOKEN`         | Yes      | Turso auth token                                   |
 | `BETTER_AUTH_SECRET`       | Yes      | Better Auth secret (min 32 chars)                  |
-| `APP_BASE_URL`             | No       | Public app base URL (fallback: `BETTER_AUTH_URL`) |
+| `APP_BASE_URL`             | No       | Public app base URL (fallback: `BETTER_AUTH_URL`)  |
 | `BETTER_AUTH_URL`          | Yes      | Base URL used by Better Auth callbacks             |
 | `UPSTASH_REDIS_REST_URL`   | Yes      | Upstash Redis REST URL                             |
 | `UPSTASH_REDIS_REST_TOKEN` | Yes      | Upstash Redis REST token                           |
