@@ -42,7 +42,7 @@ export const buildAnimeListFilters = ({
       string: query,
       removeSpaces: true,
       separator: '',
-      toLowerCase: false,
+      toLowerCase: true,
     })
 
     const queryPattern = `%${normalizedQuery}%`
