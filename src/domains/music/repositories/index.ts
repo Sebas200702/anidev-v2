@@ -10,6 +10,7 @@
  * ```
  */
 export * from './anime-music-repository'
+export * from './music-list-repository'
 export * from './music-relation-repository'
 export * from './music-repository'
 export * from './music-version-repository'
