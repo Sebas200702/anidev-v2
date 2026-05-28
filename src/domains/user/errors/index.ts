@@ -1,21 +1,16 @@
-
-import { DomainError, ValidationError, AuthError } from '@/core/errors/errors'
-import { ErrorCodes } from '@/core/errors/error-codes'
-
-export function userNotFound(id: string) {
-  return new DomainError(ErrorCodes.USER_NOT_FOUND, 'User not found', {
-    id,
-  })
-}
-
-export function userInvalidId(rawId: unknown) {
-  return new ValidationError(ErrorCodes.USER_INVALID_ID, 'Invalid user id', {
-    rawId,
-  })
-}
-
-export function userUnauthorized(userId: string) {
-  return new AuthError(ErrorCodes.USER_UNAUTHORIZED, 'Unauthorized user', {
-    userId,
-  })
-}
+/**
+ * Barrel exports for user domain errors and error factories.
+ *
+ * @module domains/user/errors
+ * @remarks
+ * Surfaces typed domain, validation, and authorization errors raised during
+ * user profile lookups together with factory helpers that construct them.
+ * @see {@link module:domains/user/errors/user-not-found-error} for error class definitions
+ * @example
+ * ```typescript
+ * import { userNotFound, UserUnauthorizedError } from '@domains/user/errors'
+ *
+ * throw userNotFound('user-123')
+ * ```
+ */
+export * from './user-not-found-error'
