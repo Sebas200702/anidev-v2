@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@astrojs/react": "5.0.2",
+    "@astrojs/vercel": "^10.0.8",
     "@libsql/client": "0.17.0",
     "@nurodev/astro-bun": "2.1.2",
     "@sentry/astro": "10.43.0",
