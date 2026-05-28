@@ -7,7 +7,20 @@
     "jsxImportSource": "react",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@styles/*": ["./styles/*"],
+      "@domains/*": ["./domains/*"],
+      "@shared/*": ["./shared/*"],
+      "@lib/*": ["./lib/*"],
+      "@config/*": ["./config/*"],
+      "@middleware/*": ["./middleware/*"],
+      "@layouts/*": ["./shared/layouts/*"],
+      "@http/*": ["./shared/http/*"],
+      "@components/*": ["./shared/components/*"],
+      "@hooks/*": ["./shared/hooks/*"],
+      "@stores/*": ["./shared/stores/*"],
+      "@utils/*": ["./shared/utils/*"],
+      "@db/*": ["./lib/db/*"]
     }
   }
 }
