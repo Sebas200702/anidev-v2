@@ -1,0 +1,49 @@
+/**
+ * @module @domains/music/repositories/music-relation-repository
+ * @remarks Database access for music-to-artist relations via the `musicArtist` join table.
+ */
+import { db } from '@db/client'
+import { musicArtist } from '@db/schemas/music-relations'
+import { artist } from '@db/schemas/artist'
+import { eq } from 'drizzle-orm'
+import type { MusicArtistDB } from '@domains/music/types/music-db.d-types'
+
+/**
+ * Reads artist relations for music records.
+ *
+ * @remarks Joins `musicArtist` with `artist` to return display names and MAL IDs for
+ * each credited performer on a track.
+ * @see {@link mapMusicDetail} for mapping into the `artist` array on {@link MusicDetails}
+ * @example
+ * ```typescript
+ * const artists = await musicRelationRepository.findArtistsByMusicId(42)
+ * ```
+ */
+export const musicRelationRepository = {
+  /**
+   * Loads artists linked to a music record.
+   *
+   * @param musicId - Internal music identifier
+   * @returns {@link MusicArtistDB} rows associated with the music entry
+   * @throws May propagate underlying database driver errors
+   * @see {@link MusicDetails.artist} for the serialized output field
+   * @example
+   * ```typescript
+   * const artists = await musicRelationRepository.findArtistsByMusicId(42)
+   * console.log(artists.map((a) => a.name))
+   * ```
+   */
+  async findArtistsByMusicId(musicId: number): Promise<MusicArtistDB[]> {
+    const rows = await db
+      .select({
+        id: musicArtist.artistId,
+        name: artist.name,
+        malId: artist.malId,
+      })
+      .from(musicArtist)
+      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+      .where(eq(musicArtist.musicId, musicId))
+
+    return rows
+  },
+}
