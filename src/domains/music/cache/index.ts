@@ -14,3 +14,4 @@
  * ```
  */
 export * from './music-cache'
+export * from './music-list-cache'

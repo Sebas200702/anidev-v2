@@ -42,6 +42,9 @@ export enum CacheKeyPrefix {
   /** Music track detail payloads. Value: `'music:details'`. */
   MusicDetails = 'music:details',
 
+  /** Paginated or filtered music list responses. Value: `'music:list'`. */
+  MusicList = 'music:list',
+
   /** Extended user profile preferences and display fields. Value: `'user:profile'`. */
   UserProfile = 'user:profile',
 }
