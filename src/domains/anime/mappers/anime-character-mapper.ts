@@ -12,6 +12,8 @@ import type {
 } from '@domains/anime/types'
 import { config } from '@/config'
 import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
+import { DomainError } from '@shared/errors/app-error'
+import { ErrorCodes } from '@shared/errors/codes'
 
 /**
  * Input for assembling anime character payloads.
@@ -62,8 +64,10 @@ export const mapAnimeCharacters = ({
   return refs.map((ref) => {
     const character = characterMap.get(ref.characterId)
     if (!character) {
-      throw new Error(
-        `[mapAnimeCharacters] Character ${ref.characterId} not found`
+      throw new DomainError(
+        ErrorCodes.ANIME_CHARACTER_NOT_FOUND,
+        `Character ${ref.characterId} not found — referenced by anime ${ref.animeId} but missing from character table`,
+        { characterId: ref.characterId, animeId: ref.animeId }
       )
     }
 

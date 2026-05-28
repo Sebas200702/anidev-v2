@@ -5,6 +5,7 @@
  * and `source` query parameters.
  */
 import type { MediaEntity, MediaType } from '@domains/media/types/media-types'
+import { config } from '@/config'
 
 type BuildMediaUrlInput = {
   entity: MediaEntity | string
@@ -31,7 +32,7 @@ type BuildMediaUrlInput = {
  * omitted rather than producing malformed paths. Positive integer `index` values append a
  * 1-based asset selector segment consumed by {@link mapIndexedMediaAsset}.
  * @param input - Entity, media type, size, slug, index, and optional transform query params
- * @returns Relative media route path with optional query string
+ * @returns Absolute media URL with origin from {@link config.baseUrl}
  * @throws Does not throw; silently drops invalid optional segments
  * @see {@link parseMediaPath} for parsing these paths back into {@link SemanticMediaPath}
  * @see {@link mediaService.optimizeMedia} for serving optimized bytes from the path
@@ -46,7 +47,7 @@ type BuildMediaUrlInput = {
  *   width: 400,
  *   quality: 75,
  * })
- * // "/media/anime/5114/poster/large?w=400&q=75&source=myanimelist"
+ * // "https://anidev.example/media/anime/5114/poster/large?w=400&q=75&source=myanimelist"
  *
  * buildMediaUrl({
  *   entity: 'anime',
@@ -54,7 +55,7 @@ type BuildMediaUrlInput = {
  *   slug: 'fullmetal-alchemist-brotherhood',
  *   type: 'banner',
  * })
- * // "/media/anime/5114/fullmetal-alchemist-brotherhood/banner"
+ * // "https://anidev.example/media/anime/5114/fullmetal-alchemist-brotherhood/banner"
  * ```
  */
 export const buildMediaUrl = ({
@@ -98,5 +99,6 @@ export const buildMediaUrl = ({
   }
 
   const query = params.toString()
-  return query ? `${path}?${query}` : path
+  const relative = query ? `${path}?${query}` : path
+  return `${config.baseUrl}${relative}`
 }

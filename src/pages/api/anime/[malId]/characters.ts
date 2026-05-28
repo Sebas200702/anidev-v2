@@ -23,6 +23,7 @@ import {
 } from '@domains/anime/schemas/anime-character-schema'
 import { withZodValidation } from '@http/with-validation'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { logger } from '@shared/utils/logger-util'
 
 /**
  * Returns the character list for a MyAnimeList anime ID.
@@ -59,6 +60,7 @@ import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
  * |--------|------|------|
  * | 400 | `VALIDATION_ERROR` | `malId` param fails Zod coercion/validation |
  * | 400 | `ANIME_INVALID_ID` | MAL ID is malformed or out of acceptable range |
+ * | 400 | `ANIME_CHARACTER_NOT_FOUND` | Character referenced in join table is missing from character table |
  * | 404 | `ANIME_NOT_FOUND` | No anime exists for the given MAL ID |
  * | 500 | `DB_ERROR` | Database query failed |
  * | 500 | `CACHE_ERROR` | Cache read/write failure |
@@ -98,6 +100,7 @@ export const GET: APIRoute = withZodValidation(getAnimeCharacterSchema)(async ({
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error) {
+    logger.error({ err: error, malId: validated.params.malId }, 'Failed to get anime characters')
     const { status, body } = mapErrorToHttp(error)
     const payload = {
       data: null,
