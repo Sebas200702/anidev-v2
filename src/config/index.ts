@@ -18,7 +18,7 @@
  */
 import { env } from './env'
 
-const baseUrl = (env.APP_BASE_URL ?? env.BETTER_AUTH_URL).replace(/\/$/, '')
+const baseUrl = env.APP_BASE_URL.replace(/\/$/, '') ?? ''
 
 /**
  * Site metadata and derived URLs used across pages, Open Graph tags, and SEO.
