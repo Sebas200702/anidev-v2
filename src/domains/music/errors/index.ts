@@ -1,14 +1,16 @@
-import { DomainError, ValidationError } from '@/core/errors/errors'
-import { ErrorCodes } from '@/core/errors/error-codes'
-
-export function musicNotFound(id: number) {
-  return new DomainError(ErrorCodes.MUSIC_NOT_FOUND, 'Music not found', {
-    id: id,
-  })
-}
-
-export function musicInvalidId(rawId: unknown) {
-  return new ValidationError(ErrorCodes.MUSIC_INVALID_ID, 'Invalid music id', {
-    rawId,
-  })
-}
+/**
+ * @module @domains/music/errors
+ * @remarks Barrel exports for music domain errors and factory helpers used by route
+ * handlers and {@link musicService} when identifiers are invalid or records are missing.
+ * @see {@link ./music-not-found-error} for missing-record errors
+ * @see {@link ./music-invalid-id-error} for malformed route parameters
+ * @example
+ * ```typescript
+ * import { musicNotFound, musicInvalidId } from '@domains/music/errors'
+ *
+ * throw musicNotFound(42)
+ * throw musicInvalidId('abc')
+ * ```
+ */
+export * from './music-invalid-id-error'
+export * from './music-not-found-error'
