@@ -55,6 +55,9 @@ export const ErrorCodes = {
   /** User not authorized for resource — HTTP 400 (domain) unless wrapped as {@link AuthError}. */
   USER_UNAUTHORIZED: 'USER_UNAUTHORIZED',
 
+  /** Character referenced by anime join table does not exist — HTTP 400. */
+  ANIME_CHARACTER_NOT_FOUND: 'ANIME_CHARACTER_NOT_FOUND',
+
   /** Unclassified failure — HTTP 500, Sentry. */
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
   /** Media asset not found for entity — HTTP 404 when thrown as {@link DomainError}. */

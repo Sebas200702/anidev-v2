@@ -138,7 +138,7 @@ function buildAppErrorBody(error: BaseError): HttpErrorBody {
  */
 function mapAuthErrorToHttp(error: AuthError): HttpErrorResponse | undefined {
   if (UNAUTHORIZED_AUTH_CODES.has(error.code)) {
-    logger.warn({ error }, 'Auth error - unauthorized')
+    logger.warn({ err: error }, 'Auth error - unauthorized')
     return {
       status: 401,
       body: buildAppErrorBody(error),
@@ -146,7 +146,7 @@ function mapAuthErrorToHttp(error: AuthError): HttpErrorResponse | undefined {
   }
 
   if (error.code === ErrorCodes.AUTH_FORBIDDEN) {
-    logger.warn({ error }, 'Auth error - forbidden')
+    logger.warn({ err: error }, 'Auth error - forbidden')
     return {
       status: 403,
       body: buildAppErrorBody(error),
@@ -169,14 +169,14 @@ function mapAuthErrorToHttp(error: AuthError): HttpErrorResponse | undefined {
  */
 function mapDomainErrorToHttp(error: DomainError): HttpErrorResponse {
   if (NOT_FOUND_DOMAIN_CODES.has(error.code)) {
-    logger.warn({ error }, 'Domain error - not found')
+    logger.warn({ err: error }, 'Domain error - not found')
     return {
       status: 404,
       body: buildAppErrorBody(error),
     }
   }
 
-  logger.error({ error }, 'Domain error')
+    logger.error({ err: error }, 'Domain error')
   return {
     status: 400,
     body: buildAppErrorBody(error),
@@ -216,7 +216,7 @@ function mapDomainErrorToHttp(error: DomainError): HttpErrorResponse {
  */
 export function mapErrorToHttp(error: unknown): HttpErrorResponse {
   if (error instanceof ValidationError) {
-    logger.warn({ error }, 'Validation error')
+    logger.warn({ err: error }, 'Validation error')
     return {
       status: 400,
       body: buildAppErrorBody(error),
@@ -235,7 +235,7 @@ export function mapErrorToHttp(error: unknown): HttpErrorResponse {
   }
 
   if (error instanceof InfraError) {
-    logger.error({ error }, 'Infra error')
+    logger.error({ err: error }, 'Infra error')
     SentryNode.captureException(error)
 
     return {
@@ -248,7 +248,7 @@ export function mapErrorToHttp(error: unknown): HttpErrorResponse {
     }
   }
 
-  logger.error({ error }, 'Unknown error')
+  logger.error({ err: error }, 'Unknown error')
   SentryNode.captureException(error as Error)
 
   return {

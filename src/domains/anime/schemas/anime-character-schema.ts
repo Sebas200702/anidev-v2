@@ -27,13 +27,13 @@ export const voiceActorSchema = z.object({
  */
 export const animeCharacterSchema = z.object({
   malId: z.number(),
-  url: z.url(),
-  name: z.string(),
-  role: z.string(),
+  url: z.string().nullable(),
+  name: z.string().nullable(),
+  role: z.string().nullable(),
   imageUrl: z.url().nullable(),
   about: z.string().nullable(),
-  nameKanji: z.string().nullable(),
-  voiceActors: z.array(voiceActorSchema),
+  nameKanji: z.string().nullable().optional(),
+  voiceActors: z.array(voiceActorSchema).nullable().optional(),
 })
 
 /**
