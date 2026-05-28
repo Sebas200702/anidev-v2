@@ -1,14 +1,13 @@
-import { DomainError, ValidationError } from '@/core/errors/errors'
-import { ErrorCodes } from '@/core/errors/error-codes'
-
-export function animeNotFound(malId: number) {
-  return new DomainError(ErrorCodes.ANIME_NOT_FOUND, 'Anime not found', {
-    malId,
-  })
-}
-
-export function animeInvalidId(rawId: unknown) {
-  return new ValidationError(ErrorCodes.ANIME_INVALID_ID, 'Invalid anime id', {
-    rawId,
-  })
-}
+/**
+ * Public exports for anime domain errors.
+ *
+ * @module domains/anime/errors
+ * @remarks
+ * Barrel for validation and not-found errors used by anime services and API
+ * routes. Pair with {@link mapErrorToHttp} at the HTTP boundary.
+ *
+ * @see {@link AnimeInvalidIdError} — HTTP 400
+ * @see {@link AnimeNotFoundError} — HTTP 404
+ */
+export * from './anime-invalid-id-error'
+export * from './anime-not-found-error'
