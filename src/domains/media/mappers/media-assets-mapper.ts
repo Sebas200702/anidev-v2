@@ -25,7 +25,7 @@ type MediaSource = NonNullable<OptimizeOptions['source']>
  * // "myanimelist"
  * ```
  */
-const detectMediaSource = (src: string): MediaSource => {
+export const detectMediaSource = (src: string): MediaSource => {
   try {
     const host = new URL(src).hostname.toLowerCase()
 
@@ -43,6 +43,10 @@ const detectMediaSource = (src: string): MediaSource => {
 
     if (host.includes('thetvdb')) {
       return 'thetvdb'
+    }
+
+    if (host.includes('tmdb') || host.includes('themoviedb')) {
+      return 'tmdb'
     }
 
     if (host.includes('youtube')) {

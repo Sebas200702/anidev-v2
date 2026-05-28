@@ -47,6 +47,7 @@ export const animeMediaRepository = {
         .select()
         .from(animeMedia)
         .where(eq(animeMedia.animeId, animeId))
+        .orderBy(asc(animeMedia.id))
     } catch (error) {
       throw dbError('[GET_MEDIA_BY_ANIME_ID]', { animeId }, error)
     }

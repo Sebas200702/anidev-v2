@@ -15,10 +15,12 @@ import type {
   GenreDB,
   ThemeDB,
 } from '@domains/anime/types'
-import type { MusicDB } from '@domains/music/types/music-db-types'
+import type { MusicDB } from '@domains/music/types'
 import { mapMusicListToAnimeMusic } from '@domains/anime/mappers/anime-music-mapper'
 import { mapExternalIds } from '@domains/anime/mappers/anime-external-mapper'
 import { config } from '@/config'
+import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
+import { detectMediaSource } from '@domains/media/mappers/media-assets-mapper'
 import type { MediaAsset } from '@domains/media/types/media-types'
 
 /** Grouped relation entry used while building full detail payloads. */
@@ -130,6 +132,24 @@ export function mapAnimeToFullDetails({
     }, {})
   )
 
+  const mediaGroups = new Map<string, MediaAsset[]>()
+  for (const asset of media) {
+    const key = `${asset.mediaType}:${asset.size ?? 'default'}`
+    const group = mediaGroups.get(key)
+    if (group) {
+      group.push(asset)
+    } else {
+      mediaGroups.set(key, [asset])
+    }
+  }
+
+  const assetIndices = new Map<number, number>()
+  for (const [, group] of mediaGroups) {
+    group.forEach((asset, idx) => {
+      assetIndices.set(asset.id, idx + 1)
+    })
+  }
+
   const external: AnimeExternalIds[] = mapExternalIds(externalIds)
 
   return {
@@ -150,7 +170,14 @@ export function mapAnimeToFullDetails({
     synopsis: anime.synopsis ?? 'No synopsis available.',
     media: media.map((m) => ({
       mediaType: m.mediaType,
-      src: m.src,
+      src: buildMediaUrl({
+        entity: 'anime',
+        entity_id: anime.malId,
+        type: m.mediaType,
+        size: (m.size ?? 'default') as 'default' | 'small' | 'large',
+        index: assetIndices.get(m.id) ?? 1,
+        source: detectMediaSource(m.src),
+      }),
       size: m.size ?? 'default',
     })),
     relations: relationsGrouped,
