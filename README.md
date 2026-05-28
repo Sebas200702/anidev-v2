@@ -13,7 +13,7 @@ AniDev  is a modern, server-rendered Astro application designed for high-perform
 
 ## Features
 
-- **Server-side Astro 6** with standalone Node.js output
+- **Server-side Astro 6** with Bun runtime via `@nurodev/astro-bun`
 - **Domain-driven modules** for anime, music, auth, and more (`src/domains/*`)
 - **Typed API validation** using Zod and shared response schemas
 - **Centralized error handling** with Sentry integration
@@ -25,7 +25,7 @@ AniDev  is a modern, server-rendered Astro application designed for high-perform
 
 ## Tech Stack
 
-- **Runtime:** Node.js `>=22.12.0`
+- **Runtime:** [Bun](https://bun.sh) (recommended) or Node.js `>=22.12.0`
 - **Framework:** Astro 6
 - **Database:** Turso (LibSQL) + Drizzle ORM
 - **Cache:** Upstash Redis
@@ -41,7 +41,7 @@ AniDev  is a modern, server-rendered Astro application designed for high-perform
 1. **Install dependencies**
 
    ```bash
-   npm install
+   bun install
    ```
 
 2. **Copy and configure environment variables**
@@ -59,7 +59,7 @@ AniDev  is a modern, server-rendered Astro application designed for high-perform
 3. **Run the development server**
 
    ```bash
-   npm run dev
+   bun run dev
    ```
 
    The app will be available at [http://localhost:4321](http://localhost:4321).
@@ -92,14 +92,14 @@ All variables are defined and validated in [`src/config/env.ts`](src/config/env.
 
 | Command                 | Purpose                                |
 | ----------------------- | -------------------------------------- |
-| `npm run dev`           | Start local Astro dev server           |
-| `npm run build`         | Build production output                |
-| `npm run preview`       | Run built app locally                  |
-| `npm run auth:generate` | Generate Better Auth schema/migrations |
-| `npm run auth:migrate`  | Run Better Auth migrations             |
-| `npm run db:generate`   | Generate Drizzle migrations            |
-| `npm run db:migrate`    | Apply Drizzle migrations               |
-| `npm run format`        | Format project with Prettier           |
+| `bun run dev`           | Start local Astro dev server           |
+| `bun run build`         | Build production output                |
+| `bun run preview`       | Run built app locally                  |
+| `bun run auth:generate` | Generate Better Auth schema/migrations |
+| `bun run auth:migrate`  | Run Better Auth migrations             |
+| `bun run db:generate`   | Generate Drizzle migrations            |
+| `bun run db:migrate`    | Apply Drizzle migrations               |
+| `bun run format`        | Format project with Prettier           |
 
 ---
 
@@ -145,7 +145,10 @@ Expected response:
 
 ### Auth
 
-- `ALL /api/auth/*`
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/auth/logout`
+- `GET /api/auth/session`
 
 ---
 
@@ -153,13 +156,14 @@ Expected response:
 
 ```text
 src/
-├── config/      # app config + env parsing
-├── core/        # auth, db, cache, errors, http middleware, logging, utils
-├── domains/     # business modules (anime, music, auth, search, etc.)
-├── pages/       # Astro pages + API routes
-├── services/    # cross-domain services (eg image proxy)
-├── styles/      # global styles
-└── ui/          # layouts and UI components
+├── config/       # app config, env parsing, public routes
+├── lib/          # auth, db, cache, monitoring
+├── shared/       # errors, http, schemas, utils, layouts, components
+├── middleware/   # auth session middleware
+├── domains/      # business modules (anime, media, music, user, auth)
+├── pages/        # Astro pages + API routes
+├── styles/       # global styles
+└── types/        # ambient types (App.Locals)
 ```
 
 ---

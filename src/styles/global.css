@@ -2,26 +2,36 @@
 @import 'tailwind-animations';
 
 @theme {
-  --color-Primary-950: #121212;
-  --color-Primary-900: #3d3d3d;
-  --color-Primary-800: #454545;
-  --color-Primary-700: #4f4f4f;
-  --color-Primary-600: #5d5d5d;
-  --color-Primary-500: #6d6d6d;
-  --color-Primary-400: #888888;
-  --color-Primary-300: #b0b0b0;
-  --color-Primary-200: #d1d1d1;
-  --color-Primary-100: #e7e7e7;
-  --color-Primary-50: #f6f6f6;
-  --color-Complementary: #1c1c1c;
+  --color-neutral-950: #121212;
+  --color-neutral-900: #3d3d3d;
+  --color-neutral-800: #454545;
+  --color-neutral-700: #4f4f4f;
+  --color-neutral-600: #5d5d5d;
+  --color-neutral-500: #6d6d6d;
+  --color-neutral-400: #888888;
+  --color-neutral-300: #b0b0b0;
+  --color-neutral-200: #d1d1d1;
+  --color-neutral-100: #e7e7e7;
+  --color-neutral-50: #f6f6f6;
+  --color-complementary: #1c1c1c;
 
-  --color-enfasisColor: var(--enfasis-dynamic);
+  --color-brand-950: var(--brand-950);
+  --color-brand-900: var(--brand-900);
+  --color-brand-800: var(--brand-800);
+  --color-brand-700: var(--brand-700);
+  --color-brand-600: var(--brand-600);
+  --color-brand-500: var(--brand-500);
+  --color-brand-400: var(--brand-400);
+  --color-brand-300: var(--brand-300);
+  --color-brand-200: var(--brand-200);
+  --color-brand-100: var(--brand-100);
+  --color-brand-50: var(--brand-50);
 }
 
 
 
 .button-primary {
-  @apply border-enfasisColor bg-enfasisColor md:hover:border-enfasisColor/80 md:hover:text-enfasisColor cursor-pointer items-center justify-center rounded-md border-2 p-1 text-white transition-all duration-300 ease-in-out md:hover:bg-transparent md:hover:shadow-md xl:p-2;
+  @apply border-brand-500 bg-brand-500 md:hover:border-brand-500/80 md:hover:text-brand-500 cursor-pointer items-center justify-center rounded-md border-2 p-1 text-white transition-all duration-300 ease-in-out md:hover:bg-transparent md:hover:shadow-md xl:p-2;
 }
 .button-secondary {
   @apply cursor-pointer items-center justify-center rounded-md border-2 bg-transparent p-1 text-white transition-all duration-300 ease-in-out md:hover:opacity-50 md:hover:shadow-md xl:p-2;
