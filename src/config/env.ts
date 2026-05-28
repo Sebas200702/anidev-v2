@@ -10,6 +10,7 @@ const envSchema = z.object({
 
   SENTRY_DSN: z.string().optional(),
 
+  APP_BASE_URL: z.url().optional(),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
   UPSTASH_REDIS_REST_URL: z.url(),
@@ -24,6 +25,7 @@ export const env = envSchema.parse({
   TURSO_DATABASE_URL: import.meta.env.TURSO_DATABASE_URL,
   TURSO_AUTH_TOKEN: import.meta.env.TURSO_AUTH_TOKEN,
   SENTRY_DSN: import.meta.env.SENTRY_DSN,
+  APP_BASE_URL: import.meta.env.APP_BASE_URL,
   BETTER_AUTH_SECRET: import.meta.env.BETTER_AUTH_SECRET,
   LOG_LEVEL: import.meta.env.LOG_LEVEL,
   BETTER_AUTH_URL: import.meta.env.BETTER_AUTH_URL,

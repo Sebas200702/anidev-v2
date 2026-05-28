@@ -18,26 +18,20 @@ export const animeCharacterService = {
 
         const characterIds = refs.map((r) => r.characterId)
 
-        const [characters, characterMedia, voiceRelations] = await Promise.all([
+        const [characters, voiceRelations] = await Promise.all([
           characterRepository.getManyByMalIds(characterIds),
-          animeCharacterRepository.getMediaByCharacterIds(characterIds),
           characterStaffRepository.getVoicesByCharacterIds(characterIds),
         ])
 
         const staffIds = [...new Set(voiceRelations.map((v) => v.staffId))]
 
-        const [staff, staffMedia] = await Promise.all([
-          staffRepository.getManyByMalIds(staffIds),
-          staffRepository.getMediaByStaffIds(staffIds),
-        ])
+        const staff = await staffRepository.getManyByMalIds(staffIds)
 
         return mapAnimeCharacters({
           refs,
           characters,
-          characterMedia,
           voiceRelations,
           staff,
-          staffMedia,
         })
       },
     })

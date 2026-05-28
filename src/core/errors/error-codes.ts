@@ -34,6 +34,8 @@ export const ErrorCodes = {
 
   // Generic
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  MEDIA_NOT_FOUND: 'MEDIA_NOT_FOUND',
+  INVALID_IMAGE_PATH: 'INVALID_IMAGE_PATH',
 } as const
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes]

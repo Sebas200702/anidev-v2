@@ -6,7 +6,6 @@ import type {
 import type {
   AnimeDB,
   AnimeTitleSynonymDB,
-  AnimeMediaDB,
   AnimeRelationsDB,
   DemographicDB,
   ThemeDB,
@@ -17,6 +16,7 @@ import type { MusicDB } from '@/domains/music/types/music-db'
 import { mapMusicListToAnimeMusic } from '@/domains/anime/mappers/anime-music'
 import { mapExternalIds } from '@/domains/anime/mappers/anime-external'
 import { config } from '@/config'
+import type { MediaAsset } from '@/domains/media/types/media'
 
 export function mapAnimeToFullDetails({
   anime,
@@ -34,7 +34,7 @@ export function mapAnimeToFullDetails({
   genres: GenreDB[]
   themes: ThemeDB[]
   demographics: DemographicDB[]
-  media: AnimeMediaDB[]
+  media: MediaAsset[]
   titleSynonyms: AnimeTitleSynonymDB[]
   relations: AnimeRelationsDB[]
   relationData: AnimeDB[]

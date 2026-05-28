@@ -3,7 +3,6 @@ import { animeListCache } from '@/domains/anime/cache/anime-list'
 import { mapAnimeListToCards } from '@/domains/anime/mappers/anime-card'
 import { mapAnimeFilters } from '@/domains/anime/mappers/anime-filters'
 import { animeListRepository } from '@/domains/anime/repositories/anime-list'
-import { animeMediaRepository } from '@/domains/anime/repositories/anime-media'
 import type {
   AnimeFilters,
   AnimeFiltersParams,
@@ -18,15 +17,11 @@ export const animeListService = {
       compute: async () => {
         const filters: AnimeFilters = mapAnimeFilters(filtersParams)
         const animeList = await animeListRepository.getAnimeList(filters)
-        const animeIds = animeList.map((anime) => anime.malId)
-        const mediaList =
-          await animeMediaRepository.getMediaByAnimeIds(animeIds)
         const total = await animeListRepository.getAnimeListCount(filters)
 
         return {
           list: mapAnimeListToCards({
             animeList,
-            mediaList,
           }),
           total,
         }

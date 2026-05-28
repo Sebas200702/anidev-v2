@@ -17,13 +17,9 @@ export const animeStaffService = {
           await animeStaffRepository.getAnimeStaffByAnimeMalId(malId)
 
         const staffIds = staffRefs.map((ref) => ref.staffId)
-        const [staff, staffMedia] = await Promise.all([
-          staffRepository.getManyByMalIds(staffIds),
-          staffRepository.getMediaByStaffIds(staffIds),
-        ])
+        const staff = await staffRepository.getManyByMalIds(staffIds)
         return mapAnimeStaff({
           staff,
-          staffMedia,
           animeStaff: staffRefs,
         })
       },
