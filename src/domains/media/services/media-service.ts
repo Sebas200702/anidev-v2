@@ -162,6 +162,7 @@ export const mediaService = {
 
     const normalizedOptions = normalizeOptimizeOptions(options)
     const resolvedParams = params
+    let isPlaceholder = false
 
     return withCache({
       key: mediaCache.key(resolvedParams, normalizedOptions),
@@ -173,9 +174,11 @@ export const mediaService = {
           resolvedParams,
           normalizedOptions.source
         )
+        isPlaceholder = media.src === mediaServiceConfig.defaultPlaceholderUrl
         const buffer = await this.fetchImageBuffer(media.src)
         return optimizeMediaImageBuffer(buffer, normalizedOptions)
       },
+      shouldCache: () => !isPlaceholder,
     })
   },
 
