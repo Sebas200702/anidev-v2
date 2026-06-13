@@ -30,9 +30,8 @@ import { z } from 'zod'
  * @property TURSO_DATABASE_URL - LibSQL/Turso database URL (must be valid URL).
  * @property TURSO_AUTH_TOKEN - Non-empty auth token for Turso remote access.
  * @property SENTRY_DSN - Optional Sentry project DSN; monitoring no-ops when absent.
- * @property APP_BASE_URL - Optional public site URL override for SEO and links.
+ * @property APP_BASE_URL - Public origin used as Better Auth base URL and SEO canonical.
  * @property BETTER_AUTH_SECRET - Session signing secret; minimum 32 characters.
- * @property BETTER_AUTH_URL - Public origin Better Auth uses for callbacks.
  * @property UPSTASH_REDIS_REST_URL - Upstash Redis REST endpoint URL.
  * @property UPSTASH_REDIS_REST_TOKEN - Non-empty Upstash REST API token.
  * @property LOG_LEVEL - Optional Pino/log level; one of trace through fatal.
