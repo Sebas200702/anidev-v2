@@ -14,7 +14,6 @@
  * @see {@link authClient} for the singleton instance
  */
 import { createAuthClient } from 'better-auth/client'
-import type { Auth } from './server'
 
 /**
  * Typed Better Auth client for browser session and credential operations.
@@ -34,7 +33,5 @@ import type { Auth } from './server'
  *
  * const { data: session } = await authClient.getSession()
  * ```
- *
- * @see {@link Auth} for the server type binding
  */
-export const authClient = createAuthClient<Auth>({})
+export const authClient = createAuthClient()

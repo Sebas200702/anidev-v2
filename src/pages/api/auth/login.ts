@@ -16,10 +16,10 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping via {@link withErrorHandling}
  */
 
-import type { APIRoute } from 'astro'
+import type { APIRoute, APIContext } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
-import { loginSchema } from '@domains/auth/schemas'
+import { loginSchema, type LoginInput } from '@domains/auth/schemas'
 import { credentialsService } from '@domains/auth/services'
 
 /**
@@ -78,7 +78,13 @@ import { credentialsService } from '@domains/auth/services'
  * ```
  */
 export const POST: APIRoute = withZodValidation(loginSchema)(
-  withErrorHandling(async ({ request, validated }) => {
+  withErrorHandling(
+    async ({
+      request,
+      validated,
+    }: APIContext & {
+      validated: { body: LoginInput }
+    }) => {
     const result = await credentialsService.login(
       validated.body,
       request.headers
