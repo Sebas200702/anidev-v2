@@ -11,4 +11,5 @@
  * import { userProfileSchema, getUserProfileSchema } from '@domains/user/schemas'
  * ```
  */
+export * from './user-preferences-schema'
 export * from './user-schema'

@@ -13,4 +13,5 @@
  * throw userNotFound('user-123')
  * ```
  */
+export * from './user-error-classes'
 export * from './user-not-found-error'
