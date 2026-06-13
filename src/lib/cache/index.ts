@@ -18,6 +18,7 @@
  * @see {@link module:config/env} for Upstash credentials
  * @see {@link module:lib/cache/cache-store} for read-through pattern
  */
+export * from './cache-primitives'
 export * from './cache-store'
 export * from './client'
 export * from './config'
