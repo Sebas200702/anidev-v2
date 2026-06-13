@@ -14,5 +14,6 @@
  */
 
 export * from './create-api-response-util'
+export * from './api-response-serialize-util'
 export * from './with-error-handling'
 export * from './with-validation'
