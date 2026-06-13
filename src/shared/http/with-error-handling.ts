@@ -50,8 +50,8 @@ type HandlerResult = {
 /**
  * Astro API route handler function type accepted by {@link withErrorHandling}.
  */
-type RouteHandler = (
-  context: APIContext
+type RouteHandler<TContext extends APIContext = APIContext> = (
+  context: TContext
 ) => Promise<HandlerResult> | HandlerResult
 
 /**
@@ -75,8 +75,10 @@ type RouteHandler = (
  *
  * @see {@link HandlerResult}
  */
-export function withErrorHandling(handler: RouteHandler) {
-  return async (context: APIContext) => {
+export function withErrorHandling<TContext extends APIContext>(
+  handler: RouteHandler<TContext>
+): (context: TContext) => Promise<Response> {
+  return async (context: TContext) => {
     try {
       const result = await handler(context)
       const payload = createSuccessResponse(
