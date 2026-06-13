@@ -21,6 +21,7 @@ type BuildMediaUrlInput = {
     | 'anilist'
     | 'kitsu'
     | 'thetvdb'
+    | 'tmdb'
     | 'custom'
     | 'youtube'
 }

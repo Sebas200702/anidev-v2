@@ -25,6 +25,7 @@ export type ImageSource =
   | 'anilist'
   | 'kitsu'
   | 'thetvdb'
+  | 'tmdb'
   | 'custom'
   | 'youtube'
 

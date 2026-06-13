@@ -85,6 +85,24 @@ export function mapAnimeToFullDetails({
 
   const relationsGrouped = groupAnimeRelations(relations, relationData)
 
+  const mediaGroups = new Map<string, MediaAsset[]>()
+  for (const asset of media) {
+    const key = `${asset.mediaType}:${asset.size ?? 'default'}`
+    const group = mediaGroups.get(key)
+    if (group) {
+      group.push(asset)
+    } else {
+      mediaGroups.set(key, [asset])
+    }
+  }
+
+  const assetIndices = new Map<number, number>()
+  for (const [, group] of mediaGroups) {
+    group.forEach((asset, idx) => {
+      assetIndices.set(asset.id, idx + 1)
+    })
+  }
+
   const external: AnimeExternalIds[] = mapExternalIds(externalIds)
 
   return {
@@ -105,7 +123,14 @@ export function mapAnimeToFullDetails({
     synopsis: anime.synopsis ?? 'No synopsis available.',
     media: media.map((m) => ({
       mediaType: m.mediaType,
-      src: m.src,
+      src: buildMediaUrl({
+        entity: 'anime',
+        entity_id: anime.malId,
+        type: m.mediaType,
+        size: (m.size ?? 'default') as 'default' | 'small' | 'large',
+        index: assetIndices.get(m.id) ?? 1,
+        source: detectMediaSource(m.src),
+      }),
       size: m.size ?? 'default',
     })),
     relations: relationsGrouped,
