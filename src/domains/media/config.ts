@@ -42,5 +42,7 @@ export const mediaServiceConfig: MediaServiceConfig = {
     MediaEntity.CHARACTER,
     MediaEntity.STAFF,
     MediaEntity.STUDIO,
+    MediaEntity.EPISODE,
+    MediaEntity.MUSIC,
   ],
 }

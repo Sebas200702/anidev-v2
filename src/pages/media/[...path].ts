@@ -20,6 +20,7 @@ import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import { withZodValidation } from '@http/with-validation'
 import { mediaRequestSchema } from '@domains/media/schemas/media-schema'
 import { mediaService } from '@domains/media/services/media-service'
+import { MediaEntity } from '@domains/media/types/media-types'
 import type { APIRoute } from 'astro'
 
 /**
@@ -73,6 +74,24 @@ export const GET: APIRoute = withZodValidation(mediaRequestSchema)(async ({
 }) => {
   try {
     const parsed = mediaService.parsePath(validated.params.path)
+
+    const isRawMedia =
+      parsed?.entityType === MediaEntity.EPISODE ||
+      parsed?.entityType === MediaEntity.MUSIC
+
+    if (isRawMedia) {
+      const rawMedia = await mediaService.fetchRawMedia(parsed, {
+        version: validated.query.version,
+        resolution: validated.query.resolution,
+      })
+
+      return new Response(new Uint8Array(rawMedia.buffer), {
+        headers: {
+          'Content-Type': rawMedia.mimeType,
+          'Cache-Control': 'public, max-age=86400',
+        },
+      })
+    }
 
     const width = validated.query.w
     const quality = validated.query.q

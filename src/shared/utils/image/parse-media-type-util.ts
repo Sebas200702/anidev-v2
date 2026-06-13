@@ -10,145 +10,22 @@
  * Segment count must be 3–6 (inclusive). Invalid counts or non-positive integer ids return `null`
  * without throwing. Unsupported entity or media type throws {@link DomainError} (`INVALID_IMAGE_PATH` → HTTP 400).
  *
+ * Segment-level parsing lives in {@link media-segment-parsers}; validation guards in
+ * {@link media-path-guards}.
+ *
  * @see {@link parseMediaPath}
  * @see {@link mediaServiceConfig.supportedEntities} / `supportedMediaTypes`
  */
 
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError } from '@shared/errors/app-error'
-import { mediaServiceConfig } from '@domains/media/config'
-import type {
-  MediaEntity,
-  MediaSize,
-  MediaType,
-  SemanticMediaPath,
-} from '@domains/media/types/media-types'
-import { MediaSize as MediaSizeEnum } from '@domains/media/types/media-types'
-
-/** Intermediate parse result before building {@link SemanticMediaPath}. */
-type ParsedMediaSegments = {
-  /** Resolved media type (poster, banner, etc.). */
-  type: MediaType
-  /** Resolved size variant. */
-  size: MediaSize
-  /** 1-based asset index within the entity's media list. */
-  index: number
-  /** Optional slug segment when using slug-then-type layout. */
-  slug?: string
-}
-
-/** Size and index pair extracted from trailing path segments. */
-type SizeAndIndex = {
-  size: MediaSize
-  index: number
-}
-
-/**
- * @param type - Raw third-or-fourth segment candidate
- * @returns `true` when the value is in {@link mediaServiceConfig.supportedMediaTypes}
- * @internal
- */
-const isSupportedMediaType = (type: string): type is MediaType => {
-  return mediaServiceConfig.supportedMediaTypes.includes(type as MediaType)
-}
-
-/**
- * @param entity - First path segment (e.g. `anime`, `character`)
- * @returns `true` when the value is in {@link mediaServiceConfig.supportedEntities}
- * @internal
- */
-const isSupportedEntity = (entity: string): entity is MediaEntity => {
-  return mediaServiceConfig.supportedEntities.includes(entity as MediaEntity)
-}
-
-/** Set of valid {@link MediaSize} enum string values for path parsing. */
-const MEDIA_SIZES: Set<MediaSize> = new Set([
-  MediaSizeEnum.DEFAULT,
-  MediaSizeEnum.SMALL,
-  MediaSizeEnum.LARGE,
-])
-
-/**
- * @param size - Raw segment that may be a media size keyword
- * @internal
- */
-const isSupportedMediaSize = (size: string): size is MediaSize => {
-  return MEDIA_SIZES.has(size as MediaSize)
-}
-
-/**
- * Parses a path segment into a positive integer media index, defaulting to 1.
- *
- * @param segment - Optional index segment from the URL
- * @returns Positive integer index, or `1` when missing or invalid
- * @internal
- */
-const parseMediaIndex = (segment?: string): number => {
-  const parsedIndex = Number(segment)
-  return Number.isInteger(parsedIndex) && parsedIndex > 0 ? parsedIndex : 1
-}
-
-/**
- * Interprets one or two trailing segments as size and/or index.
- *
- * @param sizeOrIndexSegment - Either a size keyword or the index when size is omitted
- * @param indexSegment - Index when the previous segment was a size
- * @returns Resolved {@link SizeAndIndex}
- * @internal
- */
-const parseSizeAndIndex = (
-  sizeOrIndexSegment?: string,
-  indexSegment?: string
-): SizeAndIndex => {
-  if (sizeOrIndexSegment && isSupportedMediaSize(sizeOrIndexSegment)) {
-    return {
-      size: sizeOrIndexSegment,
-      index: parseMediaIndex(indexSegment),
-    }
-  }
-
-  return {
-    size: MediaSizeEnum.DEFAULT,
-    index: parseMediaIndex(sizeOrIndexSegment),
-  }
-}
-
-/**
- * Parses `{entity}/{id}/{type}/...` layout.
- *
- * @internal
- */
-const parseTypeFirstPattern = (
-  third?: string,
-  fourth?: string,
-  fifth?: string
-): ParsedMediaSegments | null => {
-  if (!third || !isSupportedMediaType(third)) {
-    return null
-  }
-
-  const { size, index } = parseSizeAndIndex(fourth, fifth)
-  return { type: third, size, index }
-}
-
-/**
- * Parses `{entity}/{id}/{slug}/{type}/...` layout.
- *
- * @internal
- */
-const parseSlugThenTypePattern = (
-  third?: string,
-  fourth?: string,
-  fifth?: string,
-  sixth?: string
-): ParsedMediaSegments | null => {
-  if (!third || !fourth || !isSupportedMediaType(fourth)) {
-    return null
-  }
-
-  const { size, index } = parseSizeAndIndex(fifth, sixth)
-  return { type: fourth, size, index, slug: third }
-}
+import type { SemanticMediaPath } from '@domains/media/types/media-types'
+import { RAW_ENTITIES, isSupportedEntity } from '@utils/image/media-path-guards'
+import {
+  parseRawEntityPattern,
+  parseSlugThenTypePattern,
+  parseTypeFirstPattern,
+} from '@utils/image/media-segment-parsers'
 
 /**
  * Parses a raw media path into a {@link SemanticMediaPath}.
@@ -197,9 +74,29 @@ export const parseMediaPath = (rawPath: string): SemanticMediaPath | null => {
     )
   }
 
+  if (RAW_ENTITIES.has(entity)) {
+    const parsed = parseRawEntityPattern(third, fourth, fifth)
+    if (!parsed) {
+      throw new DomainError(
+        ErrorCodes.INVALID_IMAGE_PATH,
+        'Unsupported media type in path',
+        { rawPath }
+      )
+    }
+    return {
+      entityId: id,
+      entityType: entity,
+      mediaType: parsed.type,
+      mediaSize: parsed.size,
+      mediaId: parsed.index,
+      version: parsed.version,
+      resolution: parsed.resolution,
+    }
+  }
+
   const parsed =
-    parseTypeFirstPattern(third, fourth, fifth) ??
-    parseSlugThenTypePattern(third, fourth, fifth, sixth)
+    parseTypeFirstPattern(third, fourth, fifth, entity) ??
+    parseSlugThenTypePattern(third, fourth, fifth, sixth, entity)
 
   if (!parsed) {
     throw new DomainError(
