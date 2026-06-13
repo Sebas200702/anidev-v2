@@ -15,6 +15,8 @@ import { InfraError } from '@shared/errors/app-error'
 import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
 import { characterMediaRepository } from '@domains/media/repositories/character-media-repository'
 import { staffMediaRepository } from '@domains/media/repositories/staff-media-repository'
+import { episodeMediaRepository } from '@domains/media/repositories/episode-media-repository'
+import { musicMediaRepository } from '@domains/media/repositories/music-media-repository'
 import {
   MediaSize,
   type MediaAsset,
@@ -100,6 +102,22 @@ export const resolveMediaAssets = async (
     return await staffMediaRepository.getMediaByEntityAndType({
       mediaType: params.mediaType,
       staffId: params.entityId,
+    })
+  }
+
+  if (params.entityType === 'episode') {
+    return await episodeMediaRepository.getMediaByEntityAndType({
+      mediaType: params.mediaType,
+      episodeId: params.entityId,
+    })
+  }
+
+  if (params.entityType === 'music') {
+    return await musicMediaRepository.getMediaByEntityAndType({
+      mediaType: params.mediaType,
+      musicId: params.entityId,
+      version: params.version,
+      resolution: params.resolution,
     })
   }
 

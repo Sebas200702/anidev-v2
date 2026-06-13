@@ -8,4 +8,7 @@
  * import { mediaCache } from '@domains/media/cache'
  * ```
  */
+export * from './media-cache-serialization'
+export * from './media-cache-keys'
+export * from './media-cache-store'
 export * from './media-cache'

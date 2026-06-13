@@ -37,8 +37,17 @@ export const mediaRequestSchema = z.object({
       w: z.coerce.number().int().positive().optional(),
       q: z.coerce.number().int().min(1).max(100).optional(),
       source: z
-        .enum(['myanimelist', 'anilist', 'kitsu', 'thetvdb', 'custom', 'youtube'])
+        .enum([
+          'myanimelist',
+          'anilist',
+          'kitsu',
+          'thetvdb',
+          'custom',
+          'youtube',
+        ])
         .optional(),
+      version: z.string().optional(),
+      resolution: z.string().optional(),
     })
     .optional()
     .default({}),
