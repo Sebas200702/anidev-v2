@@ -13,3 +13,5 @@
 export * from './anime-media-repository'
 export * from './character-media-repository'
 export * from './staff-media-repository'
+export * from './episode-media-repository'
+export * from './music-media-repository'

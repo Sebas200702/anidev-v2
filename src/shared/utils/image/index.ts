@@ -14,4 +14,6 @@
 export * from './normalize-image-url-util'
 export * from './normalize-media-util'
 export * from './optimize-util'
+export * from './media-path-guards'
+export * from './media-segment-parsers'
 export * from './parse-media-type-util'
