@@ -3,10 +3,9 @@
  * @remarks Drizzle-derived types for music database rows and relation projections used by
  * repositories and {@link mapMusicDetail}.
  */
-import { music, musicResolution, musicVersion } from '@db/schemas/music'
-import { InferModel } from 'drizzle-orm'
-import { artist } from '@db/schemas/artist'
-import { musicArtist } from '@db/schemas/music-relations'
+import type { music, musicResolution, musicVersion } from '@db/schemas/music'
+import type { artist } from '@db/schemas/artist'
+import type { musicArtist } from '@db/schemas/music-relations'
 
 /**
  * Selected music row shape from the `music` table.
@@ -18,7 +17,7 @@ import { musicArtist } from '@db/schemas/music-relations'
  * const music: MusicDB = await musicRepository.getMusicById(42)
  * ```
  */
-export type MusicDB = InferModel<typeof music>
+export type MusicDB = typeof music.$inferSelect
 
 /**
  * Selected music resolution row shape from the `musicResolution` table.
@@ -32,7 +31,7 @@ export type MusicDB = InferModel<typeof music>
  *   await musicVersionRepository.findResolutionsByVersionId(7)
  * ```
  */
-export type MusicResolutionDB = InferModel<typeof musicResolution>
+export type MusicResolutionDB = typeof musicResolution.$inferSelect
 
 /**
  * Selected music version row shape from the `musicVersion` table.
@@ -45,7 +44,7 @@ export type MusicResolutionDB = InferModel<typeof musicResolution>
  *   await musicVersionRepository.findVersionsByMusicId(42)
  * ```
  */
-export type MusicVersionDB = InferModel<typeof musicVersion>
+export type MusicVersionDB = typeof musicVersion.$inferSelect
 
 /**
  * Selected artist row shape used in music relations.
@@ -59,7 +58,7 @@ export type MusicVersionDB = InferModel<typeof musicVersion>
  *   await musicRelationRepository.findArtistsByMusicId(42)
  * ```
  */
-export type MusicArtistDB = InferModel<typeof artist>
+export type MusicArtistDB = typeof artist.$inferSelect
 
 /**
  * Selected music-to-artist relation row shape from the `musicArtist` table.
@@ -71,4 +70,4 @@ export type MusicArtistDB = InferModel<typeof artist>
  * const relation: MusicArtistRelationDB = { musicId: 42, artistId: 10 }
  * ```
  */
-export type MusicArtistRelationDB = InferModel<typeof musicArtist>
+export type MusicArtistRelationDB = typeof musicArtist.$inferSelect
