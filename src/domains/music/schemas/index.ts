@@ -9,4 +9,6 @@
  * ```
  */
 export * from './api-schema'
+export * from './music-card-schema'
 export * from './music-details-schema'
+export * from './music-list-schema'

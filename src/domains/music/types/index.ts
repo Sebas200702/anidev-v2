@@ -11,3 +11,5 @@
  */
 export * from './music-db.d-types'
 export * from './music-details.d-types'
+export * from './music-card.d-types'
+export * from './music-list.d-types'

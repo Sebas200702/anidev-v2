@@ -5,7 +5,7 @@
 import { db } from '@db/client'
 import { musicArtist } from '@db/schemas/music-relations'
 import { artist } from '@db/schemas/artist'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import type { MusicArtistDB } from '@domains/music/types/music-db.d-types'
 
 /**
@@ -43,6 +43,37 @@ export const musicRelationRepository = {
       .from(musicArtist)
       .innerJoin(artist, eq(musicArtist.artistId, artist.id))
       .where(eq(musicArtist.musicId, musicId))
+
+    return rows
+  },
+
+  /**
+   * Loads artists linked to multiple music records in one query.
+   *
+   * @param musicIds - Internal music identifiers
+   * @returns {@link MusicArtistDB} rows with `musicId` for grouping in list mappers
+   * @remarks Short-circuits to an empty array when `musicIds` is empty.
+   * @see {@link musicListService.getMusicList} for batch usage
+   * @example
+   * ```typescript
+   * const artists = await musicRelationRepository.findArtistsByMusicIds([1, 2, 3])
+   * ```
+   */
+  async findArtistsByMusicIds(
+    musicIds: number[]
+  ): Promise<Array<MusicArtistDB & { musicId: number }>> {
+    if (musicIds.length === 0) return []
+
+    const rows = await db
+      .select({
+        id: musicArtist.artistId,
+        name: artist.name,
+        malId: artist.malId,
+        musicId: musicArtist.musicId,
+      })
+      .from(musicArtist)
+      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+      .where(inArray(musicArtist.musicId, musicIds))
 
     return rows
   },
