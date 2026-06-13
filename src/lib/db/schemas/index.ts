@@ -23,6 +23,8 @@
  */
 export * from './anime-external'
 export * from './anime-media'
+export * from './anime-entity-relations'
+export * from './anime-taxonomy-relations'
 export * from './anime-relations'
 export * from './anime-taxonomy'
 export * from './anime'
