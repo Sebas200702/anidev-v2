@@ -9,6 +9,7 @@
 export * from './anime-card.d-types'
 export * from './anime-character.d-types'
 export * from './anime-db.d-types'
+export * from './anime-relations.d-types'
 export * from './anime-details.d-types'
 export * from './anime-full.d-types'
 export * from './anime-list.d-types'

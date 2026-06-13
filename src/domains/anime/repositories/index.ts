@@ -10,6 +10,7 @@
  */
 export * from './anime-characters-repository'
 export * from './anime-external-repository'
+export * from './anime-list-filters'
 export * from './anime-list-repository'
 export * from './anime-relations-repository'
 export * from './anime-repository'
