@@ -9,30 +9,19 @@ import type {
   AnimeExternalIds,
   AnimeFullDetails,
   AnimeRelationsDB,
-  AnimeTitle,
   AnimeTitleSynonymDB,
   DemographicDB,
   GenreDB,
   ThemeDB,
 } from '@domains/anime/types'
-import type { MusicDB } from '@domains/music/types/music-db-types'
+import type { MusicDB } from '@domains/music/types/music-db.d-types'
 import { mapMusicListToAnimeMusic } from '@domains/anime/mappers/anime-music-mapper'
 import { mapExternalIds } from '@domains/anime/mappers/anime-external-mapper'
-import { config } from '@/config'
+import {
+  buildAnimeTitles,
+  groupAnimeRelations,
+} from '@domains/anime/mappers/anime-full-mapper-helpers'
 import type { MediaAsset } from '@domains/media/types/media-types'
-
-/** Grouped relation entry used while building full detail payloads. */
-type RelationGroupEntry = {
-  relatedId: number
-  title: string
-  url: string
-}
-
-/** Grouped relation bucket keyed by relation type. */
-type RelationGroup = {
-  relation: string
-  entry: RelationGroupEntry[]
-}
 
 /**
  * Input for assembling a full anime detail payload.
@@ -59,10 +48,11 @@ type MapAnimeToFullDetailsInput = {
  * @returns Expanded DTO with titled variants, grouped relations, OP/ED music, external IDs
  *
  * @remarks
- * **Titles:** Main + synonyms + optional English/Japanese from anime row.
+ * **Titles:** Main + synonyms + optional English/Japanese from anime row (see
+ * {@link buildAnimeTitles}).
  *
- * **Relations:** Grouped by `relationType`; related titles resolved from
- * `relationData` (empty string if related anime row missing).
+ * **Relations:** Grouped by `relationType` via {@link groupAnimeRelations}; related titles
+ * resolved from `relationData` (empty string if related anime row missing).
  *
  * **Music:** Filtered `OP` / `ED` from {@link MusicDB} via {@link mapMusicListToAnimeMusic}.
  *
@@ -83,28 +73,7 @@ export function mapAnimeToFullDetails({
   externalIds,
   animeMusic,
 }: MapAnimeToFullDetailsInput): AnimeFullDetails {
-  const titles: AnimeTitle[] = [
-    {
-      title: anime.title,
-      type: 'main',
-    },
-    ...titleSynonyms.map((syn) => ({
-      title: syn.title,
-      type: 'synonym' as const,
-    })),
-  ]
-  if (anime.titleEnglish) {
-    titles.push({
-      title: anime.titleEnglish,
-      type: 'english' as const,
-    })
-  }
-  if (anime.titleJapanese) {
-    titles.push({
-      title: anime.titleJapanese,
-      type: 'japanese' as const,
-    })
-  }
+  const titles = buildAnimeTitles(anime, titleSynonyms)
 
   const openings = mapMusicListToAnimeMusic(
     animeMusic.filter((m) => m.type === 'OP')
@@ -114,21 +83,7 @@ export function mapAnimeToFullDetails({
     animeMusic.filter((m) => m.type === 'ED')
   )
 
-  const relationsGrouped = Object.values(
-    relations.reduce<Record<string, RelationGroup>>((acc, rel) => {
-      const key = rel.relationType
-      if (!acc[key]) {
-        acc[key] = { relation: key, entry: [] }
-      }
-      acc[key].entry.push({
-        relatedId: rel.relatedAnimeId,
-        title:
-          relationData.find((a) => a.malId === rel.relatedAnimeId)?.title ?? '',
-        url: `${config.baseUrl}/anime/${rel.relatedAnimeId}`,
-      })
-      return acc
-    }, {})
-  )
+  const relationsGrouped = groupAnimeRelations(relations, relationData)
 
   const external: AnimeExternalIds[] = mapExternalIds(externalIds)
 
