@@ -12,8 +12,11 @@
  * @see {@link module:shared/errors/map-error-to-http} — HTTP status mapping and Sentry rules
  */
 
+export * from './base-error'
 export * from './app-error'
 export * from './auth-errors'
 export * from './codes'
 export * from './db-errors'
+export * from './http-error-types'
+export * from './error-http-maps'
 export * from './map-error-to-http'
