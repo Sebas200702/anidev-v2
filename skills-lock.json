@@ -11,6 +11,11 @@
       "sourceType": "autoskills-registry",
       "computedHash": "2afd3a02edf4374598ce471dabb1ab5638851dbf7b82d0bb36f1019331eafb54"
     },
+    "barrel-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "local",
+      "computedHash": "d2c8e7b1a9c3ec9b1e5a7c8d9fbbacfa4c3e7b2e1a0f8c9d6e5b4a3c2f1e0d9b8a7c6f5e4d3"
+    },
     "best-practices": {
       "source": "better-auth/skills",
       "sourceType": "autoskills-registry",
@@ -89,15 +94,16 @@
       "sourceType": "autoskills-registry",
       "computedHash": "5ca0e177c6aaaba1889255691224daafdb7d71f317cc70bede1590d3907ded42"
     },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "6337038fe1fe6bbe1b9f252ab678ee575859190bab6f0f246f4061824eb40875"
+    },
     "zod": {
       "source": "pproenca/dot-skills",
       "sourceType": "autoskills-registry",
       "computedHash": "aa8a97195b07763d37494b511f48be90979fd6826c031956c831cfc58f6a24b8"
-    },
-    "barrel-best-practices": {
-      "source": "vercel-labs/agent-skills",
-      "sourceType": "local",
-      "computedHash": "d2c8e7b1a9c3ec9b1e5a7c8d9fbbacfa4c3e7b2e1a0f8c9d6e5b4a3c2f1e0d9b8a7c6f5e4d3"
     }
   }
 }
