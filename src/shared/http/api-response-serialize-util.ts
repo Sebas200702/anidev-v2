@@ -6,7 +6,7 @@
  * Turns an {@link ApiEnvelope} into an HTTP {@link Response} and merges auxiliary headers (e.g.
  * Better Auth `Set-Cookie`). Envelope builders live in {@link create-api-response-util}.
  */
-import type { ApiEnvelope } from '@shared/http/create-api-response-util'
+import type { ApiEnvelope } from './api-envelope'
 
 /**
  * Serializes an API envelope into a JSON {@link Response}.
