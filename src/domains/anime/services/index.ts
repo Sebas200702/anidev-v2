@@ -6,8 +6,9 @@
  * Each service implements read-through caching (`withCache`) over repositories
  * and mappers. HTTP routes validate input with Zod schemas then call these APIs.
  */
-export * from './anime-characters-service'
-export * from './anime-full-service'
-export * from './anime-list-service'
-export * from './anime-service'
-export * from './anime-staff-service'
+
+export { animeCharacterService } from './anime-characters-service'
+export { animeFullService } from './anime-full-service'
+export { animeListService } from './anime-list-service'
+export { animeService } from './anime-service'
+export { animeStaffService } from './anime-staff-service'

@@ -3,7 +3,7 @@
  *
  * @module domains/anime/mappers/anime-music-mapper
  */
-import type { MusicDB } from '@domains/music/types/music-db.d-types'
+import type { MusicDB } from '@domains/music/types/music-db-types'
 import type { AnimeMusic } from '@domains/anime/types'
 import { config } from '@/config'
 import { normalizeString } from '@utils/string/normalize-string-util'

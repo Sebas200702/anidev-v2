@@ -15,9 +15,9 @@ import {
 } from '@domains/anime/repositories/anime-list-filters'
 import { and, countDistinct, eq } from 'drizzle-orm'
 
-// Re-exported so consumers importing from `@domains/anime/repositories/anime-list-repository`
-// keep access to the filter builder.
-export * from '@domains/anime/repositories/anime-list-filters'
+// buildAnimeListFilters and AnimeListFilterParams are re-exported via the barrel
+// at `@domains/anime/repositories`. Import them from there or from
+// `@domains/anime/repositories/anime-list-filters` directly.
 
 /**
  * Repository for querying filtered and paginated anime lists.

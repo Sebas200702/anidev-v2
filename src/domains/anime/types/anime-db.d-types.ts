@@ -15,7 +15,9 @@ import { producer } from '@db/schemas/producer'
 import { staff } from '@db/schemas/staff'
 import { genre, theme, demographic } from '@db/schemas/anime-taxonomy'
 
-export * from '@domains/anime/types/anime-relations.d-types'
+// AnimeRelationsDB, AnimeCharacterDB, and other relation types are re-exported
+// via the barrel at `@domains/anime/types`. Import them from there or from
+// `@domains/anime/types/anime-relations.d-types` directly.
 
 /**
  * Row shape for the `anime` table.

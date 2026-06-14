@@ -8,4 +8,5 @@
  *
  * @see {@link animeService}
  */
-export * from './anime-details'
+
+export { default as AnimeDetails } from './anime-details/anime-details.astro'
