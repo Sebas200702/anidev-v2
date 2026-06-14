@@ -11,4 +11,5 @@
  * import { userService } from '@domains/user/services'
  * ```
  */
-export * from './user-service'
+
+export { userService } from './user-service'

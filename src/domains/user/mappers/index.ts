@@ -10,4 +10,5 @@
  * import { mapUserProfile } from '@domains/user/mappers'
  * ```
  */
-export * from './user-mapper'
+
+export { mapUserProfile } from './user-mapper'

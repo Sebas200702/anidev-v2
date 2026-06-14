@@ -13,5 +13,6 @@
  * throw userNotFound('user-123')
  * ```
  */
-export * from './user-error-classes'
-export * from './user-not-found-error'
+
+export { UserNotFoundError, UserInvalidIdError, UserUnauthorizedError } from './user-error-classes'
+export { userNotFound, userInvalidId, userUnauthorized } from './user-not-found-error'

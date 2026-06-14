@@ -11,6 +11,7 @@
  * import { userPolicies } from '@domains/user/policies'
  * ```
  */
-export * from './user-profile-policy'
-export * from './user-content-policy'
-export * from './user-policy'
+
+export { userProfilePolicies } from './user-profile-policy'
+export { userContentPolicies } from './user-content-policy'
+export { userPolicies } from './user-policy'

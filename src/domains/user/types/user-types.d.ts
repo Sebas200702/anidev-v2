@@ -9,13 +9,13 @@
  * @see {@link userProfileSchema} for runtime validation
  * @see {@link mapUserProfile} for DB-to-type mapping
  */
+import { userProfileSchema } from '@domains/user/schemas/user-schema'
 import {
-  userProfileSchema,
   preferencesSchema,
   historySchema,
   frequencySchema,
   fanaticLevelSchema,
-} from '@domains/user/schemas/user-schema'
+} from '@domains/user/schemas/user-preferences-schema'
 import { z } from 'zod'
 
 /**

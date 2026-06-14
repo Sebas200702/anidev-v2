@@ -10,4 +10,5 @@
  * import { userRepository } from '@domains/user/repositories'
  * ```
  */
-export * from './user-repository'
+
+export { userRepository } from './user-repository'
