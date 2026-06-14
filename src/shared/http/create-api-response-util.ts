@@ -22,22 +22,7 @@
  */
 
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-
-/**
- * Standard JSON payload shape returned by API routes.
- *
- * @typeParam T - Type of the successful `data` payload
- */
-export type ApiEnvelope<T> = {
-  /** Response body on success; `null` when the handler failed or validation rejected the request. */
-  data: T | null
-  /** HTTP status code duplicated in the JSON body for client-side handling. */
-  status: number
-  /** Human-readable error message when `data` is `null`. */
-  error?: string
-  /** Optional metadata — pagination, or `details` from mapped errors in `meta`. */
-  meta?: Record<string, unknown>
-}
+import type { ApiEnvelope } from './api-envelope'
 
 /**
  * Builds a successful API envelope.
@@ -96,7 +81,5 @@ export function createErrorResponse(error: unknown): ApiEnvelope<null> {
     meta: (body.meta as Record<string, unknown>) ?? {},
   }
 }
-
-// Re-exported so consumers importing from `@shared/http/create-api-response-util` keep access to
-// the envelope serialization helpers.
-export * from '@shared/http/api-response-serialize-util'
+// jsonResponse and mergeResponseHeaders are re-exported via the barrel at
+// `@shared/http`. Import them from there or from `@shared/http/api-response-serialize-util` directly.
