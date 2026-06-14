@@ -9,4 +9,4 @@
  * @see `./base-layout.astro` — base HTML document wrapper
  */
 
-export { default as BaseLayout } from './base-layout'
+export { default as BaseLayout } from './base-layout.astro'
