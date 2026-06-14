@@ -29,9 +29,8 @@ import type { APIContext } from 'astro'
 import {
   createErrorResponse,
   createSuccessResponse,
-  jsonResponse,
-  mergeResponseHeaders,
 } from '@shared/http/create-api-response-util'
+import { jsonResponse, mergeResponseHeaders } from '@shared/http/api-response-serialize-util'
 
 /**
  * Value returned by a route handler before envelope serialization.

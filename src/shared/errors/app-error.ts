@@ -23,9 +23,8 @@
 import type { ErrorCode } from '@shared/errors/codes'
 import { BaseError } from '@shared/errors/base-error'
 
-// Re-exported so consumers importing from `@shared/errors/app-error` keep access to the base
-// class and severity type.
-export * from '@shared/errors/base-error'
+// BaseError and ErrorSeverity are re-exported via the barrel at `@shared/errors`.
+// Import them from there or from `@shared/errors/base-error` directly.
 
 /**
  * Business-rule violation raised by domain logic (not found, invalid id, unsupported path, etc.).

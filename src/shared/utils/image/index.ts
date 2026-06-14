@@ -11,9 +11,26 @@
  * @see {@link normalizeImageUrl}
  */
 
-export * from './normalize-image-url-util'
-export * from './normalize-media-util'
-export * from './optimize-util'
-export * from './media-path-guards'
-export * from './media-segment-parsers'
-export * from './parse-media-type-util'
+export { normalizeImageUrl } from './normalize-image-url-util'
+export { normalizeMediaId, normalizeAssetSize, resolveMediaAssets } from './normalize-media-util'
+export {
+  type ImageFormat,
+  type ImageSource,
+  type OptimizeOptions,
+  ImageTooLargeError,
+  normalizeOptimizeOptions,
+} from './optimize-util'
+export {
+  RAW_ENTITIES,
+  isSupportedMediaType,
+  isSupportedEntity,
+  isSupportedMediaSize,
+  isValidMediaType,
+} from './media-path-guards'
+export {
+  type ParsedMediaSegments,
+  parseTypeFirstPattern,
+  parseSlugThenTypePattern,
+  parseRawEntityPattern,
+} from './media-segment-parsers'
+export { parseMediaPath } from './parse-media-type-util'
