@@ -20,7 +20,5 @@
  * ```
  */
 
-/** Credential-based sign-in and registration via Better Auth. */
-export * from './credentials-service'
-/** Session lookup and sign-out via Better Auth. */
-export * from './session-service'
+export { credentialsService } from './credentials-service'
+export { sessionService } from './session-service'

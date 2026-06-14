@@ -22,7 +22,6 @@
  * ```
  */
 
-/** Zod schemas and inferred types for login and registration payloads. */
-export * from './login-schema'
-/** Zod schema for Better Auth session lookup responses. */
-export * from './session-schema'
+export { loginSchema, registerSchema } from './login-schema'
+export type { LoginInput, RegisterInput } from './login-schema'
+export { sessionResponseSchema } from './session-schema'

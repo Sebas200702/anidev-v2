@@ -20,5 +20,4 @@
  * ```
  */
 
-/** Resolves the current user and session for Astro locals. */
-export * from './resolve-auth-actor'
+export { resolveAuthActor } from './resolve-auth-actor'
