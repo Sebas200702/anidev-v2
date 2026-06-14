@@ -20,20 +20,9 @@
  *   SessionExpiredError,
  *   RegistrationFailedError,
  * } from '@domains/auth/errors'
- *
- * try {
- *   await credentialsService.login(input, headers)
- * } catch (error) {
- *   if (error instanceof InvalidCredentialsError) {
- *     const { status } = mapErrorToHttp(error) // 401
- *   }
- * }
  * ```
  */
 
-/** Error raised when email/password authentication fails. */
-export * from './invalid-credentials-error'
-/** Error raised when an authenticated session is no longer valid. */
-export * from './session-expired-error'
-/** Error raised when user registration cannot be completed. */
-export * from './registration-failed-error'
+export { InvalidCredentialsError } from './invalid-credentials-error'
+export { SessionExpiredError } from './session-expired-error'
+export { RegistrationFailedError } from './registration-failed-error'

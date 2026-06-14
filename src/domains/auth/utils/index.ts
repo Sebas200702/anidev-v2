@@ -21,5 +21,4 @@
  * ```
  */
 
-/** Maps Better Auth errors to typed domain auth errors. */
-export * from './map-better-auth-error-util'
+export { mapBetterAuthError } from './map-better-auth-error-util'

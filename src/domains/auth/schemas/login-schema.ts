@@ -14,9 +14,8 @@
  */
 import { z } from 'zod'
 
-// Re-exported so consumers importing from `@domains/auth/schemas/login-schema`
-// keep access to the session response schema.
-export * from '@domains/auth/schemas/session-schema'
+// sessionResponseSchema is re-exported via the barrel at `@domains/auth/schemas`.
+// Import it from there or from `@domains/auth/schemas/session-schema` directly.
 
 /**
  * Validates email/password login request bodies.
