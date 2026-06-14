@@ -16,7 +16,7 @@ import { animeMediaRepository } from '@domains/media/repositories/anime-media-re
 import { characterMediaRepository } from '@domains/media/repositories/character-media-repository'
 import { staffMediaRepository } from '@domains/media/repositories/staff-media-repository'
 import { episodeMediaRepository } from '@domains/media/repositories/episode-media-repository'
-import { musicMediaRepository } from '@domains/media/repositories/music-media-repository'
+import { musicMediaResolver } from '@domains/music/services/music-media-resolver'
 import {
   MediaSize,
   type MediaAsset,
@@ -113,7 +113,7 @@ export const resolveMediaAssets = async (
   }
 
   if (params.entityType === 'music') {
-    return await musicMediaRepository.getMediaByEntityAndType({
+    return await musicMediaResolver.getMediaByEntityAndType({
       mediaType: params.mediaType,
       musicId: params.entityId,
       version: params.version,
