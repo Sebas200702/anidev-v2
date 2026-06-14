@@ -13,7 +13,9 @@ import {
   UserUnauthorizedError,
 } from '@domains/user/errors/user-error-classes'
 
-export * from '@domains/user/errors/user-error-classes'
+// UserNotFoundError, UserInvalidIdError, and UserUnauthorizedError are
+// re-exported via the barrel at `@domains/user/errors`. Import them from there
+// or from `@domains/user/errors/user-error-classes` directly.
 
 /**
  * Creates a {@link UserNotFoundError} for the given user identifier.

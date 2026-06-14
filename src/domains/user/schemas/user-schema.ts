@@ -30,9 +30,9 @@ import {
   preferencesSchema,
 } from '@domains/user/schemas/user-preferences-schema'
 
-// Re-exported so consumers importing from `@domains/user/schemas/user-schema`
-// keep access to the nested preference/history schemas.
-export * from '@domains/user/schemas/user-preferences-schema'
+// preferencesSchema and historySchema are re-exported via the barrel at
+// `@domains/user/schemas`. Import them from there or from
+// `@domains/user/schemas/user-preferences-schema` directly.
 
 /**
  * Validates the public user profile payload.
