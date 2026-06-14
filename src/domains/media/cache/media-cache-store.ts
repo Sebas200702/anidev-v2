@@ -55,3 +55,24 @@ export async function writeCachedMedia(
     ttlSeconds: CacheTtl.Long,
   })
 }
+
+export type RawMeta = { src: string }
+
+export async function readRawMeta(cacheKey: string): Promise<RawMeta | null> {
+  const cached = await cacheGet<string>(cacheKey)
+  if (!cached) return null
+  try {
+    return JSON.parse(cached) as RawMeta
+  } catch {
+    return null
+  }
+}
+
+export async function writeRawMeta(
+  cacheKey: string,
+  meta: RawMeta
+): Promise<void> {
+  await cacheSet(cacheKey, JSON.stringify(meta), {
+    ttlSeconds: CacheTtl.Medium,
+  })
+}
