@@ -6,9 +6,20 @@
  * Request schemas (params/query) and response DTO validators. Types in
  * `domains/anime/types` are inferred from these schemas where applicable.
  */
-export * from './anime-card-schema'
-export * from './anime-character-schema'
-export * from './anime-details-schema'
-export * from './anime-full-schema'
-export * from './anime-list-schema'
-export * from './anime-staff-schema'
+
+export { animeCardSchema } from './anime-card-schema'
+export { voiceActorSchema, animeCharacterSchema, getAnimeCharacterSchema, animeCharacterResponseSchema } from './anime-character-schema'
+export { animeDetailsSchema, getAnimeDetailsSchema, animeDetailsResponseSchema } from './anime-details-schema'
+export {
+  animeMediaSchema,
+  animeRelationsSchema,
+  animeTitleSchema,
+  animeGenreSchema,
+  animeMusicSchema,
+  animeExternalIdsSchema,
+  animeFullDetailsSchema,
+  animeFullDetailsResponseSchema,
+  getAnimeFullSchema,
+} from './anime-full-schema'
+export { animeFiltersParamsSchema, animeFiltersSchema, animeListRequestSchema, animeListResponseSchema } from './anime-list-schema'
+export { personSchema, animeStaffSchema, getAnimeStaffSchema, animeStaffResponseSchema } from './anime-staff-schema'

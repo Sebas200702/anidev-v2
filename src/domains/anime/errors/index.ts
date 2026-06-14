@@ -9,5 +9,6 @@
  * @see {@link AnimeInvalidIdError} — HTTP 400
  * @see {@link AnimeNotFoundError} — HTTP 404
  */
-export * from './anime-invalid-id-error'
-export * from './anime-not-found-error'
+
+export { AnimeInvalidIdError, animeInvalidId } from './anime-invalid-id-error'
+export { AnimeNotFoundError, animeNotFound } from './anime-not-found-error'

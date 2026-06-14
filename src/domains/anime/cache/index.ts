@@ -14,8 +14,9 @@
  * | `animeCharacterCache` | `anime:characters` | Long | `animeCharacterService` |
  * | `animeStaffCache` | `anime:staff` | Long | `animeStaffService` |
  */
-export * from './anime-cache'
-export * from './anime-character-cache'
-export * from './anime-full-cache'
-export * from './anime-list-cache'
-export * from './anime-staff-cache'
+
+export { animeDetailsCache } from './anime-cache'
+export { animeCharacterCache } from './anime-character-cache'
+export { animeFullCache } from './anime-full-cache'
+export { animeListCache } from './anime-list-cache'
+export { animeStaffCache } from './anime-staff-cache'

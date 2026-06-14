@@ -7,4 +7,5 @@
  *
  * @see {@link AnimeDetails} domain type for the props/data shape
  */
-export * from './anime-details'
+
+export { default as AnimeDetails } from './anime-details.astro'
