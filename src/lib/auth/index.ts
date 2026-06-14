@@ -19,5 +19,7 @@
  * @see {@link module:lib/db/schemas/auth-schema} for underlying auth tables
  * @see {@link module:middleware/auth-middleware} for session resolution on requests
  */
-export * from './server'
-export * from './client'
+
+export { auth } from './server'
+export type { Auth, Session, User } from './server'
+export { authClient } from './client'
