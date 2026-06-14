@@ -93,6 +93,11 @@
       "source": "pproenca/dot-skills",
       "sourceType": "autoskills-registry",
       "computedHash": "aa8a97195b07763d37494b511f48be90979fd6826c031956c831cfc58f6a24b8"
+    },
+    "barrel-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "local",
+      "computedHash": "d2c8e7b1a9c3ec9b1e5a7c8d9fbbacfa4c3e7b2e1a0f8c9d6e5b4a3c2f1e0d9b8a7c6f5e4d3"
     }
   }
 }
