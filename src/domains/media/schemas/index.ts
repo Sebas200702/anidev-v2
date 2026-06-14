@@ -7,4 +7,5 @@
  * import { mediaRequestSchema } from '@domains/media/schemas'
  * ```
  */
-export * from './media-schema'
+
+export { mediaRequestSchema } from './media-schema'

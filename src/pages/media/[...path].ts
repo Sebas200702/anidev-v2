@@ -20,7 +20,7 @@ import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import { withZodValidation } from '@http/with-validation'
 import { mediaRequestSchema } from '@domains/media/schemas/media-schema'
 import { mediaService } from '@domains/media/services/media-service'
-import { MediaEntity } from '@domains/media/types/media-types'
+import { MediaEntity } from '@domains/media/types'
 import type { APIRoute } from 'astro'
 
 /**

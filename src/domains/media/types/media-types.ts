@@ -9,7 +9,7 @@
  * @see {@link media-request-types} — HTTP request shapes
  * @see {@link media-config-types} — service config and cache key options
  */
-export * from '@domains/media/types/media-enums'
-export * from '@domains/media/types/media-asset-types'
-export * from '@domains/media/types/media-request-types'
-export * from '@domains/media/types/media-config-types'
+export * from './media-enums'
+export * from './media-asset-types'
+export * from './media-request-types'
+export * from './media-config-types'
