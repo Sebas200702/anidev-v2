@@ -16,4 +16,5 @@
  * @see {@link module:config/env} for optional `SENTRY_DSN`
  * @see {@link module:lib/monitoring/sentry} for implementation
  */
-export * from './sentry'
+
+export { initServerSentry, initAstroSentry, wrapReactComponentWithSentry } from './sentry'

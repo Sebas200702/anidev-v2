@@ -11,14 +11,17 @@
  * Redis client into lightweight modules.
  *
  * **Re-exports:**
- * - `./cache-store` — `cacheGet`, `cacheSet`, `cacheDel`, `withCache`
+ * - `./cache-primitives` — `cacheGet`, `cacheSet`, `cacheDel`
+ * - `./cache-store` — `withCache`
  * - `./client` — shared `redis` Upstash instance
  * - `./config` — `CacheKeyPrefix`, `CacheTtl` enums
  *
  * @see {@link module:config/env} for Upstash credentials
  * @see {@link module:lib/cache/cache-store} for read-through pattern
  */
-export * from './cache-primitives'
-export * from './cache-store'
-export * from './client'
-export * from './config'
+
+export type { CacheGetSetOptions } from './cache-primitives'
+export { cacheGet, cacheSet, cacheDel } from './cache-primitives'
+export { withCache } from './cache-store'
+export { redis } from './client'
+export { CacheKeyPrefix, CacheTtl } from './config'

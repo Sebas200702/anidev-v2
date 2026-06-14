@@ -19,6 +19,8 @@
  * @see {@link module:lib/db/client} for the Drizzle client
  * @see {@link module:lib/db/schemas} for table catalog
  */
+
+export { db } from './client'
+export { dbConfig } from './config'
+// Schema tables — import `@db/schemas` or individual files for leaner imports.
 export * from './schemas'
-export * from './client'
-export * from './config'

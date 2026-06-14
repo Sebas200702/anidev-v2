@@ -12,7 +12,8 @@
  * @see {@link module:lib/cache/cache-primitives} for get/set/del
  * @see {@link module:lib/cache/config} for key prefixes and TTL presets
  */
-export * from '@lib/cache/cache-primitives'
+// cacheGet, cacheSet, cacheDel, and CacheGetSetOptions are re-exported via the barrel at
+// `@lib/cache`. Import them from there or from `@lib/cache/cache-primitives` directly.
 
 /**
  * Options for {@link withCache} read-through orchestration.
