@@ -9,6 +9,8 @@
  * ```
  */
 
-export { mapMusicCard, mapMusicListToCards } from './music-card-mapper'
+export { mapMusicCard, mapMusicCardFromMetadata, mapMusicListToCards } from './music-card-mapper'
 export { mapMusicDetail } from './music-detail-mapper'
+export { mapMusicMetadata } from './music-metadata-mapper'
+export { mapMusicVersions } from './music-versions-mapper'
 export { mapMusicListFilters } from './music-filters-mapper'

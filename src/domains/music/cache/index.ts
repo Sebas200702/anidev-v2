@@ -1,18 +1,18 @@
 /**
  * @module @domains/music/cache
- * @remarks Barrel exports for music cache helpers. Currently exposes read-through cache
- * accessors keyed by internal music ID for {@link MusicDetails} payloads.
- * @see {@link ./music-cache} for cache key construction and TTL configuration
+ * @remarks Barrel exports for music cache helpers. Metadata and versions are cached
+ * separately so list and detail flows can reuse stable title/artist data.
+ * @see {@link ./music-metadata-cache} for stable metadata entries
+ * @see {@link ./music-versions-cache} for playable version trees
  * @example
  * ```typescript
- * import { musicCache } from '@domains/music/cache'
+ * import { musicMetadataCache, musicVersionsCache } from '@domains/music/cache'
  *
- * const cached = await musicCache.get(42)
- * if (!cached) {
- *   await musicCache.set(42, details)
- * }
+ * const metadata = await musicMetadataCache.get(42)
+ * const versions = await musicVersionsCache.get(42)
  * ```
  */
 
-export { musicCache } from './music-cache'
 export { musicListCache } from './music-list-cache'
+export { musicMetadataCache } from './music-metadata-cache'
+export { musicVersionsCache } from './music-versions-cache'

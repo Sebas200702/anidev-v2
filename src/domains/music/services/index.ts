@@ -11,4 +11,7 @@
  */
 
 export { musicListService } from './music-list-service'
+export { musicMediaResolver } from './music-media-resolver'
+export { musicMetadataLoader } from './music-metadata-loader'
 export { musicService } from './music-service'
+export { musicVersionsLoader } from './music-versions-loader'

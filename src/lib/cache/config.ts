@@ -42,6 +42,12 @@ export enum CacheKeyPrefix {
   /** Music track detail payloads. Value: `'music:details'`. */
   MusicDetails = 'music:details',
 
+  /** Stable music metadata (title, type, artists). Value: `'music:metadata'`. */
+  MusicMetadata = 'music:metadata',
+
+  /** Music versions and playable resolutions. Value: `'music:versions'`. */
+  MusicVersions = 'music:versions',
+
   /** Paginated or filtered music list responses. Value: `'music:list'`. */
   MusicList = 'music:list',
 

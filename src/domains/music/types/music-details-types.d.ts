@@ -15,8 +15,8 @@ import {
 /**
  * Public music detail response shape.
  *
- * @remarks Returned by {@link musicService.getMusicDetailsById} and cached via
- * {@link musicCache}. Contains title metadata, type labels, credited artists, and nested
+ * @remarks Returned by {@link musicService.getMusicDetailsById}. Metadata is cached via
+ * {@link musicMetadataCache}; versions and resolutions via {@link musicVersionsCache}.
  * version/resolution playback URLs.
  * @see {@link musicDetailsSchema} for runtime validation
  * @see {@link mapMusicDetail} for database-to-API mapping

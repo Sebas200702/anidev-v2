@@ -4,6 +4,7 @@
  * @module domains/music/mappers/music-card-mapper
  */
 import type { MusicCard } from '@/domains/music/types/music-card-types'
+import type { MusicMetadata } from '@domains/music/types/music-metadata-types'
 import type { MusicArtistDB, MusicDB } from '@domains/music/types/music-db-types'
 
 /** Input for mapping a single music row to a card. */
@@ -54,6 +55,22 @@ export const mapMusicCard = ({
     })),
   }
 }
+
+/**
+ * Maps cached metadata into a list card payload.
+ *
+ * @param metadata - Warm {@link MusicMetadata} entry
+ * @returns {@link MusicCard} for list responses
+ */
+export const mapMusicCardFromMetadata = (
+  metadata: MusicMetadata
+): MusicCard => ({
+  id: metadata.id,
+  title: metadata.title,
+  type: metadata.type,
+  typeCode: metadata.typeCode,
+  artists: metadata.artists,
+})
 
 /**
  * Maps a collection of music rows into card payloads.
