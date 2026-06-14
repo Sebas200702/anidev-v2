@@ -9,5 +9,6 @@
  * import { buildMediaUrl, mapFilteredMediaAssets } from '@domains/media/mappers'
  * ```
  */
-export * from './media-assets-mapper'
-export * from './media-url-mapper'
+
+export { detectMediaSource, mapFilteredMediaAssets, mapIndexedMediaAsset } from './media-assets-mapper'
+export { buildMediaUrl } from './media-url-mapper'

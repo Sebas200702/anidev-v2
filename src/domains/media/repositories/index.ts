@@ -10,8 +10,9 @@
  * import { animeMediaRepository } from '@domains/media/repositories'
  * ```
  */
-export * from './anime-media-repository'
-export * from './character-media-repository'
-export * from './staff-media-repository'
-export * from './episode-media-repository'
-export * from './music-media-repository'
+
+export { animeMediaRepository } from './anime-media-repository'
+export { characterMediaRepository } from './character-media-repository'
+export { staffMediaRepository } from './staff-media-repository'
+export { episodeMediaRepository } from './episode-media-repository'
+export { musicMediaRepository } from './music-media-repository'

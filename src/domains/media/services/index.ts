@@ -10,11 +10,12 @@
  * import { mediaService, fetchMediaAsset, optimizeMediaImageBuffer } from '@domains/media/services'
  * ```
  */
-export * from './image-optimizer-service'
-export * from './media-fetch-service'
-export * from './resolve-media-service'
-export * from './fetch-image-buffer-service'
-export * from './optimize-media-service'
-export * from './optimize-media-url-service'
-export * from './fetch-raw-media-service'
-export * from './media-service'
+
+export { optimizeMediaImageBuffer } from './image-optimizer-service'
+export { fetchMediaAsset } from './media-fetch-service'
+export { resolveMedia } from './resolve-media-service'
+export { fetchImageBuffer } from './fetch-image-buffer-service'
+export { optimizeMedia } from './optimize-media-service'
+export { optimizeMediaByUrl } from './optimize-media-url-service'
+export { fetchRawMedia } from './fetch-raw-media-service'
+export { mediaService } from './media-service'
