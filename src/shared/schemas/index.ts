@@ -9,4 +9,4 @@
  * @see {@link module:shared/schemas/api-schema} — {@link createApiResponseSchema}
  */
 
-export * from './api-schema'
+export { createApiResponseSchema, type ApiResponse } from './api-schema'

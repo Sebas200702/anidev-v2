@@ -43,4 +43,4 @@ export const config = {
 }
 
 export { env } from './env'
-export * from './public-routes'
+export { publicRoutes, isPublicRoute } from './public-routes'

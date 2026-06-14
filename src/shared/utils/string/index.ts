@@ -8,4 +8,4 @@
  * @see {@link module:shared/utils/string/normalize-string-util}
  */
 
-export * from './normalize-string-util'
+export { type NormalizeStringOptions, normalizeString } from './normalize-string-util'

@@ -11,6 +11,7 @@
  * @see {@link module:shared/utils/string}
  */
 
-export * from './image'
-export * from './string'
-export * from './logger-util'
+export { logger } from './logger-util'
+// Image and string utilities are available via their respective sub-path barrels:
+//   import { normalizeImageUrl } from '@shared/utils/image'
+//   import { normalizeString } from '@shared/utils/string'

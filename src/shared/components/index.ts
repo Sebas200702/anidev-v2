@@ -9,4 +9,4 @@
  * @see {@link module:shared/components/picture} — responsive image component
  */
 
-export * from './picture'
+export { default as Picture } from './picture/picture.astro'

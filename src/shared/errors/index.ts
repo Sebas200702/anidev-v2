@@ -12,11 +12,12 @@
  * @see {@link module:shared/errors/map-error-to-http} — HTTP status mapping and Sentry rules
  */
 
-export * from './base-error'
-export * from './app-error'
-export * from './auth-errors'
-export * from './codes'
-export * from './db-errors'
-export * from './http-error-types'
-export * from './error-http-maps'
-export * from './map-error-to-http'
+export type { ErrorSeverity } from './base-error'
+export { BaseError } from './base-error'
+export { DomainError, InfraError, ValidationError, AuthError } from './app-error'
+export { authRequired, authForbidden, sessionExpired, registrationFailed } from './auth-errors'
+export { ErrorCodes, type ErrorCode } from './codes'
+export { dbError } from './db-errors'
+export type { HttpErrorBody, HttpErrorResponse } from './http-error-types'
+export { mapErrorToHttp } from './map-error-to-http'
+// error-http-maps functions are internal to mapErrorToHttp
