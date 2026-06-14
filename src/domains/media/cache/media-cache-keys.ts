@@ -52,3 +52,15 @@ export const buildKey = (
 export const buildRawKey = (params: SemanticMediaPath): string => {
   return `raw:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
 }
+
+/**
+ * Builds a cache key for raw media metadata (resolved src URL).
+ *
+ * @remarks Uses a `meta:` prefix distinct from the binary `raw:` prefix so metadata
+ * lookups remain lightweight even when binary caching is skipped.
+ * @param params - Semantic media path
+ * @returns Cache key string
+ */
+export const buildRawMetaKey = (params: SemanticMediaPath): string => {
+  return `meta:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
+}

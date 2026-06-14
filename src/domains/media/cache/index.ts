@@ -8,7 +8,8 @@
  * import { mediaCache } from '@domains/media/cache'
  * ```
  */
-export * from './media-cache-serialization'
-export * from './media-cache-keys'
-export * from './media-cache-store'
-export * from './media-cache'
+
+export { type CachedOptimizedMedia, serializeImage, deserializeImage } from './media-cache-serialization'
+export { buildKey, buildRawKey, buildRawMetaKey } from './media-cache-keys'
+export { type RawMeta } from './media-cache-store'
+export { mediaCache, imageCache } from './media-cache'

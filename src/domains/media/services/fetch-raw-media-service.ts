@@ -8,6 +8,7 @@ import { DomainError, InfraError } from '@shared/errors/app-error'
 import { mediaServiceConfig } from '@domains/media/config'
 import { fetchMediaAsset } from '@domains/media/services/media-fetch-service'
 import { resolveMedia } from '@domains/media/services/resolve-media-service'
+import { mediaCache } from '@domains/media/cache/media-cache'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -49,7 +50,18 @@ export async function fetchRawMedia(
     resolution: overrides?.resolution ?? params.resolution,
   }
 
-  const media = await resolveMedia(mergedParams)
+  const cachedMeta = await mediaCache.getRawMeta(mergedParams)
+  const src = cachedMeta?.src ?? null
+
+  let media
+  if (src) {
+    media = { id: 0, mediaType: params.mediaType, src, size: null }
+  } else {
+    media = await resolveMedia(mergedParams)
+    if (media.src !== mediaServiceConfig.defaultPlaceholderUrl) {
+      await mediaCache.setRawMeta(mergedParams, { src: media.src })
+    }
+  }
 
   if (media.src === mediaServiceConfig.defaultPlaceholderUrl) {
     throw new DomainError(ErrorCodes.MEDIA_NOT_FOUND, 'Media not found', {

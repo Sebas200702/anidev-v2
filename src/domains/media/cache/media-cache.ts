@@ -22,10 +22,13 @@ import type {
   OptimizedMedia,
   SemanticMediaPath,
 } from '@domains/media/types/media-types'
-import { buildKey, buildRawKey } from '@domains/media/cache/media-cache-keys'
+import { buildKey, buildRawKey, buildRawMetaKey } from '@domains/media/cache/media-cache-keys'
 import {
   readCachedMedia,
   writeCachedMedia,
+  readRawMeta,
+  writeRawMeta,
+  type RawMeta,
 } from '@domains/media/cache/media-cache-store'
 
 /**
@@ -93,6 +96,21 @@ export const mediaCache = {
     media: OptimizedMedia
   ): Promise<void> {
     await writeCachedMedia(this.rawKey(params), media)
+  },
+
+  /** Builds a cache key for raw media metadata. */
+  rawMetaKey(params: SemanticMediaPath) {
+    return buildRawMetaKey(params)
+  },
+
+  /** Retrieves cached raw media metadata. */
+  async getRawMeta(params: SemanticMediaPath): Promise<RawMeta | null> {
+    return readRawMeta(this.rawMetaKey(params))
+  },
+
+  /** Stores raw media metadata. */
+  async setRawMeta(params: SemanticMediaPath, meta: RawMeta): Promise<void> {
+    await writeRawMeta(this.rawMetaKey(params), meta)
   },
 }
 
