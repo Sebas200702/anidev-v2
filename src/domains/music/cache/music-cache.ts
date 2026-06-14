@@ -3,7 +3,7 @@
  * @remarks Read-through cache helpers for music detail payloads. Keys use the
  * `CacheKeyPrefix.MusicDetails` prefix with the internal music ID and a medium TTL.
  */
-import type { MusicDetails } from '@domains/music/types/music-details.d-types'
+import type { MusicDetails } from '@/domains/music/types/music-details-types'
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 

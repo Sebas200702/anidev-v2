@@ -3,13 +3,13 @@
  * @remarks Maps music database rows into API-facing {@link MusicDetails} payloads, including
  * artist credits, version metadata, and nested playable resolutions.
  */
+import type { MusicDetails } from '@/domains/music/types/music-details-types'
 import type {
-  MusicDB,
-  MusicArtistDB,
-  MusicResolutionDB,
-  MusicVersionDB,
-} from '@domains/music/types/music-db.d-types'
-import type { MusicDetails } from '@domains/music/types/music-details.d-types'
+    MusicArtistDB,
+    MusicDB,
+    MusicResolutionDB,
+    MusicVersionDB,
+} from '@domains/music/types/music-db-types'
 
 /** Input rows required to assemble a {@link MusicDetails} payload. */
 type MapMusicDetailInput = {

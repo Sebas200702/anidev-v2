@@ -8,6 +8,7 @@
  * import { mapMusicDetail } from '@domains/music/mappers'
  * ```
  */
-export * from './music-card-mapper'
-export * from './music-detail-mapper'
-export * from './music-filters-mapper'
+
+export { mapMusicCard, mapMusicListToCards } from './music-card-mapper'
+export { mapMusicDetail } from './music-detail-mapper'
+export { mapMusicListFilters } from './music-filters-mapper'

@@ -3,10 +3,10 @@
  * @remarks Database access for music-to-artist relations via the `musicArtist` join table.
  */
 import { db } from '@db/client'
-import { musicArtist } from '@db/schemas/music-relations'
 import { artist } from '@db/schemas/artist'
+import { musicArtist } from '@db/schemas/music-relations'
+import type { MusicArtistDB } from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
-import type { MusicArtistDB } from '@domains/music/types/music-db.d-types'
 
 /**
  * Reads artist relations for music records.

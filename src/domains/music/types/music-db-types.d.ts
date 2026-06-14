@@ -1,10 +1,10 @@
 /**
- * @module @domains/music/types/music-db.d-types
+ * @module @domains/music/types/music-db-types
  * @remarks Drizzle-derived types for music database rows and relation projections used by
  * repositories and {@link mapMusicDetail}.
  */
-import type { music, musicResolution, musicVersion } from '@db/schemas/music'
 import type { artist } from '@db/schemas/artist'
+import type { music, musicResolution, musicVersion } from '@db/schemas/music'
 import type { musicArtist } from '@db/schemas/music-relations'
 
 /**

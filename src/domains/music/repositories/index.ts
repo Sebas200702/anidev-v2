@@ -9,8 +9,9 @@
  * import { musicRepository, animeMusicRepository } from '@domains/music/repositories'
  * ```
  */
-export * from './anime-music-repository'
-export * from './music-list-repository'
-export * from './music-relation-repository'
-export * from './music-repository'
-export * from './music-version-repository'
+
+export { animeMusicRepository } from './anime-music-repository'
+export { buildMusicListFilters, musicListRepository } from './music-list-repository'
+export { musicRelationRepository } from './music-relation-repository'
+export { musicRepository } from './music-repository'
+export { musicVersionRepository } from './music-version-repository'

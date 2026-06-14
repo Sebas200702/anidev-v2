@@ -5,8 +5,8 @@
 import { db } from '@db/client'
 import { animeMusic } from '@db/schemas/anime-relations'
 import { music } from '@db/schemas/music'
+import type { MusicDB } from '@domains/music/types/music-db-types'
 import { eq } from 'drizzle-orm'
-import type { MusicDB } from '@domains/music/types/music-db.d-types'
 
 /**
  * Reads music linked to anime records.

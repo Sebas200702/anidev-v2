@@ -13,5 +13,6 @@
  * }
  * ```
  */
-export * from './music-cache'
-export * from './music-list-cache'
+
+export { musicCache } from './music-cache'
+export { musicListCache } from './music-list-cache'

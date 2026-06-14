@@ -12,5 +12,6 @@
  * throw musicInvalidId('abc')
  * ```
  */
-export * from './music-invalid-id-error'
-export * from './music-not-found-error'
+
+export { MusicInvalidIdError, musicInvalidId } from './music-invalid-id-error'
+export { MusicNotFoundError, musicNotFound } from './music-not-found-error'
