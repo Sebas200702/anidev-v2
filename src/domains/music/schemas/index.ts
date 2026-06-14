@@ -8,7 +8,8 @@
  * import { getMusicSchema, musicDetailsSchema } from '@domains/music/schemas'
  * ```
  */
-export * from './api-schema'
-export * from './music-card-schema'
-export * from './music-details-schema'
-export * from './music-list-schema'
+
+export { getMusicSchema, musicDetailsResponseSchema } from './api-schema'
+export { musicCardArtistSchema, musicCardSchema } from './music-card-schema'
+export { musicArtistSchema, musicResolutionSchema, musicVersionSchema, musicDetailsSchema } from './music-details-schema'
+export { musicListFiltersParamsSchema, musicListFiltersSchema, musicListRequestSchema, musicListResponseSchema } from './music-list-schema'

@@ -6,9 +6,9 @@
 import { db } from '@db/client'
 import { musicResolution, musicVersion } from '@db/schemas/music'
 import type {
-  MusicVersionDB,
-  MusicResolutionDB,
-} from '@domains/music/types/music-db.d-types'
+    MusicResolutionDB,
+    MusicVersionDB,
+} from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
 
 /**

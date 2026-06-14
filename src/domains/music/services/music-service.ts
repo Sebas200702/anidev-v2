@@ -3,18 +3,18 @@
  * @remarks Application service for music detail reads. Coordinates parallel repository
  * queries, resolution batching, mapping, and read-through caching.
  */
+import type { MusicDetails } from '@/domains/music/types/music-details-types'
+import { musicCache } from '@domains/music/cache/music-cache'
+import { musicNotFound } from '@domains/music/errors'
+import { mapMusicDetail } from '@domains/music/mappers/music-detail-mapper'
+import { musicRelationRepository } from '@domains/music/repositories/music-relation-repository'
 import { musicRepository } from '@domains/music/repositories/music-repository'
 import { musicVersionRepository } from '@domains/music/repositories/music-version-repository'
-import { musicRelationRepository } from '@domains/music/repositories/music-relation-repository'
-import { mapMusicDetail } from '@domains/music/mappers/music-detail-mapper'
-import { musicNotFound } from '@domains/music/errors'
-import { musicCache } from '@domains/music/cache/music-cache'
 import type {
-  MusicResolutionDB,
-  MusicVersionDB,
-} from '@domains/music/types/music-db.d-types'
+    MusicResolutionDB,
+    MusicVersionDB,
+} from '@domains/music/types/music-db-types'
 import { withCache } from '@lib/cache'
-import type { MusicDetails } from '@domains/music/types/music-details.d-types'
 
 /**
  * Coordinates repository access, mapping, and caching for music details.

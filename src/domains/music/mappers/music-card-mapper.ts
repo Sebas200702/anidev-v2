@@ -3,8 +3,8 @@
  *
  * @module domains/music/mappers/music-card-mapper
  */
-import type { MusicDB, MusicArtistDB } from '@domains/music/types/music-db.d-types'
-import type { MusicCard } from '@domains/music/types/music-card.d-types'
+import type { MusicCard } from '@/domains/music/types/music-card-types'
+import type { MusicArtistDB, MusicDB } from '@domains/music/types/music-db-types'
 
 /** Input for mapping a single music row to a card. */
 type MapMusicCardInput = {

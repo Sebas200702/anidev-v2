@@ -9,5 +9,6 @@
  * import { musicService, musicListService } from '@domains/music/services'
  * ```
  */
-export * from './music-list-service'
-export * from './music-service'
+
+export { musicListService } from './music-list-service'
+export { musicService } from './music-service'
