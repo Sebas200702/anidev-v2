@@ -14,7 +14,8 @@ APIs here are thin and schema-first. The contract is a Zod schema at the boundar
 - Response envelope is always `{ data, status, error?, meta? }`. Error codes live in `src/shared/errors/codes.ts`.
 
 ## 2. Public vs protected
-- A route is public only if prefix-matching `src/config/public-routes.ts` (/, /api/auth/login|register, /api/anime, /api/music, /media).
+- A route is public only if `isPublicRoute(pathname)` from `src/config/public-routes.ts` says so (for `/`, `/api/auth/login|register`, `/api/anime`, `/api/music`, `/media`). Reuse that matcher; do not reinvent a raw prefix check.
+- Matching is boundary-aware, not a raw prefix: `/` matches only the root exactly, and `/api/anime/search` is public only because it extends `/api/anime/` — do not treat every `/`-prefixed path as public. So other paths still require auth.
 - Otherwise require auth: `sessionService.getSession()` throws typed errors; let middleware's `resolveAuthActor()` populate `locals.user`/`locals.session`.
 
 ## 3. Schema & types
