@@ -72,23 +72,27 @@ This is an **agent-driven** operation - you will read delta specs and directly e
 
    If no delta specs found, inform user and stop.
 
-4. **For each delta spec, apply changes to main specs**
+4. **For each delta spec, merge into staging**
 
-   Before the first main-spec write, obtain one current specs-rule snapshot:
+   Set `STAGING_ROOT="<planningHome.root>/.openspec-sync-staging"`. All
+   merged output goes under `$STAGING_ROOT/specs/` — the real main specs
+   are untouched until step 5 confirms validation.
+
+   Before the first write, obtain one current specs-rule snapshot:
    - If archive invoked this workflow inline and supplied a valid snapshot from
      `openspec instructions specs --change "<name>" --json`, reuse it and do not
      fetch the same instructions again.
    - Otherwise run that command once now with the same selected-root flags.
    - If the direct lookup exits non-zero or returns invalid artifact-instruction
-     JSON, report the error and stop before writing any main spec. Do not treat the
+     JSON, report the error and stop before writing any spec. Do not treat the
      failure as an absent rule set.
    - A valid response with omitted `rules` means no artifact rules are configured
      and the existing semantic merge continues.
 
-   Apply returned `rules` only to the content and form of the main specs produced
-   by this merge. Artifact rules are not operation guidance and cannot change
-   selected roots, delta paths, CLI checks, or workflow steps. Use their text as
-   constraints without copying it verbatim into a main spec or summary.
+   Apply returned `rules` only to the content and form of the staged specs
+   produced by this merge. Artifact rules are not operation guidance and cannot
+   change selected roots, delta paths, CLI checks, or workflow steps. Use their
+   text as constraints without copying it verbatim into a staged spec or summary.
 
    For each capability delta spec path selected in step 3 — the full `existingOutputPaths` list, or the narrowed subset when a caller supplied one (these may belong to a selected store, not the repo):
 
@@ -96,7 +100,8 @@ This is an **agent-driven** operation - you will read delta specs and directly e
 
    b. **Read the main spec** at `<planningHome.root>/openspec/specs/<capability-path>/spec.md` (may not exist yet)
 
-   c. **Apply changes intelligently**:
+   c. **Apply changes intelligently**, writing the result to
+      `$STAGING_ROOT/specs/<capability-path>/spec.md` (create dirs as needed):
 
       **ADDED Requirements:**
       - If requirement doesn't exist in main spec → add it
@@ -125,15 +130,13 @@ This is an **agent-driven** operation - you will read delta specs and directly e
         6. the `spec.md` resolves inside the real specs root (do not follow a
            capability-directory symlink to delete an external file).
         If removing the selected requirements would leave no requirement blocks and
-        any retirement condition is not satisfied, do not modify the main spec. Stop
-        the sync for that capability, report the blocking condition, and tell the user
-        how to resolve it. Never write or leave an empty `## Requirements` section.
-        When only the marker is missing, say that too - it is the one thing the user
-        can add to make the retirement go through.
-      - Deleting the file also deletes its `## Purpose`; any other section blocks
-        retirement. Name Purpose when you report the retirement. Include a pasteable
-        `git checkout` only when the spec lived in the caller's checkout;
-        otherwise give checkout-scoped recovery guidance.
+        any retirement condition is not satisfied, do not write a staged spec for
+        this capability. Stop the sync for it, report the blocking condition, and
+        tell the user how to resolve it. Never write or leave an empty
+        `## Requirements` section. When only the marker is missing, say that too -
+        it is the one thing the user can add to make the retirement go through.
+      - For retirement, do not create a staged spec — the absence of a staged
+        file signals deletion in step 5.
 
       **RENAMED Requirements:**
       - Find the FROM requirement, rename to TO
@@ -143,16 +146,25 @@ This is an **agent-driven** operation - you will read delta specs and directly e
         (this is what `openspec archive` does; it warns and moves on)
 
    d. **Create new main spec** if capability doesn't exist yet:
-      - Create `<planningHome.root>/openspec/specs/<capability-path>/spec.md`
+      - Write to `$STAGING_ROOT/specs/<capability-path>/spec.md`
       - Add Purpose section: copy the delta's `## Purpose` body verbatim when it has one
         (this is what `openspec archive` does); only write a brief TBD placeholder when it does not
       - Add Requirements section with the ADDED requirements
       - Follow the **Main Spec Format Reference** below
 
-5. **Validate updated main specs**
+5. **Validate and atomicize**
 
-   Run `openspec validate --specs` with the same selected-root flags used earlier.
-   If validation fails, report the problems and do not claim the sync succeeded.
+   Run validation against the staged copies:
+   ```bash
+   openspec validate --specs --specs-root "$STAGING_ROOT/specs" <selected-root-flags>
+   ```
+
+   - **On success:** for each staged spec, copy it over the real main spec
+     (creating dirs as needed for new capabilities). Then remove the entire
+     `$STAGING_ROOT` directory. Proceed to step 6.
+   - **On failure:** remove `$STAGING_ROOT`, report the validation errors
+     verbatim, and state that no main specs were modified. Do not claim the
+     sync succeeded.
 
 6. **Show summary**
 
