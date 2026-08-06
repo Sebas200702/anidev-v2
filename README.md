@@ -1,185 +1,200 @@
-<div align="center">
-  <img src="./public/favicon.svg" alt="AniDev logo" width="92" />
+# 🌸 AniDev
 
-# AniDev
-
-**Astro + TypeScript platform for anime and music APIs, image optimization, and authentication.**
-
-</div>
-
-AniDev  is a modern, server-rendered Astro application designed for high-performance anime and music data APIs, with robust authentication, image proxying, and a clean, domain-driven architecture. Built for extensibility and reliability, it leverages Turso (LibSQL), Drizzle ORM, Upstash Redis, and Better Auth for a seamless developer and user experience.
-
----
-
-## Features
-
-- **Server-side Astro 6** with Bun runtime via `@nurodev/astro-bun`
-- **Domain-driven modules** for anime, music, auth, and more (`src/domains/*`)
-- **Typed API validation** using Zod and shared response schemas
-- **Centralized error handling** with Sentry integration
-- **Better Auth**: secure, extensible authentication (Drizzle adapter, SQLite schema)
-- **Image proxy endpoint** with `sharp` optimization and Redis caching
-- **Clean, modular codebase** for easy extension and maintenance
-
----
-
-## Tech Stack
-
-- **Runtime:** [Bun](https://bun.sh) (recommended) or Node.js `>=22.12.0`
-- **Framework:** Astro 6
-- **Database:** Turso (LibSQL) + Drizzle ORM
-- **Cache:** Upstash Redis
-- **Auth:** Better Auth
-- **Validation:** Zod
-- **Logging/Monitoring:** Pino, Sentry
-- **Styling:** Tailwind CSS v4
-
----
-
-## Quick Start
-
-1. **Install dependencies**
-
-   ```bash
-   bun install
-   ```
-
-2. **Copy and configure environment variables**
-
-   ```bash
-   # macOS / Linux
-   cp .env.example .env
-
-   # Windows PowerShell
-   Copy-Item .env.example .env
-   ```
-
-   Edit `.env` and fill in all required variables.
-
-3. **Run the development server**
-
-   ```bash
-   bun run dev
-   ```
-
-   The app will be available at [http://localhost:4321](http://localhost:4321).
-
-> [!IMPORTANT]
-> Environment variables are validated at startup. Missing or invalid values will cause the app to fail fast.
-
----
-
-## Environment Variables
-
-All variables are defined and validated in [`src/config/env.ts`](src/config/env.ts):
-
-| Variable                   | Required | Description                                        |
-| -------------------------- | -------- | -------------------------------------------------- |
-| `NODE_ENV`                 | No       | `development`, `test`, or `production`             |
-| `TURSO_DATABASE_URL`       | Yes      | Turso LibSQL database URL                          |
-| `TURSO_AUTH_TOKEN`         | Yes      | Turso auth token                                   |
-| `BETTER_AUTH_SECRET`       | Yes      | Better Auth secret (min 32 chars)                  |
-| `APP_BASE_URL`             | No       | Public app base URL (fallback: `BETTER_AUTH_URL`)  |
-| `BETTER_AUTH_URL`          | Yes      | Base URL used by Better Auth callbacks             |
-| `UPSTASH_REDIS_REST_URL`   | Yes      | Upstash Redis REST URL                             |
-| `UPSTASH_REDIS_REST_TOKEN` | Yes      | Upstash Redis REST token                           |
-| `SENTRY_DSN`               | No       | Sentry DSN                                         |
-| `LOG_LEVEL`                | No       | `trace`, `debug`, `info`, `warn`, `error`, `fatal` |
-
----
-
-## Scripts
-
-| Command                 | Purpose                                |
-| ----------------------- | -------------------------------------- |
-| `bun run dev`           | Start local Astro dev server           |
-| `bun run build`         | Build production output                |
-| `bun run preview`       | Run built app locally                  |
-| `bun run auth:generate` | Generate Better Auth schema/migrations |
-| `bun run auth:migrate`  | Run Better Auth migrations             |
-| `bun run db:generate`   | Generate Drizzle migrations            |
-| `bun run db:migrate`    | Apply Drizzle migrations               |
-| `bun run format`        | Format project with Prettier           |
-
----
-
-## Authentication (Better Auth)
-
-- **Config:** [`src/core/auth/better-auth.ts`](src/core/auth/better-auth.ts)
-- **Astro handler:** [`src/pages/api/auth/[...all].ts`](src/pages/api/auth/[...all].ts)
-- **API routes:** `/api/auth/*`
-
-Health check:
-
-```http
-GET /api/auth/ok
-```
-
-Expected response:
-
-```json
-{ "status": "ok" }
-```
-
-> [!NOTE]
-> Better Auth CLI commands are preconfigured with the correct config path.
-
----
-
-## API Endpoints
-
-### Anime
-
-- `GET /api/anime/:malId`
-- `GET /api/anime/:malId/full`
-- `GET /api/anime/:malId/characters`
-- `GET /api/anime/:malId/staff`
-
-### Music
-
-- `GET /api/music/:id`
-
-### Media Proxy
-
-- `GET /api/proxy?url=<image-url>&w=<width>&q=<quality>&fm=<webp|avif>`
-
-### Auth
-
-- `POST /api/auth/login`
-- `POST /api/auth/register`
-- `POST /api/auth/logout`
-- `GET /api/auth/session`
-
----
-
-## Project Structure
+AniDev is a modern **anime streaming and exploration platform** rebuilt from
+scratch as **AniDev-v2**. It is not just an API — it's the product: a full
+anime-discovery experience (search, collections, watch progress, schedules,
+profiles, optimized streaming) served by a fast edge backend.
 
 ```text
-src/
-├── config/       # app config, env parsing, public routes
-├── lib/          # auth, db, cache, monitoring
-├── shared/       # errors, http, schemas, utils, layouts, components
-├── middleware/   # auth session middleware
-├── domains/      # business modules (anime, media, music, user, auth)
-├── pages/        # Astro pages + API routes
-├── styles/       # global styles
-└── types/        # ambient types (App.Locals)
+Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · Vitest
 ```
 
+> **Intro**: AniDev v2 re-does the original AniDev from zero on a new stack
+> (Astro SSR + Supabase + Redis). The feature set below is the **target** —
+> v2 ships it incrementally through OpenSpec-driven changes. See
+> [Current Status](#current-status) for what exists today.
+
+## Product vision
+
+- 🎨 **Modern design** — responsive, smooth `astro:transitions`.
+- 🔍 **Dynamic search** — debounced queries, advanced filters (genre, studio,
+  rating, year, season, status).
+- 📺 **Video playback** — high-quality anime streaming.
+- 📚 **Collections & multiple lists** — Collection, Completed, To-Watch, Watching.
+- 🔄 **Progress tracking** — watch history + progress indicators.
+- 📅 **Schedule system** — calendar view of upcoming releases.
+- 👤 **User profiles & preferences** — avatar, accent color, parental control.
+- 🖼️ **Image optimization** — resize / WebP · AVIF / quality via Sharp.
+- ⚡ **Redis caching** — fast API responses with configurable TTL.
+- 🛡️ **Robust error handling** — AppError, HTTP mapping, security headers.
+- 🎯 **Code quality** — Biome + Prettier + Vitest (TDD).
+
+## Current status (v2, rebuilding from scratch)
+
+Today v2 ships the **backend foundation + API + minimal shell**; product features
+arrive incrementally, each tracked as an OpenSpec change (`openspec/changes/`):
+
+- ✅ API routes — `auth`, `anime`, `music`, `user` (Zod-validated, enveloped responses)
+- ✅ Auth (session middleware) — Better Auth email/password
+- ✅ Cache layer (Redis-compatible), image proxy foundation (`media` domain)
+- ✅ Tests (Vitest/TDD), quality gate, CI, SemVer releases
+- ✅ Pages: `/` (home), `/anime/[id]`, `/anime/[id]/[slug]`
+- 🚧 Streaming, search/filtering, collections, progress, schedule, profile UI — **to build** (OpenSpec changes drive them)
+
+## Stack
+
+- **Runtime**: Bun (primary), Node.js ≥ 22.12.0
+- **Framework**: Astro 6 SSR with the `@astrojs/vercel` adapter (`output: 'server'`)
+- **Database**: Supabase (PostgreSQL) via Drizzle ORM (`pg` dialect)
+- **Cache**: Dragonfly (Redis-compatible)
+- **Auth**: Better Auth 1.5.5 (email/password, Drizzle Postgres adapter)
+- **Styling**: Tailwind CSS v4 (`@tailwindcss/vite` plugin)
+- **Validation / Logging**: Zod 4, Pino (`LOG_LEVEL`)
+- **Quality**: Biome format+lint, Prettier (`*.astro`), Vitest (`@vitest/coverage-v8`)
+
+> **Provider swap pending**: the target is the self-hosted stack above. The
+> running code still talks to the legacy providers (Turso/LibSQL, Upstash REST,
+> Sentry DSN — see Environment); switching is a tracked OpenSpec change.
+
+## Quick start
+
+```bash
+git clone https://github.com/Sebas200702/anidev-v2.git
+bun install
+cp .env.example .env   # Windows: Copy-Item .env.example .env
+bun run dev              # http://127.0.0.1:4321
+```
+
+Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invalid
+required value fails fast.
+
+## Environment
+
+| Variable | Req | Notes |
+| --- | --- | --- |
+| `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | yes | DB (legacy provider) |
+| `APP_BASE_URL` | yes | Base URL (also Better Auth API_BASE) |
+| `BETTER_AUTH_SECRET` | yes | ≥ 32 chars |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | yes | Cache (legacy provider) |
+| `SENTRY_DSN` | no | Monitoring no-ops when absent |
+| `LOG_LEVEL` | no | `trace`\|`debug`\|`info`\|`warn`\|`error`\|`fatal` |
+| `NODE_ENV` | no | Defaults to `development` |
+
+There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
+
+## Commands
+
+| Script | Purpose |
+| --- | --- |
+| `bun run dev` | Astro dev server |
+| `bun run build` | Production build (Vercel output) |
+| `bun run preview` | Run the built output locally |
+| `bun run format` | Biome format (excludes `.astro`) |
+| `bun run format:astro` | Prettier on `.astro` |
+| `bun run check` | Biome lint + format check |
+| `bun run check:write` | Biome lint + safe fixes |
+| `bun run check:types` | Astro/TS typecheck (`astro check`) |
+| `bun run astro sync` | Regenerate `.astro/types.d.ts` |
+| `bun run test` / `test:watch` / `test:coverage` | Vitest |
+| `bun run auth:generate` / `auth:migrate` | Better Auth schema/migrations |
+| `bun run db:generate` / `db:migrate` | Drizzle migrations (needs `drizzle.config.ts` — pending) |
+| `bun run release:*` | `standard-version` release — see Versioning |
+
+## Development methodology — OpenSpec (SDD)
+
+Spec-Driven Development. Every feature passes `SPECIFY → PLAN → TASKS →
+IMPLEMENT`, managed via OpenSpec (`openspec/`); the source of truth is
+`openspec/specs/` and active work lives in `openspec/changes/<change>/`
+(`proposal.md`, `design.md`, `specs/delta`, `.tasks.md`).
+
+A universal lifecycle (`.opencode/skills/development-lifecycle`) applies to **all
+agents**: `READ → SPECIFY → PLAN → IMPLEMENT → DOUBT → VERIFY → RELEASE`, with
+TDD (tests first) and a mandatory doubt review. See `AGENTS.md` for the full
+contract — including the branching rule (never commit directly to `master`).
+
+## Verification gate
+
+Run these in order before a PR:
+
+```plain
+bun run format → bun run check → bun run check:types → bun run test → bun run test:coverage → bun run build
+```
+
+- **format**: Biome auto-formats on commit; the gate verifies consistency. `ci.yml` does not run `format` itself, so run `bun run format` locally before pushing to keep CI green.
+- **Testing**: TDD-first with Vitest. Tests live under `src/**/__tests__/`,
+  mirroring the layer under test. Modules importing `src/config/env.ts` must mock
+  it via `vi.mock('@config/env')` (the runner doesn't load `.env`).
+- Coverage runs through Vitest (`@vitest/coverage-v8`, scoped via `include`).
+
+## Architecture
+
+```
+src/
+├── config/       env validation (Zod, eager), site config, public routes
+├── lib/          auth (Better Auth), db (Drizzle), cache, monitoring
+├── domains/      business slices: anime/ auth/ media/ music/ user/
+├── pages/        Astro pages + API routes (file-based routing)
+│   ├── anime/[malId]/           anime detail pages
+│   └── api/                     auth, anime, music, user endpoints
+├── middleware/   session middleware (auth-middleware.ts)
+└── shared/       http/, errors/, schemas/, layouts/, components/, utils/
+```
+
+Domain vertical slice: `cache/ components/ errors/ mappers/ repositories/
+schemas/ services/ types/`. Data flows
+`DB schema → Repository → Service → Page/API route`. Strict barrel exports; max
+file size ≤ 150 lines. Path aliases (`@`, `@shared`, `@config`, …) map to `src/`
+in `tsconfig.json`.
+
+## API routes
+
+| Route | Description |
+| --- | --- |
+| `POST /api/auth/login` | Login (public) |
+| `POST /api/auth/register` | Register (public) |
+| `POST /api/auth/logout` | Logout (session) |
+| `GET /api/auth/session` | Current session |
+| `GET /api/anime` | Anime search/list (public) |
+| `GET /api/anime/:malId` | Anime detail |
+| `GET /api/anime/:malId/full` · `characters` · `staff` | Extra detail |
+| `GET /api/music` / `GET /api/music/:id` | Music (public) |
+| `GET /api/user/:userId` | User (session) |
+
+Routes validate via `withZodValidation(schema)(handler)` and respond enveloped as
+`{ data, status, error?, meta? }`. Public routes: `/`, `/api/auth/login`,
+`/api/auth/register`, `/api/anime`, `/api/music`, `/media`.
+
+## Versioning
+
+**SemVer** by Conventional Commits via `standard-version`.
+
+- `fix(scope):` → **patch** · `feat(scope):` → **minor** ·
+  `BREAKING CHANGE:`/`!` → **major** · pre-release → `X.Y.Z-<tag>`.
+
+**Release flow (RELEASE phase):**
+1. Land the change on `master` via PR.
+2. `bun run release` (preview with `release:dry`), or force
+   `release:patch|minor|major|prerelease`.
+3. It bumps `package.json`, rewrites `CHANGELOG.md`, commits, tags `vX.Y.Z`.
+4. `git push origin master && git push origin vX.Y.Z`.
+5. CI `release.yml` (tag `v*`) builds and pushes the Docker image `:<version>` +
+   `:latest` + `:<sha>`.
+
+## Branching & commits
+
+- Default branch `master`; never commit directly — branch `type/<slug>` and PR.
+- Conventional Commits with scopes: `fix(auth): Handle expired token`.
+
 ---
 
-## UI Routes
+## Roadmap (v2 rebuild)
 
-- `/` — base page
-- `/anime/:malId` — redirects to slug route
-- `/anime/:malId/:slug` — anime details page
+1. API + shell ✅ — auth, anime, user, music, cache, image foundation
+2. Streaming & watch player
+3. Search & advanced filtering
+4. Collections, progress & schedule
+5. Profiles & preferences UI
+6. Studio/trailer/episode surfaces & SEO
 
----
-
-## Notes
-
-> [!TIP]
-> The API layer uses a common validation/error pipeline (`withZodValidation` + `mapErrorToHttp`) for consistent responses.
-
-> [!NOTE]
-> Image optimization is cached and falls back to `public/placeholder.webp` if the source fetch fails.
+Each item is an OpenSpec change: write the proposal/design/spec/tasks first, then
+implement, verify, and release per the gate above.

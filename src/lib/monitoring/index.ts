@@ -17,4 +17,8 @@
  * @see {@link module:lib/monitoring/sentry} for implementation
  */
 
-export { initServerSentry, initAstroSentry, wrapReactComponentWithSentry } from './sentry'
+export {
+  initServerSentry,
+  initAstroSentry,
+  wrapReactComponentWithSentry,
+} from './sentry'

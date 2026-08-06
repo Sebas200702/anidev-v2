@@ -88,16 +88,17 @@ export const POST: APIRoute = withZodValidation(registerSchema)(
     }: APIContext & {
       validated: { body: RegisterInput }
     }) => {
-    const result = await credentialsService.register(
-      validated.body,
-      request.headers
-    )
+      const result = await credentialsService.register(
+        validated.body,
+        request.headers
+      )
 
-    return {
-      data: result.data,
-      status: 201,
-      meta: {},
-      headers: result.headers,
+      return {
+        data: result.data,
+        status: 201,
+        meta: {},
+        headers: result.headers,
+      }
     }
-  })
+  )
 )

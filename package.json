@@ -21,7 +21,14 @@
     "release:prerelease": "standard-version --prerelease",
     "release:first": "standard-version --first-release",
     "release:dry": "standard-version --dry-run",
-    "format": "prettier --write . "
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:write": "biome check --write .",
+    "format:astro": "prettier --write \"src/**/*.astro\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check:types": "astro check"
   },
   "dependencies": {
     "@astrojs/react": "5.0.2",
@@ -50,11 +57,17 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@biomejs/biome": "^2.5.7",
     "@types/pino": "7.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
     "drizzle-kit": "0.31.10",
+    "prettier": "^3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.6.12",
     "standard-version": "9.5.0",
-    "tsx": "4.21.0"
+    "tsx": "4.21.0",
+    "typescript": "6",
+    "vitest": "^4.1.10"
   }
 }

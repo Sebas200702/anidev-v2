@@ -1,9 +1,11 @@
 # build output
 dist/
 
+# coverage output
+coverage/
+
 # generated types
 .astro/
-.github/
 .agents/
 .vscode/
 

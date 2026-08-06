@@ -14,8 +14,18 @@
 
 export type { ErrorSeverity } from './base-error'
 export { BaseError } from './base-error'
-export { DomainError, InfraError, ValidationError, AuthError } from './app-error'
-export { authRequired, authForbidden, sessionExpired, registrationFailed } from './auth-errors'
+export {
+  DomainError,
+  InfraError,
+  ValidationError,
+  AuthError,
+} from './app-error'
+export {
+  authRequired,
+  authInvalidToken,
+  authSessionExpired,
+  authForbidden,
+} from './auth-errors'
 export { ErrorCodes, type ErrorCode } from './codes'
 export { dbError } from './db-errors'
 export type { HttpErrorBody, HttpErrorResponse } from './http-error-types'

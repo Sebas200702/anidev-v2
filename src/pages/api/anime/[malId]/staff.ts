@@ -70,39 +70,39 @@ import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
  * // data: AnimeStaff[], meta.count: number
  * ```
  */
-export const GET: APIRoute = withZodValidation(getAnimeStaffSchema)(async ({
-  validated,
-}) => {
-  try {
-    const { malId } = validated.params
+export const GET: APIRoute = withZodValidation(getAnimeStaffSchema)(
+  async ({ validated }) => {
+    try {
+      const { malId } = validated.params
 
-    const staff = await animeStaffService.getAnimeStaff(malId)
+      const staff = await animeStaffService.getAnimeStaff(malId)
 
-    const payload = {
-      data: staff,
-      status: 200,
-      meta: {
-        count: staff.length,
-      },
+      const payload = {
+        data: staff,
+        status: 200,
+        meta: {
+          count: staff.length,
+        },
+      }
+      const responseBody = animeStaffResponseSchema.parse(payload)
+
+      return new Response(JSON.stringify(responseBody), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      const { status, body } = mapErrorToHttp(error)
+      const payload = {
+        data: null,
+        status,
+        error: body.message ?? 'Unexpected error',
+        meta: body.meta ?? {},
+      }
+
+      return new Response(JSON.stringify(payload), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
-    const responseBody = animeStaffResponseSchema.parse(payload)
-
-    return new Response(JSON.stringify(responseBody), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (error) {
-    const { status, body } = mapErrorToHttp(error)
-    const payload = {
-      data: null,
-      status,
-      error: body.message ?? 'Unexpected error',
-      meta: body.meta ?? {},
-    }
-
-    return new Response(JSON.stringify(payload), {
-      status,
-      headers: { 'Content-Type': 'application/json' },
-    })
   }
-})
+)

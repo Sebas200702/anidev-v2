@@ -85,16 +85,17 @@ export const POST: APIRoute = withZodValidation(loginSchema)(
     }: APIContext & {
       validated: { body: LoginInput }
     }) => {
-    const result = await credentialsService.login(
-      validated.body,
-      request.headers
-    )
+      const result = await credentialsService.login(
+        validated.body,
+        request.headers
+      )
 
-    return {
-      data: result.data,
-      status: 200,
-      meta: {},
-      headers: result.headers,
+      return {
+        data: result.data,
+        status: 200,
+        meta: {},
+        headers: result.headers,
+      }
     }
-  })
+  )
 )

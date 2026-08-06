@@ -8,8 +8,17 @@
  */
 
 export { animeCardSchema } from './anime-card-schema'
-export { voiceActorSchema, animeCharacterSchema, getAnimeCharacterSchema, animeCharacterResponseSchema } from './anime-character-schema'
-export { animeDetailsSchema, getAnimeDetailsSchema, animeDetailsResponseSchema } from './anime-details-schema'
+export {
+  voiceActorSchema,
+  animeCharacterSchema,
+  getAnimeCharacterSchema,
+  animeCharacterResponseSchema,
+} from './anime-character-schema'
+export {
+  animeDetailsSchema,
+  getAnimeDetailsSchema,
+  animeDetailsResponseSchema,
+} from './anime-details-schema'
 export {
   animeMediaSchema,
   animeRelationsSchema,
@@ -21,5 +30,15 @@ export {
   animeFullDetailsResponseSchema,
   getAnimeFullSchema,
 } from './anime-full-schema'
-export { animeFiltersParamsSchema, animeFiltersSchema, animeListRequestSchema, animeListResponseSchema } from './anime-list-schema'
-export { personSchema, animeStaffSchema, getAnimeStaffSchema, animeStaffResponseSchema } from './anime-staff-schema'
+export {
+  animeFiltersParamsSchema,
+  animeFiltersSchema,
+  animeListRequestSchema,
+  animeListResponseSchema,
+} from './anime-list-schema'
+export {
+  personSchema,
+  animeStaffSchema,
+  getAnimeStaffSchema,
+  animeStaffResponseSchema,
+} from './anime-staff-schema'

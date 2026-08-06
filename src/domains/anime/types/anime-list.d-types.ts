@@ -3,12 +3,12 @@
  *
  * @module domains/anime/types/anime-list
  */
-import {
+import type {
   animeFiltersParamsSchema,
   animeFiltersSchema,
   animeListResponseSchema,
 } from '@domains/anime/schemas/anime-list-schema'
-import { z } from 'zod'
+import type { z } from 'zod'
 
 /**
  * Normalized list filters used by repositories and cache keys.

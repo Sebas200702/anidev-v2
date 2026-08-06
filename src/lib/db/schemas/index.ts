@@ -17,11 +17,29 @@
 export { anime, animeTitleSynonym } from './anime'
 export { animeExternalIds } from './anime-external'
 export { animeMedia } from './anime-media'
-export { animeStaff, animeMusic, animeCharacter, animeRelatedAnime, animeProducer } from './anime-entity-relations'
-export { animeGenre, animeTheme, animeDemographic } from './anime-taxonomy-relations'
+export {
+  animeStaff,
+  animeMusic,
+  animeCharacter,
+  animeRelatedAnime,
+  animeProducer,
+} from './anime-entity-relations'
+export {
+  animeGenre,
+  animeTheme,
+  animeDemographic,
+} from './anime-taxonomy-relations'
 export { genre, theme, demographic } from './anime-taxonomy'
 export { artist } from './artist'
-export { user, session, account, verification, userRelations, sessionRelations, accountRelations } from './auth-schema'
+export {
+  user,
+  session,
+  account,
+  verification,
+  userRelations,
+  sessionRelations,
+  accountRelations,
+} from './auth-schema'
 export { character, characterNickname } from './character'
 export { characterMedia } from './character-media'
 export { characterVoiceActor } from './character-relations'

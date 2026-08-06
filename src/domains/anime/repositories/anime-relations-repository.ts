@@ -85,7 +85,11 @@ export const animeRelationsRepository = {
         )
         .where(eq(animeRelatedAnime.animeId, animeId))
     } catch (error) {
-      throw dbError('[GET_ANIME_RELATED_ANIME_DATA_BY_ANIME_ID]', { animeId }, error)
+      throw dbError(
+        '[GET_ANIME_RELATED_ANIME_DATA_BY_ANIME_ID]',
+        { animeId },
+        error
+      )
     }
   },
 }

@@ -11,7 +11,10 @@
  * @see {@link UserProfileDB} for the input shape
  */
 import type { UserProfileDB } from '@domains/user/types/user-db-types'
-import type { UserProfile, UserPreferences } from '@domains/user/types/user-types'
+import type {
+  UserProfile,
+  UserPreferences,
+} from '@domains/user/types/user-types'
 
 type MapUserProfileInput = {
   userProfile: UserProfileDB

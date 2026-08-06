@@ -11,8 +11,8 @@ import { musicRelationRepository } from '@domains/music/repositories/music-relat
 import { musicRepository } from '@domains/music/repositories/music-repository'
 import { musicVersionRepository } from '@domains/music/repositories/music-version-repository'
 import type {
-    MusicResolutionDB,
-    MusicVersionDB,
+  MusicResolutionDB,
+  MusicVersionDB,
 } from '@domains/music/types/music-db-types'
 import { withCache } from '@lib/cache'
 

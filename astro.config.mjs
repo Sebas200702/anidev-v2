@@ -7,7 +7,7 @@ import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 import bun from '@nurodev/astro-bun'
 
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel'
 
 const src = fileURLToPath(new URL('./src', import.meta.url))
 

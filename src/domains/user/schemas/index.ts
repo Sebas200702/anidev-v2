@@ -12,5 +12,14 @@
  * ```
  */
 
-export { fanaticLevelSchema, frequencySchema, preferencesSchema, historySchema } from './user-preferences-schema'
-export { userProfileSchema, userProfileResponseSchema, getUserProfileSchema } from './user-schema'
+export {
+  fanaticLevelSchema,
+  frequencySchema,
+  preferencesSchema,
+  historySchema,
+} from './user-preferences-schema'
+export {
+  userProfileSchema,
+  userProfileResponseSchema,
+  getUserProfileSchema,
+} from './user-schema'

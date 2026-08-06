@@ -3,8 +3,8 @@
  *
  * @module domains/anime/types/anime-details
  */
-import { animeDetailsSchema } from '@domains/anime/schemas/anime-details-schema'
-import { z } from 'zod'
+import type { animeDetailsSchema } from '@domains/anime/schemas/anime-details-schema'
+import type { z } from 'zod'
 
 /**
  * Primary anime detail payload for public pages.
