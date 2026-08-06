@@ -5,7 +5,7 @@ The repo has no linter today: `format` is Prettier-only, and lint/typecheck scri
 ## What Changes
 
 - Add `@biomejs/biome` as a dev dependency and create `biome.json` configured to preserve the repo's current style: `indentStyle: space` (2), `lineWidth: 80`, `quoteStyle: single`, `semicolons: asNeeded` (no `;`), `trailingCommas: es5`.
-- **Hybrid formatter coverage** (Biome does not support `.astro`): Biome formats `.ts`/`.tsx`/`.css`/`.json`; Prettier remains **only** for the 6 `.astro` files via a scoped `prettier` script. Update `.prettierignore`/`.biomeignore` so each tool only touches its own files.
+- **Hybrid formatter coverage** (Biome does not support `.astro`): Biome formats `.ts`/`.tsx`/`.css`/`.json`; Prettier remains **only** for the 6 `.astro` files via a scoped `prettier` script. Use Biome's ignore mechanism in `biome.json` (`files.includes` / `files.ignore`) so each tool only touches its own files.
 - Replace the `format` script with `format` (Biome `format --write`) + `check` (Biome lint+format) and keep a `format:astro` script for Prettier; remove Prettier from the main path.
 - Remove `prettier-plugin-astro`/`prettier-plugin-tailwindcss` only where Prettier still needs them for `.astro`; add Biome as the repo's single toolchain otherwise.
 - Update `AGENTS.md`: Prettier references → Biome (Config/Commands/Code Style/Verification), document the hybrid `.astro` carve-out, and note the new `lint` gate in the verification order.

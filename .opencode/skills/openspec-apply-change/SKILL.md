@@ -95,6 +95,7 @@ Implement tasks from an OpenSpec change.
    - Make the code changes required
    - Keep changes minimal and focused
    - Mark task complete in the tasks file: `- [ ]` → `- [x]`
+   - Commit that task's changes with a Conventional Commit message using an appropriate scope (e.g. `feat(auth): Handle token refresh`). This skill marks tasks complete but does not commit itself; the per-task commit boundary is enforced by the `development-lifecycle` skill and `AGENTS.md` ("Commit after each task with a Conventional Commit message").
    - Continue to next task
 
    **Pause if:**
@@ -113,7 +114,7 @@ Implement tasks from an OpenSpec change.
 
 **Output During Implementation**
 
-```
+```markdown
 ## Implementing: <change-name> (schema: <schema-name>)
 
 Working on task 3/7: <task description>
@@ -127,7 +128,7 @@ Working on task 4/7: <task description>
 
 **Output On Completion**
 
-```
+```markdown
 ## Implementation Complete
 
 **Change:** <change-name>
@@ -144,7 +145,7 @@ All tasks complete! You can archive this change with `/opsx-archive`.
 
 **Output On Pause (Issue Encountered)**
 
-```
+```text
 ## Implementation Paused
 
 **Change:** <change-name>

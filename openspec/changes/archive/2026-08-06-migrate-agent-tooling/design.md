@@ -34,12 +34,12 @@ Place at `.opencode/skills/rustrak/SKILL.md`, matching the existing `.opencode/s
 ### D3 — Skill content is grounded in official docs, with cited URLs
 The skill captures: what Rustrak is, the Sentry-compatible migration path (DSN swap), self-hosting (server-only vs. full stack, SQLite vs. Postgres tags), the env surface, DSN shape, alerting/logs/AI-traces capabilities, and the `@rustrak/client` / `@rustrak/mcp` tooling. Every section cites `rustrak.github.io` pages so the agent can verify drift.
 
-### D4 — AGENTS.md describes the self-hosted target stack + migration notes
-The `Stack`, `Environment`, and `Important Constraints` sections are updated to the new providers with the migration path made explicit:
-- **Monitoring**: Rustrak replaces Sentry at the provider level; the `@sentry/*` SDKs and the existing "no-ops when DSN unset" behavior stay, only the DSN now points at Rustrak.
-- **Cache**: `@upstash/redis` REST client → standard Redis client wired to Dragonfly; `CacheTtl` semantics unchanged.
-- **Database**: Drizzle dialect LibSQL → `pg`; Supabase supplies the Postgres connection string; Better Auth adapter moves from SQLite to Postgres.
-- The code-swap itself is flagged as a separate change so AGENTS.md never misrepresents it as done.
+### D4 — AGENTS.md splits the target stack from the current Environment
+`AGENTS.md` distinguishes the target from what runs today: `Stack` and `Important Constraints` define the self-hosted target (Dragonfly Redis, Supabase/PostgreSQL, Rustrak); `Environment` keeps documenting the current legacy variables (`TURSO_DATABASE_URL`/`TURSO_AUTH_TOKEN`, `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN`, `SENTRY_DSN`) alongside migration notes. The target guidance names what the providers become without claiming the legacy vars were replaced or a `RUSTRAK_DSN` was added:
+- **Monitoring**: target is Rustrak replacing Sentry at the provider level; the `@sentry/*` SDKs and the existing "no-ops when DSN unset" behavior stay, only the DSN value now points at Rustrak. `SENTRY_DSN` remains the variable until the follow-up swap.
+- **Cache**: target client is a standard Redis client wired to Dragonfly (from `@upstash/redis` REST); `CacheTtl` semantics unchanged.
+- **Database**: target Drizzle dialect is `pg` (from LibSQL); Supabase supplies the Postgres connection string; Better Auth adapter moves from SQLite to Postgres.
+- The code-swap itself is flagged as a separate change so AGENTS.md never misrepresents the target as done.
 - *Alternative considered*: keeping AGENTS.md frozen until the code migrates. Rejected: the user's intent is to steer development toward the self-hosted stack now.
 
 ### D5 — Keep the DSN env name as `SENTRY_DSN`

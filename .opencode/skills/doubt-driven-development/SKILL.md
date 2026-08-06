@@ -11,7 +11,7 @@ The reviewer you play now is **not** the one who wrote it. Treat the change as u
 
 ## 0. Reset context
 - Re-read the task statement from `tasks.md` and the related spec delta / design.
-- Re-read the repo standards in `AGENTS.md` (code style, error handling, access, nire lifecycle phases).
+- Re-read the repo standards in `AGENTS.md` (code style, error handling, access, development lifecycle phases).
 
 ## 1. Attack your own work
 For each file you changed, ask adversarially:

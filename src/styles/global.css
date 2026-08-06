@@ -84,7 +84,7 @@
     "aside footer";
   height: 100dvh;
   max-width: 100dvw;
-  font-family: "Nunito", sans-serif;
+  font-family: Nunito, sans-serif;
   scroll-timeline: --scrollApp;
 }
 

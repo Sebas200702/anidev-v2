@@ -5,14 +5,14 @@ The project is migrating to a fully self-hosted stack (Upstash Redis → Dragonf
 ## What Changes
 
 - Update `AGENTS.md` Stack section: database (Turso/LibSQL → Supabase/PostgreSQL), cache (Upstash Redis REST → Dragonfly Redis), monitoring (Sentry → Rustrak, Sentry-SDK compatible).
-- Update the `Environment` section in `AGENTS.md`: replace `TURSO_DATABASE_URL`/`TURSO_AUTH_TOKEN` and `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` with the self-hosted equivalents, and add `RUSTRAK_DSN`.
-- Add migration notes to `AGENTS.md` covering: Redis client swap (`@upstash/redis` REST → standard Redis client wired to Dragonfly), Drizzle dialect change (LibSQL → `pg`), and the Rustrak DSN (drop-in for the existing Sentry DSL since Rustrak is Sentry-SDK compatible).
+- Update `AGENTS.md` with target-provider guidance (Dragonfly Redis, Supabase/PostgreSQL, Rustrak) without claiming the legacy `TURSO_*`/`UPSTASH_REDIS_*` are replaced or that `RUSTRAK_DSN` was added; `SENTRY_DSN` is retained until the follow-up swap.
+- Add migration notes to `AGENTS.md` covering: Redis client swap (`@upstash/redis` REST → standard Redis client wired to Dragonfly), Drizzle dialect change (LibSQL → `pg`), and the Rustrak DSN (drop-in for the existing Sentry SDK since Rustrak is Sentry-SDK compatible).
 - Create a project-local `rustrak` skill capturing the self-hosted error-tracking behavior, the Sentry-compatible ingestion path, and the deployment options (server-only vs. full stack, SQLite vs. PostgreSQL backend).
 
 ## Capabilities
 
 ### New Capabilities
-None — no application runtime behavior changes. The app already treats these as interchangeable providers; this change only updates agent-facing documentation and adds agent tooling (a skill).
+None — no application runtime behavior changes. This change affects documentation and agent tooling only (an `AGENTS.md` update and a `rustrak` skill); the provider swap is a separate tracked change.
 
 ### Modified Capabilities
 None — `openspec/specs/` is empty and no capability-level requirement changes.
