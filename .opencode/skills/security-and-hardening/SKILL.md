@@ -31,11 +31,11 @@ Apply at every boundary and especially in the DOUBT review phase. When auth or S
 - Use Drizzle's typed queries; no raw string interpolation of user input in SQL.
 
 ## 6. Hardening review checklist (DOUBT)
-- [x] Input validated at boundary with `safeParse`.
-- [x] No secrets / tokens / hashes in responses or logs.
-- [x] Authorization checked for each protected route; it belongs in the public list.
-- [x] Errors mapped through `mapErrorToHttp` (no stack-in-clarty leaks).
-- [x] No `any`, no non-null assertion crossing a trusted boundary.
+- [ ] Input validated at boundary with `safeParse`.
+- [ ] No secrets / tokens / hashes in responses or logs.
+- [ ] Authorization checked for each protected route; it must NOT belong in the public list.
+- [ ] Errors mapped through `mapErrorToHttp` (no stack-in-clarty leaks).
+- [ ] No `any`, no non-null assertion crossing a trusted boundary.
 
 ## Sources
 - `AGENTS.md` — API Route Patterns, Auth & Middleware, env, error handling.
