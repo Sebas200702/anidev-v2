@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+
+env:
+  # Placeholders that satisfy src/config/env.ts validation for the build step.
+  # The gate asserts code quality only; real secrets are never needed here.
+  NODE_ENV: test
+  TURSO_DATABASE_URL: https://placeholder.turso.io/local
+  TURSO_AUTH_TOKEN: placeholder
+  APP_BASE_URL: https://example.com
+  BETTER_AUTH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
+  UPSTASH_REDIS_REST_TOKEN: placeholder
+  LOG_LEVEL: warn
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint (Biome)
+        run: bun run check
+
+      - name: Typecheck (Astro)
+        run: bun run check:types
+
+      - name: Test (Vitest)
+        run: bun run test
+
+      - name: Coverage (Vitest)
+        run: bun run test:coverage
+
+      - name: Build
+        run: bun run build
