@@ -17,9 +17,14 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+RUN addgroup --system --gid 1001 bunjs \
+  && adduser --system --uid 1001 astro
+
+COPY --from=build --chown=astro:bunjs /app/dist ./dist
+COPY --from=build --chown=astro:bunjs /app/node_modules ./node_modules
+COPY --from=build --chown=astro:bunjs /app/package.json ./package.json
+
+USER astro
 
 EXPOSE 3000
 
