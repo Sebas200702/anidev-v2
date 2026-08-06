@@ -42,7 +42,7 @@ Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invali
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` (needed after schema changes) |
 | `bun run release:*` | `standard-version` (patch/minor/major/prerelease) |
 
-All verification scripts exist (`check`, `check:types`, `test`); code quality is `format` + `check` + `check:types` + `test` + `astro sync` + `build` (see Verification below).
+All verification scripts exist (`check`, `check:types`, `test`); code quality is `format` + `check` + `check:types` + `test` + `build` (see Verification below). `astro sync` is only needed after schema changes and is not part of the standard gate.
 
 ## Development Methodology — OpenSpec (Spec-Driven Development)
 
@@ -87,20 +87,19 @@ Managed with **OpenSpec** (`openspec/`). The flow is driven by skills in `.openc
 
 **Gate before opening a PR (run in order):**
 ```
-bun run format → bun run astro sync → bun run check → bun run check:types → bun run test → bun run build
+bun run format → bun run check → bun run check:types → bun run test → bun run build
 ```
 
 Rationale:
 - `bun run format` — enforce Biome formatting (single quotes, no semicolons, 80 col; CRLF preserved).
-- `bun run astro sync` — regenerate `.astro/types.d.ts` after schema/component changes.
 - `bun run check` — Biome lint (recommended rules; import sorting disabled) + format verification.
 - `bun run check:types` — Astro/TS typecheck (`astro check`); catches wrong barrel exports and `.astro` module resolution.
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
 - `bun run build` — catches type, config resolution, and prerender/SSR failures (env is validated at module import).
 
-**Testing (Vitest + TDD):** logic is test-first. `vitest.config.ts` maps the `@`-aliases and includes `src/**/__tests__/**/*.test.{ts,tsx}` (`passWithNoTests` so the gate is green until tests exist). Put new tests under `__tests__/` mirroring the layer under test (e.g. `src/domains/<domain>/__tests__/services/`, `src/shared/__tests__/http/`). Follow the `test-driven-development` skill; a failing test precedes the fix. Modules that import `src/config/env.ts` (eager Zod validation) must mock it in tests with `vi.mock('@config/env')` — the runner does not load `.env`.
+**Testing (Vitest + TDD):** logic is test-first. `vitest.config.ts` maps the `@`-aliases and includes `src/**/__tests__/**/*.test.{ts,tsx}` (no `passWithNoTests`, so Vitest fails when no tests are discovered). Put new tests under `__tests__/` mirroring the layer under test (e.g. `src/domains/<domain>/__tests__/services/`, `src/shared/__tests__/http/`). Follow the `test-driven-development` skill; a failing test precedes the fix. Modules that import `src/config/env.ts` (eager Zod validation) must mock it in tests with `vi.mock('@config/env')` — the runner does not load `.env`.
 
-**CI/CD:** `.github/workflows/deploy.yml` builds a Docker image and pushes it to Docker Hub on pushes to `master` (CD only — no lint/test gate in CI today). Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
+**CI/CD:** Two workflows. `.github/workflows/ci.yml` runs the quality gate on PRs and pushes to `master` — `check`, `check:types`, `test`, `test:coverage`, `build` (see AGENTS.md Verification gate for the local sequence). It does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
 
 **Skills:** Prefer the installed skills for domain tasks — `development-lifecycle` (the universal workflow), `better-auth-best-practices` (auth), `context7`/`find-docs` (library docs), `code-review` (two-axis diff review), `impeccable` (UI), `jsdoc-typescript-docs` (code documentation), `test-driven-development`, `doubt-driven-development`. Load them via the `skill` tool.
 

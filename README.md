@@ -10,7 +10,7 @@ Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · 
 ```
 
 > **Intro**: AniDev v2 re-does the original AniDev from zero on a new stack
-> (Astro SSZ + Supabase + Redis). The feature set below is the **target** —
+> (Astro SSR + Supabase + Redis). The feature set below is the **target** —
 > v2 ships it incrementally through OpenSpec-driven changes. See
 > [Current Status](#current-status) for what exists today.
 
@@ -61,7 +61,7 @@ arrive incrementally, each tracked as an OpenSpec change (`openspec/changes/`):
 ```bash
 git clone https://github.com/Sebas200702/anidev-v2.git
 bun install
-Copy .env.example .env   # Windows: Copy-Item .env.example .env
+cp .env.example .env   # Windows: Copy-Item .env.example .env
 bun run dev              # http://127.0.0.1:4321
 ```
 
@@ -114,12 +114,13 @@ contract — including the branching rule (never commit directly to `master`).
 
 ## Verification gate
 
-Run these in order before a PR (also enforced by CI on PR/push):
+Run these in order before a PR:
 
 ```plain
-bun run format → bun run astro sync → bun run check → bun run check:types → bun run test → bun run test:coverage → bun run build
+bun run format → bun run check → bun run check:types → bun run test → bun run test:coverage → bun run build
 ```
 
+- **format**: Biome auto-formats on commit; the gate verifies consistency. `ci.yml` does not run `format` itself, so run `bun run format` locally before pushing to keep CI green.
 - **Testing**: TDD-first with Vitest. Tests live under `src/**/__tests__/`,
   mirroring the layer under test. Modules importing `src/config/env.ts` must mock
   it via `vi.mock('@config/env')` (the runner doesn't load `.env`).
