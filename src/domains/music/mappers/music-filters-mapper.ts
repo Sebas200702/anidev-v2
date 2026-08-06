@@ -25,9 +25,7 @@ const TYPE_CODE_BY_LABEL: Record<string, MusicListFilters['type']> = {
  *
  * @internal
  */
-const normalizeType = (
-  raw?: string
-): MusicListFilters['type'] | undefined => {
+const normalizeType = (raw?: string): MusicListFilters['type'] | undefined => {
   const trimmed = raw?.trim()
   if (!trimmed) return undefined
 

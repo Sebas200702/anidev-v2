@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import 'tailwind-animations';
+@import "tailwind-animations";
 
 @theme {
   --color-neutral-950: #121212;
@@ -28,8 +28,6 @@
   --color-brand-50: var(--brand-50);
 }
 
-
-
 .button-primary {
   @apply border-brand-500 bg-brand-500 md:hover:border-brand-500/80 md:hover:text-brand-500 cursor-pointer items-center justify-center rounded-md border-2 p-1 text-white transition-all duration-300 ease-in-out md:hover:bg-transparent md:hover:shadow-md xl:p-2;
 }
@@ -39,7 +37,6 @@
 .custom-scrollbar {
   @apply overflow-x-hidden overflow-y-auto scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent;
 }
-
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -82,12 +79,12 @@
   grid-template-columns: 80px 1fr;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    'aside header'
-    'aside main'
-    'aside footer';
+    "aside header"
+    "aside main"
+    "aside footer";
   height: 100dvh;
   max-width: 100dvw;
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   scroll-timeline: --scrollApp;
 }
 
@@ -96,9 +93,9 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto auto;
     grid-template-areas:
-      'header'
-      'main'
-      'footer'
-      'aside';
+      "header"
+      "main"
+      "footer"
+      "aside";
   }
 }

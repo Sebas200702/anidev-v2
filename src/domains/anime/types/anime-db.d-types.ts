@@ -8,12 +8,12 @@
  * here so existing `@domains/anime/types/anime-db.d-types` imports keep working.
  */
 import type { InferSelectModel } from 'drizzle-orm'
-import { anime, animeTitleSynonym } from '@db/schemas/anime'
-import { animeExternalIds } from '@db/schemas/anime-external'
-import { character, characterNickname } from '@db/schemas/character'
-import { producer } from '@db/schemas/producer'
-import { staff } from '@db/schemas/staff'
-import { genre, theme, demographic } from '@db/schemas/anime-taxonomy'
+import type { anime, animeTitleSynonym } from '@db/schemas/anime'
+import type { animeExternalIds } from '@db/schemas/anime-external'
+import type { character, characterNickname } from '@db/schemas/character'
+import type { producer } from '@db/schemas/producer'
+import type { staff } from '@db/schemas/staff'
+import type { genre, theme, demographic } from '@db/schemas/anime-taxonomy'
 
 // AnimeRelationsDB, AnimeCharacterDB, and other relation types are re-exported
 // via the barrel at `@domains/anime/types`. Import them from there or from

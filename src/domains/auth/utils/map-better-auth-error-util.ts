@@ -100,9 +100,5 @@ export function mapBetterAuthError(error: unknown): Error {
     }
   }
 
-  return new AuthError(
-    ErrorCodes.AUTH_REQUIRED,
-    'Authentication failed',
-    error
-  )
+  return new AuthError(ErrorCodes.AUTH_REQUIRED, 'Authentication failed', error)
 }

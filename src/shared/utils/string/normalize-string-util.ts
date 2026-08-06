@@ -60,7 +60,7 @@ export const normalizeString = ({
   separator = '-',
   toLowerCase = false,
 }: NormalizeStringOptions): string => {
-  if (!string) return ''
+  if (!string || string.trim() === '') return ''
 
   const specialCharsPattern = /[/?¡.:,;¿!@#$%^&*()\-_=+[\]{}|\\'<>`~"]/g
   let result = string.replaceAll(specialCharsPattern, '')

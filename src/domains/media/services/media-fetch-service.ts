@@ -68,9 +68,13 @@ export async function fetchMediaAsset(
   } catch (error) {
     if (error instanceof InfraError) throw error
 
-    throw new InfraError(ErrorCodes.EXTERNAL_API_ERROR, 'Failed to fetch media', {
-      url: mediaUrl,
-      cause: error instanceof Error ? error.message : String(error),
-    })
+    throw new InfraError(
+      ErrorCodes.EXTERNAL_API_ERROR,
+      'Failed to fetch media',
+      {
+        url: mediaUrl,
+        cause: error instanceof Error ? error.message : String(error),
+      }
+    )
   }
 }

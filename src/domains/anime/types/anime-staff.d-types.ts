@@ -3,8 +3,8 @@
  *
  * @module domains/anime/types/anime-staff
  */
-import { animeStaffSchema } from '@domains/anime/schemas/anime-staff-schema'
-import { z } from 'zod'
+import type { animeStaffSchema } from '@domains/anime/schemas/anime-staff-schema'
+import type { z } from 'zod'
 
 /**
  * Staff member and their credited positions on an anime.

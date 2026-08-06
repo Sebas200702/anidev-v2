@@ -10,6 +10,17 @@
  */
 
 export { MediaEntity, MediaType, MediaSize } from './media-enums'
-export type { OptimizedMedia, SemanticMediaPath, MediaAsset } from './media-asset-types'
-export type { MediaRequest, MediaRequestQuery, MediaRequestParams } from './media-request-types'
-export type { MediaServiceConfig, MediaCacheKeyOptions } from './media-config-types'
+export type {
+  OptimizedMedia,
+  SemanticMediaPath,
+  MediaAsset,
+} from './media-asset-types'
+export type {
+  MediaRequest,
+  MediaRequestQuery,
+  MediaRequestParams,
+} from './media-request-types'
+export type {
+  MediaServiceConfig,
+  MediaCacheKeyOptions,
+} from './media-config-types'

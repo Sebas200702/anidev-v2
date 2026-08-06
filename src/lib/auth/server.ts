@@ -19,12 +19,7 @@ import { betterAuth } from 'better-auth'
 import { env } from '@config/env'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@db/client'
-import {
-  account,
-  session,
-  user,
-  verification,
-} from '@db/schemas/auth-schema'
+import { account, session, user, verification } from '@db/schemas/auth-schema'
 
 /**
  * Configured Better Auth server instance backed by Drizzle and SQLite/Turso.

@@ -11,7 +11,10 @@
  */
 
 export { animeMusicRepository } from './anime-music-repository'
-export { buildMusicListFilters, musicListRepository } from './music-list-repository'
+export {
+  buildMusicListFilters,
+  musicListRepository,
+} from './music-list-repository'
 export { musicRelationRepository } from './music-relation-repository'
 export { musicRepository } from './music-repository'
 export { musicVersionRepository } from './music-version-repository'

@@ -7,7 +7,7 @@
  * anime to characters, staff, producers, taxonomy, related anime, and voice actors.
  */
 import type { InferSelectModel } from 'drizzle-orm'
-import {
+import type {
   animeRelatedAnime,
   animeCharacter,
   animeGenre,
@@ -15,7 +15,7 @@ import {
   animeStaff,
   animeTheme,
 } from '@db/schemas/anime-relations'
-import { characterVoiceActor } from '@db/schemas/character-relations'
+import type { characterVoiceActor } from '@db/schemas/character-relations'
 
 /**
  * Row shape for the `anime_related_anime` join table.

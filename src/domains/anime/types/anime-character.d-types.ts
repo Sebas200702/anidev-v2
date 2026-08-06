@@ -3,13 +3,13 @@
  *
  * @module domains/anime/types/anime-character
  */
-import {
+import type {
   voiceActorSchema,
   animeCharacterSchema,
   getAnimeCharacterSchema,
   animeCharacterResponseSchema,
 } from '@domains/anime/schemas/anime-character-schema'
-import { z } from 'zod'
+import type { z } from 'zod'
 
 /**
  * Voice actor credited on a character entry.

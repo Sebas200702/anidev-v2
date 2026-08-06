@@ -90,43 +90,42 @@ import {
  * // data: UserProfile
  * ```
  */
-export const GET: APIRoute = withZodValidation(getUserProfileSchema)(async ({
-  locals,
-  validated,
-}) => {
-  try {
-    const { userId: targetId } = validated.params
-    const { user } = locals
-    const userProfile = await userService.getUserProfile({
-      userId: user?.id ?? 'anonymous',
-      targetId,
-    })
+export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
+  async ({ locals, validated }) => {
+    try {
+      const { userId: targetId } = validated.params
+      const { user } = locals
+      const userProfile = await userService.getUserProfile({
+        userId: user?.id ?? 'anonymous',
+        targetId,
+      })
 
-    const payload = {
-      data: userProfile,
-      status: 200,
-      meta: {},
+      const payload = {
+        data: userProfile,
+        status: 200,
+        meta: {},
+      }
+
+      const responseBody = userProfileResponseSchema.parse(payload)
+
+      return new Response(JSON.stringify(responseBody), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      const { status, body } = mapErrorToHttp(error)
+
+      const payload = {
+        data: null,
+        status,
+        error: body.message ?? 'Unexpected error',
+        meta: body.meta ?? {},
+      }
+
+      return new Response(JSON.stringify(payload), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
-
-    const responseBody = userProfileResponseSchema.parse(payload)
-
-    return new Response(JSON.stringify(responseBody), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (error) {
-    const { status, body } = mapErrorToHttp(error)
-
-    const payload = {
-      data: null,
-      status,
-      error: body.message ?? 'Unexpected error',
-      meta: body.meta ?? {},
-    }
-
-    return new Response(JSON.stringify(payload), {
-      status,
-      headers: { 'Content-Type': 'application/json' },
-    })
   }
-})
+)

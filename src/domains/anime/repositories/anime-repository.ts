@@ -70,10 +70,7 @@ export const animeRepository = {
    */
   async getManyAnimeByMalIds(malIds: number[]): Promise<AnimeDB[]> {
     try {
-      return await db
-        .select()
-        .from(anime)
-        .where(inArray(anime.malId, malIds))
+      return await db.select().from(anime).where(inArray(anime.malId, malIds))
     } catch (error) {
       throw dbError('[GET_MANY_ANIME_BY_MAL_IDS]', { malIds }, error)
     }

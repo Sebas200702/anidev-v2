@@ -78,39 +78,39 @@ import type { APIRoute } from 'astro'
  * // data: MusicCard[], meta: { page, total, hasNext }
  * ```
  */
-export const GET: APIRoute = withZodValidation(musicListRequestSchema)(async ({
-  validated,
-}) => {
-  try {
-    const { list: musicCards, total } = await musicListService.getMusicList(
-      validated.query
-    )
-    const payload = {
-      data: musicCards,
-      status: 200,
-      meta: {
-        page: validated.query.page,
-        total,
-        hasNext: validated.query.page * validated.query.limit < total,
-      },
-    }
-    const responseBody = musicListResponseSchema.parse(payload)
+export const GET: APIRoute = withZodValidation(musicListRequestSchema)(
+  async ({ validated }) => {
+    try {
+      const { list: musicCards, total } = await musicListService.getMusicList(
+        validated.query
+      )
+      const payload = {
+        data: musicCards,
+        status: 200,
+        meta: {
+          page: validated.query.page,
+          total,
+          hasNext: validated.query.page * validated.query.limit < total,
+        },
+      }
+      const responseBody = musicListResponseSchema.parse(payload)
 
-    return new Response(JSON.stringify(responseBody), {
-      headers: { 'Content-Type': 'application/json' },
-    })
-  } catch (error) {
-    const { status, body } = mapErrorToHttp(error)
-    const payload = {
-      data: null,
-      status,
-      error: body.message ?? 'Unexpected error',
-      meta: body.meta ?? {},
-    }
+      return new Response(JSON.stringify(responseBody), {
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      const { status, body } = mapErrorToHttp(error)
+      const payload = {
+        data: null,
+        status,
+        error: body.message ?? 'Unexpected error',
+        meta: body.meta ?? {},
+      }
 
-    return new Response(JSON.stringify(payload), {
-      status,
-      headers: { 'Content-Type': 'application/json' },
-    })
+      return new Response(JSON.stringify(payload), {
+        status,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
   }
-})
+)

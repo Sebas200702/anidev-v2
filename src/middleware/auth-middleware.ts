@@ -90,7 +90,10 @@ const hasAuthCookie = (cookieHeader: string | null) => {
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url
 
-  if (pathname.startsWith('/api/auth/login') || pathname.startsWith('/api/auth/register')) {
+  if (
+    pathname.startsWith('/api/auth/login') ||
+    pathname.startsWith('/api/auth/register')
+  ) {
     clearSession(context.locals)
     return next()
   }

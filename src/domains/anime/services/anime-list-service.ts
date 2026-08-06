@@ -8,10 +8,7 @@ import { animeListCache } from '@domains/anime/cache/anime-list-cache'
 import { mapAnimeListToCards } from '@domains/anime/mappers/anime-card-mapper'
 import { mapAnimeFilters } from '@domains/anime/mappers/anime-filters-mapper'
 import { animeListRepository } from '@domains/anime/repositories/anime-list-repository'
-import type {
-  AnimeFilters,
-  AnimeFiltersParams,
-} from '@domains/anime/types'
+import type { AnimeFilters, AnimeFiltersParams } from '@domains/anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for anime list pages.

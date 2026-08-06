@@ -4,7 +4,10 @@
  * @module domains/music/mappers/music-card-mapper
  */
 import type { MusicCard } from '@/domains/music/types/music-card-types'
-import type { MusicArtistDB, MusicDB } from '@domains/music/types/music-db-types'
+import type {
+  MusicArtistDB,
+  MusicDB,
+} from '@domains/music/types/music-db-types'
 
 /** Input for mapping a single music row to a card. */
 type MapMusicCardInput = {

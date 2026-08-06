@@ -22,7 +22,11 @@ import type {
   OptimizedMedia,
   SemanticMediaPath,
 } from '@domains/media/types/media-types'
-import { buildKey, buildRawKey, buildRawMetaKey } from '@domains/media/cache/media-cache-keys'
+import {
+  buildKey,
+  buildRawKey,
+  buildRawMetaKey,
+} from '@domains/media/cache/media-cache-keys'
 import {
   readCachedMedia,
   writeCachedMedia,

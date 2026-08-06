@@ -5,10 +5,10 @@
  */
 import type { MusicDetails } from '@/domains/music/types/music-details-types'
 import type {
-    MusicArtistDB,
-    MusicDB,
-    MusicResolutionDB,
-    MusicVersionDB,
+  MusicArtistDB,
+  MusicDB,
+  MusicResolutionDB,
+  MusicVersionDB,
 } from '@domains/music/types/music-db-types'
 
 /** Input rows required to assemble a {@link MusicDetails} payload. */

@@ -7,8 +7,8 @@
  * capture for 500s happens in the top-level mapper).
  */
 
-import { AuthError, DomainError } from '@shared/errors/app-error'
-import { BaseError } from '@shared/errors/base-error'
+import type { AuthError, DomainError } from '@shared/errors/app-error'
+import type { BaseError } from '@shared/errors/base-error'
 import { ErrorCodes, type ErrorCode } from '@shared/errors/codes'
 import type {
   HttpErrorBody,

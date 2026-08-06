@@ -95,9 +95,7 @@ export const musicListRepository = {
       return await db
         .select()
         .from(music)
-        .where(
-          whereConditions.length > 0 ? and(...whereConditions) : undefined
-        )
+        .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
         .limit(limit)
         .offset((page - 1) * limit)
     } catch (error) {
@@ -122,9 +120,7 @@ export const musicListRepository = {
       const [result] = await db
         .select({ count: count() })
         .from(music)
-        .where(
-          whereConditions.length > 0 ? and(...whereConditions) : undefined
-        )
+        .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
 
       return result?.count ?? 0
     } catch (error) {

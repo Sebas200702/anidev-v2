@@ -3,7 +3,7 @@
  *
  * @module domains/anime/types/anime-full
  */
-import {
+import type {
   animeExternalIdsSchema,
   animeGenreSchema,
   animeMediaSchema,
@@ -13,7 +13,7 @@ import {
   animeFullDetailsSchema,
   animeFullDetailsResponseSchema,
 } from '@domains/anime/schemas/anime-full-schema'
-import { z } from 'zod'
+import type { z } from 'zod'
 
 /**
  * Expanded anime detail payload returned by the full endpoint.
