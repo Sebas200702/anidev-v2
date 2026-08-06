@@ -21,6 +21,7 @@ SENTRY_DSN=http://<key>@<host>:8080/<project_id>
 ```
 
 DSN shape is exactly Sentry's; the project id comes from the Rustrak dashboard project, `<key>` is that project's key.
+Docs: https://rustrak.build/rustrak/getting-started/quickstart
 
 ## Self-hosting
 Compose stack (server + Postgres + UI) or server-only:
@@ -28,14 +29,14 @@ Compose stack (server + Postgres + UI) or server-only:
 ```yaml
 services:
   server:
-    image: rustrak/rustrak-server:latest   # SQLite; use :postgres for Postgres
+    image: rustrak/rustrak-server:v0.14.1   # SQLite; use :postgres for Postgres
     ports: ["8080:8080"]
     volumes: [rustrak_data:/data]
     environment:
       - SESSION_SECRET_KEY=${SESSION_SECRET_KEY}
       - CREATE_SUPERUSER=${CREATE_SUPERUSER}
   ui:
-    image: rustrak/rustrak-ui:latest
+    image: rustrak/rustrak-ui:v0.14.1
     ports: ["3000:3000"]
     environment:
       - RUSTRAK_API_URL=http://server:8080
@@ -46,9 +47,11 @@ volumes:
 - `SESSION_SECRET_KEY` → `openssl rand -hex 32`
 - `CREATE_SUPERUSER` → `email:password` (admin, created only on empty DB)
 - SQLite default: `DATABASE_URL=sqlite:///data/rustrak.db`. Postgres image tag `:postgres` + `DATABASE_URL=postgres://user:pass@host:5432/db`.
+- Docs: https://rustrak.build/rustrak/getting-started/installation · https://rustrak.build/rustrak/getting-started/overview (database backends + deployment options)
 
 ## Server env surface (subset)
 `DATABASE_URL`, `SESSION_SECRET_KEY`, `CREATE_SUPERUSER`, `PUBLIC_URL` (must be reachable URL or SDK gets `0.0.0.0`), `SSL_PROXY` (secure cookies + requires SESSION secret), `PORT` (8080), `HOST` (0.0.0.0 default), `RUST_LOG`, `MAX_EVENTS_PER_*` (rate limits), `SOURCEMAP_STORAGE_PATH`, `SMTP_HOST/USERNAME/PASSWORD/FROM`, `DASHBOARD_URL`. UI: `RUSTRAK_API_URL`, `RUSTRAK_VERSION_CHECK_ENABLED`.
+Docs: https://rustrak.build/rustrak/configuration/environment
 
 ## Capabilities (all via the same DSN)
 - **Errors** → grouped into issues by deterministic fingerprint (SDK fingerprint, else type+first line+transaction). Source maps applied server-side per release.
@@ -57,11 +60,13 @@ volumes:
 - **Performance / release health** — transactions + spans; session-based crash-free users/sessions.
 - **Alerts** — triggers `new_issue` / `regression` / `unmute` → Slack (webhook or bot), SMTP email, or JSON webhook.
 - **Teams & retention** — Admin/Member/Viewer roles, storage usage, configurable retention + manual cleanup.
+- Docs: https://rustrak.build/rustrak/usage/issues · https://rustrak.build/rustrak/usage/logs · https://rustrak.build/rustrak/usage/agents · https://rustrak.build/rustrak/usage/alerts · https://rustrak.build/rustrak/usage/team
 
 ## Tooling
 - `@rustrak/client` — typed REST client; every method returns `Result<T, RustrakError>` and never throws.
 - `@rustrak/mcp` — MCP server over that client so an agent can triage the instance.
 - Server exposes OpenAPI at `/docs`.
+- Docs: https://rustrak.build/rustrak/sdks/client · https://rustrak.build/rustrak/sdks/mcp
 
 ## Conventions
 - Prefer `@rustrak/client` over raw HTTP for server-side reads; keep `@sentry/*` untouched in the app.
