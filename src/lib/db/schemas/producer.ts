@@ -15,10 +15,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Production company record (`producer` table) keyed by MyAnimeList ID.
@@ -29,7 +30,7 @@ import {
  * - `about` — Company description.
  * - `count` — Optional count metadata from MAL (e.g. produced titles).
  */
-export const producer = sqliteTable('producer', {
+export const producer = pgTable('producer', {
   malId: integer('mal_id').primaryKey(),
   established: text('established'),
   about: text('about'),
@@ -44,10 +45,10 @@ export const producer = sqliteTable('producer', {
  * - `type` — Title variant kind (Default, Japanese, etc.).
  * - `title` — Display string; unique per `(producerId, title)`.
  */
-export const producerTitle = sqliteTable(
+export const producerTitle = pgTable(
   'producer_title',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     producerId: integer('producer_id')
       .notNull()
       .references(() => producer.malId, { onDelete: 'cascade' }),

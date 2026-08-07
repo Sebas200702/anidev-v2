@@ -14,10 +14,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 import { anime } from '@db/schemas/anime'
 
 /**
@@ -30,10 +31,10 @@ import { anime } from '@db/schemas/anime'
  * - `title` — Episode title (required).
  * - `synopsis` / `duration` / `aired` — Optional descriptive metadata.
  */
-export const episode = sqliteTable(
+export const episode = pgTable(
   'episode',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     animeId: integer('anime_id')
       .notNull()
       .references(() => anime.malId, { onDelete: 'cascade' }),
@@ -53,10 +54,10 @@ export const episode = sqliteTable(
  * - `episodeId` — FK to {@link episode.id}; cascade on delete.
  * - `src` — Stream or file URL; unique per `(episodeId, src)`.
  */
-export const episodeSource = sqliteTable(
+export const episodeSource = pgTable(
   'episode_source',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     episodeId: integer('episode_id')
       .notNull()
       .references(() => episode.id, { onDelete: 'cascade' }),
@@ -73,10 +74,10 @@ export const episodeSource = sqliteTable(
  * - `language` — Subtitle language code or label.
  * - `src` — Subtitle file URL; unique with episode and language.
  */
-export const episodeSubtitle = sqliteTable(
+export const episodeSubtitle = pgTable(
   'episode_subtitle',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     episodeId: integer('episode_id')
       .notNull()
       .references(() => episode.id, { onDelete: 'cascade' }),

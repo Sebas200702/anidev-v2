@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/character} for parent character entity
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { character } from '@db/schemas/character'
 
 /**
@@ -22,8 +22,8 @@ import { character } from '@db/schemas/character'
  * - `src` — Resource URL or path.
  * - `size` — Optional variant descriptor.
  */
-export const characterMedia = sqliteTable('character_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const characterMedia = pgTable('character_media', {
+  id: serial('id').primaryKey(),
   characterId: integer('character_id')
     .notNull()
     .references(() => character.malId, { onDelete: 'cascade' }),

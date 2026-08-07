@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/music} for parent music entity
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { music } from '@db/schemas/music'
 
 /**
@@ -22,8 +22,8 @@ import { music } from '@db/schemas/music'
  * - `src` — Image URL or CDN path.
  * - `size` — Optional variant (small, large).
  */
-export const musicMedia = sqliteTable('music_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const musicMedia = pgTable('music_media', {
+  id: serial('id').primaryKey(),
   musicId: integer('music_id')
     .notNull()
     .references(() => music.id, { onDelete: 'cascade' }),

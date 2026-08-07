@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime-relations} for anime ↔ taxonomy links
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, text } from 'drizzle-orm/pg-core'
 
 /**
  * Genre lookup values (`genre` table) keyed by MyAnimeList ID.
@@ -20,7 +20,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
  * - `malId` — Primary key; MAL genre id.
  * - `name` — Human-readable genre label (e.g. Action, Romance).
  */
-export const genre = sqliteTable('genre', {
+export const genre = pgTable('genre', {
   malId: integer('mal_id').primaryKey(),
   name: text('name').notNull(),
 })
@@ -32,7 +32,7 @@ export const genre = sqliteTable('genre', {
  * - `malId` — Primary key; MAL theme id.
  * - `name` — Theme label (e.g. School, Military).
  */
-export const theme = sqliteTable('theme', {
+export const theme = pgTable('theme', {
   malId: integer('mal_id').primaryKey(),
   name: text('name').notNull(),
 })
@@ -44,7 +44,7 @@ export const theme = sqliteTable('theme', {
  * - `malId` — Primary key; MAL demographic id.
  * - `name` — Demographic label (e.g. Shounen, Josei).
  */
-export const demographic = sqliteTable('demographic', {
+export const demographic = pgTable('demographic', {
   malId: integer('mal_id').primaryKey(),
   name: text('name').notNull(),
 })

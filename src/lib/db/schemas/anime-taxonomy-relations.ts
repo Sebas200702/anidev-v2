@@ -10,14 +10,14 @@
 import { anime } from '@db/schemas/anime'
 import { genre, demographic, theme } from '@db/schemas/anime-taxonomy'
 
-import { integer, primaryKey, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { integer, primaryKey, pgTable } from 'drizzle-orm/pg-core'
 
 /**
  * Anime-to-genre association (`anime_genre` table).
  *
  * **Key columns:** `animeId`, `genreId` — composite primary key; both FKs cascade.
  */
-export const animeGenre = sqliteTable(
+export const animeGenre = pgTable(
   'anime_genre',
   {
     animeId: integer('anime_id')
@@ -35,7 +35,7 @@ export const animeGenre = sqliteTable(
  *
  * **Key columns:** `animeId`, `themeId` — composite primary key.
  */
-export const animeTheme = sqliteTable(
+export const animeTheme = pgTable(
   'anime_theme',
   {
     animeId: integer('anime_id')
@@ -53,7 +53,7 @@ export const animeTheme = sqliteTable(
  *
  * **Key columns:** `animeId`, `demographicId` — composite primary key.
  */
-export const animeDemographic = sqliteTable(
+export const animeDemographic = pgTable(
   'anime_demographic',
   {
     animeId: integer('anime_id')

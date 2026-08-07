@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/producer} for parent producer entity
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { producer } from '@db/schemas/producer'
 
 /**
@@ -22,8 +22,8 @@ import { producer } from '@db/schemas/producer'
  * - `src` — Media URL or path.
  * - `size` — Optional variant label.
  */
-export const producerMedia = sqliteTable('producer_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const producerMedia = pgTable('producer_media', {
+  id: serial('id').primaryKey(),
   producerId: integer('producer_id')
     .notNull()
     .references(() => producer.malId, { onDelete: 'cascade' }),

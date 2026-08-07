@@ -7,14 +7,14 @@
  *
  * @remarks
  * Table and column names follow Better Auth Drizzle adapter conventions.
- * Timestamps use SQLite integer milliseconds with SQL defaults. Cascading
+ * Timestamps use PostgreSQL timestamps with `now()` defaults. Cascading
  * deletes on `userId` foreign keys remove orphaned sessions and accounts.
  *
  * @see {@link module:lib/auth/server} for adapter registration
  * @see {@link module:lib/db/schemas/profile} for extended user profile data
  */
 import { relations, sql } from 'drizzle-orm'
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
 /**
  * Authenticated application user (`user` table).
@@ -28,19 +28,17 @@ import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core'
  * @see {@link session} for active login sessions
  * @see {@link account} for provider-linked credentials
  */
-export const user = sqliteTable('user', {
+export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  emailVerified: integer('email_verified', { mode: 'boolean' })
-    .default(false)
-    .notNull(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
   image: text('image'),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .default(sql`now()`)
     .notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .default(sql`now()`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 })
@@ -55,16 +53,16 @@ export const user = sqliteTable('user', {
  *
  * @see {@link sessionRelations} for Drizzle `user` join
  */
-export const session = sqliteTable(
+export const session = pgTable(
   'session',
   {
     id: text('id').primaryKey(),
-    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     token: text('token').notNull().unique(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .default(sql`now()`)
       .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    updatedAt: timestamp('updated_at', { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
     ipAddress: text('ip_address'),
@@ -86,7 +84,7 @@ export const session = sqliteTable(
  *
  * @see {@link accountRelations} for Drizzle `user` join
  */
-export const account = sqliteTable(
+export const account = pgTable(
   'account',
   {
     id: text('id').primaryKey(),
@@ -98,18 +96,18 @@ export const account = sqliteTable(
     accessToken: text('access_token'),
     refreshToken: text('refresh_token'),
     idToken: text('id_token'),
-    accessTokenExpiresAt: integer('access_token_expires_at', {
-      mode: 'timestamp_ms',
+    accessTokenExpiresAt: timestamp('access_token_expires_at', {
+      withTimezone: true,
     }),
-    refreshTokenExpiresAt: integer('refresh_token_expires_at', {
-      mode: 'timestamp_ms',
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at', {
+      withTimezone: true,
     }),
     scope: text('scope'),
     password: text('password'),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .default(sql`now()`)
       .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    updatedAt: timestamp('updated_at', { withTimezone: true })
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
@@ -124,18 +122,18 @@ export const account = sqliteTable(
  * - `value` — Hashed or raw token depending on Better Auth flow.
  * - `expiresAt` — Challenge invalid after this timestamp.
  */
-export const verification = sqliteTable(
+export const verification = pgTable(
   'verification',
   {
     id: text('id').primaryKey(),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
-    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .default(sql`now()`)
       .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .default(sql`now()`)
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },

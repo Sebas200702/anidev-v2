@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent anime entity
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { anime } from '@db/schemas/anime'
 
 /**
@@ -25,8 +25,8 @@ import { anime } from '@db/schemas/anime'
  *
  * @see {@link anime} parent anime row
  */
-export const animeMedia = sqliteTable('anime_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const animeMedia = pgTable('anime_media', {
+  id: serial('id').primaryKey(),
   animeId: integer('anime_id')
     .notNull()
     .references(() => anime.malId, { onDelete: 'cascade' }),

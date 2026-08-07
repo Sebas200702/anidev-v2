@@ -12,7 +12,7 @@
  * @see {@link module:lib/db/schemas/character} for character root
  * @see {@link module:lib/db/schemas/staff} for staff/voice actor profiles
  */
-import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
 import { character } from '@db/schemas/character'
 import { staff } from '@db/schemas/staff'
 
@@ -24,7 +24,7 @@ import { staff } from '@db/schemas/staff'
  * - `staffId` — FK to {@link staff.malId} (voice actor).
  * - `language` — Dub language label (Japanese, English, etc.); part of PK.
  */
-export const characterVoiceActor = sqliteTable(
+export const characterVoiceActor = pgTable(
   'character_voice_actor',
   {
     characterId: integer('character_id')

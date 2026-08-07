@@ -16,10 +16,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Base music track record (`music` table).
@@ -29,7 +30,7 @@ import {
  * - `title` — Track title (nullable for incomplete imports).
  * - `type` — Track category (OP, ED, Insert, etc.); required.
  */
-export const music = sqliteTable('music', {
+export const music = pgTable('music', {
   id: integer('id').primaryKey(),
   title: text('title'),
   type: text('type').notNull(),
@@ -43,10 +44,10 @@ export const music = sqliteTable('music', {
  * - `version` / `versionId` — Version index and external version identifier.
  * - Unique on `(musicId, versionId)`.
  */
-export const musicVersion = sqliteTable(
+export const musicVersion = pgTable(
   'music_version',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     musicId: integer('music_id')
       .notNull()
       .references(() => music.id, { onDelete: 'cascade' }),
@@ -65,10 +66,10 @@ export const musicVersion = sqliteTable(
  * - `resolution` — Quality label (720p, 1080p, audio-only, etc.).
  * - `audioUrl` / `videoUrl` — Optional stream URLs for playback.
  */
-export const musicResolution = sqliteTable(
+export const musicResolution = pgTable(
   'music_resolution',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     musicVersionId: integer('music_version_id')
       .notNull()
       .references(() => musicVersion.versionId, { onDelete: 'cascade' }),
