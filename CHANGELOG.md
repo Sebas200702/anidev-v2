@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/Sebas200702/anidev-v2/compare/v0.1.2...v0.1.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* **db:** Break circular import between auth-schema and auth-relations ([735e0fc](https://github.com/Sebas200702/anidev-v2/commit/735e0fc41671b821a3aaf9a8ee43862d782dbbbc))
+
 ### [0.1.2](https://github.com/Sebas200702/anidev-v2/compare/v0.1.1...v0.1.2) (2026-08-07)
 
 

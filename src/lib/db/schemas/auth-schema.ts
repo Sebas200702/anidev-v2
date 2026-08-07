@@ -2,8 +2,8 @@
  * @module lib/db/schemas/auth-schema
  *
  * Better Auth persistence layer: user accounts, sessions, linked OAuth/credential
- * accounts, and verification tokens. Includes Drizzle relation helpers for
- * eager-loading sessions and accounts from a user root.
+ * accounts, and verification tokens. Drizzle relation helpers live in the
+ * sibling `auth-relations` module, which imports the tables from here.
  *
  * @remarks
  * Table and column names follow Better Auth Drizzle adapter conventions.
@@ -11,6 +11,7 @@
  * deletes on `userId` foreign keys remove orphaned sessions and accounts.
  *
  * @see {@link module:lib/auth/server} for adapter registration
+ * @see {@link module:lib/db/schemas/auth-relations} for the relation graph
  * @see {@link module:lib/db/schemas/profile} for extended user profile data
  */
 import { sql } from 'drizzle-orm'
@@ -51,7 +52,7 @@ export const user = pgTable('user', {
  * - `expiresAt` — Hard expiry; expired tokens must be rejected.
  * - `userId` — FK to {@link user.id}; indexed for lookup by user.
  *
- * @see {@link sessionRelations} for Drizzle `user` join
+ * @see {@link module:lib/db/schemas/auth-relations.sessionRelations} for Drizzle `user` join
  */
 export const session = pgTable(
   'session',
@@ -83,7 +84,7 @@ export const session = pgTable(
  * - `password` — Hashed credential for email/password provider when present.
  * - Token columns — OAuth access/refresh tokens and expiry metadata.
  *
- * @see {@link accountRelations} for Drizzle `user` join
+ * @see {@link module:lib/db/schemas/auth-relations.accountRelations} for Drizzle `user` join
  */
 export const account = pgTable(
   'account',
@@ -141,9 +142,3 @@ export const verification = pgTable(
   },
   (table) => [index('verification_identifier_idx').on(table.identifier)]
 )
-
-export {
-  accountRelations,
-  sessionRelations,
-  userRelations,
-} from '@db/schemas/auth-relations'
