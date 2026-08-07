@@ -1,16 +1,19 @@
 /**
  * @module lib/monitoring/sentry
  *
- * Sentry initialization and React error-boundary wiring for server (Node),
- * Astro, and client React runtimes. Centralizes DSN, environment tagging, and
- * trace sampling so production observability stays consistent across surfaces.
+ * Error monitoring initialization and React error-boundary wiring for server
+ * (Node), Astro, and client React runtimes, pointed at a self-hosted
+ * Sentry-compatible backend (Rustrak). Centralizes DSN, environment tagging,
+ * and trace sampling so observability stays consistent across surfaces.
  *
  * @remarks
  * Monitoring is disabled when `SENTRY_DSN` is absent — all exported functions
- * become no-ops or pass-through wrappers. `tracesSampleRate` is fixed at `0.1`
- * for cost control; adjust here for higher fidelity in staging.
+ * become no-ops or pass-through wrappers, and none throw in runtime even when
+ * the backend is unreachable. `tracesSampleRate` is fixed at `0.1` for cost
+ * control; adjust here for higher fidelity in staging.
  *
  * @see {@link module:config/env} for `SENTRY_DSN` and `NODE_ENV`
+ * @see {@link module:lib/monitoring} for the re-export barrel
  * @see {@link initServerSentry} for Node bootstrap
  * @see {@link initAstroSentry} for Astro integration bootstrap
  * @see {@link wrapReactComponentWithSentry} for client island protection
