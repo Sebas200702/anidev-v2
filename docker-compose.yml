@@ -85,6 +85,16 @@ services:
       - SESSION_SECRET_KEY=${RUSTRAK_SESSION_SECRET_KEY:-667e0e851a0df3f47d1929a54638dc9bad8563606789bd10c4a7c091070db092}
       - CREATE_SUPERUSER=${RUSTRAK_SUPERUSER:-admin@example.com:admin}
 
+  rustrak-ui:
+    image: rustrak/rustrak-ui:v0.14.1
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - RUSTRAK_API_URL=http://rustrak:8080
+    depends_on:
+      - rustrak
+
 volumes:
   postgres_data:
   dragonfly_data:
