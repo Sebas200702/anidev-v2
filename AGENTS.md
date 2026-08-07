@@ -45,7 +45,7 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run dev` | Astro dev server |
 | `bun run build` | Production build (Vercel output) |
 | `bun run preview` | Run the built output locally |
-| `bun run format` | Biome formatter (`biome format --write .`; excludes `.astro`) |
+| `bun run format` | Biome formatter (`biome format --write .`; excludes `.astro`; LF line endings) |
 | `bun run check` | Biome lint + format check (exit non-zero on errors) |
 | `bun run check:write` | Biome lint, applying safe fixes |
 | `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
@@ -108,7 +108,7 @@ bun run format → bun run check → bun run check:types → bun run test → bu
 ```
 
 Rationale:
-- `bun run format` — enforce Biome formatting (single quotes, no semicolons, 80 col; CRLF preserved).
+- `bun run format` — enforce Biome formatting (single quotes, no semicolons, 80 col; LF enforced via `.gitattributes`).
 - `bun run check` — Biome lint (recommended rules; import sorting disabled) + format verification.
 - `bun run check:types` — Astro/TS typecheck (`astro check`); catches wrong barrel exports and `.astro` module resolution.
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
@@ -249,7 +249,7 @@ Few. When present they explain the **why**, not the **what**. Follow the JSDoc c
 Never `throw new Error(...)` generic, never `console.log(error)` as handling. Use `AppError` subclasses / the domain error factories and `mapErrorToHttp` (see API Route Patterns); repositories use `try/catch` + the error factory obligatorily. See `src/shared/errors/`.
 
 ## Formatting/Lint Config
-- **Biome** (`biome.json`): semi:false, **single quotes**, trailing commas `es5`, 80 col, 2-space indent, CRLF preserved. Lint = recommended preset (import sorting disabled; `noSvgWithoutTitle`, `noImplicitAnyLet` relaxed). Config is authoritative — edit `biome.json`, do not reformat to tabs/double quotes.
+- **Biome** (`biome.json`): semi:false, **single quotes**, trailing commas `es5`, 80 col, 2-space indent, LF enforced via `.gitattributes`. Lint = recommended preset (import sorting disabled; `noSvgWithoutTitle`, `noImplicitAnyLet` relaxed). Config is authoritative — edit `biome.json`, do not reformat to tabs/double quotes.
 - **Prettier** (`.prettierignore` + `prettier.config.cjs`): only for `.astro` files; keep `prettier-plugin-astro`, `prettier-plugin-tailwindcss`.
 
 ## Important Constraints
