@@ -214,7 +214,8 @@ CREATE TABLE "music_version" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"music_id" integer NOT NULL,
 	"version" integer NOT NULL,
-	"version_id" integer NOT NULL
+	"version_id" integer NOT NULL,
+	CONSTRAINT "music_version_version_id_unique" UNIQUE("version_id")
 );
 --> statement-breakpoint
 CREATE TABLE "producer" (
@@ -364,7 +365,6 @@ CREATE UNIQUE INDEX "episode_anime_number_unique" ON "episode" USING btree ("ani
 CREATE UNIQUE INDEX "episode_source_unique" ON "episode_source" USING btree ("episode_id","src");--> statement-breakpoint
 CREATE UNIQUE INDEX "episode_subtitle_unique" ON "episode_subtitle" USING btree ("episode_id","language","src");--> statement-breakpoint
 CREATE UNIQUE INDEX "music_resolution_song_res_unique" ON "music_resolution" USING btree ("song_id","resolution");--> statement-breakpoint
-CREATE UNIQUE INDEX "music_version_unique" ON "music_version" USING btree ("music_id","version_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "producer_title_unique" ON "producer_title" USING btree ("producer_id","title");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "staff_alt_name_unique" ON "staff_alternative_name" USING btree ("staff_id","name");--> statement-breakpoint

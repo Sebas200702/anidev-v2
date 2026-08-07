@@ -42,7 +42,8 @@ export const music = pgTable('music', {
  * **Key columns:**
  * - `musicId` — FK to {@link music.id}; cascade on delete.
  * - `version` / `versionId` — Version index and external version identifier.
- * - Unique on `(musicId, versionId)`.
+ * - `versionId` unique — the external catalog id is the version's identity and
+ *   is referenced by {@link musicResolution}; Postgres requires it be unique.
  */
 export const musicVersion = pgTable(
   'music_version',
@@ -52,9 +53,8 @@ export const musicVersion = pgTable(
       .notNull()
       .references(() => music.id, { onDelete: 'cascade' }),
     version: integer('version').notNull(),
-    versionId: integer('version_id').notNull(),
-  },
-  (t) => [uniqueIndex('music_version_unique').on(t.musicId, t.versionId)]
+    versionId: integer('version_id').notNull().unique(),
+  }
 )
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "6e2d3687-aeff-4858-9f1c-255ea0dded69",
+  "id": "89dace9c-ffd0-483b-a07e-8e3141cf8ce5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -110,8 +110,12 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -254,8 +258,12 @@
           "name": "anime_character_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_character",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -263,8 +271,12 @@
           "name": "anime_character_character_id_character_mal_id_fk",
           "tableFrom": "anime_character",
           "tableTo": "character",
-          "columnsFrom": ["character_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "character_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -272,7 +284,11 @@
       "compositePrimaryKeys": {
         "anime_character_anime_id_character_id_role_pk": {
           "name": "anime_character_anime_id_character_id_role_pk",
-          "columns": ["anime_id", "character_id", "role"]
+          "columns": [
+            "anime_id",
+            "character_id",
+            "role"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -303,8 +319,12 @@
           "name": "anime_demographic_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_demographic",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -312,8 +332,12 @@
           "name": "anime_demographic_demographic_id_demographic_mal_id_fk",
           "tableFrom": "anime_demographic",
           "tableTo": "demographic",
-          "columnsFrom": ["demographic_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "demographic_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -321,7 +345,10 @@
       "compositePrimaryKeys": {
         "anime_demographic_anime_id_demographic_id_pk": {
           "name": "anime_demographic_anime_id_demographic_id_pk",
-          "columns": ["anime_id", "demographic_id"]
+          "columns": [
+            "anime_id",
+            "demographic_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -376,8 +403,12 @@
           "name": "anime_external_ids_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_external_ids",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -411,8 +442,12 @@
           "name": "anime_genre_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_genre",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -420,8 +455,12 @@
           "name": "anime_genre_genre_id_genre_mal_id_fk",
           "tableFrom": "anime_genre",
           "tableTo": "genre",
-          "columnsFrom": ["genre_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "genre_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -429,7 +468,10 @@
       "compositePrimaryKeys": {
         "anime_genre_anime_id_genre_id_pk": {
           "name": "anime_genre_anime_id_genre_id_pk",
-          "columns": ["anime_id", "genre_id"]
+          "columns": [
+            "anime_id",
+            "genre_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -478,8 +520,12 @@
           "name": "anime_media_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_media",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -513,8 +559,12 @@
           "name": "anime_music_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_music",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -522,8 +572,12 @@
           "name": "anime_music_music_id_music_id_fk",
           "tableFrom": "anime_music",
           "tableTo": "music",
-          "columnsFrom": ["music_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "music_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -531,7 +585,10 @@
       "compositePrimaryKeys": {
         "anime_music_anime_id_music_id_pk": {
           "name": "anime_music_anime_id_music_id_pk",
-          "columns": ["anime_id", "music_id"]
+          "columns": [
+            "anime_id",
+            "music_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -562,8 +619,12 @@
           "name": "anime_producer_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_producer",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -571,8 +632,12 @@
           "name": "anime_producer_producer_id_producer_mal_id_fk",
           "tableFrom": "anime_producer",
           "tableTo": "producer",
-          "columnsFrom": ["producer_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "producer_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -580,7 +645,10 @@
       "compositePrimaryKeys": {
         "anime_producer_anime_id_producer_id_pk": {
           "name": "anime_producer_anime_id_producer_id_pk",
-          "columns": ["anime_id", "producer_id"]
+          "columns": [
+            "anime_id",
+            "producer_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -617,8 +685,12 @@
           "name": "anime_relation_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_relation",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -626,8 +698,12 @@
           "name": "anime_relation_related_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_relation",
           "tableTo": "anime",
-          "columnsFrom": ["related_anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "related_anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -635,7 +711,11 @@
       "compositePrimaryKeys": {
         "anime_relation_anime_id_related_anime_id_relation_type_pk": {
           "name": "anime_relation_anime_id_related_anime_id_relation_type_pk",
-          "columns": ["anime_id", "related_anime_id", "relation_type"]
+          "columns": [
+            "anime_id",
+            "related_anime_id",
+            "relation_type"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -672,8 +752,12 @@
           "name": "anime_staff_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_staff",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -681,8 +765,12 @@
           "name": "anime_staff_staff_id_staff_mal_id_fk",
           "tableFrom": "anime_staff",
           "tableTo": "staff",
-          "columnsFrom": ["staff_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "staff_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -690,7 +778,11 @@
       "compositePrimaryKeys": {
         "anime_staff_anime_id_staff_id_role_pk": {
           "name": "anime_staff_anime_id_staff_id_role_pk",
-          "columns": ["anime_id", "staff_id", "role"]
+          "columns": [
+            "anime_id",
+            "staff_id",
+            "role"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -721,8 +813,12 @@
           "name": "anime_theme_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_theme",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -730,8 +826,12 @@
           "name": "anime_theme_theme_id_theme_mal_id_fk",
           "tableFrom": "anime_theme",
           "tableTo": "theme",
-          "columnsFrom": ["theme_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "theme_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -739,7 +839,10 @@
       "compositePrimaryKeys": {
         "anime_theme_anime_id_theme_id_pk": {
           "name": "anime_theme_anime_id_theme_id_pk",
-          "columns": ["anime_id", "theme_id"]
+          "columns": [
+            "anime_id",
+            "theme_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -798,8 +901,12 @@
           "name": "anime_title_synonym_anime_id_anime_mal_id_fk",
           "tableFrom": "anime_title_synonym",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -855,8 +962,12 @@
           "name": "artist_mal_id_staff_mal_id_fk",
           "tableFrom": "artist",
           "tableTo": "staff",
-          "columnsFrom": ["mal_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "mal_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -945,8 +1056,12 @@
           "name": "character_media_character_id_character_mal_id_fk",
           "tableFrom": "character_media",
           "tableTo": "character",
-          "columnsFrom": ["character_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "character_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1008,8 +1123,12 @@
           "name": "character_nickname_character_id_character_mal_id_fk",
           "tableFrom": "character_nickname",
           "tableTo": "character",
-          "columnsFrom": ["character_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "character_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1049,8 +1168,12 @@
           "name": "character_voice_actor_character_id_character_mal_id_fk",
           "tableFrom": "character_voice_actor",
           "tableTo": "character",
-          "columnsFrom": ["character_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "character_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1058,8 +1181,12 @@
           "name": "character_voice_actor_staff_id_staff_mal_id_fk",
           "tableFrom": "character_voice_actor",
           "tableTo": "staff",
-          "columnsFrom": ["staff_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "staff_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1067,7 +1194,11 @@
       "compositePrimaryKeys": {
         "character_voice_actor_character_id_staff_id_language_pk": {
           "name": "character_voice_actor_character_id_staff_id_language_pk",
-          "columns": ["character_id", "staff_id", "language"]
+          "columns": [
+            "character_id",
+            "staff_id",
+            "language"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -1175,8 +1306,12 @@
           "name": "episode_anime_id_anime_mal_id_fk",
           "tableFrom": "episode",
           "tableTo": "anime",
-          "columnsFrom": ["anime_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1228,8 +1363,12 @@
           "name": "episode_media_episode_id_episode_id_fk",
           "tableFrom": "episode_media",
           "tableTo": "episode",
-          "columnsFrom": ["episode_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "episode_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1291,8 +1430,12 @@
           "name": "episode_source_episode_id_episode_id_fk",
           "tableFrom": "episode_source",
           "tableTo": "episode",
-          "columnsFrom": ["episode_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "episode_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1366,8 +1509,12 @@
           "name": "episode_subtitle_episode_id_episode_id_fk",
           "tableFrom": "episode_subtitle",
           "tableTo": "episode",
-          "columnsFrom": ["episode_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "episode_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1457,8 +1604,12 @@
           "name": "music_artist_music_id_music_id_fk",
           "tableFrom": "music_artist",
           "tableTo": "music",
-          "columnsFrom": ["music_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "music_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1466,8 +1617,12 @@
           "name": "music_artist_artist_id_artist_id_fk",
           "tableFrom": "music_artist",
           "tableTo": "artist",
-          "columnsFrom": ["artist_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "artist_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1475,7 +1630,10 @@
       "compositePrimaryKeys": {
         "music_artist_music_id_artist_id_pk": {
           "name": "music_artist_music_id_artist_id_pk",
-          "columns": ["music_id", "artist_id"]
+          "columns": [
+            "music_id",
+            "artist_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -1524,8 +1682,12 @@
           "name": "music_media_music_id_music_id_fk",
           "tableFrom": "music_media",
           "tableTo": "music",
-          "columnsFrom": ["music_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "music_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1605,8 +1767,12 @@
           "name": "music_resolution_music_version_id_music_version_version_id_fk",
           "tableFrom": "music_resolution",
           "tableTo": "music_version",
-          "columnsFrom": ["music_version_id"],
-          "columnsTo": ["version_id"],
+          "columnsFrom": [
+            "music_version_id"
+          ],
+          "columnsTo": [
+            "version_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1646,42 +1812,32 @@
           "notNull": true
         }
       },
-      "indexes": {
-        "music_version_unique": {
-          "name": "music_version_unique",
-          "columns": [
-            {
-              "expression": "music_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "version_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "music_version_music_id_music_id_fk": {
           "name": "music_version_music_id_music_id_fk",
           "tableFrom": "music_version",
           "tableTo": "music",
-          "columnsFrom": ["music_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "music_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "music_version_version_id_unique": {
+          "name": "music_version_version_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "version_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1764,8 +1920,12 @@
           "name": "producer_media_producer_id_producer_mal_id_fk",
           "tableFrom": "producer_media",
           "tableTo": "producer",
-          "columnsFrom": ["producer_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "producer_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1833,8 +1993,12 @@
           "name": "producer_title_producer_id_producer_mal_id_fk",
           "tableFrom": "producer_title",
           "tableTo": "producer",
-          "columnsFrom": ["producer_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "producer_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1940,8 +2104,12 @@
           "name": "profile_user_id_user_id_fk",
           "tableFrom": "profile",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2028,8 +2196,12 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2039,7 +2211,9 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": ["token"]
+          "columns": [
+            "token"
+          ]
         }
       },
       "policies": {},
@@ -2146,8 +2320,12 @@
           "name": "staff_alternative_name_staff_id_staff_mal_id_fk",
           "tableFrom": "staff_alternative_name",
           "tableTo": "staff",
-          "columnsFrom": ["staff_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "staff_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2199,8 +2377,12 @@
           "name": "staff_media_staff_id_staff_mal_id_fk",
           "tableFrom": "staff_media",
           "tableTo": "staff",
-          "columnsFrom": ["staff_id"],
-          "columnsTo": ["mal_id"],
+          "columnsFrom": [
+            "staff_id"
+          ],
+          "columnsTo": [
+            "mal_id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2293,7 +2475,9 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       },
       "policies": {},
