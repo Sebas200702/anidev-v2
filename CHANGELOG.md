@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/Sebas200702/anidev-v2/compare/v0.1.0...v0.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **anime:** Annotate explicit return types on cached queries ([181a7cb](https://github.com/Sebas200702/anidev-v2/commit/181a7cbaf863a7b268be76275ddbe4db3ad294a4))
+* **auth:** Use Zod 4 top-level z.email validator ([6d86427](https://github.com/Sebas200702/anidev-v2/commit/6d864273cf728bef3f8b567ed91b82562b712e51))
+* **media:** Add typed EmptyImageError for empty buffers ([e7c3379](https://github.com/Sebas200702/anidev-v2/commit/e7c33791f8b73e0ded8e7fe1bdefed38e489a553))
+* **media:** Drop non-null assertion in music media mapping ([594004d](https://github.com/Sebas200702/anidev-v2/commit/594004da80a979ad6ae38f1ed3f1f4f721d89867))
+* **media:** Type the resolved media variable explicitly ([7aba7f3](https://github.com/Sebas200702/anidev-v2/commit/7aba7f3e477bbebecf96a625fcc53bf919f7230e))
+* **user:** Parse favorite/watch list ids with explicit radix ([2beace5](https://github.com/Sebas200702/anidev-v2/commit/2beace5b76a9d2bb9ebb051e79831c6718e8f4da))
+
 ## 0.1.0 (2026-08-07)
 
 
