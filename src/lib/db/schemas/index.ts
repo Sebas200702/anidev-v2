@@ -4,7 +4,8 @@
  * Named re-exports of all Drizzle ORM schema definitions for the AniDev
  * PostgreSQL database. Tables cover authentication (Better Auth), anime catalog
  * metadata, related media entities, junction relations, and extended user
- * profiles.
+ * profiles. Relation graphs are re-exported from their own modules (e.g.
+ * `./auth-relations`) to avoid circular imports with the table definitions.
  *
  * @remarks
  * Import from `@db/schemas` when repositories need multiple table symbols.
@@ -32,15 +33,12 @@ export {
 } from './anime-taxonomy-relations'
 export { genre, theme, demographic } from './anime-taxonomy'
 export { artist } from './artist'
+export { user, session, account, verification } from './auth-schema'
 export {
-  user,
-  session,
-  account,
-  verification,
   userRelations,
   sessionRelations,
   accountRelations,
-} from './auth-schema'
+} from './auth-relations'
 export { character, characterNickname } from './character'
 export { characterMedia } from './character-media'
 export { characterVoiceActor } from './character-relations'
