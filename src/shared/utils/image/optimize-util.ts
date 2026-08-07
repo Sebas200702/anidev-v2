@@ -69,12 +69,26 @@ export class ImageTooLargeError extends Error {
 }
 
 /**
+ * Thrown when an empty image buffer reaches the optimizer.
+ *
+ * @remarks
+ * Signals invalid upstream input before Sharp decodes. Callers should map to a
+ * 400/404 response as appropriate.
+ */
+export class EmptyImageError extends Error {
+  constructor() {
+    super('Empty buffer')
+    this.name = 'EmptyImageError'
+  }
+}
+
+/**
  * Resizes and re-encodes an image buffer using Sharp.
  *
  * @param buffer - Raw image bytes from fetch or disk
  * @param options - Optional `width`, `quality` (default 50), and `format` (default `'webp'`)
  * @returns Optimized buffer and resulting MIME type (`image/webp` or `image/avif`)
- * @throws {Error} When `buffer` is empty or missing (`'Empty buffer'`)
+ * @throws {EmptyImageError} When `buffer` is empty or missing
  * @throws {ImageTooLargeError} When `buffer.length` exceeds 10 MiB
  * @throws Sharp decode errors for corrupt images (propagated from Sharp)
  *
@@ -97,7 +111,7 @@ export async function optimizeImageBuffer(
   { width, quality = 50, format = 'webp' }: OptimizeOptions = {}
 ): Promise<{ buffer: Buffer; mimeType: string }> {
   if (!buffer || buffer.length === 0) {
-    throw new Error('Empty buffer')
+    throw new EmptyImageError()
   }
 
   if (buffer.length > MAX_SIZE_BYTES) {

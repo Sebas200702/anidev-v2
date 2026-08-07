@@ -22,6 +22,7 @@ export {
   type ImageSource,
   type OptimizeOptions,
   ImageTooLargeError,
+  EmptyImageError,
   normalizeOptimizeOptions,
 } from './optimize-util'
 export {
