@@ -17,7 +17,7 @@
  * {
  *   params: APIContext['params'],  // Astro dynamic route segments, e.g. { id: '42' }
  *   query: Record<string, string>, // URL search params as plain key/value strings
- *   body: unknown            // JSON body for non-GET; null for GET or parse failures
+ *   body: unknown,                 // JSON body for non-GET; null for GET or parse failures
  * }
  * ```
  *
