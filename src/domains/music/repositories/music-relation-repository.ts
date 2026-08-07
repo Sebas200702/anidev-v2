@@ -7,7 +7,27 @@ import { artist } from '@db/schemas/artist'
 import { musicArtist } from '@db/schemas/music-relations'
 import type { MusicArtistDB } from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
+import type { PgColumn } from 'drizzle-orm/pg-core'
 import { dbError } from '@shared/errors/db-errors'
+
+/**
+ * Builds the shared `musicArtist` × `artist` join projection.
+ *
+ * @template TSelection - Shape of the selected columns; lets Drizzle preserve
+ * row inference from whichever projection each lookup passes
+ * @param selection - Columns to select from the joined tables; the single- and
+ * multi-music lookups differ only in whether `musicId` is included
+ * @returns A Drizzle query pinned to the `musicArtist` × `artist` inner join
+ * @remarks Centralizes the join so both artist lookups stay in sync.
+ */
+function baseArtistQuery<TSelection extends Record<string, PgColumn>>(
+  selection: TSelection
+) {
+  return db
+    .select(selection)
+    .from(musicArtist)
+    .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+}
 
 /**
  * Reads artist relations for music records.
@@ -36,15 +56,11 @@ export const musicRelationRepository = {
    */
   async findArtistsByMusicId(musicId: number): Promise<MusicArtistDB[]> {
     try {
-      const rows = await db
-        .select({
-          id: musicArtist.artistId,
-          name: artist.name,
-          malId: artist.malId,
-        })
-        .from(musicArtist)
-        .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-        .where(eq(musicArtist.musicId, musicId))
+      const rows = await baseArtistQuery({
+        id: musicArtist.artistId,
+        name: artist.name,
+        malId: artist.malId,
+      }).where(eq(musicArtist.musicId, musicId))
 
       return rows
     } catch (error) {
@@ -70,16 +86,12 @@ export const musicRelationRepository = {
     if (musicIds.length === 0) return []
 
     try {
-      const rows = await db
-        .select({
-          id: musicArtist.artistId,
-          name: artist.name,
-          malId: artist.malId,
-          musicId: musicArtist.musicId,
-        })
-        .from(musicArtist)
-        .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-        .where(inArray(musicArtist.musicId, musicIds))
+      const rows = await baseArtistQuery({
+        id: musicArtist.artistId,
+        name: artist.name,
+        malId: artist.malId,
+        musicId: musicArtist.musicId,
+      }).where(inArray(musicArtist.musicId, musicIds))
 
       return rows
     } catch (error) {
