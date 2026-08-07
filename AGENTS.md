@@ -31,9 +31,14 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 
 - Local credentials live in `.env.local.example` (copy to `.env.local`) and
   point at those local ports; they are separate from production (`.env.example`).
+- Compose reads its required variables (POSTGRES_USER/PASSWORD/DB,
+  RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, …) from the project `.env`;
+  copy `.env.local.example` → `.env` (or export the vars) before
+  `docker compose up -d`.
 - Apply migrations against the local DB with `bun run db:migrate`.
-- Dashboard UIs: Rustrak is on `http://localhost:8080` (create a project to get a
-  full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`).
+- Dashboard UIs: Rustrak UI is on `http://localhost:3000` (create a project there
+  to get a full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`);
+  the Rustrak server API itself listens on `http://localhost:8080`.
 - Named `postgres_data` / `dragonfly_data` / `rustrak_data` volumes persist across
   `docker compose down`; add `-v` to wipe them too.
 

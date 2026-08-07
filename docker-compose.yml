@@ -15,10 +15,17 @@
 # Tear down (keeps named volumes): docker compose down
 # Wipe data too:                   docker compose down -v
 #
-# Local connection URLs mirror `.env.local.example`; they are separate from
-# production credentials in `.env.example`. Inside the compose network the app
-# reaches services by service name (postgres, dragonfly), while host dev uses
-# the published localhost ports.
+# Local connection URLs are read from the environment (see `.env.local.example` for
+# the local values; see `.env.example` for production). Inside the compose network
+# the app reaches services by service name (postgres, dragonfly), while host dev
+# uses the published localhost ports.
+#
+# REQUIRED environment (read from the project `.env`, git-ignored — see the
+# "Local stack" section of AGENTS.md): POSTGRES_USER, POSTGRES_PASSWORD,
+# POSTGRES_DB, REDIS_URL, APP_BASE_URL, BETTER_AUTH_SECRET,
+# RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, SENTRY_DSN.
+# With `docker compose`, unset variables that are required cause configuration
+# to fail rather than falling back to insecure defaults.
 
 services:
   app:
@@ -32,11 +39,11 @@ services:
       - '4321:3000'
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://anidev:anidev@postgres:5432/anidev
-      - REDIS_URL=redis://dragonfly:6379
-      - APP_BASE_URL=http://localhost:4321
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-local-dev-only-replace-with-at-least-32-chars}
-      - SENTRY_DSN=http://e4600773d54141d8b8e8250fc480f168@rustrak:8080/1
+      - DATABASE_URL=postgres://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      - REDIS_URL=${REDIS_URL:?set REDIS_URL in .env}
+      - APP_BASE_URL=${APP_BASE_URL:?set APP_BASE_URL in .env}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      - SENTRY_DSN=${SENTRY_DSN:?set SENTRY_DSN in .env}
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,15 +54,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: anidev
-      POSTGRES_PASSWORD: anidev
-      POSTGRES_DB: anidev
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U anidev -d anidev']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-anidev} -d ${POSTGRES_DB:-anidev}']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -82,8 +89,8 @@ services:
       - rustrak_data:/data
     environment:
       - PORT=8080
-      - SESSION_SECRET_KEY=${RUSTRAK_SESSION_SECRET_KEY:-667e0e851a0df3f47d1929a54638dc9bad8563606789bd10c4a7c091070db092}
-      - CREATE_SUPERUSER=${RUSTRAK_SUPERUSER:-admin@example.com:admin}
+      - SESSION_SECRET_KEY=${RUSTRAK_SESSION_SECRET_KEY:?set RUSTRAK_SESSION_SECRET_KEY in .env}
+      - CREATE_SUPERUSER=${RUSTRAK_SUPERUSER:?set RUSTRAK_SUPERUSER in .env}
 
   rustrak-ui:
     image: rustrak/rustrak-ui:v0.14.1
