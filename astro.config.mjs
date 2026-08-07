@@ -11,6 +11,11 @@ import vercel from '@astrojs/vercel'
 
 const src = fileURLToPath(new URL('./src', import.meta.url))
 
+// ASTRO_ADAPTER=bun emits a standalone Bun server (dist/server/entry.mjs),
+// used by the Docker image runtime. Default (Vercel) targets the serverless
+// deploy output and is used by CI.
+const adapter = process.env.ASTRO_ADAPTER === 'bun' ? bun() : vercel()
+
 /** @type {import('astro').AstroIntegration} */
 const sessionMiddlewareIntegration = {
   name: 'session-middleware',
@@ -31,7 +36,7 @@ const sessionMiddlewareIntegration = {
 export default defineConfig({
   integrations: [sessionMiddlewareIntegration, react()],
   output: 'server',
-  adapter: vercel(),
+  adapter,
 
   vite: {
     plugins: [tailwindcss()],
