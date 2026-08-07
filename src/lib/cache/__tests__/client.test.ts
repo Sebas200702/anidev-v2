@@ -14,20 +14,22 @@
  */
 import { describe, expect, it, vi } from 'vitest'
 
-const { RedisMock, connectSpy, onSpy, instances } = vi.hoisted(() => {
+const { RedisMock, connectSpy, onSpy, instances, options } = vi.hoisted(() => {
   const connectSpy = vi.fn(() => Promise.resolve('OK'))
   const onSpy = vi.fn()
   const instances: unknown[] = []
+  const options = { constructorOpts: {} as Record<string, unknown> }
 
   class RedisMock {
     on = onSpy
     connect = connectSpy
-    constructor() {
+    constructor(_url: unknown, opts?: Record<string, unknown>) {
       instances.push(this)
+      options.constructorOpts = opts ?? {}
     }
   }
 
-  return { RedisMock, connectSpy, onSpy, instances }
+  return { RedisMock, connectSpy, onSpy, instances, options }
 })
 
 vi.mock('@config/env', () => ({
@@ -44,7 +46,7 @@ vi.mock('@config/env', () => ({
 
 vi.mock('ioredis', () => ({ Redis: RedisMock }))
 
-import '@lib/cache/client'
+import { retryStrategy } from '@lib/cache/client'
 
 describe('redis client bootstrap', () => {
   it('connects eagerly so the first cache operation is not degraded', () => {
@@ -60,5 +62,20 @@ describe('redis client bootstrap', () => {
 
   it('constructs a Redis instance at module load', () => {
     expect(instances.length).toBeGreaterThan(0)
+  })
+
+  it('passes a bound retry strategy to the constructor', () => {
+    expect(typeof options.constructorOpts.retryStrategy).toBe('function')
+  })
+
+  it('backoff is exponential until it caps at MAX_RETRY_DELAY_MS', () => {
+    const first = retryStrategy(1)
+    const second = retryStrategy(2)
+    expect(second).toBeGreaterThan(first)
+    expect(first).toBeGreaterThanOrEqual(250)
+  })
+
+  it('gives up (returns null) after MAX_RECONNECT_ATTEMPTS', () => {
+    expect(retryStrategy(6)).toBeNull()
   })
 })

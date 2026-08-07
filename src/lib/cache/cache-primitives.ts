@@ -13,16 +13,18 @@
  * @see {@link module:lib/cache/config} for key prefixes and TTL presets
  */
 import { redis } from '@lib/cache/client'
+import type { CacheTtl } from '@lib/cache/config'
 import { logger } from '@utils/logger-util'
 
 /**
  * Options for {@link cacheSet} controlling key expiry.
  *
- * @property ttlSeconds - Optional expiry in seconds. When omitted or `<= 0`,
- * the key persists until explicit {@link cacheDel} or Redis eviction policy.
+ * @property ttlSeconds - Required expiry in seconds. Every write stores the key
+ * with Redis `EX` so {@link cacheDel} can rely on a bounded lifetime even when
+ * the delete is suppressed by a degraded backend.
  */
 export type CacheGetSetOptions = {
-  ttlSeconds?: number
+  ttlSeconds: CacheTtl
 }
 
 /**
@@ -60,20 +62,20 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
 }
 
 /**
- * Stores a value in Redis as a JSON string, optionally with TTL expiry.
+ * Stores a value in Redis as a JSON string with a required TTL expiry.
  *
  * @typeParam T - Value type to serialize via `JSON.stringify`.
  * @param key - Redis cache key. Overwrites existing value atomically.
  * @param value - Serializable value; `undefined` becomes omitted in JSON.
  * Functions, `BigInt`, and circular structures will cause `JSON.stringify` to throw.
- * @param options - Optional TTL configuration via {@link CacheGetSetOptions}.
+ * @param options - Required TTL configuration via {@link CacheGetSetOptions}.
  * @returns `Promise<void>` resolving when Redis acknowledges the write. If the
  * cache is unreachable the write is skipped and a warning logged — the caller
  * must not assume persistence succeeded.
  *
  * @example
  * ```typescript
- * await cacheSet('anime:list:page:1', { items: [], total: 0 }, { ttlSeconds: 3600 })
+ * await cacheSet('anime:list:page:1', { items: [], total: 0 }, { ttlSeconds: CacheTtl.Short })
  * ```
  *
  * @see {@link CacheTtl} for standard expiry durations
@@ -82,16 +84,11 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
 export async function cacheSet<T>(
   key: string,
   value: T,
-  { ttlSeconds }: CacheGetSetOptions = {}
+  { ttlSeconds }: CacheGetSetOptions
 ): Promise<void> {
   try {
     const payload = JSON.stringify(value)
-
-    if (ttlSeconds && ttlSeconds > 0) {
-      await redis.set(key, payload, 'EX', ttlSeconds)
-    } else {
-      await redis.set(key, payload)
-    }
+    await redis.set(key, payload, 'EX', ttlSeconds)
   } catch (error) {
     logger.warn({ err: error, key }, 'Cache degraded (cache write skipped)')
   }

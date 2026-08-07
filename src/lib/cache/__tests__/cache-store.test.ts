@@ -37,6 +37,7 @@ vi.mock('@lib/cache/client', () => ({
 
 import { cacheDel, cacheGet, cacheSet } from '@lib/cache/cache-primitives'
 import { withCache } from '@lib/cache/cache-store'
+import { CacheTtl } from '@lib/cache/config'
 
 describe('cache-primitives with a healthy ioredis client', () => {
   beforeEach(() => {
@@ -47,7 +48,13 @@ describe('cache-primitives with a healthy ioredis client', () => {
     setMock.mockResolvedValueOnce('OK')
     getMock.mockResolvedValueOnce('{"malId":5114,"title":"Cowboy Bebop"}')
 
-    await cacheSet('anime:details:5114', { malId: 5114, title: 'Cowboy Bebop' })
+    await cacheSet(
+      'anime:details:5114',
+      { malId: 5114, title: 'Cowboy Bebop' },
+      {
+        ttlSeconds: CacheTtl.Medium,
+      }
+    )
     const got = await cacheGet<{ malId: number; title: string }>(
       'anime:details:5114'
     )
@@ -55,20 +62,16 @@ describe('cache-primitives with a healthy ioredis client', () => {
     expect(got).toEqual({ malId: 5114, title: 'Cowboy Bebop' })
     expect(setMock).toHaveBeenCalledWith(
       'anime:details:5114',
-      '{"malId":5114,"title":"Cowboy Bebop"}'
+      '{"malId":5114,"title":"Cowboy Bebop"}',
+      'EX',
+      CacheTtl.Medium
     )
   })
 
-  it('applies the EX TTL when ttlSeconds is positive', async () => {
-    await cacheSet('k', 1, { ttlSeconds: 300 })
+  it('writes every entry with the required EX TTL', async () => {
+    await cacheSet('k', 1, { ttlSeconds: CacheTtl.Short })
 
-    expect(setMock).toHaveBeenCalledWith('k', '1', 'EX', 300)
-  })
-
-  it('omits the TTL when ttlSeconds is absent', async () => {
-    await cacheSet('k', 1)
-
-    expect(setMock).toHaveBeenCalledWith('k', '1')
+    expect(setMock).toHaveBeenCalledWith('k', '1', 'EX', CacheTtl.Short)
   })
 
   it('treats a missing key as a miss (null)', async () => {
@@ -99,7 +102,8 @@ describe('withCache graceful degradation', () => {
     const result = await withCache({
       key: 'anime:details:5114',
       getCache: cacheGet,
-      setCache: (key, value) => cacheSet(key, value),
+      setCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Medium }),
       compute,
     })
 
@@ -117,7 +121,9 @@ describe('withCache graceful degradation', () => {
   it('skips the write (no throw) when the cache store fails', async () => {
     setMock.mockRejectedValueOnce(new Error('down'))
 
-    await expect(cacheSet('key', { ok: true })).resolves.toBeUndefined()
+    await expect(
+      cacheSet('key', { ok: true }, { ttlSeconds: CacheTtl.Medium })
+    ).resolves.toBeUndefined()
   })
 
   it('propagates compute errors (DB failures remain visible)', async () => {
@@ -130,7 +136,8 @@ describe('withCache graceful degradation', () => {
       withCache({
         key: 'k',
         getCache: cacheGet,
-        setCache: (key, value) => cacheSet(key, value),
+        setCache: (key, value) =>
+          cacheSet(key, value, { ttlSeconds: CacheTtl.Medium }),
         compute,
       })
     ).rejects.toThrow('db unavailable')

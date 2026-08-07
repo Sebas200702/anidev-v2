@@ -23,6 +23,34 @@ import { Redis } from 'ioredis'
 import { env } from '@config/env'
 import { logger } from '@utils/logger-util'
 
+const MAX_RECONNECT_ATTEMPTS = 5
+const INITIAL_RETRY_DELAY_MS = 250
+const MAX_RETRY_DELAY_MS = 5_000
+
+/**
+ * Bounded reconnection policy for the Redis client.
+ *
+ * @remarks
+ * ioredis reconnects automatically after a lost connection. Without a bound the
+ * client retries forever, hammering a down Dragonfly instance and amplifying
+ * error logging. This strategy applies exponential backoff and gives up after
+ * `MAX_RECONNECT_ATTEMPTS`, returning `null` so ioredis stops reconnecting and
+ * the cache degrades gracefully instead of retrying indefinitely.
+ *
+ * @param attempt - Zero-indexed reconnection attempt counter from ioredis.
+ * @returns Delay in milliseconds before the next attempt, or `null` to give up.
+ */
+export function retryStrategy(attempt: number): number | null {
+  if (attempt > MAX_RECONNECT_ATTEMPTS) {
+    logger.warn({ attempt }, 'Redis/Dragonfly reconnect limit reached')
+    return null
+  }
+  return Math.min(
+    INITIAL_RETRY_DELAY_MS * 2 ** (attempt - 1),
+    MAX_RETRY_DELAY_MS
+  )
+}
+
 /**
  * Shared Dragonfly/Redis client for cache read/write operations.
  *
@@ -43,10 +71,19 @@ import { logger } from '@utils/logger-util'
 export const redis = new Redis(env.REDIS_URL, {
   lazyConnect: true,
   enableOfflineQueue: false,
+  retryStrategy,
 })
 
+// Track consecutive errors so a down backend logs once instead of per event.
+let errorCount = 0
 redis.on('error', (err) => {
-  logger.error({ err }, 'Redis/Dragonfly cache client error')
+  errorCount += 1
+  if (errorCount === 1) {
+    logger.error({ err }, 'Redis/Dragonfly cache client error')
+  } else {
+    logger.warn({ err, errorCount }, 'Redis/Dragonfly cache client errors')
+  }
+  if (errorCount > MAX_RECONNECT_ATTEMPTS) errorCount = 0
 })
 
 // Connect eagerly so the socket reaches `ready` before the first cache
