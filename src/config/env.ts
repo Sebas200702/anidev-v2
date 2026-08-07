@@ -41,8 +41,8 @@ const envSchema = z.object({
     .enum(['development', 'test', 'production'])
     .default('development'),
 
-  DATABASE_URL: z.url(),
-  REDIS_URL: z.url(),
+  DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
+  REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
 
   SENTRY_DSN: z.string().optional(),
 

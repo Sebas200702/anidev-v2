@@ -3,11 +3,12 @@
  *
  * @module lib/monitoring/__tests__/sentry
  * @remarks
- * `sentry.ts` computes `isEnabled` from `env.SENTRY_DSN` at module load, so each
- * case stubs the env, resets modules, re-imports, and asserts on the SDK init
- * call. The SDKs (`@sentry/node`, `@sentry/astro`) and pino integration are
- * mocked to observe that logging is enabled and the pino bridge is wired when a
- * DSN is present, while calls no-op (never invoke the SDK) when it is absent.
+ * `sentry.ts` computes `isEnabled` from `env.SENTRY_DSN` at module load. The env
+ * is mocked with {@link module:@config/env} so each case swaps `SENTRY_DSN`, re-imports
+ * the module, and asserts on the SDK init call. The SDKs (`@sentry/node`,
+ * `@sentry/astro`) and pino integration are mocked to observe that logging is
+ * enabled and the pino bridge is wired when a DSN is present, while calls no-op
+ * (never invoke the SDK) when it is absent.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -26,23 +27,20 @@ vi.mock('@sentry/astro', () => ({
   pinoIntegration: sentryAstroPino,
 }))
 
-const baseEnv = {
+const mockEnv = vi.hoisted(() => ({
   NODE_ENV: 'development',
   DATABASE_URL: 'postgres://user:pass@localhost:5432/anidev',
   REDIS_URL: 'redis://localhost:6379',
-  SENTRY_DSN: undefined,
+  SENTRY_DSN: undefined as string | undefined,
   APP_BASE_URL: 'http://localhost:4321',
   BETTER_AUTH_SECRET: 'a'.repeat(32),
   LOG_LEVEL: 'info',
-}
+}))
 
-async function loadSentry(hasDsn: boolean) {
+vi.mock('@config/env', () => ({ env: mockEnv }))
+
+async function loadSentry() {
   vi.resetModules()
-  vi.stubEnv('SENTRY_DSN', hasDsn ? 'http://key@localhost:8080/1' : '')
-  for (const [key, value] of Object.entries(baseEnv)) {
-    if (key === 'SENTRY_DSN') continue
-    vi.stubEnv(key, String(value))
-  }
   return import('@lib/monitoring/sentry')
 }
 
@@ -55,7 +53,8 @@ beforeEach(() => {
 
 describe('monitoring log capture', () => {
   it('does not initialize the SDKs when SENTRY_DSN is absent', async () => {
-    const { initServerSentry, initAstroSentry } = await loadSentry(false)
+    mockEnv.SENTRY_DSN = ''
+    const { initServerSentry, initAstroSentry } = await loadSentry()
 
     initServerSentry()
     initAstroSentry()
@@ -65,7 +64,8 @@ describe('monitoring log capture', () => {
   })
 
   it('enables pino log capture in the Node SDK when a DSN is set', async () => {
-    const { initServerSentry } = await loadSentry(true)
+    mockEnv.SENTRY_DSN = 'http://key@localhost:8080/1'
+    const { initServerSentry } = await loadSentry()
 
     initServerSentry()
 
@@ -80,7 +80,8 @@ describe('monitoring log capture', () => {
   })
 
   it('enables pino log capture in the Astro SDK when a DSN is set', async () => {
-    const { initAstroSentry } = await loadSentry(true)
+    mockEnv.SENTRY_DSN = 'http://key@localhost:8080/1'
+    const { initAstroSentry } = await loadSentry()
 
     initAstroSentry()
 

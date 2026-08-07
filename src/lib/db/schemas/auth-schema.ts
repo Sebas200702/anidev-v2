@@ -13,7 +13,7 @@
  * @see {@link module:lib/auth/server} for adapter registration
  * @see {@link module:lib/db/schemas/profile} for extended user profile data
  */
-import { relations, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { pgTable, text, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
 /**
@@ -63,6 +63,7 @@ export const session = pgTable(
       .default(sql`now()`)
       .notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
+      .default(sql`now()`)
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
     ipAddress: text('ip_address'),
@@ -108,6 +109,7 @@ export const account = pgTable(
       .default(sql`now()`)
       .notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
+      .default(sql`now()`)
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
@@ -140,36 +142,8 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)]
 )
 
-/**
- * Drizzle relation graph: user → many sessions and accounts.
- *
- * @see {@link user} root entity
- */
-export const userRelations = relations(user, ({ many }) => ({
-  sessions: many(session),
-  accounts: many(account),
-}))
-
-/**
- * Drizzle relation: session → one owning user.
- *
- * @see {@link session.userId} foreign key
- */
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}))
-
-/**
- * Drizzle relation: account → one owning user.
- *
- * @see {@link account.userId} foreign key
- */
-export const accountRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id],
-  }),
-}))
+export {
+  accountRelations,
+  sessionRelations,
+  userRelations,
+} from '@db/schemas/auth-relations'

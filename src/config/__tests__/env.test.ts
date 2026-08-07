@@ -61,6 +61,36 @@ describe('env DATABASE_URL / REDIS_URL', () => {
     await expect(loadEnv({ REDIS_URL: 'nope' })).rejects.toThrow()
   })
 
+  it('accepts postgresql: scheme for DATABASE_URL', async () => {
+    const { env } = await loadEnv({
+      DATABASE_URL: 'postgresql://user:pass@localhost:5432/anidev',
+    })
+
+    expect(env.DATABASE_URL).toBe(
+      'postgresql://user:pass@localhost:5432/anidev'
+    )
+  })
+
+  it('accepts rediss: scheme for REDIS_URL', async () => {
+    const { env } = await loadEnv({ REDIS_URL: 'rediss://localhost:6379' })
+
+    expect(env.REDIS_URL).toBe('rediss://localhost:6379')
+  })
+
+  it.each(['http://localhost:5432/anidev', 'ftp://localhost:5432/anidev'])(
+    'rejects unsupported DATABASE_URL scheme %s',
+    async (url) => {
+      await expect(loadEnv({ DATABASE_URL: url })).rejects.toThrow()
+    }
+  )
+
+  it.each(['http://localhost:6379', 'ftp://localhost:6379'])(
+    'rejects unsupported REDIS_URL scheme %s',
+    async (url) => {
+      await expect(loadEnv({ REDIS_URL: url })).rejects.toThrow()
+    }
+  )
+
   it('rejects a BETTER_AUTH_SECRET shorter than 32 characters', async () => {
     await expect(loadEnv({ BETTER_AUTH_SECRET: 'too-short' })).rejects.toThrow()
   })
