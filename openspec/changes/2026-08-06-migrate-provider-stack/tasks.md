@@ -43,7 +43,7 @@
 
 - [x] 7.1 Crear `docker-compose.yml` con servicios PostgreSQL, Dragonfly y Rustrak: puertos locales, volúmenes nombrados, red propia y healthchecks por servicio.
 - [x] 7.2 Crear `.env.local.example` con las URLs/credenciales del stack local (distintas de producción) y documentar su uso en `AGENTS.md` o un README breve.
-- [ ] 7.3 Verificar que `docker compose up` levanta los tres servicios y que `db:migrate` aplica contra la instancia local.
+- [x] 7.3 Verificar que `docker compose up` levanta los tres servicios y que `db:migrate` aplica contra la instancia local.
 
 ## 8. Pruebas y gate de verificación
 
