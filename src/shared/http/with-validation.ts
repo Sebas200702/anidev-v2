@@ -17,7 +17,7 @@
  * {
  *   params: APIContext['params'],  // Astro dynamic route segments, e.g. { id: '42' }
  *   query: Record<string, string>, // URL search params as plain key/value strings
- *   body: unknown | null           // JSON body for non-GET; null for GET or parse failures
+ *   body: unknown            // JSON body for non-GET; null for GET or parse failures
  * }
  * ```
  *
@@ -66,7 +66,7 @@ type ValidationRequestData = {
    * - `GET` requests always receive `null` (body is not read).
    * - Invalid or empty JSON body yields `null` (not a validation error until the schema rejects it).
    */
-  body: unknown | null
+  body: unknown
 }
 
 /**

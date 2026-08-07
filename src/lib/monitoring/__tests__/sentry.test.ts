@@ -16,6 +16,7 @@ const sentryNodeInit = vi.fn()
 const sentryAstroInit = vi.fn()
 const sentryNodePino = vi.fn(() => ({ name: 'Pino' }))
 const sentryAstroPino = vi.fn(() => ({ name: 'Pino' }))
+const sentryBoundary = vi.fn((component) => component)
 
 vi.mock('@sentry/node', () => ({
   init: sentryNodeInit,
@@ -25,6 +26,10 @@ vi.mock('@sentry/node', () => ({
 vi.mock('@sentry/astro', () => ({
   init: sentryAstroInit,
   pinoIntegration: sentryAstroPino,
+}))
+
+vi.mock('@sentry/react', () => ({
+  withErrorBoundary: sentryBoundary,
 }))
 
 const mockEnv = vi.hoisted(() => ({
