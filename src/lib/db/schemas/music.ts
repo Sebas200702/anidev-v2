@@ -45,17 +45,14 @@ export const music = pgTable('music', {
  * - `versionId` unique — the external catalog id is the version's identity and
  *   is referenced by {@link musicResolution}; Postgres requires it be unique.
  */
-export const musicVersion = pgTable(
-  'music_version',
-  {
-    id: serial('id').primaryKey(),
-    musicId: integer('music_id')
-      .notNull()
-      .references(() => music.id, { onDelete: 'cascade' }),
-    version: integer('version').notNull(),
-    versionId: integer('version_id').notNull().unique(),
-  }
-)
+export const musicVersion = pgTable('music_version', {
+  id: serial('id').primaryKey(),
+  musicId: integer('music_id')
+    .notNull()
+    .references(() => music.id, { onDelete: 'cascade' }),
+  version: integer('version').notNull(),
+  versionId: integer('version_id').notNull().unique(),
+})
 
 /**
  * Streamable resolution assets (`music_resolution` table) for a music version.
