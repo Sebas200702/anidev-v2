@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/Sebas200702/anidev-v2/compare/v0.1.1...v0.1.2) (2026-08-07)
+
+
+### Bug Fixes
+
+* **ci:** Pass ASTRO_ADAPTER=bun build-arg to Docker workflows ([6619c8b](https://github.com/Sebas200702/anidev-v2/commit/6619c8b7bde21b8c780b7860d7664c16faf04684))
+
 ### [0.1.1](https://github.com/Sebas200702/anidev-v2/compare/v0.1.0...v0.1.1) (2026-08-07)
 
 

@@ -27,6 +27,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          build-args: |
+            ASTRO_ADAPTER=bun
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/anidev-v2:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/anidev-v2:${{ github.sha }}
