@@ -14,6 +14,7 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { createHash } from 'node:crypto'
 import type {
+  MediaAsset,
   OptimizedMedia,
   SemanticMediaPath,
 } from '@domains/media/types/media-types'
@@ -53,7 +54,7 @@ export async function fetchRawMedia(
   const cachedMeta = await mediaCache.getRawMeta(mergedParams)
   const src = cachedMeta?.src ?? null
 
-  let media
+  let media: MediaAsset
   if (src) {
     media = { id: 0, mediaType: params.mediaType, src, size: null }
   } else {
