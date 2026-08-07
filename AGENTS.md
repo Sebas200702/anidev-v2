@@ -276,10 +276,13 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 - Pre-release: `bun run release:prerelease` → `X.Y.Z-<tag>`
 
 **Release flow (the RELEASE phase of the lifecycle):**
-1. The feature/change must land on `master` via PR first.
-2. On `master` (pulled current), pick the release: `bun run release` (auto bumps from commits) or force `release:patch`/`release:minor`/`release:major`/`release:prerelease`. Preview first: `bun run release:dry`.
-3. `standard-version` bumps `package.json`, regenerates `CHANGELOG.md`, commits, and creates the git tag `vX.Y.Z`.
-4. Push branch and tag: `git push origin master && git push origin vX.Y.Z`.
+
+> **`master` is protected (PR required — no direct push).** This means a release/version-bump commit can never go straight to `master`; it must ride in a Pull Request like any other change. Do **not** run the release *after* the feature PR is already merged — you would then need a second throwaway branch/PR solely to carry the `chore(release):` bump. Instead, run the release **on the same feature branch before merging**, so the feature PR carries the version bump and tag together:
+
+1. On the **feature branch** (base `master`) and after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch`/`release:minor`/`release:major`/`release:prerelease`. Preview first: `bun run release:dry`, and confirm the bump type matches the commit set (a mix incl. `feat` → minor).
+2. `standard-version` bumps `package.json`, regenerates `CHANGELOG.md`, commits `chore(release): X.Y.Z`, and creates the local tag `vX.Y.Z`.
+3. Open/amend the feature PR including that release commit, get it green (`gate` + SonarQube + Vercel), and merge it.
+4. After merging, `git push origin vX.Y.Z` (tags are not restricted by the branch protection).
 5. CI `release.yml` (triggered on tag `v*`) builds the Docker image tagged `:<version>`, `:latest`, and `:<sha>` and deploys — so any published release is reproducible exactly.
 
 ## Commit Convention
