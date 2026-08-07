@@ -10,6 +10,7 @@ import { mapAnimeDetails } from '@domains/anime/mappers/anime-mapper'
 import { animeRepository } from '@domains/anime/repositories/anime-repository'
 import { animeTaxonomyRepository } from '@domains/anime/repositories/anime-taxonomy-repository'
 import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
+import type { AnimeDetails } from '@domains/anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for anime details.
@@ -41,7 +42,7 @@ export const animeService = {
    * // { malId, title, genres, imageUrl, slug, watchUrl, ... }
    * ```
    */
-  async getAnimeDetails(malId: number) {
+  async getAnimeDetails(malId: number): Promise<AnimeDetails> {
     return withCache({
       key: animeDetailsCache.key(malId),
       getCache: () => animeDetailsCache.get(malId),

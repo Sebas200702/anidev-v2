@@ -14,6 +14,7 @@ import { animeTaxonomyRepository } from '@domains/anime/repositories/anime-taxon
 import { animeTitleRepository } from '@domains/anime/repositories/anime-title-repository'
 import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
 import { animeMusicRepository } from '@domains/music/repositories/anime-music-repository'
+import type { AnimeFullDetails } from '@domains/anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for full anime details.
@@ -44,7 +45,7 @@ export const animeFullService = {
    * const full = await animeFullService.getAnimeFullByMalId(5114)
    * ```
    */
-  async getAnimeFullByMalId(malId: number) {
+  async getAnimeFullByMalId(malId: number): Promise<AnimeFullDetails> {
     return withCache({
       key: animeFullCache.key(malId),
       getCache: () => animeFullCache.get(malId),

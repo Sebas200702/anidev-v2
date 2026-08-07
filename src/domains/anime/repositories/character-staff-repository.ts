@@ -37,7 +37,9 @@ export const characterStaffRepository = {
    * const voices = await characterStaffRepository.getVoicesByCharacterIds([1, 2, 3])
    * ```
    */
-  async getVoicesByCharacterIds(characterIds: number[]) {
+  async getVoicesByCharacterIds(
+    characterIds: number[]
+  ): Promise<CharacterVoiceActorDB[]> {
     try {
       if (!characterIds.length) return []
 
