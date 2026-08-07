@@ -10,7 +10,9 @@
  * Parsing happens eagerly when this module is first imported; invalid or
  * missing required variables cause the process to fail fast with a
  * {@link ZodError}. Optional variables fall back to schema defaults or
- * `undefined`. Values are read from `import.meta.env` (Astro/Vite convention).
+ * `undefined`. Values are read from `process.env` so server-side secrets are
+ * resolved at runtime (dev via Bun `.env` loading, Docker/CI via injected
+ * environment) rather than being inlined at build time.
  *
  * @see {@link module:types/env.d} for TypeScript augmentations of `ImportMetaEnv`
  * @see {@link module:lib/db/client} for PostgreSQL connection usage
@@ -73,11 +75,11 @@ const envSchema = z.object({
  * @see {@link module:config} for derived site config built from these values
  */
 export const env = envSchema.parse({
-  NODE_ENV: import.meta.env.NODE_ENV,
-  DATABASE_URL: import.meta.env.DATABASE_URL,
-  REDIS_URL: import.meta.env.REDIS_URL,
-  SENTRY_DSN: import.meta.env.SENTRY_DSN,
-  APP_BASE_URL: import.meta.env.APP_BASE_URL,
-  BETTER_AUTH_SECRET: import.meta.env.BETTER_AUTH_SECRET,
-  LOG_LEVEL: import.meta.env.LOG_LEVEL,
+  NODE_ENV: process.env.NODE_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+  REDIS_URL: process.env.REDIS_URL,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  APP_BASE_URL: process.env.APP_BASE_URL,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+  LOG_LEVEL: process.env.LOG_LEVEL,
 })
