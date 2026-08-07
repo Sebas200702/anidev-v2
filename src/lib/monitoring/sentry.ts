@@ -12,6 +12,10 @@
  * the backend is unreachable. `tracesSampleRate` is fixed at `0.1` for cost
  * control; adjust here for higher fidelity in staging.
  *
+ * When enabled, `enableLogs: true` plus the `pinoIntegration` bridge forward
+ * the application's Pino logs ({@link module:shared/utils/logger-util}) to the
+ * backend as first-class log events, so Rustrak stores them alongside errors.
+ *
  * @see {@link module:config/env} for `SENTRY_DSN` and `NODE_ENV`
  * @see {@link module:lib/monitoring} for the re-export barrel
  * @see {@link initServerSentry} for Node bootstrap
@@ -54,6 +58,8 @@ export function initServerSentry() {
     dsn: env.SENTRY_DSN,
     environment: env.NODE_ENV,
     tracesSampleRate: 0.1,
+    enableLogs: true,
+    integrations: [SentryNode.pinoIntegration()],
   })
 }
 
@@ -84,6 +90,8 @@ export function initAstroSentry() {
     dsn: env.SENTRY_DSN,
     environment: env.NODE_ENV,
     tracesSampleRate: 0.1,
+    enableLogs: true,
+    integrations: [SentryAstro.pinoIntegration()],
   })
 }
 

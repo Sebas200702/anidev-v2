@@ -45,6 +45,7 @@ El código aún corre sobre Turso (SQLite), Upstash Redis REST y Sentry (ver `pr
 - Mantener `initServerSentry`/`initAstroSentry`/`wrapReactComponentWithSentry` y los SDK `@sentry/*`; el cambio es apuntar el DSN a la instancia auto-hospedada Rustrak (que habla el protocolo de Sentry). `SENTRY_DSN` se conserva como nombre de variable.
 - **Por qué**: AGENTS.md indica que Rustrak es "Sentry-SDK compatible" y "no-ops when DSN unset"; migrar solo el DSN evita reescribir la capa y conserva el comportamiento no-op.
 - **No se renombra** la variable DSN ni se cambia `tracesSampleRate`/`NODE_ENV`.
+- **Captura de logs**: ambos inits activan `enableLogs: true` y conectan la `pinoIntegration` (re-exportada por `@sentry/node`/`@sentry/astro`), que auto-instrumenta todos los loggers Pino vía `diagnostics_channel`. Así el `logger` de `@shared/utils/logger-util` se reenvía a Rustrak como eventos de log sin tocar `logger-util.ts`. Sigue sin DSN → no-op. (Conjetura verificada contra el SDK v10: `enableLogs` + `pinoIntegration()`.)
 
 ### D6 — Variables de entorno
 - Eliminar `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` → añadir `DATABASE_URL` (obligatoria, `z.url()`).

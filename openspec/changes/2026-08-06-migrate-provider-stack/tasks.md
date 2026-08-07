@@ -24,6 +24,7 @@
 ## 4. Monitoreo Rustrak
 
 - [x] 4.1 Actualizar `src/lib/monitoring/sentry.ts` y `index.ts`: JSDoc apuntando a Rustrak auto-hospedado; mantener API y comportamiento no-op con DSN ausente.
+- [x] 4.2 Activar `enableLogs: true` en `initServerSentry`/`initAstroSentry` y bridgear el `logger` de `@shared/utils/logger-util` a `Sentry.logger.*` (los logs se guardan en Rustrak como eventos de primera clase; no-op sin DSN).
 
 ## 5. Auth y middleware
 
