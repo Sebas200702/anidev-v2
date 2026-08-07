@@ -7,6 +7,7 @@ import { artist } from '@db/schemas/artist'
 import { musicArtist } from '@db/schemas/music-relations'
 import type { MusicArtistDB } from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
+import { dbError } from '@shared/errors/db-errors'
 
 /**
  * Reads artist relations for music records.
@@ -25,7 +26,7 @@ export const musicRelationRepository = {
    *
    * @param musicId - Internal music identifier
    * @returns {@link MusicArtistDB} rows associated with the music entry
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[ARTISTS_BY_MUSIC_ID]`)
    * @see {@link MusicDetails.artist} for the serialized output field
    * @example
    * ```typescript
@@ -34,25 +35,29 @@ export const musicRelationRepository = {
    * ```
    */
   async findArtistsByMusicId(musicId: number): Promise<MusicArtistDB[]> {
-    const rows = await db
-      .select({
-        id: musicArtist.artistId,
-        name: artist.name,
-        malId: artist.malId,
-      })
-      .from(musicArtist)
-      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-      .where(eq(musicArtist.musicId, musicId))
+    try {
+      const rows = await db
+        .select({
+          id: musicArtist.artistId,
+          name: artist.name,
+          malId: artist.malId,
+        })
+        .from(musicArtist)
+        .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+        .where(eq(musicArtist.musicId, musicId))
 
-    return rows
+      return rows
+    } catch (error) {
+      throw dbError('[ARTISTS_BY_MUSIC_ID]', { musicId }, error)
+    }
   },
 
   /**
    * Loads artists linked to multiple music records in one query.
    *
-   * @param musicIds - Internal music identifiers
    * @returns {@link MusicArtistDB} rows with `musicId` for grouping in list mappers
    * @remarks Short-circuits to an empty array when `musicIds` is empty.
+   * @throws {InfraError} On database failure (`[ARTISTS_BY_MUSIC_IDS]`)
    * @see {@link musicListService.getMusicList} for batch usage
    * @example
    * ```typescript
@@ -64,17 +69,21 @@ export const musicRelationRepository = {
   ): Promise<Array<MusicArtistDB & { musicId: number }>> {
     if (musicIds.length === 0) return []
 
-    const rows = await db
-      .select({
-        id: musicArtist.artistId,
-        name: artist.name,
-        malId: artist.malId,
-        musicId: musicArtist.musicId,
-      })
-      .from(musicArtist)
-      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-      .where(inArray(musicArtist.musicId, musicIds))
+    try {
+      const rows = await db
+        .select({
+          id: musicArtist.artistId,
+          name: artist.name,
+          malId: artist.malId,
+          musicId: musicArtist.musicId,
+        })
+        .from(musicArtist)
+        .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+        .where(inArray(musicArtist.musicId, musicIds))
 
-    return rows
+      return rows
+    } catch (error) {
+      throw dbError('[ARTISTS_BY_MUSIC_IDS]', { musicIds }, error)
+    }
   },
 }

@@ -7,6 +7,7 @@ import { animeMusic } from '@db/schemas/anime-relations'
 import { music } from '@db/schemas/music'
 import type { MusicDB } from '@domains/music/types/music-db-types'
 import { eq } from 'drizzle-orm'
+import { dbError } from '@shared/errors/db-errors'
 
 /**
  * Reads music linked to anime records.
@@ -25,7 +26,7 @@ export const animeMusicRepository = {
    *
    * @param animeId - Internal anime identifier (MAL ID in this schema)
    * @returns Partial {@link MusicDB} rows linked to the anime
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[MUSIC_BY_ANIME_ID]`)
    * @see {@link musicRepository.getMusicById} for full music row lookup
    * @example
    * ```typescript
@@ -34,16 +35,20 @@ export const animeMusicRepository = {
    * ```
    */
   async findMusicByAnimeId(animeId: number): Promise<MusicDB[]> {
-    const rows = await db
-      .select({
-        id: music.id,
-        title: music.title,
-        type: music.type,
-      })
-      .from(animeMusic)
-      .innerJoin(music, eq(animeMusic.musicId, music.id))
-      .where(eq(animeMusic.animeId, animeId))
+    try {
+      const rows = await db
+        .select({
+          id: music.id,
+          title: music.title,
+          type: music.type,
+        })
+        .from(animeMusic)
+        .innerJoin(music, eq(animeMusic.musicId, music.id))
+        .where(eq(animeMusic.animeId, animeId))
 
-    return rows
+      return rows
+    } catch (error) {
+      throw dbError('[MUSIC_BY_ANIME_ID]', { animeId }, error)
+    }
   },
 }
