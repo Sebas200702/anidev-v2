@@ -20,6 +20,23 @@
 
 Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invalid required var fails fast.
 
+### Local stack (PostgreSQL + Dragonfly + Rustrak)
+
+For development you can stand up the self-hosted target stack entirely on your
+machine (no external Turso/Upstash/Sentry accounts needed):
+
+```bash
+docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :8080
+```
+
+- Local credentials live in `.env.local.example` (copy to `.env.local`) and
+  point at those local ports; they are separate from production (`.env.example`).
+- Apply migrations against the local DB with `bun run db:migrate`.
+- Dashboard UIs: Rustrak is on `http://localhost:8080` (create a project to get a
+  full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`).
+- Named `postgres_data` / `dragonfly_data` / `rustrak_data` volumes persist across
+  `docker compose down`; add `-v` to wipe them too.
+
 ## Commands
 
 | Script | Purpose |
