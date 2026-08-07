@@ -31,7 +31,7 @@ import {
  * - `type` — Track category (OP, ED, Insert, etc.); required.
  */
 export const music = pgTable('music', {
-  id: integer('id').primaryKey(),
+  id: integer('id').primaryKey().notNull(),
   title: text('title'),
   type: text('type').notNull(),
 })

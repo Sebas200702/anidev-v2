@@ -36,7 +36,7 @@ import {
  * @see {@link animeTitleSynonym} for alternate searchable titles
  */
 export const anime = pgTable('anime', {
-  malId: integer('mal_id').primaryKey(),
+  malId: integer('mal_id').primaryKey().notNull(),
   title: text('title').notNull(),
   titleEnglish: text('title_english'),
   titleJapanese: text('title_japanese'),
