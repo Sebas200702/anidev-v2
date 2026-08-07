@@ -24,4 +24,4 @@
 
 ## 5. Verificación
 
-- [ ] 5.1 Recorrer el gate completo: `format → check → check:types → test → build` en verde.
+- [x] 5.1 Recorrer el gate completo: `format → check → check:types → test → build` en verde.
