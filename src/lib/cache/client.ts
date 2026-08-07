@@ -51,5 +51,14 @@ redis.on('error', (err) => {
 
 // Connect eagerly so the socket reaches `ready` before the first cache
 // operation; with `enableOfflineQueue: false` a still-`wait` command is
-// rejected, making the first get/set always degrade (issue #82).
-void redis.connect()
+// rejected, making the first get/set always degrade (issue #82). The failure
+// is handled here (logged, not rethrown) so a cache backend down at boot
+// degrades gracefully instead of surfacing an unhandled rejection.
+try {
+  await redis.connect()
+} catch (err) {
+  logger.warn(
+    { err },
+    'Redis/Dragonfly initial connect failed; cache will degrade'
+  )
+}
