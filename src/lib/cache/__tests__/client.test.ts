@@ -71,8 +71,10 @@ describe('redis client bootstrap', () => {
   it('backoff is exponential until it caps at MAX_RETRY_DELAY_MS', () => {
     const first = retryStrategy(1)
     const second = retryStrategy(2)
-    expect(second).toBeGreaterThan(first)
+    expect(first).not.toBeNull()
+    expect(second).not.toBeNull()
     expect(first).toBeGreaterThanOrEqual(250)
+    expect(second as number).toBeGreaterThan(first as number)
   })
 
   it('gives up (returns null) after MAX_RECONNECT_ATTEMPTS', () => {
