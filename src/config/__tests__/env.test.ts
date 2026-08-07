@@ -20,7 +20,7 @@ const baseEnv = {
   LOG_LEVEL: 'info',
 }
 
-async function loadEnv(overrides: Record<string, unknown> = {}) {
+const loadEnv = async (overrides: Record<string, unknown> = {}) => {
   vi.resetModules()
   const full = { ...baseEnv, ...overrides }
   for (const [key, value] of Object.entries(full)) {

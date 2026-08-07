@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/services/media-service
+ * @module @media/services/media-service
  * @remarks Application service facade for media resolution and image optimization. Composes the
  * focused service modules into a single object covering semantic path parsing, repository-backed
  * asset lookup, remote fetching, buffer optimization, and read-through caching.
@@ -17,7 +17,7 @@
  * @see {@link fetch-raw-media-service} for raw byte delivery
  * @example
  * ```typescript
- * import { mediaService } from '@domains/media/services/media-service'
+ * import { mediaService } from '@media/services/media-service'
  *
  * const params = mediaService.parsePath('anime/5114/poster/large')
  * const asset = await mediaService.resolveMedia(params, 'myanimelist')
@@ -25,11 +25,11 @@
  * ```
  */
 import { parseMediaPath } from '@utils/image/parse-media-type-util'
-import { resolveMedia } from '@domains/media/services/resolve-media-service'
-import { fetchImageBuffer } from '@domains/media/services/fetch-image-buffer-service'
-import { optimizeMedia } from '@domains/media/services/optimize-media-service'
-import { optimizeMediaByUrl } from '@domains/media/services/optimize-media-url-service'
-import { fetchRawMedia } from '@domains/media/services/fetch-raw-media-service'
+import { resolveMedia } from '@media/services/resolve-media-service'
+import { fetchImageBuffer } from '@media/services/fetch-image-buffer-service'
+import { optimizeMedia } from '@media/services/optimize-media-service'
+import { optimizeMediaByUrl } from '@media/services/optimize-media-url-service'
+import { fetchRawMedia } from '@media/services/fetch-raw-media-service'
 
 /**
  * Aggregated media service exposing path parsing, asset resolution, optimization, and raw

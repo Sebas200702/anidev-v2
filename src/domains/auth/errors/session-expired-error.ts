@@ -34,7 +34,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  *
  * @example
  * ```typescript
- * import { SessionExpiredError } from '@domains/auth/errors'
+ * import { SessionExpiredError } from '@auth/errors'
  * import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
  *
  * const error = new SessionExpiredError()

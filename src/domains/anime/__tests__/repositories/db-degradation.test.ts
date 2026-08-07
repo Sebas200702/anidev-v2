@@ -40,7 +40,7 @@ vi.mock('@db/client', () => ({
   },
 }))
 
-import { animeExternalRepository } from '@domains/anime/repositories/anime-external-repository'
+import { animeExternalRepository } from '@anime/repositories/anime-external-repository'
 
 describe('DB repository degradation', () => {
   beforeEach(() => {

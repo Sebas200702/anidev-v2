@@ -1,10 +1,10 @@
 /**
- * @module @domains/music/repositories/music-repository
+ * @module @music/repositories/music-repository
  * @remarks Database access for core music records stored in the `music` table.
  */
 import { db } from '@db/client'
 import { music } from '@db/schemas/music'
-import type { MusicDB } from '@domains/music/types/music-db-types'
+import type { MusicDB } from '@music/types/music-db-types'
 import { dbError } from '@shared/errors/db-errors'
 import { eq, inArray } from 'drizzle-orm'
 

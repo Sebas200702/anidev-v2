@@ -1,7 +1,7 @@
 /**
  * Standard JSON payload shape returned by API routes.
  *
- * @module shared/http/api-envelope
+ * @module shared/http/api-envelope-types
  * @remarks
  * Extracted from {@link create-api-response-util} so both envelope builders and
  * serialization helpers can import it without circular dependencies.
@@ -10,7 +10,7 @@
  * @see {@link module:shared/http/create-api-response-util} — `createSuccessResponse` / `createErrorResponse`
  * @see {@link module:shared/http/api-response-serialize-util} — `jsonResponse` / `mergeResponseHeaders`
  */
-export type ApiEnvelope<T> = {
+export interface ApiEnvelope<T> {
   /** Response body on success; `null` when the handler failed or validation rejected the request. */
   data: T | null
   /** HTTP status code duplicated in the JSON body for client-side handling. */

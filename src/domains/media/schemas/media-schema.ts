@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/schemas/media-schema
+ * @module @media/schemas/media-schema
  * @remarks Zod schemas for validating media proxy route requests, including catch-all path
  * params and optional image transform query parameters.
  */

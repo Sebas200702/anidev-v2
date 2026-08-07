@@ -8,22 +8,9 @@
  * @see {@link normalizeString}
  */
 
-/**
- * Options controlling how {@link normalizeString} transforms input.
- */
-export type NormalizeStringOptions = {
-  /** Source string to normalize. Falsy values yield `''`. */
-  string: string
-  /**
-   * When `true` (default), whitespace runs are replaced with `separator`.
-   * When `false`, internal spaces are preserved after special-character removal.
-   */
-  removeSpaces?: boolean
-  /** Replacement inserted between former space boundaries; defaults to `'-'`. */
-  separator?: string
-  /** When `true`, the final string is lowercased. */
-  toLowerCase?: boolean
-}
+import type { NormalizeStringOptions } from './normalize-string-util-types'
+
+export type { NormalizeStringOptions } from './normalize-string-util-types'
 
 /**
  * Removes special characters and optionally replaces spaces in a string.

@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/services
+ * @module @media/services
  * @remarks Barrel exports for media application services covering remote fetching, image
  * optimization, and the full semantic-path delivery pipeline.
  * @see {@link ./media-service} for orchestration
@@ -7,7 +7,7 @@
  * @see {@link ./image-optimizer-service} for buffer optimization
  * @example
  * ```typescript
- * import { mediaService, fetchMediaAsset, optimizeMediaImageBuffer } from '@domains/media/services'
+ * import { mediaService, fetchMediaAsset, optimizeMediaImageBuffer } from '@media/services'
  * ```
  */
 
@@ -18,4 +18,5 @@ export { fetchImageBuffer } from './fetch-image-buffer-service'
 export { optimizeMedia } from './optimize-media-service'
 export { optimizeMediaByUrl } from './optimize-media-url-service'
 export { fetchRawMedia } from './fetch-raw-media-service'
+export { getAnimeMedia } from './get-anime-media-service'
 export { mediaService } from './media-service'

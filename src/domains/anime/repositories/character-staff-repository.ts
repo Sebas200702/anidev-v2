@@ -8,7 +8,7 @@ import { dbConfig } from '@db/config'
 import { characterVoiceActor } from '@db/schemas/character-relations'
 import { dbError } from '@shared/errors/db-errors'
 import { inArray } from 'drizzle-orm'
-import type { CharacterVoiceActorDB } from '@domains/anime/types'
+import type { CharacterVoiceActorDB } from '@anime/types'
 
 /**
  * Repository for querying voice actor credits linked to characters.
@@ -37,7 +37,9 @@ export const characterStaffRepository = {
    * const voices = await characterStaffRepository.getVoicesByCharacterIds([1, 2, 3])
    * ```
    */
-  async getVoicesByCharacterIds(characterIds: number[]) {
+  async getVoicesByCharacterIds(
+    characterIds: number[]
+  ): Promise<CharacterVoiceActorDB[]> {
     try {
       if (!characterIds.length) return []
 

@@ -4,7 +4,7 @@
  * @module domains/music/schemas/music-list-schema
  */
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
-import { musicCardSchema } from '@domains/music/schemas/music-card-schema'
+import { musicCardSchema } from '@music/schemas/music-card-schema'
 import { z } from 'zod'
 
 /**

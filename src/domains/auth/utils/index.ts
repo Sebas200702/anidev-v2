@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { mapBetterAuthError } from '@domains/auth/utils'
+ * import { mapBetterAuthError } from '@auth/utils'
  *
  * try {
  *   await auth.api.signInEmail({ body, headers })

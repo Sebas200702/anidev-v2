@@ -8,7 +8,7 @@
  * @see {@link module:domains/user/errors/user-not-found-error} for error class definitions
  * @example
  * ```typescript
- * import { userNotFound, UserUnauthorizedError } from '@domains/user/errors'
+ * import { userNotFound, UserUnauthorizedError } from '@user/errors'
  *
  * throw userNotFound('user-123')
  * ```

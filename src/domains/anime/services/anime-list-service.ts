@@ -4,11 +4,11 @@
  * @module domains/anime/services/anime-list-service
  */
 import { withCache } from '@lib/cache'
-import { animeListCache } from '@domains/anime/cache/anime-list-cache'
-import { mapAnimeListToCards } from '@domains/anime/mappers/anime-card-mapper'
-import { mapAnimeFilters } from '@domains/anime/mappers/anime-filters-mapper'
-import { animeListRepository } from '@domains/anime/repositories/anime-list-repository'
-import type { AnimeFilters, AnimeFiltersParams } from '@domains/anime/types'
+import { animeListCache } from '@anime/cache/anime-list-cache'
+import { mapAnimeListToCards } from '@anime/mappers/anime-card-mapper'
+import { mapAnimeFilters } from '@anime/mappers/anime-filters-mapper'
+import { animeListRepository } from '@anime/repositories/anime-list-repository'
+import type { AnimeFilters, AnimeFiltersParams } from '@anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for anime list pages.

@@ -3,10 +3,7 @@
  *
  * @module domains/music/mappers/music-filters-mapper
  */
-import type {
-  MusicListFilters,
-  MusicListFiltersParams,
-} from '@domains/music/types'
+import type { MusicListFilters, MusicListFiltersParams } from '@music/types'
 
 const TYPE_CODE_BY_LABEL: Record<string, MusicListFilters['type']> = {
   opening: 'OP',

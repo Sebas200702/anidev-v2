@@ -8,7 +8,7 @@
  * @see {@link module:domains/user/schemas/user-schema} for schema definitions
  * @example
  * ```typescript
- * import { userProfileSchema, getUserProfileSchema } from '@domains/user/schemas'
+ * import { userProfileSchema, getUserProfileSchema } from '@user/schemas'
  * ```
  */
 

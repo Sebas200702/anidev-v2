@@ -7,13 +7,9 @@ import { db } from '@db/client'
 import { music } from '@db/schemas/music'
 import { dbError } from '@shared/errors/db-errors'
 import { normalizeString } from '@utils/string/normalize-string-util'
-import type { MusicDB, MusicListFilters } from '@domains/music/types'
+import type { MusicDB, MusicListFilters } from '@music/types'
+import type { MusicListFilterParams } from './music-list-repository-types'
 import { and, count, eq, sql, type SQL } from 'drizzle-orm'
-
-/**
- * Filter fields used to build SQL `WHERE` clauses (excludes pagination).
- */
-type MusicListFilterParams = Omit<MusicListFilters, 'page' | 'limit'>
 
 /**
  * Builds SQL filter clauses for music list queries.

@@ -56,7 +56,7 @@ const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
  *
  * @internal
  */
-export function buildAppErrorBody(error: BaseError): HttpErrorBody {
+export const buildAppErrorBody = (error: BaseError): HttpErrorBody => {
   return {
     code: error.code,
     message: error.message,
@@ -78,9 +78,9 @@ export function buildAppErrorBody(error: BaseError): HttpErrorBody {
  *
  * @internal
  */
-export function mapAuthErrorToHttp(
+export const mapAuthErrorToHttp = (
   error: AuthError
-): HttpErrorResponse | undefined {
+): HttpErrorResponse | undefined => {
   if (UNAUTHORIZED_AUTH_CODES.has(error.code)) {
     logger.warn({ err: error }, 'Auth error - unauthorized')
     return {
@@ -111,7 +111,7 @@ export function mapAuthErrorToHttp(
  *
  * @internal
  */
-export function mapDomainErrorToHttp(error: DomainError): HttpErrorResponse {
+export const mapDomainErrorToHttp = (error: DomainError): HttpErrorResponse => {
   if (NOT_FOUND_DOMAIN_CODES.has(error.code)) {
     logger.warn({ err: error }, 'Domain error - not found')
     return {

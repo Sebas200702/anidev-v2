@@ -18,7 +18,7 @@
 
 import type { APIRoute } from 'astro'
 import { withErrorHandling } from '@http/with-error-handling'
-import { sessionService } from '@domains/auth/services'
+import { sessionService } from '@auth/services'
 
 /**
  * Ends the current authenticated session and clears session cookies.

@@ -22,17 +22,13 @@
  * @see {@link userProfileCache} for cache key and TTL configuration
  * @see {@link withCache} for the read-through cache helper
  */
-import { mapUserProfile } from '@domains/user/mappers/user-mapper'
-import { userRepository } from '@domains/user/repositories/user-repository'
-import { userPolicies } from '@domains/user/policies/user-policy'
+import { mapUserProfile } from '@user/mappers/user-mapper'
+import { userRepository } from '@user/repositories/user-repository'
+import { userPolicies } from '@user/policies/user-policy'
 import { withCache } from '@lib/cache'
-import { userProfileCache } from '@domains/user/cache'
-import { userNotFound, userUnauthorized } from '@domains/user/errors'
-
-type GetUserProfileParams = {
-  userId: string
-  targetId: string
-}
+import { userProfileCache } from '@user/cache'
+import { userNotFound, userUnauthorized } from '@user/errors'
+import type { GetUserProfileParams } from './user-service-types'
 
 /**
  * Coordinates authorization, persistence, mapping, and caching for profiles.

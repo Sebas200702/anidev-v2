@@ -5,17 +5,17 @@
  * @remarks
  * Factories return error instances so callers can `throw` them from services or route handlers.
  * The error classes themselves live in {@link user-error-classes} and are re-exported here so
- * existing `@domains/user/errors/user-not-found-error` imports keep working.
+ * existing `@user/errors/user-not-found-error` imports keep working.
  */
 import {
   UserInvalidIdError,
   UserNotFoundError,
   UserUnauthorizedError,
-} from '@domains/user/errors/user-error-classes'
+} from '@user/errors/user-error-classes'
 
 // UserNotFoundError, UserInvalidIdError, and UserUnauthorizedError are
-// re-exported via the barrel at `@domains/user/errors`. Import them from there
-// or from `@domains/user/errors/user-error-classes` directly.
+// re-exported via the barrel at `@user/errors`. Import them from there
+// or from `@user/errors/user-error-classes` directly.
 
 /**
  * Creates a {@link UserNotFoundError} for the given user identifier.
@@ -32,7 +32,7 @@ import {
  * throw userNotFound(targetId)
  * ```
  */
-export function userNotFound(id: string) {
+export const userNotFound = (id: string) => {
   return new UserNotFoundError(id)
 }
 
@@ -50,7 +50,7 @@ export function userNotFound(id: string) {
  * throw userInvalidId(params.userId)
  * ```
  */
-export function userInvalidId(rawId: unknown) {
+export const userInvalidId = (rawId: unknown) => {
   return new UserInvalidIdError(rawId)
 }
 
@@ -69,6 +69,6 @@ export function userInvalidId(rawId: unknown) {
  * throw userUnauthorized(targetId)
  * ```
  */
-export function userUnauthorized(userId: string) {
+export const userUnauthorized = (userId: string) => {
   return new UserUnauthorizedError(userId)
 }

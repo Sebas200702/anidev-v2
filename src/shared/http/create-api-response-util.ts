@@ -22,7 +22,7 @@
  */
 
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import type { ApiEnvelope } from './api-envelope'
+import type { ApiEnvelope } from './api-envelope-types'
 
 /**
  * Builds a successful API envelope.
@@ -41,11 +41,11 @@ import type { ApiEnvelope } from './api-envelope'
  *
  * @see {@link jsonResponse}
  */
-export function createSuccessResponse<T>(
+export const createSuccessResponse = <T>(
   data: T,
   status = 200,
   meta: Record<string, unknown> = {}
-): ApiEnvelope<T> {
+): ApiEnvelope<T> => {
   return {
     data,
     status,
@@ -71,7 +71,7 @@ export function createSuccessResponse<T>(
  *
  * @see {@link mapErrorToHttp}
  */
-export function createErrorResponse(error: unknown): ApiEnvelope<null> {
+export const createErrorResponse = (error: unknown): ApiEnvelope<null> => {
   const { status, body } = mapErrorToHttp(error)
 
   return {

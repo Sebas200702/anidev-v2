@@ -17,7 +17,7 @@
  * {
  *   params: APIContext['params'],  // Astro dynamic route segments, e.g. { id: '42' }
  *   query: Record<string, string>, // URL search params as plain key/value strings
- *   body: unknown | null           // JSON body for non-GET; null for GET or parse failures
+ *   body: unknown,                 // JSON body for non-GET; null for GET or parse failures
  * }
  * ```
  *
@@ -39,35 +39,10 @@ import { ValidationError } from '@shared/errors/app-error'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import type { APIContext } from 'astro'
 import type { ZodType } from 'zod'
-
-/**
- * Handler invoked after successful validation.
- *
- * @typeParam T - Inferred output type of the validation schema
- */
-type ValidatedHandler<T> = (
-  context: APIContext & { validated: T }
-) => Response | Promise<Response>
-
-/**
- * Raw request slices passed to the Zod schema before parsing.
- *
- * @remarks
- * This is the exact object shape validated by {@link withZodValidation}. Schemas should expect
- * these three keys at the top level.
- */
-type ValidationRequestData = {
-  /** Astro route dynamic parameters (e.g. `[id]` → `{ id: string }`). */
-  params: APIContext['params']
-  /** Query string parameters from `URL.searchParams`, coerced to string values. */
-  query: Record<string, string>
-  /**
-   * Parsed JSON request body for non-`GET` methods.
-   * - `GET` requests always receive `null` (body is not read).
-   * - Invalid or empty JSON body yields `null` (not a validation error until the schema rejects it).
-   */
-  body: unknown | null
-}
+import type {
+  ValidatedHandler,
+  ValidationRequestData,
+} from './with-validation-types'
 
 /**
  * Returns middleware that validates `params`, `query`, and `body`, then calls the handler with `validated` data.
@@ -102,7 +77,7 @@ type ValidationRequestData = {
  * @see {@link ValidationRequestData}
  * @see {@link ValidatedHandler}
  */
-export function withZodValidation<T>(schema: ZodType<T>) {
+export const withZodValidation = <T>(schema: ZodType<T>) => {
   return (handler: ValidatedHandler<T>) => {
     return async (context: APIContext) => {
       const url = new URL(context.request.url)

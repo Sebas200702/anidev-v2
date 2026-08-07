@@ -5,7 +5,8 @@
  * @remarks
  * Validates request bodies for Better Auth email/password flows before they reach
  * {@link credentialsService}. Password minimum length aligns with common credential
- * security baselines; email fields use Zod's built-in RFC-style email validation.
+ * security baselines; email fields use Zod's built-in RFC-style email validation
+ * (`z.email()`).
  *
  * @see {@link credentialsService.login} — consumes {@link LoginInput}
  * @see {@link credentialsService.register} — consumes {@link RegisterInput}
@@ -14,15 +15,15 @@
  */
 import { z } from 'zod'
 
-// sessionResponseSchema is re-exported via the barrel at `@domains/auth/schemas`.
-// Import it from there or from `@domains/auth/schemas/session-schema` directly.
+// sessionResponseSchema is re-exported via the barrel at `@auth/schemas`.
+// Import it from there or from `@auth/schemas/session-schema` directly.
 
 /**
  * Validates email/password login request bodies.
  *
  * @remarks
  * **Fields** (`body`):
- * - `email` — `string`, must be a valid email address (`z.string().email()`)
+ * - `email` — `string`, must be a valid email address (`z.email()`)
  * - `password` — `string`, minimum 8 characters (`z.string().min(8)`)
  *
  * Wraps fields in a top-level `body` key to match API route validation conventions.
@@ -41,7 +42,7 @@ import { z } from 'zod'
 export const loginSchema = z.object({
   body: z.object({
     /** User email address; validated as RFC-style email string. */
-    email: z.string().email(),
+    email: z.email(),
     /** Plain-text password; minimum 8 characters. */
     password: z.string().min(8),
   }),
@@ -52,7 +53,7 @@ export const loginSchema = z.object({
  *
  * @remarks
  * **Fields** (`body`):
- * - `email` — `string`, must be a valid email address (`z.string().email()`)
+ * - `email` — `string`, must be a valid email address (`z.email()`)
  * - `password` — `string`, minimum 8 characters (`z.string().min(8)`)
  * - `name` — `string`, minimum 1 non-empty character (`z.string().min(1)`)
  *
@@ -72,7 +73,7 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   body: z.object({
     /** Account email address; validated as RFC-style email string. */
-    email: z.string().email(),
+    email: z.email(),
     /** Account password; minimum 8 characters. */
     password: z.string().min(8),
     /** Display name; required, at least one character. */

@@ -10,38 +10,15 @@
  * @see {@link normalizeOptimizeOptions}
  */
 
-import { mediaServiceConfig } from '@domains/media/config'
+import { mediaServiceConfig } from '@media/config'
 import sharp from 'sharp'
+import type { OptimizeOptions } from './optimize-util-types'
 
-/** Supported output formats for optimized images. */
-export type ImageFormat = 'webp' | 'avif'
-
-/**
- * Known upstream image providers; reserved for future per-source tuning.
- * @remarks Currently only stored on options; defaults do not vary by source yet.
- */
-export type ImageSource =
-  | 'myanimelist'
-  | 'anilist'
-  | 'kitsu'
-  | 'thetvdb'
-  | 'tmdb'
-  | 'custom'
-  | 'youtube'
-
-/**
- * Options passed to {@link optimizeImageBuffer} and merged by {@link normalizeOptimizeOptions}.
- */
-export type OptimizeOptions = {
-  /** Target width in pixels; omitted or non-positive skips resize. */
-  width?: number
-  /** Encoder quality 1–100; default 50 in {@link optimizeImageBuffer}, or config default when normalized. */
-  quality?: number
-  /** Output format; default `'webp'`. */
-  format?: ImageFormat
-  /** Upstream provider hint for future optimization profiles. */
-  source?: ImageSource
-}
+export type {
+  ImageFormat,
+  ImageSource,
+  OptimizeOptions,
+} from './optimize-util-types'
 
 /** Maximum input buffer size (10 MiB) before {@link ImageTooLargeError} is thrown. */
 const MAX_SIZE_BYTES = 10 * 1024 * 1024
@@ -69,12 +46,26 @@ export class ImageTooLargeError extends Error {
 }
 
 /**
+ * Thrown when an empty image buffer reaches the optimizer.
+ *
+ * @remarks
+ * Signals invalid upstream input before Sharp decodes. Callers should map to a
+ * 400/404 response as appropriate.
+ */
+export class EmptyImageError extends Error {
+  constructor() {
+    super('Empty buffer')
+    this.name = 'EmptyImageError'
+  }
+}
+
+/**
  * Resizes and re-encodes an image buffer using Sharp.
  *
  * @param buffer - Raw image bytes from fetch or disk
  * @param options - Optional `width`, `quality` (default 50), and `format` (default `'webp'`)
  * @returns Optimized buffer and resulting MIME type (`image/webp` or `image/avif`)
- * @throws {Error} When `buffer` is empty or missing (`'Empty buffer'`)
+ * @throws {EmptyImageError} When `buffer` is empty or missing
  * @throws {ImageTooLargeError} When `buffer.length` exceeds 10 MiB
  * @throws Sharp decode errors for corrupt images (propagated from Sharp)
  *
@@ -92,12 +83,12 @@ export class ImageTooLargeError extends Error {
  * // mimeType === 'image/webp'
  * ```
  */
-export async function optimizeImageBuffer(
+export const optimizeImageBuffer = async (
   buffer: Buffer,
   { width, quality = 50, format = 'webp' }: OptimizeOptions = {}
-): Promise<{ buffer: Buffer; mimeType: string }> {
+): Promise<{ buffer: Buffer; mimeType: string }> => {
   if (!buffer || buffer.length === 0) {
-    throw new Error('Empty buffer')
+    throw new EmptyImageError()
   }
 
   if (buffer.length > MAX_SIZE_BYTES) {

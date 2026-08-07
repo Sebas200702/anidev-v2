@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/schemas/music-details-schema
+ * @module @music/schemas/music-details-schema
  * @remarks Zod schemas defining the public {@link MusicDetails} API payload and its nested
  * artist, version, and resolution objects.
  */

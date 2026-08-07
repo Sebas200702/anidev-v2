@@ -1,15 +1,12 @@
 /**
- * @module @domains/media/cache/media-cache-serialization
+ * @module @media/cache/media-cache-serialization
  * @remarks Serializes {@link OptimizedMedia} payloads as base64 JSON for cache storage and
  * restores them on read. Invalid or malformed payloads are treated as cache misses.
  */
-import type { OptimizedMedia } from '@domains/media/types/media-types'
+import type { OptimizedMedia } from '@media/types/media-types'
+import type { CachedOptimizedMedia } from './media-cache-serialization-types'
 
-/** Base64-encoded cache payload for an optimized image. */
-export type CachedOptimizedMedia = {
-  buffer: string
-  mimeType: string
-}
+export type { CachedOptimizedMedia } from './media-cache-serialization-types'
 
 /**
  * Serializes an optimized image for cache storage.

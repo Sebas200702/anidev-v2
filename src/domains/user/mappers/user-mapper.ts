@@ -10,15 +10,8 @@
  * @see {@link UserProfile} for the output shape
  * @see {@link UserProfileDB} for the input shape
  */
-import type { UserProfileDB } from '@domains/user/types/user-db-types'
-import type {
-  UserProfile,
-  UserPreferences,
-} from '@domains/user/types/user-types'
-
-type MapUserProfileInput = {
-  userProfile: UserProfileDB
-}
+import type { UserProfile, UserPreferences } from '@user/types/user-types'
+import type { MapUserProfileInput } from './user-mapper-types'
 
 /**
  * Converts a persisted profile row into a public user profile object.
@@ -30,7 +23,8 @@ type MapUserProfileInput = {
  * **Field transformations:**
  *
  * - `avatar` — falls back to `'/placeholder.webp'` when null.
- * - `birthday` — non-null asserted (`!`); expected present on persisted rows.
+ * - `birthday` — mapped with `?? undefined` so a nullable DB value becomes an
+ *   absent field (matches the optional schema).
  * - `gender` — cast to {@link UserProfile} gender union.
  * - `favoriteAnimes`, `favoriteGenres`, `favoriteStudios`, `watchedAnimes` —
  *   comma-separated DB strings split, trimmed, parsed to integers; empty or
@@ -54,7 +48,7 @@ export const mapUserProfile = ({
     favoriteAnimes:
       userProfile.favoriteAnimes
         ?.split(',')
-        .map((id) => Number.parseInt(id.trim()))
+        .map((id) => Number.parseInt(id.trim(), 10))
         .filter(Boolean) || [],
     frequency: (userProfile.frequency ??
       undefined) as UserPreferences['frequency'],
@@ -64,12 +58,12 @@ export const mapUserProfile = ({
     favoriteGenres:
       userProfile.favoriteGenres
         ?.split(',')
-        .map((genre) => Number.parseInt(genre.trim()))
+        .map((genre) => Number.parseInt(genre.trim(), 10))
         .filter(Boolean) || [],
     favoriteStudios:
       userProfile.favoriteStudios
         ?.split(',')
-        .map((studio) => Number.parseInt(studio.trim()))
+        .map((studio) => Number.parseInt(studio.trim(), 10))
         .filter(Boolean) || [],
   }
 
@@ -78,14 +72,14 @@ export const mapUserProfile = ({
     avatar: userProfile.avatar ?? '/placeholder.webp',
     name: userProfile.name,
     lastName: userProfile.lastName,
-    birthday: userProfile.birthday!,
+    birthday: userProfile.birthday ?? undefined,
     gender: userProfile.gender as UserProfile['gender'],
     preferences,
     history: {
       watchedAnimes:
         userProfile.watchedAnimes
           ?.split(',')
-          .map((id) => Number.parseInt(id.trim()))
+          .map((id) => Number.parseInt(id.trim(), 10))
           .filter(Boolean) || [],
     },
   }

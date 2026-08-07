@@ -8,7 +8,7 @@
  *
  * @see {@link PolicyParameters}
  */
-import type { PolicyParameters } from '@domains/user/types/user-policies-types'
+import type { PolicyParameters } from '@user/types/user-policies-types'
 
 /**
  * Preference and watch-history view/edit policy checks (owner-only).

@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/types/music-details.d-types
+ * @module @music/types/music-details.d-types
  * @remarks Inferred API types for music detail payloads. All types are derived from Zod
  * schemas in {@link ../schemas/music-details-schema} so runtime validation and compile-time
  * types stay in sync.
@@ -10,7 +10,7 @@ import {
   musicDetailsSchema,
   musicResolutionSchema,
   musicVersionSchema,
-} from '@domains/music/schemas/music-details-schema'
+} from '@music/schemas/music-details-schema'
 
 /**
  * Public music detail response shape.

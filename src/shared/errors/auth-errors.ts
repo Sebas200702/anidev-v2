@@ -35,7 +35,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  *
  * @see {@link mapErrorToHttp}
  */
-export function authRequired(details?: unknown) {
+export const authRequired = (details?: unknown) => {
   return new AuthError(
     ErrorCodes.AUTH_REQUIRED,
     'Authentication required',
@@ -51,7 +51,7 @@ export function authRequired(details?: unknown) {
  *
  * @see {@link mapErrorToHttp}
  */
-export function authInvalidToken(details?: unknown) {
+export const authInvalidToken = (details?: unknown) => {
   return new AuthError(
     ErrorCodes.AUTH_INVALID_TOKEN,
     'Invalid or malformed authentication token',
@@ -67,7 +67,7 @@ export function authInvalidToken(details?: unknown) {
  *
  * @see {@link mapErrorToHttp}
  */
-export function authSessionExpired(details?: unknown) {
+export const authSessionExpired = (details?: unknown) => {
   return new AuthError(
     ErrorCodes.AUTH_SESSION_EXPIRED,
     'Session has expired, please log in again',
@@ -86,7 +86,7 @@ export function authSessionExpired(details?: unknown) {
  *
  * @see {@link mapErrorToHttp}
  */
-export function authForbidden(details?: unknown) {
+export const authForbidden = (details?: unknown) => {
   return new AuthError(
     ErrorCodes.AUTH_FORBIDDEN,
     'You do not have permission to perform this action',

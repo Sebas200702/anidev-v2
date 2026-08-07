@@ -49,6 +49,6 @@ export class AnimeInvalidIdError extends ValidationError {
  *
  * @see {@link getAnimeDetailsSchema} — Zod `z.coerce.number().int().positive()` prevents most cases at the edge
  */
-export function animeInvalidId(rawId: unknown) {
+export const animeInvalidId = (rawId: unknown) => {
   return new AnimeInvalidIdError(rawId)
 }

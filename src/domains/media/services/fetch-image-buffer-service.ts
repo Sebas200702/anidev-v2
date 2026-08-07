@@ -1,12 +1,12 @@
 /**
- * @module @domains/media/services/fetch-image-buffer-service
+ * @module @media/services/fetch-image-buffer-service
  * @remarks Downloads an image URL and validates that the response is an image before it enters
  * the optimization pipeline. Thin image-focused wrapper over {@link fetchMediaAsset}.
  */
 import { ErrorCodes } from '@shared/errors/codes'
 import { InfraError } from '@shared/errors/app-error'
 import { normalizeImageUrl } from '@utils/image/normalize-image-url-util'
-import { fetchMediaAsset } from '@domains/media/services/media-fetch-service'
+import { fetchMediaAsset } from '@media/services/media-fetch-service'
 
 /**
  * Downloads an image URL and validates that the response is an image.
@@ -23,7 +23,7 @@ import { fetchMediaAsset } from '@domains/media/services/media-fetch-service'
  * const optimized = optimizeMediaImageBuffer(buffer, { width: 400 })
  * ```
  */
-export async function fetchImageBuffer(imageUrl: string): Promise<Buffer> {
+export const fetchImageBuffer = async (imageUrl: string): Promise<Buffer> => {
   const normalizedImageUrl = normalizeImageUrl(imageUrl)
   const media = await fetchMediaAsset(normalizedImageUrl, {
     accept: 'image/webp,image/avif,image/apng,image/*,*/*;q=0.8',

@@ -12,16 +12,16 @@
 
 import { ErrorCodes } from '@shared/errors/codes'
 import { InfraError } from '@shared/errors/app-error'
-import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
-import { characterMediaRepository } from '@domains/media/repositories/character-media-repository'
-import { staffMediaRepository } from '@domains/media/repositories/staff-media-repository'
-import { episodeMediaRepository } from '@domains/media/repositories/episode-media-repository'
-import { musicMediaRepository } from '@domains/media/repositories/music-media-repository'
+import { animeMediaRepository } from '@media/repositories/anime-media-repository'
+import { characterMediaRepository } from '@media/repositories/character-media-repository'
+import { staffMediaRepository } from '@media/repositories/staff-media-repository'
+import { episodeMediaRepository } from '@media/repositories/episode-media-repository'
+import { musicMediaRepository } from '@media/repositories/music-media-repository'
 import {
   MediaSize,
   type MediaAsset,
   type SemanticMediaPath,
-} from '@domains/media/types/media-types'
+} from '@media/types/media-types'
 
 /**
  * Clamps a 1-based media index to the valid range `[1, total]`.

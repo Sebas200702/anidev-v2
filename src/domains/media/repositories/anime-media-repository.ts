@@ -1,18 +1,13 @@
 /**
- * @module @domains/media/repositories/anime-media-repository
+ * @module @media/repositories/anime-media-repository
  * @remarks Database access for anime media assets stored in the `animeMedia` table.
  */
 import { db } from '@db/client'
 import { animeMedia } from '@db/schemas/anime-media'
 import { dbError } from '@shared/errors/db-errors'
-import type { MediaAsset } from '@domains/media/types/media-types'
+import type { MediaAsset } from '@media/types/media-types'
 import { and, asc, eq, inArray } from 'drizzle-orm'
-
-/** Parameters for filtering anime media by entity ID and media type. */
-type GetAnimeMediaByTypeParams = {
-  mediaType: string
-  animeId: number
-}
+import type { GetAnimeMediaByTypeParams } from './anime-media-repository-types'
 
 /**
  * Reads media assets linked to anime records.

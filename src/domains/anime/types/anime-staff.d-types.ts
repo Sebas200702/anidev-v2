@@ -3,7 +3,7 @@
  *
  * @module domains/anime/types/anime-staff
  */
-import type { animeStaffSchema } from '@domains/anime/schemas/anime-staff-schema'
+import type { animeStaffSchema } from '@anime/schemas/anime-staff-schema'
 import type { z } from 'zod'
 
 /**

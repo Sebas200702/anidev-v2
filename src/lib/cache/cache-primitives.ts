@@ -13,19 +13,10 @@
  * @see {@link module:lib/cache/config} for key prefixes and TTL presets
  */
 import { redis } from '@lib/cache/client'
-import type { CacheTtl } from '@lib/cache/config'
 import { logger } from '@utils/logger-util'
+import type { CacheGetSetOptions } from './cache-primitives-types'
 
-/**
- * Options for {@link cacheSet} controlling key expiry.
- *
- * @property ttlSeconds - Required expiry in seconds. Every write stores the key
- * with Redis `EX` so {@link cacheDel} can rely on a bounded lifetime even when
- * the delete is suppressed by a degraded backend.
- */
-export type CacheGetSetOptions = {
-  ttlSeconds: CacheTtl
-}
+export type { CacheGetSetOptions } from './cache-primitives-types'
 
 /**
  * Reads a JSON-deserialized cached value by key.
@@ -49,7 +40,7 @@ export type CacheGetSetOptions = {
  * @see {@link cacheSet} for writing values
  * @see {@link withCache} for read-through pattern
  */
-export async function cacheGet<T>(key: string): Promise<T | null> {
+export const cacheGet = async <T>(key: string): Promise<T | null> => {
   try {
     const raw = await redis.get(key)
     if (!raw) return null
@@ -81,11 +72,11 @@ export async function cacheGet<T>(key: string): Promise<T | null> {
  * @see {@link CacheTtl} for standard expiry durations
  * @see {@link cacheGet} for the corresponding read with the same degradation
  */
-export async function cacheSet<T>(
+export const cacheSet = async <T>(
   key: string,
   value: T,
   { ttlSeconds }: CacheGetSetOptions
-): Promise<void> {
+): Promise<void> => {
   try {
     const payload = JSON.stringify(value)
     await redis.set(key, payload, 'EX', ttlSeconds)
@@ -109,7 +100,7 @@ export async function cacheSet<T>(
  *
  * @see {@link cacheSet} for writing entries
  */
-export async function cacheDel(key: string): Promise<void> {
+export const cacheDel = async (key: string): Promise<void> => {
   try {
     await redis.del(key)
   } catch (error) {

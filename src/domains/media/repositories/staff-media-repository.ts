@@ -1,18 +1,13 @@
 /**
- * @module @domains/media/repositories/staff-media-repository
+ * @module @media/repositories/staff-media-repository
  * @remarks Database access for staff media assets stored in the `staffMedia` table.
  */
 import { db } from '@db/client'
 import { staffMedia } from '@db/schemas/staff-media'
 import { dbError } from '@shared/errors/db-errors'
 import { and, asc, eq } from 'drizzle-orm'
-import type { MediaAsset } from '@domains/media/types/media-types'
-
-/** Parameters for filtering staff media by entity ID and media type. */
-type GetStaffMediaByTypeParams = {
-  mediaType: string
-  staffId: number
-}
+import type { MediaAsset } from '@media/types/media-types'
+import type { GetStaffMediaByTypeParams } from './staff-media-repository-types'
 
 /**
  * Reads media assets linked to staff records.

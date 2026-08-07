@@ -4,12 +4,13 @@
  * @module domains/anime/services/anime-service
  */
 import { withCache } from '@lib/cache'
-import { animeDetailsCache } from '@domains/anime/cache/anime-cache'
-import { animeNotFound } from '@domains/anime/errors'
-import { mapAnimeDetails } from '@domains/anime/mappers/anime-mapper'
-import { animeRepository } from '@domains/anime/repositories/anime-repository'
-import { animeTaxonomyRepository } from '@domains/anime/repositories/anime-taxonomy-repository'
-import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
+import { animeDetailsCache } from '@anime/cache/anime-cache'
+import { animeNotFound } from '@anime/errors'
+import { mapAnimeDetails } from '@anime/mappers/anime-mapper'
+import { animeRepository } from '@anime/repositories/anime-repository'
+import { animeTaxonomyRepository } from '@anime/repositories/anime-taxonomy-repository'
+import { getAnimeMedia } from '@media/services/get-anime-media-service'
+import type { AnimeDetails } from '@anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for anime details.
@@ -41,7 +42,7 @@ export const animeService = {
    * // { malId, title, genres, imageUrl, slug, watchUrl, ... }
    * ```
    */
-  async getAnimeDetails(malId: number) {
+  async getAnimeDetails(malId: number): Promise<AnimeDetails> {
     return withCache({
       key: animeDetailsCache.key(malId),
       getCache: () => animeDetailsCache.get(malId),
@@ -53,7 +54,7 @@ export const animeService = {
         }
 
         const [media, genres, themes, demographics] = await Promise.all([
-          animeMediaRepository.getMediaByAnimeId(malId),
+          getAnimeMedia(malId),
           animeTaxonomyRepository.getGenresByAnimeId(malId),
           animeTaxonomyRepository.getThemesByAnimeId(malId),
           animeTaxonomyRepository.getDemographicsByAnimeId(malId),

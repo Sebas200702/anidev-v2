@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/types/media-request-types
+ * @module @media/types/media-request-types
  * @remarks HTTP request shapes for the media proxy route: catch-all path params, transform query
  * params, and the combined validated request. Inferred alongside {@link mediaRequestSchema}.
  */

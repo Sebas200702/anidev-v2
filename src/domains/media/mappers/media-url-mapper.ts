@@ -1,30 +1,11 @@
 /**
- * @module @domains/media/mappers/media-url-mapper
+ * @module @media/mappers/media-url-mapper
  * @remarks Builds semantic on-site media optimization URLs from entity metadata. Output paths
  * follow `/media/{entity}/{id}/[{slug}/]{type}/[{size}/][{index}]` with optional `w`, `q`,
  * and `source` query parameters.
  */
-import type { MediaEntity, MediaType } from '@domains/media/types/media-types'
+import type { BuildMediaUrlInput } from './media-url-mapper-types'
 import { config } from '@/config'
-
-type BuildMediaUrlInput = {
-  entity: MediaEntity | string
-  entity_id: number
-  type: MediaType | string
-  size?: 'default' | 'small' | 'large'
-  slug?: string
-  index?: number
-  width?: number
-  quality?: number
-  source?:
-    | 'myanimelist'
-    | 'anilist'
-    | 'kitsu'
-    | 'thetvdb'
-    | 'tmdb'
-    | 'custom'
-    | 'youtube'
-}
 
 /**
  * Constructs an on-site media optimization URL from entity metadata.

@@ -48,6 +48,6 @@ export class AnimeNotFoundError extends DomainError {
  * @see {@link animeService}
  * @see {@link animeFullService}
  */
-export function animeNotFound(malId: number) {
+export const animeNotFound = (malId: number) => {
   return new AnimeNotFoundError(malId)
 }

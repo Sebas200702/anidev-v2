@@ -3,27 +3,12 @@
  *
  * @module domains/anime/mappers/anime-character-mapper
  */
-import type {
-  AnimeCharacter,
-  AnimeCharacterDB,
-  CharacterDB,
-  CharacterVoiceActorDB,
-  StaffDB,
-} from '@domains/anime/types'
+import type { AnimeCharacter, CharacterVoiceActorDB } from '@anime/types'
 import { config } from '@/config'
-import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
+import { buildMediaUrl } from '@media/mappers/media-url-mapper'
 import { DomainError } from '@shared/errors/app-error'
 import { ErrorCodes } from '@shared/errors/codes'
-
-/**
- * Input for assembling anime character payloads.
- */
-type MapAnimeCharactersInput = {
-  refs: AnimeCharacterDB[]
-  characters: CharacterDB[]
-  voiceRelations: CharacterVoiceActorDB[]
-  staff: StaffDB[]
-}
+import type { MapAnimeCharactersInput } from './anime-character-mapper-types'
 
 /**
  * Maps join-table references and related rows into {@link AnimeCharacter} payloads.

@@ -15,7 +15,7 @@
  *
  * @example
  * ```typescript
- * import { loginSchema, type LoginInput } from '@domains/auth/schemas'
+ * import { loginSchema, type LoginInput } from '@auth/schemas'
  *
  * const parsed = loginSchema.parse({ body: { email: 'a@b.com', password: '12345678' } })
  * const input: LoginInput = parsed.body

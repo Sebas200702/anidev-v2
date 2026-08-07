@@ -1,22 +1,23 @@
 /**
- * @module @domains/media/services/fetch-raw-media-service
+ * @module @media/services/fetch-raw-media-service
  * @remarks Resolves and fetches raw media bytes for a semantic path with file-system caching.
  * No optimization or MIME validation is performed.
  */
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError, InfraError } from '@shared/errors/app-error'
-import { mediaServiceConfig } from '@domains/media/config'
-import { fetchMediaAsset } from '@domains/media/services/media-fetch-service'
-import { resolveMedia } from '@domains/media/services/resolve-media-service'
-import { mediaCache } from '@domains/media/cache/media-cache'
+import { mediaServiceConfig } from '@media/config'
+import { fetchMediaAsset } from '@media/services/media-fetch-service'
+import { resolveMedia } from '@media/services/resolve-media-service'
+import { mediaCache } from '@media/cache/media-cache'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { createHash } from 'node:crypto'
 import type {
+  MediaAsset,
   OptimizedMedia,
   SemanticMediaPath,
-} from '@domains/media/types/media-types'
+} from '@media/types/media-types'
 
 /**
  * Resolves and fetches raw media bytes for a semantic path with file-system caching.
@@ -34,10 +35,10 @@ import type {
  * const raw = await fetchRawMedia(parsedPath)
  * ```
  */
-export async function fetchRawMedia(
+export const fetchRawMedia = async (
   params: SemanticMediaPath | null,
   overrides?: { version?: string; resolution?: string }
-): Promise<OptimizedMedia> {
+): Promise<OptimizedMedia> => {
   if (!params) {
     throw new InfraError(ErrorCodes.INVALID_IMAGE_PATH, 'Invalid media path', {
       params,
@@ -53,7 +54,7 @@ export async function fetchRawMedia(
   const cachedMeta = await mediaCache.getRawMeta(mergedParams)
   const src = cachedMeta?.src ?? null
 
-  let media
+  let media: MediaAsset
   if (src) {
     media = { id: 0, mediaType: params.mediaType, src, size: null }
   } else {

@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/mappers/media-assets-mapper
+ * @module @media/mappers/media-assets-mapper
  * @remarks Maps and filters resolved media assets for delivery. Supports size normalization,
  * optional upstream source filtering by hostname, and 1-based asset index selection.
  */
@@ -7,10 +7,8 @@ import {
   normalizeAssetSize,
   normalizeMediaId,
 } from '@utils/image/normalize-media-util'
-import type { OptimizeOptions } from '@utils/image/optimize-util'
-import type { MediaAsset, MediaSize } from '@domains/media/types/media-types'
-
-type MediaSource = NonNullable<OptimizeOptions['source']>
+import type { MediaAsset } from '@media/types/media-types'
+import type { MapAssetsInput, MediaSource } from './media-assets-mapper-types'
 
 /**
  * Infers the upstream source host for a media asset URL.
@@ -57,12 +55,6 @@ export const detectMediaSource = (src: string): MediaSource => {
   }
 
   return 'custom'
-}
-
-type MapAssetsInput = {
-  assets: MediaAsset[]
-  mediaSize: MediaSize
-  source?: OptimizeOptions['source']
 }
 
 /**

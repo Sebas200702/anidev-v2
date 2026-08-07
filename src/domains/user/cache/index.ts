@@ -7,7 +7,7 @@
  * @see {@link module:domains/user/cache/user-profile-cache} for implementation details
  * @example
  * ```typescript
- * import { userProfileCache } from '@domains/user/cache'
+ * import { userProfileCache } from '@user/cache'
  *
  * const cached = await userProfileCache.get('user-123')
  * ```

@@ -17,11 +17,14 @@ export {
   normalizeAssetSize,
   resolveMediaAssets,
 } from './normalize-media-util'
+export type {
+  ImageFormat,
+  ImageSource,
+  OptimizeOptions,
+} from './optimize-util-types'
 export {
-  type ImageFormat,
-  type ImageSource,
-  type OptimizeOptions,
   ImageTooLargeError,
+  EmptyImageError,
   normalizeOptimizeOptions,
 } from './optimize-util'
 export {

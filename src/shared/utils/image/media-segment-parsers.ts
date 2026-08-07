@@ -7,34 +7,18 @@
  * @see {@link parseMediaPath}
  */
 
-import type { MediaSize, MediaType } from '@domains/media/types/media-types'
-import { MediaSize as MediaSizeEnum } from '@domains/media/types/media-types'
+import type { MediaType } from '@media/types/media-types'
+import { MediaSize as MediaSizeEnum } from '@media/types/media-types'
 import {
   isSupportedMediaSize,
   isValidMediaType,
 } from '@utils/image/media-path-guards'
+import type {
+  ParsedMediaSegments,
+  SizeAndIndex,
+} from './media-segment-parsers-types'
 
-/** Intermediate parse result before building {@link SemanticMediaPath}. */
-export type ParsedMediaSegments = {
-  /** Resolved media type (poster, banner, etc.). */
-  type: MediaType
-  /** Resolved size variant. */
-  size: MediaSize
-  /** 1-based asset index within the entity's media list. */
-  index: number
-  /** Optional slug segment when using slug-then-type layout. */
-  slug?: string
-  /** Version label for music/episode assets. */
-  version?: string
-  /** Resolution label for music/episode assets. */
-  resolution?: string
-}
-
-/** Size and index pair extracted from trailing path segments. */
-type SizeAndIndex = {
-  size: MediaSize
-  index: number
-}
+export type { ParsedMediaSegments } from './media-segment-parsers-types'
 
 /**
  * Parses a path segment into a positive integer media index, defaulting to 1.

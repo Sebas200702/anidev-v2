@@ -3,13 +3,14 @@
  *
  * @module domains/anime/services/anime-characters-service
  */
-import { animeCharacterRepository } from '@domains/anime/repositories/anime-characters-repository'
-import { characterRepository } from '@domains/anime/repositories/character-repository'
-import { characterStaffRepository } from '@domains/anime/repositories/character-staff-repository'
-import { animeCharacterCache } from '@domains/anime/cache/anime-character-cache'
-import { staffRepository } from '@domains/anime/repositories/staff-repository'
-import { mapAnimeCharacters } from '@domains/anime/mappers/anime-character-mapper'
+import { animeCharacterRepository } from '@anime/repositories/anime-characters-repository'
+import { characterRepository } from '@anime/repositories/character-repository'
+import { characterStaffRepository } from '@anime/repositories/character-staff-repository'
+import { animeCharacterCache } from '@anime/cache/anime-character-cache'
+import { staffRepository } from '@anime/repositories/staff-repository'
+import { mapAnimeCharacters } from '@anime/mappers/anime-character-mapper'
 import { withCache } from '@lib/cache'
+import type { AnimeCharacter } from '@anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for anime characters.
@@ -38,7 +39,7 @@ export const animeCharacterService = {
    * const cast = await animeCharacterService.getAnimeCharacters(5114)
    * ```
    */
-  async getAnimeCharacters(animeId: number) {
+  async getAnimeCharacters(animeId: number): Promise<AnimeCharacter[]> {
     return withCache({
       key: animeCharacterCache.key(animeId),
       getCache: () => animeCharacterCache.get(animeId),

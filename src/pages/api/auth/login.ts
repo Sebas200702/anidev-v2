@@ -19,8 +19,8 @@
 import type { APIRoute, APIContext } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
-import { loginSchema, type LoginInput } from '@domains/auth/schemas'
-import { credentialsService } from '@domains/auth/services'
+import { loginSchema, type LoginInput } from '@auth/schemas'
+import { credentialsService } from '@auth/services'
 
 /**
  * Signs in a user with email and password credentials.

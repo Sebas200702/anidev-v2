@@ -12,7 +12,7 @@ import {
   animeDemographic,
   animeTheme,
 } from '@db/schemas/anime-relations'
-import type { DemographicDB, GenreDB, ThemeDB } from '@domains/anime/types'
+import type { DemographicDB, GenreDB, ThemeDB } from '@anime/types'
 
 /**
  * Repository for querying taxonomy rows linked to an anime.

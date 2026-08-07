@@ -19,7 +19,7 @@
 
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError } from '@shared/errors/app-error'
-import type { SemanticMediaPath } from '@domains/media/types/media-types'
+import type { SemanticMediaPath } from '@media/types/media-types'
 import { RAW_ENTITIES, isSupportedEntity } from '@utils/image/media-path-guards'
 import {
   parseRawEntityPattern,

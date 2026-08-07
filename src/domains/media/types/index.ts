@@ -1,11 +1,11 @@
 /**
- * @module @domains/media/types
+ * @module @media/types
  * @remarks Barrel exports for shared media domain types covering semantic paths, assets,
  * request shapes, and service configuration.
- * @see {@link @domains/media/types/media-types} for all type definitions
+ * @see {@link @media/types/media-types} for all type definitions
  * @example
  * ```typescript
- * import type { SemanticMediaPath, MediaAsset, OptimizedMedia } from '@domains/media/types'
+ * import type { SemanticMediaPath, MediaAsset, OptimizedMedia } from '@media/types'
  * ```
  */
 

@@ -5,33 +5,9 @@
  */
 import { config } from '@/config'
 import { normalizeString } from '@utils/string/normalize-string-util'
-import type {
-  AnimeDB,
-  AnimeDetails,
-  DemographicDB,
-  GenreDB,
-  ThemeDB,
-} from '@domains/anime/types'
-import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
-import type { MediaAsset } from '@domains/media/types/media-types'
-
-/**
- * Input for assembling an anime detail payload.
- *
- * @see {@link animeService.getAnimeDetails}
- */
-type MapAnimeDetailsInput = {
-  /** Genre rows from {@link animeTaxonomyRepository.getGenresByAnimeId} */
-  genres: GenreDB[]
-  /** Theme rows */
-  themes: ThemeDB[]
-  /** Demographic rows */
-  demographics: DemographicDB[]
-  /** Trailer/poster assets from media repository */
-  media: MediaAsset[]
-  /** Core `anime` row */
-  anime: AnimeDB
-}
+import type { AnimeDetails } from '@anime/types'
+import { buildMediaUrl } from '@media/mappers/media-url-mapper'
+import type { MapAnimeDetailsInput } from './anime-mapper-types'
 
 /**
  * Maps anime, taxonomy, and media rows into an {@link AnimeDetails} payload.

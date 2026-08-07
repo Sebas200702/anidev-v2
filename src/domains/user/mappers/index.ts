@@ -7,7 +7,7 @@
  * @see {@link module:domains/user/mappers/user-mapper} for profile mapping
  * @example
  * ```typescript
- * import { mapUserProfile } from '@domains/user/mappers'
+ * import { mapUserProfile } from '@user/mappers'
  * ```
  */
 

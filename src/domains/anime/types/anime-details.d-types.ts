@@ -3,7 +3,7 @@
  *
  * @module domains/anime/types/anime-details
  */
-import type { animeDetailsSchema } from '@domains/anime/schemas/anime-details-schema'
+import type { animeDetailsSchema } from '@anime/schemas/anime-details-schema'
 import type { z } from 'zod'
 
 /**

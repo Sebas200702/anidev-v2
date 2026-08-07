@@ -17,12 +17,12 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { animeService } from '@domains/anime/services/anime-service'
+import { animeService } from '@anime/services/anime-service'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import {
   animeDetailsResponseSchema,
   getAnimeDetailsSchema,
-} from '@domains/anime/schemas/anime-details-schema'
+} from '@anime/schemas/anime-details-schema'
 
 /**
  * Returns anime detail data for a MyAnimeList ID.

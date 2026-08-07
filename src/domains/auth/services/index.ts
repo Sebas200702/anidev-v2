@@ -13,7 +13,7 @@
  *
  * @example
  * ```typescript
- * import { credentialsService, sessionService } from '@domains/auth/services'
+ * import { credentialsService, sessionService } from '@auth/services'
  *
  * const loginResult = await credentialsService.login(body, request.headers)
  * const session = await sessionService.getSession(request.headers)

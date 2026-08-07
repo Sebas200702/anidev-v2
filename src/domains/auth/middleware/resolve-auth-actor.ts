@@ -16,8 +16,7 @@
  * @see {@link credentialsService.login} — establishes the session this function reads
  */
 import { auth } from '@lib/auth/server'
-
-type SessionLocals = Pick<App.Locals, 'user' | 'session'>
+import type { SessionLocals } from './resolve-auth-actor-types'
 
 /**
  * Loads the current user and session from Better Auth request cookies/headers.
@@ -44,7 +43,7 @@ type SessionLocals = Pick<App.Locals, 'user' | 'session'>
  * @example
  * ```typescript
  * // astro middleware
- * import { resolveAuthActor } from '@domains/auth/middleware/resolve-auth-actor'
+ * import { resolveAuthActor } from '@auth/middleware/resolve-auth-actor'
  *
  * export const onRequest = defineMiddleware(async (context, next) => {
  *   const { user, session } = await resolveAuthActor(context.request.headers)
@@ -63,9 +62,9 @@ type SessionLocals = Pick<App.Locals, 'user' | 'session'>
  * }
  * ```
  */
-export async function resolveAuthActor(
+export const resolveAuthActor = async (
   requestHeaders: Headers
-): Promise<SessionLocals> {
+): Promise<SessionLocals> => {
   try {
     const sessionData = await auth.api.getSession({
       headers: requestHeaders,

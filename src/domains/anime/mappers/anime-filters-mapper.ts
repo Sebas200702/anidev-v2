@@ -3,7 +3,7 @@
  *
  * @module domains/anime/mappers/anime-filters-mapper
  */
-import type { AnimeFilters, AnimeFiltersParams } from '@domains/anime/types'
+import type { AnimeFilters, AnimeFiltersParams } from '@anime/types'
 
 /**
  * Coerces a scalar or array query value into an array for SQL `IN` filters.

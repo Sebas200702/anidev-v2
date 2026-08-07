@@ -1,20 +1,17 @@
 /**
- * @module @domains/media/services/resolve-media-service
+ * @module @media/services/resolve-media-service
  * @remarks Resolves the best matching {@link MediaAsset} for a parsed semantic media path.
  * Loads candidate assets from entity repositories, filters by size and optional source host,
  * then selects a single asset by 1-based index. Falls back to a placeholder when none match.
  */
 import { resolveMediaAssets } from '@utils/image/normalize-media-util'
 import type { OptimizeOptions } from '@utils/image/optimize-util'
-import { mediaServiceConfig } from '@domains/media/config'
+import { mediaServiceConfig } from '@media/config'
 import {
   mapFilteredMediaAssets,
   mapIndexedMediaAsset,
-} from '@domains/media/mappers/media-assets-mapper'
-import type {
-  MediaAsset,
-  SemanticMediaPath,
-} from '@domains/media/types/media-types'
+} from '@media/mappers/media-assets-mapper'
+import type { MediaAsset, SemanticMediaPath } from '@media/types/media-types'
 
 /**
  * Resolves the best matching media asset for a semantic path.
@@ -32,10 +29,10 @@ import type {
  * console.log(asset.src)
  * ```
  */
-export async function resolveMedia(
+export const resolveMedia = async (
   params: SemanticMediaPath,
   source?: OptimizeOptions['source']
-): Promise<MediaAsset> {
+): Promise<MediaAsset> => {
   const assets = await resolveMediaAssets(params)
   const sourceFilteredAssets = mapFilteredMediaAssets({
     assets,

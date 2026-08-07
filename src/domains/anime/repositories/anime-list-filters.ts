@@ -9,13 +9,10 @@
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { normalizeString } from '@utils/string/normalize-string-util'
-import type { AnimeFilters } from '@domains/anime/types'
 import { eq, inArray, sql, type SQL } from 'drizzle-orm'
+import type { AnimeListFilterParams } from './anime-list-filters-types'
 
-/**
- * Filter fields used to build SQL `WHERE` clauses (excludes pagination).
- */
-export type AnimeListFilterParams = Omit<AnimeFilters, 'page' | 'limit'>
+export type { AnimeListFilterParams } from './anime-list-filters-types'
 
 /**
  * Builds SQL filter clauses for anime list queries.

@@ -3,12 +3,12 @@
  *
  * @module domains/anime/services/anime-staff-service
  */
-import type { AnimeStaff } from '@domains/anime/types'
-import { animeStaffCache } from '@domains/anime/cache/anime-staff-cache'
-import { staffRepository } from '@domains/anime/repositories/staff-repository'
+import type { AnimeStaff } from '@anime/types'
+import { animeStaffCache } from '@anime/cache/anime-staff-cache'
+import { staffRepository } from '@anime/repositories/staff-repository'
 import { withCache } from '@lib/cache'
-import { mapAnimeStaff } from '@domains/anime/mappers/anime-staff-mapper'
-import { animeStaffRepository } from '@domains/anime/repositories/anime-staff-repository'
+import { mapAnimeStaff } from '@anime/mappers/anime-staff-mapper'
+import { animeStaffRepository } from '@anime/repositories/anime-staff-repository'
 
 /**
  * Coordinates repository access, mapping, and caching for anime staff lists.

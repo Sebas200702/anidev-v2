@@ -1,20 +1,14 @@
 /**
- * @module @domains/media/services/media-fetch-service
+ * @module @media/services/media-fetch-service
  * @remarks Fetches remote media assets over HTTP with browser-like headers for upstream CDN
  * compatibility. Used by {@link mediaService.fetchImageBuffer} in the optimization pipeline.
  */
 import { ErrorCodes } from '@shared/errors/codes'
 import { InfraError } from '@shared/errors/app-error'
-
-type FetchMediaOptions = {
-  signal?: AbortSignal
-  accept?: string
-}
-
-type FetchedMediaAsset = {
-  buffer: Buffer
-  mimeType: string
-}
+import type {
+  FetchMediaOptions,
+  FetchedMediaAsset,
+} from './media-fetch-service-types'
 
 /**
  * Downloads a remote media resource and returns its bytes and MIME type.
@@ -34,10 +28,10 @@ type FetchedMediaAsset = {
  * })
  * ```
  */
-export async function fetchMediaAsset(
+export const fetchMediaAsset = async (
   mediaUrl: string,
   { signal, accept = '*/*' }: FetchMediaOptions = {}
-): Promise<FetchedMediaAsset> {
+): Promise<FetchedMediaAsset> => {
   try {
     const response = await fetch(mediaUrl, {
       signal,

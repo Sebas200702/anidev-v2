@@ -60,7 +60,7 @@ export const publicRoutes = [
  * @see {@link publicRoutes} for the authoritative allowlist
  * @see {@link module:middleware/auth-middleware} for middleware integration
  */
-export function isPublicRoute(pathname: string) {
+export const isPublicRoute = (pathname: string) => {
   return publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   )

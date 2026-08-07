@@ -1,11 +1,11 @@
 /**
- * @module @domains/music/cache
+ * @module @music/cache
  * @remarks Barrel exports for music cache helpers. Currently exposes read-through cache
  * accessors keyed by internal music ID for {@link MusicDetails} payloads.
  * @see {@link ./music-cache} for cache key construction and TTL configuration
  * @example
  * ```typescript
- * import { musicCache } from '@domains/music/cache'
+ * import { musicCache } from '@music/cache'
  *
  * const cached = await musicCache.get(42)
  * if (!cached) {

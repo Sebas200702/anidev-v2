@@ -6,7 +6,7 @@
  * Turns an {@link ApiEnvelope} into an HTTP {@link Response} and merges auxiliary headers (e.g.
  * Better Auth `Set-Cookie`). Envelope builders live in {@link create-api-response-util}.
  */
-import type { ApiEnvelope } from './api-envelope'
+import type { ApiEnvelope } from './api-envelope-types'
 
 /**
  * Serializes an API envelope into a JSON {@link Response}.
@@ -21,11 +21,11 @@ import type { ApiEnvelope } from './api-envelope'
  *
  * @see {@link withErrorHandling}
  */
-export function jsonResponse(
+export const jsonResponse = (
   payload: ApiEnvelope<unknown>,
   initHeaders?: HeadersInit,
   statusOverride?: number
-) {
+) => {
   const status = statusOverride ?? payload.status
 
   return new Response(JSON.stringify(payload), {
@@ -51,10 +51,10 @@ export function jsonResponse(
  *
  * @see {@link withErrorHandling}
  */
-export function mergeResponseHeaders(
+export const mergeResponseHeaders = (
   responseHeaders: Headers,
   authHeaders?: Headers
-) {
+) => {
   if (!authHeaders) {
     return responseHeaders
   }

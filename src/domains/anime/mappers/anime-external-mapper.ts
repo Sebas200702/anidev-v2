@@ -3,7 +3,7 @@
  *
  * @module domains/anime/mappers/anime-external-mapper
  */
-import type { AnimeExternalDB, AnimeExternalIds } from '@domains/anime/types'
+import type { AnimeExternalDB, AnimeExternalIds } from '@anime/types'
 
 /**
  * Maps a single external IDs row into normalized platform identifiers.

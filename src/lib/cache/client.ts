@@ -40,7 +40,7 @@ const MAX_RETRY_DELAY_MS = 5_000
  * @param attempt - Zero-indexed reconnection attempt counter from ioredis.
  * @returns Delay in milliseconds before the next attempt, or `null` to give up.
  */
-export function retryStrategy(attempt: number): number | null {
+export const retryStrategy = (attempt: number): number | null => {
   if (attempt > MAX_RECONNECT_ATTEMPTS) {
     logger.warn({ attempt }, 'Redis/Dragonfly reconnect limit reached')
     return null

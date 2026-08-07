@@ -162,7 +162,7 @@ DB schema (lib/db/schemas/) → Repository → Mapper → Service → Page/API r
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
 
 ## Path Aliases (tsconfig + Vite)
-`@`, `@styles`, `@domains`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json` and `astro.config.mjs`). Use these instead of relative imports.
+`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`).
 
 ## API Route Patterns
 Two composition styles:

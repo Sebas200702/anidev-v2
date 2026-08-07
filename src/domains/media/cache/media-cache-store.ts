@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/cache/media-cache-store
+ * @module @media/cache/media-cache-store
  * @remarks Low-level read/write helpers over the shared cache backend for serialized media
  * payloads. Key construction is the caller's responsibility (see {@link media-cache-keys}).
  */
@@ -9,8 +9,11 @@ import {
   serializeImage,
   deserializeImage,
   type CachedOptimizedMedia,
-} from '@domains/media/cache/media-cache-serialization'
-import type { OptimizedMedia } from '@domains/media/types/media-types'
+} from '@media/cache/media-cache-serialization'
+import type { OptimizedMedia } from '@media/types/media-types'
+import type { RawMeta } from './media-cache-store-types'
+
+export type { RawMeta } from './media-cache-store-types'
 
 /**
  * Reads and deserializes a cached media payload.
@@ -24,9 +27,9 @@ import type { OptimizedMedia } from '@domains/media/types/media-types'
  * const cached = await readCachedMedia(mediaCache.key(parsedPath, options))
  * ```
  */
-export async function readCachedMedia(
+export const readCachedMedia = async (
   cacheKey: string
-): Promise<OptimizedMedia | null> {
+): Promise<OptimizedMedia | null> => {
   const cached = await cacheGet<CachedOptimizedMedia | string>(cacheKey)
 
   return deserializeImage(cached)
@@ -47,18 +50,18 @@ export async function readCachedMedia(
  * await writeCachedMedia(mediaCache.key(parsedPath, options), optimized)
  * ```
  */
-export async function writeCachedMedia(
+export const writeCachedMedia = async (
   cacheKey: string,
   image: OptimizedMedia
-): Promise<void> {
+): Promise<void> => {
   await cacheSet(cacheKey, serializeImage(image), {
     ttlSeconds: CacheTtl.Long,
   })
 }
 
-export type RawMeta = { src: string }
-
-export async function readRawMeta(cacheKey: string): Promise<RawMeta | null> {
+export const readRawMeta = async (
+  cacheKey: string
+): Promise<RawMeta | null> => {
   const cached = await cacheGet<string>(cacheKey)
   if (!cached) return null
   try {
@@ -68,10 +71,10 @@ export async function readRawMeta(cacheKey: string): Promise<RawMeta | null> {
   }
 }
 
-export async function writeRawMeta(
+export const writeRawMeta = async (
   cacheKey: string,
   meta: RawMeta
-): Promise<void> {
+): Promise<void> => {
   await cacheSet(cacheKey, JSON.stringify(meta), {
     ttlSeconds: CacheTtl.Medium,
   })

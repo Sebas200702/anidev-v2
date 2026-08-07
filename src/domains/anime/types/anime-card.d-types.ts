@@ -4,7 +4,7 @@
  * @module domains/anime/types/anime-card
  */
 import type { z } from 'zod'
-import type { animeCardSchema } from '@domains/anime/schemas/anime-card-schema'
+import type { animeCardSchema } from '@anime/schemas/anime-card-schema'
 
 /**
  * Compact anime summary used in list and grid views.

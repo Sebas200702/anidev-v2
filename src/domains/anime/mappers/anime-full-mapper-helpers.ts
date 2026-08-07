@@ -11,21 +11,11 @@ import type {
   AnimeRelationsDB,
   AnimeTitle,
   AnimeTitleSynonymDB,
-} from '@domains/anime/types'
+} from '@anime/types'
 import { config } from '@/config'
+import type { RelationGroup } from './anime-full-mapper-helpers-types'
 
-/** Grouped relation entry used while building full detail payloads. */
-type RelationGroupEntry = {
-  relatedId: number
-  title: string
-  url: string
-}
-
-/** Grouped relation bucket keyed by relation type. */
-export type RelationGroup = {
-  relation: string
-  entry: RelationGroupEntry[]
-}
+export type { RelationGroup } from './anime-full-mapper-helpers-types'
 
 /**
  * Builds the ordered title list: main, synonyms, then optional English/Japanese.
@@ -34,10 +24,10 @@ export type RelationGroup = {
  * @param titleSynonyms - Synonym rows for the anime
  * @returns Ordered {@link AnimeTitle} list
  */
-export function buildAnimeTitles(
+export const buildAnimeTitles = (
   anime: AnimeDB,
   titleSynonyms: AnimeTitleSynonymDB[]
-): AnimeTitle[] {
+): AnimeTitle[] => {
   const titles: AnimeTitle[] = [
     {
       title: anime.title,
@@ -71,10 +61,10 @@ export function buildAnimeTitles(
  * @param relationData - Related anime rows used to resolve titles
  * @returns Relations grouped by `relationType`
  */
-export function groupAnimeRelations(
+export const groupAnimeRelations = (
   relations: AnimeRelationsDB[],
   relationData: AnimeDB[]
-): RelationGroup[] {
+): RelationGroup[] => {
   return Object.values(
     relations.reduce<Record<string, RelationGroup>>((acc, rel) => {
       const key = rel.relationType

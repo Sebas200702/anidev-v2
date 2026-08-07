@@ -20,7 +20,7 @@
  */
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheTtl, CacheKeyPrefix } from '@lib/cache/config'
-import type { AnimeDetails } from '@domains/anime/types'
+import type { AnimeDetails } from '@anime/types'
 
 /**
  * Read-through cache for {@link AnimeDetails} keyed by MAL ID.
