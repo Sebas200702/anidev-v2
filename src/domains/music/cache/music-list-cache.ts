@@ -20,20 +20,8 @@
  */
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
-import type { MusicCard, MusicListFilters } from '@domains/music/types'
-
-/**
- * Cached payload for a filtered music list query.
- *
- * @remarks
- * Mirrors the return shape of {@link musicListService.getMusicList}.
- */
-type MusicListCacheValue = {
-  /** Mapped card rows for the current page */
-  list: MusicCard[]
-  /** Total rows matching filters (all pages) */
-  total: number
-}
+import type { MusicListFilters } from '@music/types'
+import type { MusicListCacheValue } from './music-list-cache-types'
 
 /**
  * Read-through cache for paginated music list results keyed by filter set.

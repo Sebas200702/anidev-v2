@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/types/music-db-types
+ * @module @music/types/music-db-types
  * @remarks Drizzle-derived types for music database rows and relation projections used by
  * repositories and {@link mapMusicDetail}.
  */

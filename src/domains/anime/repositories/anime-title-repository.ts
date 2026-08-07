@@ -3,7 +3,7 @@
  *
  * @module domains/anime/repositories/anime-title-repository
  */
-import type { AnimeTitleSynonymDB } from '@domains/anime/types'
+import type { AnimeTitleSynonymDB } from '@anime/types'
 import { dbError } from '@shared/errors/db-errors'
 import { db } from '@db/client'
 import { animeTitleSynonym } from '@db/schemas/anime'

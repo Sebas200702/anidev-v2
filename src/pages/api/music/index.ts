@@ -20,8 +20,8 @@ import { withZodValidation } from '@http/with-validation'
 import {
   musicListRequestSchema,
   musicListResponseSchema,
-} from '@domains/music/schemas/music-list-schema'
-import { musicListService } from '@domains/music/services/music-list-service'
+} from '@music/schemas/music-list-schema'
+import { musicListService } from '@music/services/music-list-service'
 import type { APIRoute } from 'astro'
 
 /**

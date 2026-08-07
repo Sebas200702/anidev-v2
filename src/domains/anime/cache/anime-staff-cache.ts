@@ -15,7 +15,7 @@
  * @see {@link mapAnimeStaff}
  */
 import { cacheGet, cacheSet } from '@lib/cache'
-import type { AnimeStaff } from '@domains/anime/types'
+import type { AnimeStaff } from '@anime/types'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
 /**

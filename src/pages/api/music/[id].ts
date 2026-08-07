@@ -17,12 +17,12 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { musicService } from '@domains/music/services/music-service'
+import { musicService } from '@music/services/music-service'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import {
   getMusicSchema,
   musicDetailsResponseSchema,
-} from '@domains/music/schemas/api-schema'
+} from '@music/schemas/api-schema'
 
 /**
  * Returns music detail metadata and playable versions by internal music ID.

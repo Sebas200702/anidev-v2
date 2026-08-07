@@ -16,11 +16,11 @@
  */
 
 import type { APIRoute } from 'astro'
-import { animeStaffService } from '@domains/anime/services/anime-staff-service'
+import { animeStaffService } from '@anime/services/anime-staff-service'
 import {
   getAnimeStaffSchema,
   animeStaffResponseSchema,
-} from '@domains/anime/schemas/anime-staff-schema'
+} from '@anime/schemas/anime-staff-schema'
 import { withZodValidation } from '@http/with-validation'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 

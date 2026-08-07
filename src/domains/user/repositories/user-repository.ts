@@ -12,7 +12,7 @@
 import { db } from '@db/client'
 import { profile } from '@db/schemas/profile'
 import { dbError } from '@shared/errors/db-errors'
-import type { UserProfileDB } from '@domains/user/types/user-db-types'
+import type { UserProfileDB } from '@user/types/user-db-types'
 import { eq } from 'drizzle-orm'
 
 /**

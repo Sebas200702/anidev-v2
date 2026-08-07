@@ -10,7 +10,7 @@
  * @see {@link CacheTtl.Medium} for entry TTL
  * @example
  * ```typescript
- * import { userProfileCache } from '@domains/user/cache'
+ * import { userProfileCache } from '@user/cache'
  *
  * const cached = await userProfileCache.get('user-123')
  * if (!cached) {
@@ -20,7 +20,7 @@
  */
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
-import type { UserProfile } from '@domains/user/types/user-types'
+import type { UserProfile } from '@user/types/user-types'
 
 /**
  * Cache helpers for serialized user profile payloads.

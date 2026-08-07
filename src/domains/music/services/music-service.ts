@@ -1,19 +1,19 @@
 /**
- * @module @domains/music/services/music-service
+ * @module @music/services/music-service
  * @remarks Application service for music detail reads. Coordinates parallel repository
  * queries, resolution batching, mapping, and read-through caching.
  */
-import type { MusicDetails } from '@/domains/music/types/music-details-types'
-import { musicCache } from '@domains/music/cache/music-cache'
-import { musicNotFound } from '@domains/music/errors'
-import { mapMusicDetail } from '@domains/music/mappers/music-detail-mapper'
-import { musicRelationRepository } from '@domains/music/repositories/music-relation-repository'
-import { musicRepository } from '@domains/music/repositories/music-repository'
-import { musicVersionRepository } from '@domains/music/repositories/music-version-repository'
+import type { MusicDetails } from '@music/types/music-details-types'
+import { musicCache } from '@music/cache/music-cache'
+import { musicNotFound } from '@music/errors'
+import { mapMusicDetail } from '@music/mappers/music-detail-mapper'
+import { musicRelationRepository } from '@music/repositories/music-relation-repository'
+import { musicRepository } from '@music/repositories/music-repository'
+import { musicVersionRepository } from '@music/repositories/music-version-repository'
 import type {
   MusicResolutionDB,
   MusicVersionDB,
-} from '@domains/music/types/music-db-types'
+} from '@music/types/music-db-types'
 import { withCache } from '@lib/cache'
 
 /**
@@ -25,7 +25,7 @@ import { withCache } from '@lib/cache'
  * @see {@link musicCache} for cache key and TTL configuration
  * @example
  * ```typescript
- * import { musicService } from '@domains/music/services/music-service'
+ * import { musicService } from '@music/services/music-service'
  *
  * const details = await musicService.getMusicDetailsById(42)
  * console.log(details.title, details.versions.length)

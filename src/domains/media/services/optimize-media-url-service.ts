@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/services/optimize-media-url-service
+ * @module @media/services/optimize-media-url-service
  * @remarks Optimizes a direct image URL with read-through caching, bypassing semantic-path
  * resolution. Used for already-known absolute image URLs.
  */
@@ -9,10 +9,10 @@ import {
   normalizeOptimizeOptions,
   type OptimizeOptions,
 } from '@utils/image/optimize-util'
-import { mediaCache } from '@domains/media/cache/media-cache'
-import { optimizeMediaImageBuffer } from '@domains/media/services/image-optimizer-service'
-import { fetchImageBuffer } from '@domains/media/services/fetch-image-buffer-service'
-import type { OptimizedMedia } from '@domains/media/types/media-types'
+import { mediaCache } from '@media/cache/media-cache'
+import { optimizeMediaImageBuffer } from '@media/services/image-optimizer-service'
+import { fetchImageBuffer } from '@media/services/fetch-image-buffer-service'
+import type { OptimizedMedia } from '@media/types/media-types'
 
 /**
  * Optimizes a direct image URL with caching.
@@ -32,10 +32,10 @@ import type { OptimizedMedia } from '@domains/media/types/media-types'
  * )
  * ```
  */
-export async function optimizeMediaByUrl(
+export const optimizeMediaByUrl = async (
   imageUrl: string,
   options: OptimizeOptions = {}
-): Promise<OptimizedMedia> {
+): Promise<OptimizedMedia> => {
   const normalizedImageUrl = normalizeImageUrl(imageUrl)
   const normalizedOptions = normalizeOptimizeOptions(options)
 

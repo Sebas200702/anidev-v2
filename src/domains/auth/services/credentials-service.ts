@@ -18,13 +18,9 @@
  * @see {@link mapBetterAuthError} — error normalization layer
  */
 import { auth } from '@lib/auth/server'
-import type { LoginInput, RegisterInput } from '@domains/auth/schemas'
-import { mapBetterAuthError } from '@domains/auth/utils/map-better-auth-error-util'
-
-type AuthResult<T> = {
-  data: T
-  headers: Headers
-}
+import type { LoginInput, RegisterInput } from '@auth/schemas'
+import { mapBetterAuthError } from '@auth/utils/map-better-auth-error-util'
+import type { AuthResult } from './credentials-service-types'
 
 /**
  * Better Auth wrapper for email/password sign-in and sign-up.
@@ -38,7 +34,7 @@ type AuthResult<T> = {
  *
  * @example
  * ```typescript
- * import { credentialsService } from '@domains/auth/services/credentials-service'
+ * import { credentialsService } from '@auth/services/credentials-service'
  *
  * const { data, headers } = await credentialsService.login(
  *   { email: 'user@example.com', password: 'securepass' },

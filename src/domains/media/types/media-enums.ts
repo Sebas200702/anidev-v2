@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/types/media-enums
+ * @module @media/types/media-enums
  * @remarks Enumerations for semantic media paths: supported entity types, asset categories, and
  * size variants. Parsed from `/media/{entity}/...` route segments.
  */

@@ -30,7 +30,7 @@ import {
   InvalidCredentialsError,
   RegistrationFailedError,
   SessionExpiredError,
-} from '@domains/auth/errors'
+} from '@auth/errors'
 
 /**
  * Normalizes Better Auth failures into typed application auth errors.
@@ -56,7 +56,7 @@ import {
  *
  * @example
  * ```typescript
- * import { mapBetterAuthError } from '@domains/auth/utils/map-better-auth-error-util'
+ * import { mapBetterAuthError } from '@auth/utils/map-better-auth-error-util'
  *
  * try {
  *   await auth.api.signInEmail({ body, headers })
@@ -79,7 +79,7 @@ import {
  * // → AuthError { code: 'AUTH_REQUIRED', message: 'Authentication failed' }
  * ```
  */
-export function mapBetterAuthError(error: unknown): Error {
+export const mapBetterAuthError = (error: unknown): Error => {
   if (error instanceof Error) {
     const message = error.message.toLowerCase()
 

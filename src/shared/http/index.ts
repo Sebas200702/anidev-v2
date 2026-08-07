@@ -13,7 +13,7 @@
  * @see {@link module:shared/http/create-api-response-util}
  */
 
-export type { ApiEnvelope } from './api-envelope'
+export type { ApiEnvelope } from './api-envelope-types'
 export {
   createSuccessResponse,
   createErrorResponse,

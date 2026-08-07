@@ -18,7 +18,7 @@
 
 import type { APIRoute } from 'astro'
 import { withErrorHandling } from '@http/with-error-handling'
-import { sessionService } from '@domains/auth/services'
+import { sessionService } from '@auth/services'
 
 /**
  * Returns the active session and user from request cookies or headers.

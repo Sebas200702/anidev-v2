@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/repositories
+ * @module @media/repositories
  * @remarks Barrel exports for entity-specific media asset repositories. Each repository loads
  * persisted `src` URLs and metadata from the corresponding media join table.
  * @see {@link ./anime-media-repository} for anime assets
@@ -7,7 +7,7 @@
  * @see {@link ./staff-media-repository} for staff assets
  * @example
  * ```typescript
- * import { animeMediaRepository } from '@domains/media/repositories'
+ * import { animeMediaRepository } from '@media/repositories'
  * ```
  */
 

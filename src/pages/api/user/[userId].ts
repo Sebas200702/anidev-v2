@@ -20,12 +20,12 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { userService } from '@domains/user/services/user-service'
+import { userService } from '@user/services/user-service'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import {
   getUserProfileSchema,
   userProfileResponseSchema,
-} from '@domains/user/schemas/user-schema'
+} from '@user/schemas/user-schema'
 
 /**
  * Returns a public user profile for the given user ID.

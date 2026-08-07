@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/errors/music-invalid-id-error
+ * @module @music/errors/music-invalid-id-error
  * @remarks Validation errors raised when route or query parameters cannot be parsed into
  * a valid internal music identifier.
  */
@@ -41,6 +41,6 @@ export class MusicInvalidIdError extends ValidationError {
  * if (!Number.isFinite(id)) throw musicInvalidId(params.id)
  * ```
  */
-export function musicInvalidId(rawId: unknown) {
+export const musicInvalidId = (rawId: unknown) => {
   return new MusicInvalidIdError(rawId)
 }

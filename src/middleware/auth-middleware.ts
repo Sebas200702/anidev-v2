@@ -19,7 +19,7 @@
  */
 import { defineMiddleware } from 'astro:middleware'
 import { isPublicRoute } from '@config/public-routes'
-import { resolveAuthActor } from '@domains/auth/middleware'
+import { resolveAuthActor } from '@auth/middleware'
 
 /** Cookie substrings that indicate a Better Auth session may be present. */
 const authCookieMarkers = ['session_token=', 'session_data=']

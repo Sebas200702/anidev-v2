@@ -10,7 +10,7 @@
  * @see {@link module:domains/user/types/user-policies-types} for policy inputs
  * @example
  * ```typescript
- * import type { UserProfile, UserProfileDB, PolicyParameters } from '@domains/user/types'
+ * import type { UserProfile, UserProfileDB, PolicyParameters } from '@user/types'
  * ```
  */
 export * from './user-db-types'

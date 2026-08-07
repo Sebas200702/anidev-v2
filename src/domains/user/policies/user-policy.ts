@@ -22,7 +22,7 @@
  * @see {@link userService} for policy usage during profile reads
  * @example
  * ```typescript
- * import { userPolicies } from '@domains/user/policies/user-policy'
+ * import { userPolicies } from '@user/policies/user-policy'
  *
  * const canEdit = userPolicies.canEditUserProfile({
  *   userId: session.userId,
@@ -30,8 +30,8 @@
  * })
  * ```
  */
-import { userProfilePolicies } from '@domains/user/policies/user-profile-policy'
-import { userContentPolicies } from '@domains/user/policies/user-content-policy'
+import { userProfilePolicies } from '@user/policies/user-profile-policy'
+import { userContentPolicies } from '@user/policies/user-content-policy'
 
 /**
  * Policy checks for profile, preferences, and watch-history access.

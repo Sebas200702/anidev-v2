@@ -51,7 +51,7 @@ const isEnabled = !!env.SENTRY_DSN
  *
  * @see {@link initAstroSentry} for Astro-specific SDK
  */
-export function initServerSentry() {
+export const initServerSentry = () => {
   if (!isEnabled) return
 
   SentryNode.init({
@@ -83,7 +83,7 @@ export function initServerSentry() {
  *
  * @see {@link initServerSentry} for non-Astro Node contexts
  */
-export function initAstroSentry() {
+export const initAstroSentry = () => {
   if (!isEnabled) return
 
   SentryAstro.init({
@@ -116,7 +116,7 @@ export function initAstroSentry() {
  *
  * @see {@link initAstroSentry} for SSR error capture
  */
-export function wrapReactComponentWithSentry<T>(Component: T): T {
+export const wrapReactComponentWithSentry = <T>(Component: T): T => {
   if (!isEnabled) return Component
 
   // @ts-expect-error Sentry HOC typing does not preserve generic component props.

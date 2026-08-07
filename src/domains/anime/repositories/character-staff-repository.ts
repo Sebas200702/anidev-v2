@@ -8,7 +8,7 @@ import { dbConfig } from '@db/config'
 import { characterVoiceActor } from '@db/schemas/character-relations'
 import { dbError } from '@shared/errors/db-errors'
 import { inArray } from 'drizzle-orm'
-import type { CharacterVoiceActorDB } from '@domains/anime/types'
+import type { CharacterVoiceActorDB } from '@anime/types'
 
 /**
  * Repository for querying voice actor credits linked to characters.

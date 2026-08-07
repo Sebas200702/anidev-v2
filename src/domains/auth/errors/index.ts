@@ -19,7 +19,7 @@
  *   InvalidCredentialsError,
  *   SessionExpiredError,
  *   RegistrationFailedError,
- * } from '@domains/auth/errors'
+ * } from '@auth/errors'
  * ```
  */
 

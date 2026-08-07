@@ -8,7 +8,7 @@
  * @see {@link module:domains/user/policies/user-policy} for rule definitions
  * @example
  * ```typescript
- * import { userPolicies } from '@domains/user/policies'
+ * import { userPolicies } from '@user/policies'
  * ```
  */
 

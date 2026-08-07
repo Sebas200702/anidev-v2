@@ -1,23 +1,10 @@
 /**
- * @module @domains/music/mappers/music-detail-mapper
+ * @module @music/mappers/music-detail-mapper
  * @remarks Maps music database rows into API-facing {@link MusicDetails} payloads, including
  * artist credits, version metadata, and nested playable resolutions.
  */
-import type { MusicDetails } from '@/domains/music/types/music-details-types'
-import type {
-  MusicArtistDB,
-  MusicDB,
-  MusicResolutionDB,
-  MusicVersionDB,
-} from '@domains/music/types/music-db-types'
-
-/** Input rows required to assemble a {@link MusicDetails} payload. */
-type MapMusicDetailInput = {
-  music: MusicDB
-  artists: MusicArtistDB[]
-  versions: MusicVersionDB[]
-  resolutionsByVersionId: Record<number, MusicResolutionDB[]>
-}
+import type { MusicDetails } from '@music/types/music-details-types'
+import type { MapMusicDetailInput } from './music-detail-mapper-types'
 
 /**
  * Builds a music detail object from related database records.

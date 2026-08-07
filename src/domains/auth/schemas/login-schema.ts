@@ -15,8 +15,8 @@
  */
 import { z } from 'zod'
 
-// sessionResponseSchema is re-exported via the barrel at `@domains/auth/schemas`.
-// Import it from there or from `@domains/auth/schemas/session-schema` directly.
+// sessionResponseSchema is re-exported via the barrel at `@auth/schemas`.
+// Import it from there or from `@auth/schemas/session-schema` directly.
 
 /**
  * Validates email/password login request bodies.

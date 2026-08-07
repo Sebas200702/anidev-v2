@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/config
+ * @module @media/config
  * @remarks Default configuration for media resolution, placeholder fallbacks, and image
  * optimization defaults used across the media delivery pipeline.
  */
@@ -8,7 +8,7 @@ import {
   MediaEntity,
   MediaType,
   type MediaServiceConfig,
-} from '@domains/media/types/media-types'
+} from '@media/types/media-types'
 
 /**
  * Shared defaults for media lookup, placeholders, and supported assets.
@@ -19,7 +19,7 @@ import {
  * @see {@link mediaService} for runtime usage
  * @example
  * ```typescript
- * import { mediaServiceConfig } from '@domains/media/config'
+ * import { mediaServiceConfig } from '@media/config'
  *
  * console.log(mediaServiceConfig.defaultQuality) // 75
  * console.log(mediaServiceConfig.defaultPlaceholderUrl)

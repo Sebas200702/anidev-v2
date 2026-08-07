@@ -45,7 +45,11 @@ import { ErrorCodes } from '@shared/errors/codes'
  *
  * @see {@link mapErrorToHttp}
  */
-export function dbError(operation: string, details?: unknown, cause?: unknown) {
+export const dbError = (
+  operation: string,
+  details?: unknown,
+  cause?: unknown
+) => {
   return new InfraError(
     ErrorCodes.DB_ERROR,
     `Database error during ${operation}`,

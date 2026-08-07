@@ -19,7 +19,7 @@
  * @see {@link mapAnimeCharacters}
  */
 import { cacheGet, cacheSet } from '@lib/cache'
-import type { AnimeCharacter } from '@domains/anime/types'
+import type { AnimeCharacter } from '@anime/types'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
 /**

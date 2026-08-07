@@ -4,7 +4,7 @@
  * @module domains/anime/schemas/anime-list-schema
  */
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
-import { animeCardSchema } from '@domains/anime/schemas/anime-card-schema'
+import { animeCardSchema } from '@anime/schemas/anime-card-schema'
 import { z } from 'zod'
 
 /**

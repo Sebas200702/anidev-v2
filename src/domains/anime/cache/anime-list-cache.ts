@@ -20,20 +20,8 @@
  */
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
-import type { AnimeCard, AnimeFilters } from '@domains/anime/types'
-
-/**
- * Cached payload for a filtered anime list query.
- *
- * @remarks
- * Mirrors the return shape of {@link animeListService.getAnimeList}.
- */
-type AnimeListCacheValue = {
-  /** Mapped card rows for the current page */
-  list: AnimeCard[]
-  /** Total distinct anime rows matching filters (all pages) */
-  total: number
-}
+import type { AnimeFilters } from '@anime/types'
+import type { AnimeListCacheValue } from './anime-list-cache-types'
 
 /**
  * Read-through cache for paginated anime list results keyed by filter set.

@@ -1,9 +1,9 @@
 /**
- * @module @domains/music/cache/music-cache
+ * @module @music/cache/music-cache
  * @remarks Read-through cache helpers for music detail payloads. Keys use the
  * `CacheKeyPrefix.MusicDetails` prefix with the internal music ID and a medium TTL.
  */
-import type { MusicDetails } from '@/domains/music/types/music-details-types'
+import type { MusicDetails } from '@music/types/music-details-types'
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
@@ -16,7 +16,7 @@ import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
  * @see {@link CacheKeyPrefix.MusicDetails} for the key prefix constant
  * @example
  * ```typescript
- * import { musicCache } from '@domains/music/cache/music-cache'
+ * import { musicCache } from '@music/cache/music-cache'
  *
  * const key = musicCache.key(42) // "music-details:42"
  * const hit = await musicCache.get(42)

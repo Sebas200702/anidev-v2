@@ -10,15 +10,8 @@
  * @see {@link UserProfile} for the output shape
  * @see {@link UserProfileDB} for the input shape
  */
-import type { UserProfileDB } from '@domains/user/types/user-db-types'
-import type {
-  UserProfile,
-  UserPreferences,
-} from '@domains/user/types/user-types'
-
-type MapUserProfileInput = {
-  userProfile: UserProfileDB
-}
+import type { UserProfile, UserPreferences } from '@user/types/user-types'
+import type { MapUserProfileInput } from './user-mapper-types'
 
 /**
  * Converts a persisted profile row into a public user profile object.

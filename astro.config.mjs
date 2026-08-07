@@ -56,7 +56,17 @@ export default defineConfig({
       alias: {
         '@': src,
         '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
-        '@domains': fileURLToPath(new URL('./src/domains', import.meta.url)),
+        '@anime': fileURLToPath(
+          new URL('./src/domains/anime', import.meta.url)
+        ),
+        '@auth': fileURLToPath(new URL('./src/domains/auth', import.meta.url)),
+        '@media': fileURLToPath(
+          new URL('./src/domains/media', import.meta.url)
+        ),
+        '@music': fileURLToPath(
+          new URL('./src/domains/music', import.meta.url)
+        ),
+        '@user': fileURLToPath(new URL('./src/domains/user', import.meta.url)),
         '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
         '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
         '@config': fileURLToPath(new URL('./src/config', import.meta.url)),

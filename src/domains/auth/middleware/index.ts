@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { resolveAuthActor } from '@domains/auth/middleware'
+ * import { resolveAuthActor } from '@auth/middleware'
  *
  * const { user, session } = await resolveAuthActor(Astro.request.headers)
  * Astro.locals.user = user

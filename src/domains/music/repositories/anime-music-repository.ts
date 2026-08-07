@@ -1,11 +1,11 @@
 /**
- * @module @domains/music/repositories/anime-music-repository
+ * @module @music/repositories/anime-music-repository
  * @remarks Database access for anime-to-music relations via the `animeMusic` join table.
  */
 import { db } from '@db/client'
 import { animeMusic } from '@db/schemas/anime-relations'
 import { music } from '@db/schemas/music'
-import type { MusicDB } from '@domains/music/types/music-db-types'
+import type { MusicDB } from '@music/types/music-db-types'
 import { eq } from 'drizzle-orm'
 import { dbError } from '@shared/errors/db-errors'
 

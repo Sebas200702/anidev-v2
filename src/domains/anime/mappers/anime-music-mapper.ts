@@ -3,8 +3,8 @@
  *
  * @module domains/anime/mappers/anime-music-mapper
  */
-import type { MusicDB } from '@domains/music/types/music-db-types'
-import type { AnimeMusic } from '@domains/anime/types'
+import type { MusicDB } from '@music/types/music-db-types'
+import type { AnimeMusic } from '@anime/types'
 import { config } from '@/config'
 import { normalizeString } from '@utils/string/normalize-string-util'
 
@@ -24,7 +24,9 @@ import { normalizeString } from '@utils/string/normalize-string-util'
  * @see {@link mapAnimeToFullDetails}
  * @see {@link animeMusicSchema}
  */
-export function mapMusicListToAnimeMusic(musicList: MusicDB[]): AnimeMusic[] {
+export const mapMusicListToAnimeMusic = (
+  musicList: MusicDB[]
+): AnimeMusic[] => {
   return musicList.map((m, index) => {
     const type: AnimeMusic['type'] = m.type === 'ED' ? 'ending' : 'opening'
     const slug = normalizeString({

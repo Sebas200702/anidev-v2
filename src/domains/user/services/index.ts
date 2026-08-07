@@ -8,7 +8,7 @@
  * @see {@link module:domains/user/services/user-service} for the service implementation
  * @example
  * ```typescript
- * import { userService } from '@domains/user/services'
+ * import { userService } from '@user/services'
  * ```
  */
 

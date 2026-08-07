@@ -6,7 +6,7 @@
 import { animeStaff } from '@db/schemas/anime-relations'
 import { db } from '@db/client'
 import { eq } from 'drizzle-orm'
-import type { AnimeStaffDB } from '@domains/anime/types'
+import type { AnimeStaffDB } from '@anime/types'
 import { dbError } from '@shared/errors/db-errors'
 
 /**

@@ -4,17 +4,17 @@
  * @module domains/music/services/music-list-service
  */
 import { withCache } from '@lib/cache'
-import { musicListCache } from '@domains/music/cache/music-list-cache'
-import { mapMusicListToCards } from '@domains/music/mappers/music-card-mapper'
-import { mapMusicListFilters } from '@domains/music/mappers/music-filters-mapper'
-import { musicListRepository } from '@domains/music/repositories/music-list-repository'
-import { musicRelationRepository } from '@domains/music/repositories/music-relation-repository'
+import { musicListCache } from '@music/cache/music-list-cache'
+import { mapMusicListToCards } from '@music/mappers/music-card-mapper'
+import { mapMusicListFilters } from '@music/mappers/music-filters-mapper'
+import { musicListRepository } from '@music/repositories/music-list-repository'
+import { musicRelationRepository } from '@music/repositories/music-relation-repository'
 import type {
   MusicArtistDB,
   MusicCard,
   MusicListFilters,
   MusicListFiltersParams,
-} from '@domains/music/types'
+} from '@music/types'
 
 /**
  * Groups artist rows by parent music ID for card mapping.

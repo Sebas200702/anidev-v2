@@ -10,38 +10,15 @@
  * @see {@link normalizeOptimizeOptions}
  */
 
-import { mediaServiceConfig } from '@domains/media/config'
+import { mediaServiceConfig } from '@media/config'
 import sharp from 'sharp'
+import type { OptimizeOptions } from './optimize-util-types'
 
-/** Supported output formats for optimized images. */
-export type ImageFormat = 'webp' | 'avif'
-
-/**
- * Known upstream image providers; reserved for future per-source tuning.
- * @remarks Currently only stored on options; defaults do not vary by source yet.
- */
-export type ImageSource =
-  | 'myanimelist'
-  | 'anilist'
-  | 'kitsu'
-  | 'thetvdb'
-  | 'tmdb'
-  | 'custom'
-  | 'youtube'
-
-/**
- * Options passed to {@link optimizeImageBuffer} and merged by {@link normalizeOptimizeOptions}.
- */
-export type OptimizeOptions = {
-  /** Target width in pixels; omitted or non-positive skips resize. */
-  width?: number
-  /** Encoder quality 1–100; default 50 in {@link optimizeImageBuffer}, or config default when normalized. */
-  quality?: number
-  /** Output format; default `'webp'`. */
-  format?: ImageFormat
-  /** Upstream provider hint for future optimization profiles. */
-  source?: ImageSource
-}
+export type {
+  ImageFormat,
+  ImageSource,
+  OptimizeOptions,
+} from './optimize-util-types'
 
 /** Maximum input buffer size (10 MiB) before {@link ImageTooLargeError} is thrown. */
 const MAX_SIZE_BYTES = 10 * 1024 * 1024
@@ -106,10 +83,10 @@ export class EmptyImageError extends Error {
  * // mimeType === 'image/webp'
  * ```
  */
-export async function optimizeImageBuffer(
+export const optimizeImageBuffer = async (
   buffer: Buffer,
   { width, quality = 50, format = 'webp' }: OptimizeOptions = {}
-): Promise<{ buffer: Buffer; mimeType: string }> {
+): Promise<{ buffer: Buffer; mimeType: string }> => {
   if (!buffer || buffer.length === 0) {
     throw new EmptyImageError()
   }

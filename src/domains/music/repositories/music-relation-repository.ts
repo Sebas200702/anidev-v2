@@ -1,11 +1,11 @@
 /**
- * @module @domains/music/repositories/music-relation-repository
+ * @module @music/repositories/music-relation-repository
  * @remarks Database access for music-to-artist relations via the `musicArtist` join table.
  */
 import { db } from '@db/client'
 import { artist } from '@db/schemas/artist'
 import { musicArtist } from '@db/schemas/music-relations'
-import type { MusicArtistDB } from '@domains/music/types/music-db-types'
+import type { MusicArtistDB } from '@music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
 import type { PgColumn } from 'drizzle-orm/pg-core'
 import { dbError } from '@shared/errors/db-errors'
@@ -20,9 +20,9 @@ import { dbError } from '@shared/errors/db-errors'
  * @returns A Drizzle query pinned to the `musicArtist` × `artist` inner join
  * @remarks Centralizes the join so both artist lookups stay in sync.
  */
-function baseArtistQuery<TSelection extends Record<string, PgColumn>>(
+const baseArtistQuery = <TSelection extends Record<string, PgColumn>>(
   selection: TSelection
-) {
+) => {
   return db
     .select(selection)
     .from(musicArtist)

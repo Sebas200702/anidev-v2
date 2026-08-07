@@ -7,7 +7,7 @@ import { db } from '@db/client'
 import { anime } from '@db/schemas/anime'
 import { eq, inArray } from 'drizzle-orm'
 import { dbError } from '@shared/errors/db-errors'
-import type { AnimeDB } from '@domains/anime/types'
+import type { AnimeDB } from '@anime/types'
 
 /**
  * Repository for querying anime rows from the database.

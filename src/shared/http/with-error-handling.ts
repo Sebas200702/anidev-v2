@@ -34,27 +34,7 @@ import {
   jsonResponse,
   mergeResponseHeaders,
 } from '@shared/http/api-response-serialize-util'
-
-/**
- * Value returned by a route handler before envelope serialization.
- */
-type HandlerResult = {
-  /** Serializable payload placed in `envelope.data`. */
-  data: unknown
-  /** HTTP status; defaults to 200 when omitted. */
-  status?: number
-  /** Optional metadata merged into `envelope.meta`. */
-  meta?: Record<string, unknown>
-  /** Optional headers (e.g. `Set-Cookie`) appended to the JSON response. */
-  headers?: Headers
-}
-
-/**
- * Astro API route handler function type accepted by {@link withErrorHandling}.
- */
-type RouteHandler<TContext extends APIContext = APIContext> = (
-  context: TContext
-) => Promise<HandlerResult> | HandlerResult
+import type { RouteHandler } from './with-error-handling-types'
 
 /**
  * Wraps an Astro API handler with standardized success and error JSON envelopes.
@@ -77,9 +57,9 @@ type RouteHandler<TContext extends APIContext = APIContext> = (
  *
  * @see {@link HandlerResult}
  */
-export function withErrorHandling<TContext extends APIContext>(
+export const withErrorHandling = <TContext extends APIContext>(
   handler: RouteHandler<TContext>
-): (context: TContext) => Promise<Response> {
+): ((context: TContext) => Promise<Response>) => {
   return async (context: TContext) => {
     try {
       const result = await handler(context)

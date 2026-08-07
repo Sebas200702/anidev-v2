@@ -15,7 +15,7 @@
  * @see {@link animeFullService}
  * @see {@link mapAnimeToFullDetails}
  */
-import type { AnimeFullDetails } from '@domains/anime/types'
+import type { AnimeFullDetails } from '@anime/types'
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 

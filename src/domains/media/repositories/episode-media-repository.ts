@@ -1,13 +1,9 @@
 import { db } from '@db/client'
 import { episodeSource } from '@db/schemas/episode'
 import { dbError } from '@shared/errors/db-errors'
-import type { MediaAsset } from '@domains/media/types/media-types'
+import type { MediaAsset } from '@media/types/media-types'
 import { asc, eq } from 'drizzle-orm'
-
-type GetEpisodeMediaByTypeParams = {
-  mediaType: string
-  episodeId: number
-}
+import type { GetEpisodeMediaByTypeParams } from './episode-media-repository-types'
 
 export const episodeMediaRepository = {
   async getMediaByEntityAndType({

@@ -4,7 +4,7 @@
  * @module domains/music/types/music-card
  */
 import { z } from 'zod'
-import { musicCardSchema } from '@domains/music/schemas/music-card-schema'
+import { musicCardSchema } from '@music/schemas/music-card-schema'
 
 /**
  * Compact music summary used in list views.

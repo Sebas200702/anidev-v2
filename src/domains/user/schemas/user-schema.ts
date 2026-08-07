@@ -28,11 +28,11 @@ import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import {
   historySchema,
   preferencesSchema,
-} from '@domains/user/schemas/user-preferences-schema'
+} from '@user/schemas/user-preferences-schema'
 
 // preferencesSchema and historySchema are re-exported via the barrel at
-// `@domains/user/schemas`. Import them from there or from
-// `@domains/user/schemas/user-preferences-schema` directly.
+// `@user/schemas`. Import them from there or from
+// `@user/schemas/user-preferences-schema` directly.
 
 /**
  * Validates the public user profile payload.

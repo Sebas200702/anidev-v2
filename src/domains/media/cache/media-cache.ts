@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/cache/media-cache
+ * @module @media/cache/media-cache
  * @remarks Read-through cache facade for optimized media image buffers. Composes deterministic
  * key construction ({@link media-cache-keys}), base64 serialization
  * ({@link media-cache-serialization}), and the cache store ({@link media-cache-store}).
@@ -11,7 +11,7 @@
  * @see {@link mediaService} for the read-through consumer
  * @example
  * ```typescript
- * import { mediaCache } from '@domains/media/cache/media-cache'
+ * import { mediaCache } from '@media/cache/media-cache'
  *
  * const hit = await mediaCache.get(parsedPath, { width: 400 })
  * if (!hit) await mediaCache.set(parsedPath, options, optimized)
@@ -21,19 +21,19 @@ import type { OptimizeOptions } from '@utils/image/optimize-util'
 import type {
   OptimizedMedia,
   SemanticMediaPath,
-} from '@domains/media/types/media-types'
+} from '@media/types/media-types'
 import {
   buildKey,
   buildRawKey,
   buildRawMetaKey,
-} from '@domains/media/cache/media-cache-keys'
+} from '@media/cache/media-cache-keys'
 import {
   readCachedMedia,
   writeCachedMedia,
   readRawMeta,
   writeRawMeta,
   type RawMeta,
-} from '@domains/media/cache/media-cache-store'
+} from '@media/cache/media-cache-store'
 
 /**
  * Cache helpers for optimized and raw media payloads. Each member delegates to a focused module;

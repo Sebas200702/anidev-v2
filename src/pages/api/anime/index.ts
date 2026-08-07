@@ -20,8 +20,8 @@ import { withZodValidation } from '@http/with-validation'
 import {
   animeListRequestSchema,
   animeListResponseSchema,
-} from '@domains/anime/schemas/anime-list-schema'
-import { animeListService } from '@domains/anime/services/anime-list-service'
+} from '@anime/schemas/anime-list-schema'
+import { animeListService } from '@anime/services/anime-list-service'
 import type { APIRoute } from 'astro'
 
 /**

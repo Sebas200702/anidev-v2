@@ -1,18 +1,13 @@
 /**
- * @module @domains/media/repositories/character-media-repository
+ * @module @media/repositories/character-media-repository
  * @remarks Database access for character media assets stored in the `characterMedia` table.
  */
 import { db } from '@db/client'
 import { characterMedia } from '@db/schemas/character-media'
 import { dbError } from '@shared/errors/db-errors'
 import { and, asc, eq, inArray } from 'drizzle-orm'
-import type { MediaAsset } from '@domains/media/types/media-types'
-
-/** Parameters for filtering character media by entity ID and media type. */
-type GetCharacterMediaByTypeParams = {
-  mediaType: string
-  characterId: number
-}
+import type { MediaAsset } from '@media/types/media-types'
+import type { GetCharacterMediaByTypeParams } from './character-media-repository-types'
 
 /**
  * Reads media assets linked to character records.

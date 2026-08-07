@@ -14,7 +14,7 @@
  *
  * @example
  * ```typescript
- * import type { LoginInput, RegisterInput } from '@domains/auth/types'
+ * import type { LoginInput, RegisterInput } from '@auth/types'
  *
  * function handleLogin(input: LoginInput) {
  *   return credentialsService.login(input, headers)
@@ -37,7 +37,7 @@
  * const input: LoginInput = { email: 'user@example.com', password: 'password123' }
  * ```
  */
-export type { LoginInput } from '@domains/auth/schemas'
+export type { LoginInput } from '@auth/schemas'
 
 /**
  * Validated email/password registration request body.
@@ -58,4 +58,4 @@ export type { LoginInput } from '@domains/auth/schemas'
  * }
  * ```
  */
-export type { RegisterInput } from '@domains/auth/schemas'
+export type { RegisterInput } from '@auth/schemas'

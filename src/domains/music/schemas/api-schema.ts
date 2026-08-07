@@ -1,10 +1,10 @@
 /**
- * @module @domains/music/schemas/api-schema
+ * @module @music/schemas/api-schema
  * @remarks Zod schemas for music API route validation and standardized response envelopes.
  */
 import { z } from 'zod'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
-import { musicDetailsSchema } from '@domains/music/schemas/music-details-schema'
+import { musicDetailsSchema } from '@music/schemas/music-details-schema'
 
 /**
  * Validates route parameters for music detail requests.

@@ -36,7 +36,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  *
  * @example
  * ```typescript
- * import { RegistrationFailedError } from '@domains/auth/errors'
+ * import { RegistrationFailedError } from '@auth/errors'
  *
  * throw new RegistrationFailedError('An account with this email already exists', cause)
  * ```

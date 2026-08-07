@@ -15,24 +15,7 @@
 // cacheGet, cacheSet, cacheDel, and CacheGetSetOptions are re-exported via the barrel at
 // `@lib/cache`. Import them from there or from `@lib/cache/cache-primitives` directly.
 
-/**
- * Options for {@link withCache} read-through orchestration.
- *
- * @typeParam T - Cached value type
- * @property key - Redis key passed to get/set delegates
- * @property getCache - Async reader; should return `null` on miss
- * @property setCache - Async writer invoked after successful compute
- * @property compute - Source-of-truth fetch when cache misses
- * @property shouldCache - Optional predicate; when returns `false`, result is
- * returned but not stored (default: always cache)
- */
-type WithCacheOptions<T> = {
-  key: string
-  getCache: (key: string) => Promise<T | null>
-  setCache: (key: string, value: T) => Promise<void>
-  compute: () => Promise<T>
-  shouldCache?: (result: T) => boolean
-}
+import type { WithCacheOptions } from './cache-store-types'
 
 /**
  * Returns a cached value or computes, optionally stores, and returns a fresh result.

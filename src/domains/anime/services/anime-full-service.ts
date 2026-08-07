@@ -4,17 +4,17 @@
  * @module domains/anime/services/anime-full-service
  */
 import { withCache } from '@lib/cache'
-import { animeFullCache } from '@domains/anime/cache/anime-full-cache'
-import { animeNotFound } from '@domains/anime/errors'
-import { mapAnimeToFullDetails } from '@domains/anime/mappers/anime-full-mapper'
-import { animeRepository } from '@domains/anime/repositories/anime-repository'
-import { animeExternalRepository } from '@domains/anime/repositories/anime-external-repository'
-import { animeRelationsRepository } from '@domains/anime/repositories/anime-relations-repository'
-import { animeTaxonomyRepository } from '@domains/anime/repositories/anime-taxonomy-repository'
-import { animeTitleRepository } from '@domains/anime/repositories/anime-title-repository'
-import { animeMediaRepository } from '@domains/media/repositories/anime-media-repository'
-import { animeMusicRepository } from '@domains/music/repositories/anime-music-repository'
-import type { AnimeFullDetails } from '@domains/anime/types'
+import { animeFullCache } from '@anime/cache/anime-full-cache'
+import { animeNotFound } from '@anime/errors'
+import { mapAnimeToFullDetails } from '@anime/mappers/anime-full-mapper'
+import { animeRepository } from '@anime/repositories/anime-repository'
+import { animeExternalRepository } from '@anime/repositories/anime-external-repository'
+import { animeRelationsRepository } from '@anime/repositories/anime-relations-repository'
+import { animeTaxonomyRepository } from '@anime/repositories/anime-taxonomy-repository'
+import { animeTitleRepository } from '@anime/repositories/anime-title-repository'
+import { getAnimeMedia } from '@media/services/get-anime-media-service'
+import { getMusicByAnimeId } from '@music/services/anime-music-service'
+import type { AnimeFullDetails } from '@anime/types'
 
 /**
  * Coordinates repository access, mapping, and caching for full anime details.
@@ -67,7 +67,7 @@ export const animeFullService = {
           externalIds,
           animeMusic,
         ] = await Promise.all([
-          animeMediaRepository.getMediaByAnimeId(malId),
+          getAnimeMedia(malId),
           animeTaxonomyRepository.getGenresByAnimeId(malId),
           animeTaxonomyRepository.getThemesByAnimeId(malId),
           animeTaxonomyRepository.getDemographicsByAnimeId(malId),
@@ -75,7 +75,7 @@ export const animeFullService = {
           animeRelationsRepository.getRelatedAnimeByAnimeId(malId),
           animeRelationsRepository.getAnimeRelatedAnimeDataByAnimeId(malId),
           animeExternalRepository.getExternalLinksByAnimeId(malId),
-          animeMusicRepository.findMusicByAnimeId(malId),
+          getMusicByAnimeId(malId),
         ])
 
         return mapAnimeToFullDetails({

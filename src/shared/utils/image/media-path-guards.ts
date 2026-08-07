@@ -7,13 +7,13 @@
  * @see {@link parseMediaPath}
  */
 
-import { mediaServiceConfig } from '@domains/media/config'
+import { mediaServiceConfig } from '@media/config'
 import type {
   MediaEntity,
   MediaSize,
   MediaType,
-} from '@domains/media/types/media-types'
-import { MediaSize as MediaSizeEnum } from '@domains/media/types/media-types'
+} from '@media/types/media-types'
+import { MediaSize as MediaSizeEnum } from '@media/types/media-types'
 
 /** Entity types that use free-form version/resolution segments instead of size/index. */
 export const RAW_ENTITIES = new Set(['episode', 'music'])

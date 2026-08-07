@@ -12,7 +12,7 @@ import type {
   animeMusicSchema,
   animeFullDetailsSchema,
   animeFullDetailsResponseSchema,
-} from '@domains/anime/schemas/anime-full-schema'
+} from '@anime/schemas/anime-full-schema'
 import type { z } from 'zod'
 
 /**

@@ -7,7 +7,7 @@
  * @see {@link module:domains/user/repositories/user-repository} for profile queries
  * @example
  * ```typescript
- * import { userRepository } from '@domains/user/repositories'
+ * import { userRepository } from '@user/repositories'
  * ```
  */
 

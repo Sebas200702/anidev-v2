@@ -5,7 +5,7 @@
  * @remarks
  * All types use `InferSelectModel` — they represent **read** row shapes from Postgres. Join/relation
  * table row types live in {@link module:domains/anime/types/anime-relations-db} and are re-exported
- * here so existing `@domains/anime/types/anime-db.d-types` imports keep working.
+ * here so existing `@anime/types/anime-db.d-types` imports keep working.
  */
 import type { InferSelectModel } from 'drizzle-orm'
 import type { anime, animeTitleSynonym } from '@db/schemas/anime'
@@ -16,8 +16,8 @@ import type { staff } from '@db/schemas/staff'
 import type { genre, theme, demographic } from '@db/schemas/anime-taxonomy'
 
 // AnimeRelationsDB, AnimeCharacterDB, and other relation types are re-exported
-// via the barrel at `@domains/anime/types`. Import them from there or from
-// `@domains/anime/types/anime-relations.d-types` directly.
+// via the barrel at `@anime/types`. Import them from there or from
+// `@anime/types/anime-relations.d-types` directly.
 
 /**
  * Row shape for the `anime` table.

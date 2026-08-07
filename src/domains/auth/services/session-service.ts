@@ -17,12 +17,8 @@
  * @see {@link mapBetterAuthError} — error normalization layer
  */
 import { auth } from '@lib/auth/server'
-import { mapBetterAuthError } from '@domains/auth/utils/map-better-auth-error-util'
-
-type AuthResult<T> = {
-  data: T
-  headers: Headers
-}
+import { mapBetterAuthError } from '@auth/utils/map-better-auth-error-util'
+import type { AuthResult } from './session-service-types'
 
 /**
  * Better Auth wrapper for session lookup and sign-out.
@@ -36,7 +32,7 @@ type AuthResult<T> = {
  *
  * @example
  * ```typescript
- * import { sessionService } from '@domains/auth/services/session-service'
+ * import { sessionService } from '@auth/services/session-service'
  *
  * const session = await sessionService.getSession(request.headers)
  * if (!session) {

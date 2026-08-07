@@ -5,7 +5,7 @@
  */
 import { z } from 'zod'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
-import { personSchema } from '@domains/anime/schemas/anime-staff-schema'
+import { personSchema } from '@anime/schemas/anime-staff-schema'
 
 /**
  * Validates a voice actor attached to a character.

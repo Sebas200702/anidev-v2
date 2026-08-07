@@ -8,7 +8,11 @@ export default defineConfig({
     alias: {
       '@': alias('./src'),
       '@styles': alias('./src/styles'),
-      '@domains': alias('./src/domains'),
+      '@anime': alias('./src/domains/anime'),
+      '@auth': alias('./src/domains/auth'),
+      '@media': alias('./src/domains/media'),
+      '@music': alias('./src/domains/music'),
+      '@user': alias('./src/domains/user'),
       '@shared': alias('./src/shared'),
       '@lib': alias('./src/lib'),
       '@config': alias('./src/config'),

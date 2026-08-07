@@ -1,17 +1,12 @@
 import { db } from '@db/client'
 import { musicResolution, musicVersion } from '@db/schemas/music'
-import type { MediaAsset } from '@domains/media/types/media-types'
+import type { MediaAsset } from '@media/types/media-types'
 import { dbError } from '@shared/errors/db-errors'
 import { asc, eq } from 'drizzle-orm'
-
-type GetMusicMediaByTypeParams = {
-  mediaType: string
-  musicId: number
-  version?: string
-  resolution?: string
-}
-
-type MusicMediaAsset = MediaAsset & { size: string }
+import type {
+  GetMusicMediaByTypeParams,
+  MusicMediaAsset,
+} from './music-media-repository-types'
 
 export const musicMediaRepository = {
   async getMediaByEntityAndType({

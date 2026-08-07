@@ -1,8 +1,8 @@
 /**
- * @module @domains/media/types/media-types
+ * @module @media/types/media-types
  * @remarks Aggregating module for the media domain types. Re-exports the focused type modules
  * (enums, asset/path types, request shapes, and service config) so existing
- * `@domains/media/types/media-types` imports keep working from a single entry point.
+ * `@media/types/media-types` imports keep working from a single entry point.
  *
  * @see {@link media-enums} — entity/type/size enumerations
  * @see {@link media-asset-types} — optimized output, semantic paths, assets

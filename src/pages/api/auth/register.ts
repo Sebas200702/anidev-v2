@@ -19,8 +19,8 @@
 import type { APIRoute, APIContext } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
-import { registerSchema, type RegisterInput } from '@domains/auth/schemas'
-import { credentialsService } from '@domains/auth/services'
+import { registerSchema, type RegisterInput } from '@auth/schemas'
+import { credentialsService } from '@auth/services'
 
 /**
  * Registers a new user account with email, password, and display name.

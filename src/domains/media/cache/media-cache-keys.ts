@@ -1,10 +1,10 @@
 /**
- * @module @domains/media/cache/media-cache-keys
+ * @module @media/cache/media-cache-keys
  * @remarks Builds deterministic cache keys from semantic media paths or normalized source URLs
  * combined with optimization options, so distinct transform requests never collide.
  */
 import type { OptimizeOptions } from '@utils/image/optimize-util'
-import type { SemanticMediaPath } from '@domains/media/types/media-types'
+import type { SemanticMediaPath } from '@media/types/media-types'
 
 /**
  * Builds a deterministic cache key for optimized media.

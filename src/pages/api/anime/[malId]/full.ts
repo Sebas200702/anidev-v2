@@ -18,12 +18,12 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { animeFullService } from '@domains/anime/services/anime-full-service'
+import { animeFullService } from '@anime/services/anime-full-service'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import {
   animeFullDetailsResponseSchema,
   getAnimeFullSchema,
-} from '@domains/anime/schemas/anime-full-schema'
+} from '@anime/schemas/anime-full-schema'
 
 /**
  * Returns extended anime detail data for a MyAnimeList ID.

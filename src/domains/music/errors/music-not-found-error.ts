@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/errors/music-not-found-error
+ * @module @music/errors/music-not-found-error
  * @remarks Domain errors raised when a music record cannot be located by internal ID.
  */
 import { DomainError } from '@shared/errors/app-error'
@@ -41,6 +41,6 @@ export class MusicNotFoundError extends DomainError {
  * if (!music) throw musicNotFound(id)
  * ```
  */
-export function musicNotFound(id: number) {
+export const musicNotFound = (id: number) => {
   return new MusicNotFoundError(id)
 }

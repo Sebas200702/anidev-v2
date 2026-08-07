@@ -7,7 +7,7 @@ import type {
   animeFiltersParamsSchema,
   animeFiltersSchema,
   animeListResponseSchema,
-} from '@domains/anime/schemas/anime-list-schema'
+} from '@anime/schemas/anime-list-schema'
 import type { z } from 'zod'
 
 /**

@@ -1,11 +1,11 @@
 /**
- * @module @domains/music/mappers
+ * @module @music/mappers
  * @remarks Barrel exports for music mappers that transform database rows into API-facing
  * {@link MusicDetails} payloads.
  * @see {@link ./music-detail-mapper} for the primary detail mapper
  * @example
  * ```typescript
- * import { mapMusicDetail } from '@domains/music/mappers'
+ * import { mapMusicDetail } from '@music/mappers'
  * ```
  */
 

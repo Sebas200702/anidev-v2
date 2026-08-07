@@ -3,7 +3,7 @@
  *
  * @module domains/anime/repositories/anime-external-repository
  */
-import type { AnimeExternalDB } from '@domains/anime/types'
+import type { AnimeExternalDB } from '@anime/types'
 import { dbError } from '@shared/errors/db-errors'
 import { db } from '@db/client'
 import { animeExternalIds } from '@db/schemas/anime-external'

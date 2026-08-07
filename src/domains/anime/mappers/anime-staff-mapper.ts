@@ -3,19 +3,10 @@
  *
  * @module domains/anime/mappers/anime-staff-mapper
  */
-import type { AnimeStaff, AnimeStaffDB, StaffDB } from '@domains/anime/types'
+import type { AnimeStaff } from '@anime/types'
 import { config } from '@/config'
-import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
-
-/**
- * Input for assembling anime staff payloads.
- */
-type MapAnimeStaffInput = {
-  /** `staff` rows keyed by `malId` */
-  staff: StaffDB[]
-  /** `anime_staff` join rows with comma-separated `role` */
-  animeStaff: AnimeStaffDB[]
-}
+import { buildMediaUrl } from '@media/mappers/media-url-mapper'
+import type { MapAnimeStaffInput } from './anime-staff-mapper-types'
 
 /**
  * Maps staff rows and join-table roles into {@link AnimeStaff} payloads.

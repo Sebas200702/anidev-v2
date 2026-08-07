@@ -1,10 +1,10 @@
 /**
- * @module @domains/media/types/media-config-types
+ * @module @media/types/media-config-types
  * @remarks Runtime configuration types for media resolution/optimization and the cache key
  * options alias.
  */
 import type { ImageFormat, OptimizeOptions } from '@utils/image/optimize-util'
-import type { MediaEntity, MediaType } from '@domains/media/types/media-enums'
+import type { MediaEntity, MediaType } from '@media/types/media-enums'
 
 /**
  * Runtime defaults for media resolution and optimization.

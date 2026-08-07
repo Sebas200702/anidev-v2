@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/services/image-optimizer-service
+ * @module @media/services/image-optimizer-service
  * @remarks Thin domain adapter over shared image optimization utilities. Converts raw image
  * buffers into web-ready formats as part of the media delivery pipeline.
  */

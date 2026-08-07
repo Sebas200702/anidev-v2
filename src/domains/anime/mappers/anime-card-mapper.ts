@@ -3,18 +3,12 @@
  *
  * @module domains/anime/mappers/anime-card-mapper
  */
-import type { AnimeCard, AnimeDB } from '@domains/anime/types'
-import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
-
-/** Input for mapping a single anime row to a card. */
-type MapAnimeCardInput = {
-  anime: AnimeDB
-}
-
-/** Input for mapping multiple anime rows to cards. */
-type MapAnimeListToCardsInput = {
-  animeList: AnimeDB[]
-}
+import type { AnimeCard } from '@anime/types'
+import { buildMediaUrl } from '@media/mappers/media-url-mapper'
+import type {
+  MapAnimeCardInput,
+  MapAnimeListToCardsInput,
+} from './anime-card-mapper-types'
 
 /**
  * Maps a single anime database row into an {@link AnimeCard}.

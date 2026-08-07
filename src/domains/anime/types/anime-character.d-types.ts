@@ -8,7 +8,7 @@ import type {
   animeCharacterSchema,
   getAnimeCharacterSchema,
   animeCharacterResponseSchema,
-} from '@domains/anime/schemas/anime-character-schema'
+} from '@anime/schemas/anime-character-schema'
 import type { z } from 'zod'
 
 /**

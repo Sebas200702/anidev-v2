@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/types/media-asset-types
+ * @module @media/types/media-asset-types
  * @remarks Types describing optimized output bytes, parsed semantic route segments, and persisted
  * media asset metadata. Used across repositories, mappers, cache keys, and the optimization
  * pipeline.
@@ -8,7 +8,7 @@ import type {
   MediaEntity,
   MediaType,
   MediaSize,
-} from '@domains/media/types/media-enums'
+} from '@media/types/media-enums'
 
 /**
  * Optimized image bytes ready for HTTP delivery.

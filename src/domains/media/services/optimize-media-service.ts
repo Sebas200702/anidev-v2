@@ -1,5 +1,5 @@
 /**
- * @module @domains/media/services/optimize-media-service
+ * @module @media/services/optimize-media-service
  * @remarks Resolves and optimizes media for a semantic path with read-through caching.
  * Full pipeline: resolve asset → fetch buffer → optimize → cache.
  */
@@ -10,15 +10,15 @@ import {
   normalizeOptimizeOptions,
   type OptimizeOptions,
 } from '@utils/image/optimize-util'
-import { mediaServiceConfig } from '@domains/media/config'
-import { mediaCache } from '@domains/media/cache/media-cache'
-import { optimizeMediaImageBuffer } from '@domains/media/services/image-optimizer-service'
-import { resolveMedia } from '@domains/media/services/resolve-media-service'
-import { fetchImageBuffer } from '@domains/media/services/fetch-image-buffer-service'
+import { mediaServiceConfig } from '@media/config'
+import { mediaCache } from '@media/cache/media-cache'
+import { optimizeMediaImageBuffer } from '@media/services/image-optimizer-service'
+import { resolveMedia } from '@media/services/resolve-media-service'
+import { fetchImageBuffer } from '@media/services/fetch-image-buffer-service'
 import type {
   OptimizedMedia,
   SemanticMediaPath,
-} from '@domains/media/types/media-types'
+} from '@media/types/media-types'
 
 /**
  * Resolves and optimizes media for a semantic path with caching.
@@ -40,10 +40,10 @@ import type {
  * })
  * ```
  */
-export async function optimizeMedia(
+export const optimizeMedia = async (
   params: SemanticMediaPath | null,
   options: OptimizeOptions = {}
-): Promise<OptimizedMedia> {
+): Promise<OptimizedMedia> => {
   if (!params) {
     throw new InfraError(ErrorCodes.INVALID_IMAGE_PATH, 'Invalid media path', {
       params,

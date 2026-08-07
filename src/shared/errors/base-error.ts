@@ -12,14 +12,9 @@
  */
 
 import type { ErrorCode } from '@shared/errors/codes'
+import type { ErrorSeverity } from './base-error-types'
 
-/**
- * Severity level used for logging and monitoring classification.
- *
- * @remarks
- * Assigned per error subclass: `warn` for validation/auth, `error` for domain, `critical` for infra.
- */
-export type ErrorSeverity = 'info' | 'warn' | 'error' | 'critical'
+export type { ErrorSeverity } from './base-error-types'
 
 /**
  * Abstract base for all first-class application errors.

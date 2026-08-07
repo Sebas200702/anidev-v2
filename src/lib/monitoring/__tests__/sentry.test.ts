@@ -44,7 +44,7 @@ const mockEnv = vi.hoisted(() => ({
 
 vi.mock('@config/env', () => ({ env: mockEnv }))
 
-async function loadSentry() {
+const loadSentry = async () => {
   vi.resetModules()
   return import('@lib/monitoring/sentry')
 }

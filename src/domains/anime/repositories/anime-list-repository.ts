@@ -8,16 +8,16 @@ import { anime } from '@db/schemas/anime'
 import { animeGenre } from '@db/schemas/anime-relations'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { dbError } from '@shared/errors/db-errors'
-import type { AnimeDB, AnimeFilters } from '@domains/anime/types'
+import type { AnimeDB, AnimeFilters } from '@anime/types'
 import {
   buildAnimeListFilters,
   type AnimeListFilterParams,
-} from '@domains/anime/repositories/anime-list-filters'
+} from '@anime/repositories/anime-list-filters'
 import { and, countDistinct, eq } from 'drizzle-orm'
 
 // buildAnimeListFilters and AnimeListFilterParams are re-exported via the barrel
-// at `@domains/anime/repositories`. Import them from there or from
-// `@domains/anime/repositories/anime-list-filters` directly.
+// at `@anime/repositories`. Import them from there or from
+// `@anime/repositories/anime-list-filters` directly.
 
 /**
  * Repository for querying filtered and paginated anime lists.

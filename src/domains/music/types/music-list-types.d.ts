@@ -7,7 +7,7 @@ import {
   musicListFiltersParamsSchema,
   musicListFiltersSchema,
   musicListResponseSchema,
-} from '@domains/music/schemas/music-list-schema'
+} from '@music/schemas/music-list-schema'
 import { z } from 'zod'
 
 /**

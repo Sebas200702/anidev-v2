@@ -3,23 +3,11 @@
  *
  * @module domains/music/mappers/music-card-mapper
  */
-import type { MusicCard } from '@/domains/music/types/music-card-types'
+import type { MusicCard } from '@music/types/music-card-types'
 import type {
-  MusicArtistDB,
-  MusicDB,
-} from '@domains/music/types/music-db-types'
-
-/** Input for mapping a single music row to a card. */
-type MapMusicCardInput = {
-  music: MusicDB
-  artists: MusicArtistDB[]
-}
-
-/** Input for mapping multiple music rows to cards. */
-type MapMusicListToCardsInput = {
-  musicList: MusicDB[]
-  artistsByMusicId: Record<number, MusicArtistDB[]>
-}
+  MapMusicCardInput,
+  MapMusicListToCardsInput,
+} from './music-card-mapper-types'
 
 /**
  * Maps a single music database row into a {@link MusicCard}.

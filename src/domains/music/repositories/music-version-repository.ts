@@ -1,5 +1,5 @@
 /**
- * @module @domains/music/repositories/music-version-repository
+ * @module @music/repositories/music-version-repository
  * @remarks Database access for music version and resolution records. Versions represent
  * alternate cuts of a track; resolutions hold playable audio/video URLs per version.
  */
@@ -8,7 +8,7 @@ import { musicResolution, musicVersion } from '@db/schemas/music'
 import type {
   MusicResolutionDB,
   MusicVersionDB,
-} from '@domains/music/types/music-db-types'
+} from '@music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
 import { dbError } from '@shared/errors/db-errors'
 

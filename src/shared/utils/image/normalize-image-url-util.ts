@@ -10,7 +10,7 @@
  * @see `mediaServiceConfig.defaultPlaceholderUrl` — fallback asset
  */
 
-import { mediaServiceConfig } from '@domains/media/config'
+import { mediaServiceConfig } from '@media/config'
 
 /**
  * Returns a trimmed image URL or the configured placeholder when input is missing or blank.

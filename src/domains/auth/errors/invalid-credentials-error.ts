@@ -35,7 +35,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  *
  * @example
  * ```typescript
- * import { InvalidCredentialsError } from '@domains/auth/errors'
+ * import { InvalidCredentialsError } from '@auth/errors'
  * import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
  *
  * const error = new InvalidCredentialsError({ reason: 'bad password' })

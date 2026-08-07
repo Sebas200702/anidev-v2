@@ -85,7 +85,7 @@ import * as SentryNode from '@sentry/node'
  * @see {@link createErrorResponse} — API envelope wrapper
  * @see {@link withErrorHandling} — Astro route wrapper using envelopes
  */
-export function mapErrorToHttp(error: unknown): HttpErrorResponse {
+export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof ValidationError) {
     logger.warn({ err: error }, 'Validation error')
     return {

@@ -3,45 +3,17 @@
  *
  * @module domains/anime/mappers/anime-full-mapper
  */
-import type {
-  AnimeDB,
-  AnimeExternalDB,
-  AnimeExternalIds,
-  AnimeFullDetails,
-  AnimeRelationsDB,
-  AnimeTitleSynonymDB,
-  DemographicDB,
-  GenreDB,
-  ThemeDB,
-} from '@domains/anime/types'
-import type { MusicDB } from '@domains/music/types'
-import { mapMusicListToAnimeMusic } from '@domains/anime/mappers/anime-music-mapper'
-import { mapExternalIds } from '@domains/anime/mappers/anime-external-mapper'
+import type { AnimeExternalIds, AnimeFullDetails } from '@anime/types'
+import { mapMusicListToAnimeMusic } from '@anime/mappers/anime-music-mapper'
+import { mapExternalIds } from '@anime/mappers/anime-external-mapper'
 import {
   buildAnimeTitles,
   groupAnimeRelations,
-} from '@domains/anime/mappers/anime-full-mapper-helpers'
-import { buildMediaUrl } from '@domains/media/mappers/media-url-mapper'
-import { detectMediaSource } from '@domains/media/mappers/media-assets-mapper'
-import type { MediaAsset } from '@domains/media/types/media-types'
-
-/**
- * Input for assembling a full anime detail payload.
- *
- * @see {@link animeFullService.getAnimeFullByMalId}
- */
-type MapAnimeToFullDetailsInput = {
-  anime: AnimeDB
-  genres: GenreDB[]
-  themes: ThemeDB[]
-  demographics: DemographicDB[]
-  media: MediaAsset[]
-  titleSynonyms: AnimeTitleSynonymDB[]
-  relations: AnimeRelationsDB[]
-  relationData: AnimeDB[]
-  externalIds: AnimeExternalDB
-  animeMusic: MusicDB[]
-}
+} from '@anime/mappers/anime-full-mapper-helpers'
+import { buildMediaUrl } from '@media/mappers/media-url-mapper'
+import { detectMediaSource } from '@media/mappers/media-assets-mapper'
+import type { MediaAsset } from '@media/types/media-types'
+import type { MapAnimeToFullDetailsInput } from './anime-full-mapper-types'
 
 /**
  * Maps aggregated anime data into an {@link AnimeFullDetails} payload.
@@ -63,7 +35,7 @@ type MapAnimeToFullDetailsInput = {
  *
  * @see {@link animeFullDetailsSchema}
  */
-export function mapAnimeToFullDetails({
+export const mapAnimeToFullDetails = ({
   anime,
   genres,
   themes,
@@ -74,7 +46,7 @@ export function mapAnimeToFullDetails({
   relationData,
   externalIds,
   animeMusic,
-}: MapAnimeToFullDetailsInput): AnimeFullDetails {
+}: MapAnimeToFullDetailsInput): AnimeFullDetails => {
   const titles = buildAnimeTitles(anime, titleSynonyms)
 
   const openings = mapMusicListToAnimeMusic(
