@@ -7,7 +7,7 @@
  *
  * @remarks
  * Prefix values are concatenated with domain-specific suffixes (e.g. MAL id)
- * at call sites. TTL enum values are in **seconds** as required by Upstash
+ * at call sites. TTL enum values are in **seconds** as required by Redis
  * `EX` expiry options.
  *
  * @see {@link module:lib/cache/cache-store} for functions that consume TTL values
@@ -50,7 +50,7 @@ export enum CacheKeyPrefix {
 }
 
 /**
- * Standard cache TTL values in seconds for Upstash `EX` expiry.
+ * Standard cache TTL values in seconds for Redis `EX` expiry.
  *
  * @remarks
  * Choose shorter TTLs for frequently mutating data; longer for stable catalog
