@@ -10,6 +10,8 @@
  * import, so the application can start even when the database is temporarily
  * unreachable. Connections are acquired on demand per query; the pool retains
  * healthy connections and transparently recovers when the database returns.
+ * An `error` listener logs idle-client failures instead of letting an unhandled
+ * `error` event crash the process during a DB bounce.
  *
  * @see {@link module:config/env} for `DATABASE_URL`
  * @see {@link db} for the exported Drizzle instance
@@ -18,9 +20,14 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { env } from '@config/env'
+import { logger } from '@utils/logger-util'
 
 /** Internal PostgreSQL connection pool; prefer {@link db} for queries. */
 const pool = new Pool({ connectionString: env.DATABASE_URL })
+
+pool.on('error', (err) => {
+  logger.error({ err }, 'PostgreSQL pool idle-client error')
+})
 
 /**
  * Shared Drizzle database client for repositories, auth adapter, and services.
