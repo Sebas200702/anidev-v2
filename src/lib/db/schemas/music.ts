@@ -16,10 +16,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Base music track record (`music` table).
@@ -29,8 +30,8 @@ import {
  * - `title` — Track title (nullable for incomplete imports).
  * - `type` — Track category (OP, ED, Insert, etc.); required.
  */
-export const music = sqliteTable('music', {
-  id: integer('id').primaryKey(),
+export const music = pgTable('music', {
+  id: integer('id').primaryKey().notNull(),
   title: text('title'),
   type: text('type').notNull(),
 })
@@ -41,20 +42,17 @@ export const music = sqliteTable('music', {
  * **Key columns:**
  * - `musicId` — FK to {@link music.id}; cascade on delete.
  * - `version` / `versionId` — Version index and external version identifier.
- * - Unique on `(musicId, versionId)`.
+ * - `versionId` unique — the external catalog id is the version's identity and
+ *   is referenced by {@link musicResolution}; Postgres requires it be unique.
  */
-export const musicVersion = sqliteTable(
-  'music_version',
-  {
-    id: integer('id').primaryKey({ autoIncrement: true }),
-    musicId: integer('music_id')
-      .notNull()
-      .references(() => music.id, { onDelete: 'cascade' }),
-    version: integer('version').notNull(),
-    versionId: integer('version_id').notNull(),
-  },
-  (t) => [uniqueIndex('music_version_unique').on(t.musicId, t.versionId)]
-)
+export const musicVersion = pgTable('music_version', {
+  id: serial('id').primaryKey(),
+  musicId: integer('music_id')
+    .notNull()
+    .references(() => music.id, { onDelete: 'cascade' }),
+  version: integer('version').notNull(),
+  versionId: integer('version_id').notNull().unique(),
+})
 
 /**
  * Streamable resolution assets (`music_resolution` table) for a music version.
@@ -65,10 +63,10 @@ export const musicVersion = sqliteTable(
  * - `resolution` — Quality label (720p, 1080p, audio-only, etc.).
  * - `audioUrl` / `videoUrl` — Optional stream URLs for playback.
  */
-export const musicResolution = sqliteTable(
+export const musicResolution = pgTable(
   'music_resolution',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     musicVersionId: integer('music_version_id')
       .notNull()
       .references(() => musicVersion.versionId, { onDelete: 'cascade' }),

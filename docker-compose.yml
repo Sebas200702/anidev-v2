@@ -1,0 +1,108 @@
+# Local isolated infrastructure stack for AniDev v2.
+#
+# Provisioned services:
+#   - postgres (app database)
+#   - dragonfly (Redis-compatible cache)
+#   - rustrak (Sentry-compatible error tracking)
+#   - app (optional, profile "preview": the built Astro/Bun server in Docker)
+#
+# USE:
+#   Dev (default):      docker compose up -d        -> only infra services.
+#                       Then run the app on the host: bun run dev (uses localhost URLs).
+#   Preview (Docker):   docker compose --profile preview up -d --build app
+#                       serves the app at http://localhost:4321 from a container.
+#
+# Tear down (keeps named volumes): docker compose down
+# Wipe data too:                   docker compose down -v
+#
+# Local connection URLs are read from the environment (see `.env.local.example` for
+# the local values; see `.env.example` for production). Inside the compose network
+# the app reaches services by service name (postgres, dragonfly), while host dev
+# uses the published localhost ports.
+#
+# REQUIRED environment (read from the project `.env`, git-ignored — see the
+# "Local stack" section of AGENTS.md): POSTGRES_USER, POSTGRES_PASSWORD,
+# POSTGRES_DB, REDIS_URL, APP_BASE_URL, BETTER_AUTH_SECRET,
+# RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, SENTRY_DSN.
+# With `docker compose`, unset variables that are required cause configuration
+# to fail rather than falling back to insecure defaults.
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - ASTRO_ADAPTER=bun
+    profiles: ['preview']
+    restart: unless-stopped
+    ports:
+      - '4321:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      - REDIS_URL=${REDIS_URL:?set REDIS_URL in .env}
+      - APP_BASE_URL=${APP_BASE_URL:?set APP_BASE_URL in .env}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      - SENTRY_DSN=${SENTRY_DSN:?set SENTRY_DSN in .env}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dragonfly:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-anidev} -d ${POSTGRES_DB:-anidev}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.25.4
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - dragonfly_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rustrak:
+    image: rustrak/rustrak-server:v0.14.1
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    volumes:
+      - rustrak_data:/data
+    environment:
+      - PORT=8080
+      - SESSION_SECRET_KEY=${RUSTRAK_SESSION_SECRET_KEY:?set RUSTRAK_SESSION_SECRET_KEY in .env}
+      - CREATE_SUPERUSER=${RUSTRAK_SUPERUSER:?set RUSTRAK_SUPERUSER in .env}
+
+  rustrak-ui:
+    image: rustrak/rustrak-ui:v0.14.1
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - RUSTRAK_API_URL=http://rustrak:8080
+    depends_on:
+      - rustrak
+
+volumes:
+  postgres_data:
+  dragonfly_data:
+  rustrak_data:

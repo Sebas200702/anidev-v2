@@ -10,12 +10,13 @@ import type {
   MusicVersionDB,
 } from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
+import { dbError } from '@shared/errors/db-errors'
 
 /**
  * Reads music version and resolution rows.
  *
- * @remarks Unlike other repositories, these queries do not wrap errors in {@link dbError};
- * database failures propagate directly to callers.
+ * @remarks Database failures are wrapped in {@link dbError} so an unavailable
+ * database surfaces as a typed {@link InfraError} instead of a raw driver error.
  * @see {@link musicService.getMusicDetailsById} for resolution batching by version ID
  * @example
  * ```typescript
@@ -29,7 +30,7 @@ export const musicVersionRepository = {
    *
    * @param musicId - Internal music identifier
    * @returns {@link MusicVersionDB} rows for the music entry
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[FIND_VERSIONS_BY_MUSIC_ID]`)
    * @see {@link musicVersionRepository.findResolutionsByVersionId} for nested resolutions
    * @example
    * ```typescript
@@ -37,10 +38,15 @@ export const musicVersionRepository = {
    * ```
    */
   async findVersionsByMusicId(musicId: number): Promise<MusicVersionDB[]> {
-    return db
-      .select()
-      .from(musicVersion)
-      .where(eq(musicVersion.musicId, musicId))
+    try {
+      const rows = await db
+        .select()
+        .from(musicVersion)
+        .where(eq(musicVersion.musicId, musicId))
+      return rows
+    } catch (error) {
+      throw dbError('[FIND_VERSIONS_BY_MUSIC_ID]', { musicId }, error)
+    }
   },
 
   /**
@@ -48,7 +54,7 @@ export const musicVersionRepository = {
    *
    * @param versionId - Internal version identifier
    * @returns {@link MusicResolutionDB} rows containing audio/video URLs
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[FIND_RESOLUTIONS_BY_VERSION_ID]`)
    * @see {@link mapMusicDetail} for nesting resolutions under version entries
    * @example
    * ```typescript
@@ -58,10 +64,15 @@ export const musicVersionRepository = {
   async findResolutionsByVersionId(
     versionId: number
   ): Promise<MusicResolutionDB[]> {
-    return db
-      .select()
-      .from(musicResolution)
-      .where(eq(musicResolution.musicVersionId, versionId))
+    try {
+      const rows = await db
+        .select()
+        .from(musicResolution)
+        .where(eq(musicResolution.musicVersionId, versionId))
+      return rows
+    } catch (error) {
+      throw dbError('[FIND_RESOLUTIONS_BY_VERSION_ID]', { versionId }, error)
+    }
   },
 
   /**
@@ -70,7 +81,7 @@ export const musicVersionRepository = {
    * @remarks Short-circuits to an empty array when `versionIds` is empty.
    * @param versionIds - Internal version identifiers
    * @returns {@link MusicResolutionDB} rows for the requested versions
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[FIND_RESOLUTIONS_BY_VERSION_IDS]`)
    * @see {@link musicVersionRepository.findResolutionsByVersionId} for single-version lookup
    * @example
    * ```typescript
@@ -82,9 +93,18 @@ export const musicVersionRepository = {
   ): Promise<MusicResolutionDB[]> {
     if (versionIds.length === 0) return []
 
-    return db
-      .select()
-      .from(musicResolution)
-      .where(inArray(musicResolution.musicVersionId, versionIds))
+    try {
+      const rows = await db
+        .select()
+        .from(musicResolution)
+        .where(inArray(musicResolution.musicVersionId, versionIds))
+      return rows
+    } catch (error) {
+      throw dbError(
+        '[FIND_RESOLUTIONS_BY_VERSION_IDS]',
+        { count: versionIds.length },
+        error
+      )
+    }
   },
 }

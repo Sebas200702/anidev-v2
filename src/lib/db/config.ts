@@ -7,7 +7,7 @@
  *
  * @remarks
  * Values are not loaded from environment — change here for global policy.
- * Turso/LibSQL may enforce its own platform limits regardless of these settings.
+ * PostgreSQL may enforce its own platform limits regardless of these settings.
  *
  * @see {@link dbConfig} for the exported configuration object
  * @see {@link module:lib/db/client} for the database client
@@ -17,11 +17,11 @@
  *
  * @property maxConnections - Upper bound for concurrent logical connections
  * in worker pools or parallel batch jobs (default `10`). Exceeding risks
- * throttling from Turso; lowering reduces parallelism.
+ * throttling from PostgreSQL; lowering reduces parallelism.
  * @property connectionTimeout - Milliseconds to wait before failing a connect
  * or handshake attempt (default `5000`). Does not cap individual query duration.
  * @property chunkSize - Maximum rows per batched insert/update statement
- * (default `500`). Larger chunks reduce round trips but may hit SQLite variable limits.
+ * (default `500`). Larger chunks reduce round trips but may hit statement size limits.
  *
  * @example
  * ```typescript

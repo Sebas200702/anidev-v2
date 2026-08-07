@@ -15,10 +15,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Staff member profile (`staff` table) keyed by MyAnimeList ID.
@@ -30,7 +31,7 @@ import {
  * - `birthday` — Birth date as text from import.
  * - `about` — Biography text.
  */
-export const staff = sqliteTable('staff', {
+export const staff = pgTable('staff', {
   malId: integer('mal_id').primaryKey(),
   name: text('name').notNull(),
   givenName: text('given_name'),
@@ -46,10 +47,10 @@ export const staff = sqliteTable('staff', {
  * - `staffId` — FK to {@link staff.malId}; cascade on delete.
  * - `name` — Alias string; unique per `(staffId, name)`.
  */
-export const staffAlternativeName = sqliteTable(
+export const staffAlternativeName = pgTable(
   'staff_alternative_name',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     staffId: integer('staff_id')
       .notNull()
       .references(() => staff.malId, { onDelete: 'cascade' }),

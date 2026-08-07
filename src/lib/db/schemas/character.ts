@@ -14,10 +14,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Character profile (`character` table) keyed by MyAnimeList ID.
@@ -28,7 +29,7 @@ import {
  * - `nameKanji` — Optional Japanese script name.
  * - `about` — Biography or description text.
  */
-export const character = sqliteTable('character', {
+export const character = pgTable('character', {
   malId: integer('mal_id').primaryKey(),
   name: text('name').notNull(),
   nameKanji: text('name_kanji'),
@@ -42,10 +43,10 @@ export const character = sqliteTable('character', {
  * - `characterId` — FK to {@link character.malId}; cascade on delete.
  * - `nickname` — Alias string; unique per `(characterId, nickname)`.
  */
-export const characterNickname = sqliteTable(
+export const characterNickname = pgTable(
   'character_nickname',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     characterId: integer('character_id')
       .notNull()
       .references(() => character.malId, { onDelete: 'cascade' }),

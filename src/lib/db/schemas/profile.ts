@@ -13,7 +13,7 @@
  * @see {@link module:lib/db/schemas/auth-schema.user} for auth user root
  * @see {@link module:lib/cache/config.CacheKeyPrefix.UserProfile} for profile cache keys
  */
-import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { integer, text, pgTable } from 'drizzle-orm/pg-core'
 import { user } from '@db/schemas/auth-schema'
 
 /**
@@ -29,7 +29,7 @@ import { user } from '@db/schemas/auth-schema'
  * - `frequency` / `fanaticLevel` / `preferredFormat` — Viewing habit questionnaire answers.
  * - `watchedAnimes` — Serialized watch history or list snapshot.
  */
-export const profile = sqliteTable('profile', {
+export const profile = pgTable('profile', {
   id: text('id').primaryKey().notNull(),
   userId: integer('user_id')
     .notNull()

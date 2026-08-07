@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/staff} for parent staff entity
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { staff } from '@db/schemas/staff'
 
 /**
@@ -22,8 +22,8 @@ import { staff } from '@db/schemas/staff'
  * - `src` — URL or path to media.
  * - `size` — Optional size variant.
  */
-export const staffMedia = sqliteTable('staff_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const staffMedia = pgTable('staff_media', {
+  id: serial('id').primaryKey(),
   staffId: integer('staff_id')
     .notNull()
     .references(() => staff.malId, { onDelete: 'cascade' }),

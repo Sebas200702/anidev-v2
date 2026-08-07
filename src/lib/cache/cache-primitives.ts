@@ -2,38 +2,40 @@
  * @module lib/cache/cache-primitives
  *
  * Generic Redis-backed primitives: get, set, and delete. Serializes values as JSON strings and
- * delegates transport to the shared Upstash client. The read-through `withCache` wrapper lives in
- * {@link module:lib/cache/cache-store}.
+ * delegates transport to the shared Dragonfly/Redis client. The read-through `withCache` wrapper
+ * lives in {@link module:lib/cache/cache-store}.
  *
  * @remarks
  * `cacheGet` returns `null` for missing keys and for falsy Redis responses (empty string, etc.).
- * Upstash/network errors propagate as rejected promises without translation.
+ * Values are stored as JSON strings; reads deserialize explicitly.
  *
  * @see {@link module:lib/cache/client} for the underlying Redis instance
  * @see {@link module:lib/cache/config} for key prefixes and TTL presets
  */
 import { redis } from '@lib/cache/client'
+import type { CacheTtl } from '@lib/cache/config'
+import { logger } from '@utils/logger-util'
 
 /**
  * Options for {@link cacheSet} controlling key expiry.
  *
- * @property ttlSeconds - Optional expiry in seconds. When omitted or `<= 0`,
- * the key persists until explicit {@link cacheDel} or Redis eviction policy.
+ * @property ttlSeconds - Required expiry in seconds. Every write stores the key
+ * with Redis `EX` so {@link cacheDel} can rely on a bounded lifetime even when
+ * the delete is suppressed by a degraded backend.
  */
 export type CacheGetSetOptions = {
-  ttlSeconds?: number
+  ttlSeconds: CacheTtl
 }
 
 /**
  * Reads a JSON-deserialized cached value by key.
  *
  * @typeParam T - Expected cached value type; caller responsible for shape correctness.
- * @param key - Non-empty Redis cache key. Invalid keys behave per Upstash rules.
- * @returns The cached value when present and truthy after Redis `GET`; `null`
- * when the key is missing or Redis returns a falsy payload. Does not distinguish
- * "cached null" from miss unless callers encode sentinels in `T`.
- *
- * @throws Rejects when Upstash REST request fails (network, auth, rate limit).
+ * @param key - Non-empty Redis cache key.
+ * @returns The cached value when present after `JSON.parse`; `null` when the key
+ * is missing, Redis returns a falsy payload, **or the cache backend is
+ * unreachable** (logged as a warning, not propagated). Callers must treat
+ * `null` as a cache miss and fall back to the database.
  *
  * @example
  * ```typescript
@@ -48,43 +50,47 @@ export type CacheGetSetOptions = {
  * @see {@link withCache} for read-through pattern
  */
 export async function cacheGet<T>(key: string): Promise<T | null> {
-  const raw = await redis.get<T>(key)
-  if (!raw) return null
+  try {
+    const raw = await redis.get(key)
+    if (!raw) return null
 
-  return raw
+    return JSON.parse(raw) as T
+  } catch (error) {
+    logger.warn({ err: error, key }, 'Cache GET degraded (cache read failed)')
+    return null
+  }
 }
 
 /**
- * Stores a value in Redis as a JSON string, optionally with TTL expiry.
+ * Stores a value in Redis as a JSON string with a required TTL expiry.
  *
  * @typeParam T - Value type to serialize via `JSON.stringify`.
  * @param key - Redis cache key. Overwrites existing value atomically.
  * @param value - Serializable value; `undefined` becomes omitted in JSON.
  * Functions, `BigInt`, and circular structures will cause `JSON.stringify` to throw.
- * @param options - Optional TTL configuration via {@link CacheGetSetOptions}.
- * @returns `Promise<void>` resolving when Upstash acknowledges the write.
- *
- * @throws Rejects on non-serializable `value`, Upstash errors, or invalid credentials.
- * @throws {TypeError} When `JSON.stringify` fails for exotic values.
+ * @param options - Required TTL configuration via {@link CacheGetSetOptions}.
+ * @returns `Promise<void>` resolving when Redis acknowledges the write. If the
+ * cache is unreachable the write is skipped and a warning logged — the caller
+ * must not assume persistence succeeded.
  *
  * @example
  * ```typescript
- * await cacheSet('anime:list:page:1', { items: [], total: 0 }, { ttlSeconds: 3600 })
+ * await cacheSet('anime:list:page:1', { items: [], total: 0 }, { ttlSeconds: CacheTtl.Short })
  * ```
  *
  * @see {@link CacheTtl} for standard expiry durations
+ * @see {@link cacheGet} for the corresponding read with the same degradation
  */
 export async function cacheSet<T>(
   key: string,
   value: T,
-  { ttlSeconds }: CacheGetSetOptions = {}
+  { ttlSeconds }: CacheGetSetOptions
 ): Promise<void> {
-  const payload = JSON.stringify(value)
-
-  if (ttlSeconds && ttlSeconds > 0) {
-    await redis.set(key, payload, { ex: ttlSeconds })
-  } else {
-    await redis.set(key, payload)
+  try {
+    const payload = JSON.stringify(value)
+    await redis.set(key, payload, 'EX', ttlSeconds)
+  } catch (error) {
+    logger.warn({ err: error, key }, 'Cache degraded (cache write skipped)')
   }
 }
 
@@ -92,9 +98,9 @@ export async function cacheSet<T>(
  * Removes a cached entry by key.
  *
  * @param key - Redis cache key to delete. No-op when key does not exist.
- * @returns `Promise<void>` resolving after Upstash `DEL` completes.
- *
- * @throws Rejects on Upstash transport or authentication failures.
+ * @returns `Promise<void>` resolving after Redis `DEL` completes. When the cache
+ * is unreachable the delete is skipped and a warning logged, leaving stale data
+ * to expire via TTL.
  *
  * @example
  * ```typescript
@@ -104,5 +110,9 @@ export async function cacheSet<T>(
  * @see {@link cacheSet} for writing entries
  */
 export async function cacheDel(key: string): Promise<void> {
-  await redis.del(key)
+  try {
+    await redis.del(key)
+  } catch (error) {
+    logger.warn({ err: error, key }, 'Cache degraded (cache delete skipped)')
+  }
 }

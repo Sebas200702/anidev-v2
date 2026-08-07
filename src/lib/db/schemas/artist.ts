@@ -14,10 +14,11 @@
  */
 import {
   integer,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 import { staff } from '@db/schemas/staff'
 
 /**
@@ -28,10 +29,10 @@ import { staff } from '@db/schemas/staff'
  * - `name` — Display name; globally unique.
  * - `malId` — Optional FK to {@link staff.malId} when artist maps to staff.
  */
-export const artist = sqliteTable(
+export const artist = pgTable(
   'artist',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
 
     name: text('name').notNull(),
 

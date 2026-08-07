@@ -15,7 +15,7 @@ import { character } from '@db/schemas/character'
 import { producer } from '@db/schemas/producer'
 import { staff } from '@db/schemas/staff'
 
-import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
 
 /**
  * Staff credits (`anime_staff` table) attached to an anime with role metadata.
@@ -24,7 +24,7 @@ import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
  * - `animeId`, `staffId`, `role` — composite PK; allows duplicate staff with different roles.
  * - `role` — Free-text credit (Director, Series Composition, etc.).
  */
-export const animeStaff = sqliteTable(
+export const animeStaff = pgTable(
   'anime_staff',
   {
     animeId: integer('anime_id')
@@ -43,7 +43,7 @@ export const animeStaff = sqliteTable(
  *
  * **Key columns:** `animeId`, `musicId` — composite primary key.
  */
-export const animeMusic = sqliteTable(
+export const animeMusic = pgTable(
   'anime_music',
   {
     animeId: integer('anime_id')
@@ -63,7 +63,7 @@ export const animeMusic = sqliteTable(
  * - `animeId`, `characterId`, `role` — composite PK.
  * - `role` — Main, Supporting, etc.
  */
-export const animeCharacter = sqliteTable(
+export const animeCharacter = pgTable(
   'anime_character',
   {
     animeId: integer('anime_id')
@@ -84,7 +84,7 @@ export const animeCharacter = sqliteTable(
  * - `animeId`, `relatedAnimeId`, `relationType` — composite PK.
  * - `relationType` — Sequel, Prequel, Side story, etc.
  */
-export const animeRelatedAnime = sqliteTable(
+export const animeRelatedAnime = pgTable(
   'anime_relation',
   {
     animeId: integer('anime_id')
@@ -105,7 +105,7 @@ export const animeRelatedAnime = sqliteTable(
  *
  * **Key columns:** `animeId`, `producerId` — composite primary key.
  */
-export const animeProducer = sqliteTable(
+export const animeProducer = pgTable(
   'anime_producer',
   {
     animeId: integer('anime_id')

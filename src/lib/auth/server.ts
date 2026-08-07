@@ -22,7 +22,7 @@ import { db } from '@db/client'
 import { account, session, user, verification } from '@db/schemas/auth-schema'
 
 /**
- * Configured Better Auth server instance backed by Drizzle and SQLite/Turso.
+ * Configured Better Auth server instance backed by Drizzle and PostgreSQL.
  *
  * @remarks
  * Singleton for the process lifetime. Session cookies and token validation
@@ -37,7 +37,7 @@ export const auth = betterAuth({
     enabled: true,
   },
   database: drizzleAdapter(db, {
-    provider: 'sqlite',
+    provider: 'pg',
     schema: {
       user,
       session,

@@ -14,7 +14,7 @@
  */
 import { music } from '@db/schemas/music'
 import { artist } from '@db/schemas/artist'
-import { sqliteTable, integer, primaryKey } from 'drizzle-orm/sqlite-core'
+import { pgTable, integer, primaryKey } from 'drizzle-orm/pg-core'
 
 /**
  * Artist credits (`music_artist` table) linking a music track to artists.
@@ -24,7 +24,7 @@ import { sqliteTable, integer, primaryKey } from 'drizzle-orm/sqlite-core'
  * - `artistId` — FK to {@link artist.id}.
  * - Composite primary key on both columns.
  */
-export const musicArtist = sqliteTable(
+export const musicArtist = pgTable(
   'music_artist',
   {
     musicId: integer('music_id')

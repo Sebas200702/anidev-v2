@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/episode} for parent episode rows
  */
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { episode } from '@db/schemas/episode'
 
 /**
@@ -22,8 +22,8 @@ import { episode } from '@db/schemas/episode'
  * - `src` — Media URL or path.
  * - `size` — Optional resolution/variant label.
  */
-export const episodeMedia = sqliteTable('episode_media', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+export const episodeMedia = pgTable('episode_media', {
+  id: serial('id').primaryKey(),
   episodeId: integer('episode_id')
     .notNull()
     .references(() => episode.id, { onDelete: 'cascade' }),

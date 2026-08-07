@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent MAL-keyed anime row
  */
-import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core'
+import { integer, text, pgTable, timestamp } from 'drizzle-orm/pg-core'
 
 import { anime } from '@db/schemas/anime'
 
@@ -26,7 +26,7 @@ import { anime } from '@db/schemas/anime'
  *
  * @see {@link anime} canonical anime record
  */
-export const animeExternalIds = sqliteTable('anime_external_ids', {
+export const animeExternalIds = pgTable('anime_external_ids', {
   animeId: integer('anime_id')
     .notNull()
     .primaryKey()
@@ -36,10 +36,10 @@ export const animeExternalIds = sqliteTable('anime_external_ids', {
   kitsuId: integer('kitsu_id'),
   tvdbId: integer('tvdb_id'),
 
-  createdAt: integer('created_at', { mode: 'timestamp' })
+  createdAt: timestamp('created_at')
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer('updated_at', { mode: 'timestamp' })
+  updatedAt: timestamp('updated_at')
     .notNull()
     .$defaultFn(() => new Date()),
 })

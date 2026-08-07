@@ -1,9 +1,10 @@
 /**
  * @module lib/db/schemas
  *
- * Named re-exports of all Drizzle ORM schema definitions for the AniDev SQLite
- * database. Tables cover authentication (Better Auth), anime catalog metadata,
- * related media entities, junction relations, and extended user profiles.
+ * Named re-exports of all Drizzle ORM schema definitions for the AniDev
+ * PostgreSQL database. Tables cover authentication (Better Auth), anime catalog
+ * metadata, related media entities, junction relations, and extended user
+ * profiles.
  *
  * @remarks
  * Import from `@db/schemas` when repositories need multiple table symbols.

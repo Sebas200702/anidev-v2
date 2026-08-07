@@ -7,6 +7,27 @@ import { artist } from '@db/schemas/artist'
 import { musicArtist } from '@db/schemas/music-relations'
 import type { MusicArtistDB } from '@domains/music/types/music-db-types'
 import { eq, inArray } from 'drizzle-orm'
+import type { PgColumn } from 'drizzle-orm/pg-core'
+import { dbError } from '@shared/errors/db-errors'
+
+/**
+ * Builds the shared `musicArtist` × `artist` join projection.
+ *
+ * @template TSelection - Shape of the selected columns; lets Drizzle preserve
+ * row inference from whichever projection each lookup passes
+ * @param selection - Columns to select from the joined tables; the single- and
+ * multi-music lookups differ only in whether `musicId` is included
+ * @returns A Drizzle query pinned to the `musicArtist` × `artist` inner join
+ * @remarks Centralizes the join so both artist lookups stay in sync.
+ */
+function baseArtistQuery<TSelection extends Record<string, PgColumn>>(
+  selection: TSelection
+) {
+  return db
+    .select(selection)
+    .from(musicArtist)
+    .innerJoin(artist, eq(musicArtist.artistId, artist.id))
+}
 
 /**
  * Reads artist relations for music records.
@@ -25,7 +46,7 @@ export const musicRelationRepository = {
    *
    * @param musicId - Internal music identifier
    * @returns {@link MusicArtistDB} rows associated with the music entry
-   * @throws May propagate underlying database driver errors
+   * @throws {InfraError} On database failure (`[ARTISTS_BY_MUSIC_ID]`)
    * @see {@link MusicDetails.artist} for the serialized output field
    * @example
    * ```typescript
@@ -34,25 +55,25 @@ export const musicRelationRepository = {
    * ```
    */
   async findArtistsByMusicId(musicId: number): Promise<MusicArtistDB[]> {
-    const rows = await db
-      .select({
+    try {
+      const rows = await baseArtistQuery({
         id: musicArtist.artistId,
         name: artist.name,
         malId: artist.malId,
-      })
-      .from(musicArtist)
-      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-      .where(eq(musicArtist.musicId, musicId))
+      }).where(eq(musicArtist.musicId, musicId))
 
-    return rows
+      return rows
+    } catch (error) {
+      throw dbError('[ARTISTS_BY_MUSIC_ID]', { musicId }, error)
+    }
   },
 
   /**
    * Loads artists linked to multiple music records in one query.
    *
-   * @param musicIds - Internal music identifiers
    * @returns {@link MusicArtistDB} rows with `musicId` for grouping in list mappers
    * @remarks Short-circuits to an empty array when `musicIds` is empty.
+   * @throws {InfraError} On database failure (`[ARTISTS_BY_MUSIC_IDS]`)
    * @see {@link musicListService.getMusicList} for batch usage
    * @example
    * ```typescript
@@ -64,17 +85,17 @@ export const musicRelationRepository = {
   ): Promise<Array<MusicArtistDB & { musicId: number }>> {
     if (musicIds.length === 0) return []
 
-    const rows = await db
-      .select({
+    try {
+      const rows = await baseArtistQuery({
         id: musicArtist.artistId,
         name: artist.name,
         malId: artist.malId,
         musicId: musicArtist.musicId,
-      })
-      .from(musicArtist)
-      .innerJoin(artist, eq(musicArtist.artistId, artist.id))
-      .where(inArray(musicArtist.musicId, musicIds))
+      }).where(inArray(musicArtist.musicId, musicIds))
 
-    return rows
+      return rows
+    } catch (error) {
+      throw dbError('[ARTISTS_BY_MUSIC_IDS]', { musicIds }, error)
+    }
   },
 }

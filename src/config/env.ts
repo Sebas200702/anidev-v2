@@ -10,11 +10,13 @@
  * Parsing happens eagerly when this module is first imported; invalid or
  * missing required variables cause the process to fail fast with a
  * {@link ZodError}. Optional variables fall back to schema defaults or
- * `undefined`. Values are read from `import.meta.env` (Astro/Vite convention).
+ * `undefined`. Values are read from `process.env` so server-side secrets are
+ * resolved at runtime (dev via Bun `.env` loading, Docker/CI via injected
+ * environment) rather than being inlined at build time.
  *
  * @see {@link module:types/env.d} for TypeScript augmentations of `ImportMetaEnv`
- * @see {@link module:lib/db/client} for Turso connection usage
- * @see {@link module:lib/cache/client} for Upstash Redis usage
+ * @see {@link module:lib/db/client} for PostgreSQL connection usage
+ * @see {@link module:lib/cache/client} for Redis/Dragonfly usage
  * @see {@link module:lib/auth/server} for Better Auth secret and base URL
  */
 import { z } from 'zod'
@@ -27,13 +29,11 @@ import { z } from 'zod'
  * prevent bypassing validation at import time.
  *
  * @property NODE_ENV - Runtime mode; defaults to `'development'`.
- * @property TURSO_DATABASE_URL - LibSQL/Turso database URL (must be valid URL).
- * @property TURSO_AUTH_TOKEN - Non-empty auth token for Turso remote access.
- * @property SENTRY_DSN - Optional Sentry project DSN; monitoring no-ops when absent.
+ * @property DATABASE_URL - PostgreSQL connection URL (must be valid URL).
+ * @property REDIS_URL - Redis/Dragonfly connection URL (must be valid URL).
+ * @property SENTRY_DSN - Optional Sentry/Rustrak DSN; monitoring no-ops when absent.
  * @property APP_BASE_URL - Public origin used as Better Auth base URL and SEO canonical.
  * @property BETTER_AUTH_SECRET - Session signing secret; minimum 32 characters.
- * @property UPSTASH_REDIS_REST_URL - Upstash Redis REST endpoint URL.
- * @property UPSTASH_REDIS_REST_TOKEN - Non-empty Upstash REST API token.
  * @property LOG_LEVEL - Optional Pino/log level; one of trace through fatal.
  */
 const envSchema = z.object({
@@ -41,15 +41,13 @@ const envSchema = z.object({
     .enum(['development', 'test', 'production'])
     .default('development'),
 
-  TURSO_DATABASE_URL: z.url(),
-  TURSO_AUTH_TOKEN: z.string().min(1),
+  DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
+  REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
 
   SENTRY_DSN: z.string().optional(),
 
   APP_BASE_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(32),
-  UPSTASH_REDIS_REST_URL: z.url(),
-  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   LOG_LEVEL: z
     .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
     .optional(),
@@ -70,21 +68,18 @@ const envSchema = z.object({
  * import { env } from '@config/env'
  *
  * // Safe to use after import — parse already succeeded
- * const dbUrl = env.TURSO_DATABASE_URL
+ * const dbUrl = env.DATABASE_URL
  * const isProd = env.NODE_ENV === 'production'
  * ```
  *
  * @see {@link module:config} for derived site config built from these values
  */
 export const env = envSchema.parse({
-  NODE_ENV: import.meta.env.NODE_ENV,
-  TURSO_DATABASE_URL: import.meta.env.TURSO_DATABASE_URL,
-  TURSO_AUTH_TOKEN: import.meta.env.TURSO_AUTH_TOKEN,
-  SENTRY_DSN: import.meta.env.SENTRY_DSN,
-  APP_BASE_URL: import.meta.env.APP_BASE_URL,
-  BETTER_AUTH_SECRET: import.meta.env.BETTER_AUTH_SECRET,
-  LOG_LEVEL: import.meta.env.LOG_LEVEL,
-
-  UPSTASH_REDIS_REST_URL: import.meta.env.UPSTASH_REDIS_REST_URL,
-  UPSTASH_REDIS_REST_TOKEN: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
+  NODE_ENV: process.env.NODE_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+  REDIS_URL: process.env.REDIS_URL,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  APP_BASE_URL: process.env.APP_BASE_URL,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+  LOG_LEVEL: process.env.LOG_LEVEL,
 })

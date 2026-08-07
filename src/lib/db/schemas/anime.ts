@@ -16,10 +16,11 @@
 import {
   integer,
   real,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
   uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+} from 'drizzle-orm/pg-core'
 
 /**
  * Primary anime catalog record (`anime` table) keyed by MyAnimeList ID.
@@ -34,8 +35,8 @@ import {
  *
  * @see {@link animeTitleSynonym} for alternate searchable titles
  */
-export const anime = sqliteTable('anime', {
-  malId: integer('mal_id').primaryKey(),
+export const anime = pgTable('anime', {
+  malId: integer('mal_id').primaryKey().notNull(),
   title: text('title').notNull(),
   titleEnglish: text('title_english'),
   titleJapanese: text('title_japanese'),
@@ -61,10 +62,10 @@ export const anime = sqliteTable('anime', {
  *
  * @see {@link anime} parent record
  */
-export const animeTitleSynonym = sqliteTable(
+export const animeTitleSynonym = pgTable(
   'anime_title_synonym',
   {
-    id: integer('id').primaryKey({ autoIncrement: true }),
+    id: serial('id').primaryKey(),
     animeId: integer('anime_id')
       .notNull()
       .references(() => anime.malId, { onDelete: 'cascade' }),

@@ -9,7 +9,14 @@ import bun from '@nurodev/astro-bun'
 
 import vercel from '@astrojs/vercel'
 
+import sentryAstro from '@sentry/astro'
+
 const src = fileURLToPath(new URL('./src', import.meta.url))
+
+// ASTRO_ADAPTER=bun emits a standalone Bun server (dist/server/entry.mjs),
+// used by the Docker image runtime. Default (Vercel) targets the serverless
+// deploy output and is used by CI.
+const adapter = process.env.ASTRO_ADAPTER === 'bun' ? bun() : vercel()
 
 /** @type {import('astro').AstroIntegration} */
 const sessionMiddlewareIntegration = {
@@ -29,9 +36,19 @@ const sessionMiddlewareIntegration = {
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [sessionMiddlewareIntegration, react()],
+  integrations: [
+    sessionMiddlewareIntegration,
+    react(),
+    // Sentry/Rustrak: discovers sentry.server.config.ts at the project root and
+    // injects it at SSR startup (init no-ops when SENTRY_DSN is unset). Client
+    // SDK stays disabled — browser error boundaries go through
+    // wrapReactComponentWithSentry instead.
+    sentryAstro({
+      enabled: { server: true, client: false },
+    }),
+  ],
   output: 'server',
-  adapter: vercel(),
+  adapter,
 
   vite: {
     plugins: [tailwindcss()],
