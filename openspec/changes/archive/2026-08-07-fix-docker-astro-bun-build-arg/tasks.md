@@ -6,5 +6,5 @@
 ## 2. Verify and release
 
 - [x] 2.1 Confirm the Dockerfile needs no change (`ARG`/`ENV` already consume `ASTRO_ADAPTER`) and the workflow YAML is valid
-- [ ] 2.2 Run the Verification gate and open a PR to `master` on branch `ci/fix-docker-astro-bun-build-arg`
-- [ ] 2.3 Run `bun run release:patch` on the branch so the PR carries the version bump and `v0.1.2` tag, then merge and push the tag to trigger `release.yml` and rebuild the image
+- [x] 2.2 Run the Verification gate and open a PR to `master` on branch `ci/fix-docker-astro-bun-build-arg`
+- [x] 2.3 Run `bun run release:patch` on the branch so the PR carries the version bump and `v0.1.2` tag, then merge and push the tag to trigger `release.yml` and rebuild the image
