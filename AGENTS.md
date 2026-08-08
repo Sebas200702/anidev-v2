@@ -123,7 +123,7 @@ Rationale:
 
 **CI/CD:** Two workflows. `.github/workflows/ci.yml` runs the quality gate on PRs and pushes to `master` — `check`, `check:types`, `test`, `test:coverage`, `build` (see AGENTS.md Verification gate for the local sequence). It does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
 
-**Skills:** Prefer the installed skills for domain tasks — `development-lifecycle` (the universal workflow), `better-auth-best-practices` (auth), `context7`/`find-docs` (library docs), `code-review` (two-axis diff review), `impeccable` (UI), `jsdoc-typescript-docs` (code documentation), `test-driven-development`, `doubt-driven-development`. Load them via the `skill` tool.
+**Skills:** Prefer the installed skills for domain tasks — `development-lifecycle` (the universal workflow), `better-auth-best-practices` (auth), `context7`/`find-docs` (library docs), `code-review` (two-axis diff review), `impeccable` (UI craft), `frontend` / `presentational-container` (UI architecture), `web-quality-audit` / `webapp-testing` (UI verification), `jsdoc-typescript-docs` (code documentation), `test-driven-development`, `doubt-driven-development`. Load them via the `skill` tool.
 
 ## Architecture (Domain-Driven + Presentational-Container)
 
@@ -158,11 +158,60 @@ DB schema (lib/db/schemas/) → Repository → Mapper → Service → Page/API r
 - **Rule**: *"Data is supplied by domain services in page routes, not fetched inside components"*
 - Each component lives in its own directory: `Name/Name.astro` + `index.ts` barrel
 
+### Frontend & UI — estilos, render, composición
+
+Reglas que gobiernan todo trabajo en el frontend, además de las anteriores. El
+flujo completo está en la skill `frontend`; aquí están las reglas vinculantes:
+
+- **Renderizado — "zero-JS + Islands on demand".** Todo componente es un SFC
+  `.astro` renderizado en SSR estático. Zero JS de cliente por defecto; React
+  islands (`@astrojs/react` + React 19, `client:load`/`client:visible`) solo
+  cuando la interacción lo exige (un player, un toggle, una votación). Si un
+  formulario puede resolverlo, usa `<form>` + API route antes que una island.
+- **View Transitions** ya está habilitado en `base-layout.astro`
+  (`<ClientRouter />`) — úsalo para transiciones de página, no reescribas el
+  swap a mano.
+- **Hooks**: los hooks React solo existen dentro de islands (client). Ruta
+  reservada: `src/shared/hooks/` (alias `@hooks`) y por dominio bajo
+  `src/domains/*/hooks/`. Nombre `use`+PascalCase (`useAuth`). Estado global
+  vía Zustand con `use[Nombre]Store` (alias `@stores` → `src/shared/stores/`;
+  directorios de reserva aún, crearlos con la primera feature que los use).
+- **Estilos**: Tailwind v4, sin `<style>` inline en componentes; las utility
+  classes globales (`.title`, `.text-*`, `.button-*`) viven en
+  `src/styles/global.css` vía `@apply`. Color solo desde tokens `@theme`
+  (`brand`/`neutral`), nunca hex en crudo. La propuesta es diseño solo-dark
+  (`color-scheme: dark`).
+- **Imágenes**: componente compartido `Picture` (LQIP blur-up) con
+  `aspect-*` y tamaños explícitos en banners. Preload del LCP.
+- **Accesibilidad**: HTML semántico, ARIA cuando el elemento no es semántico,
+  focus-visible, contraste ≥ 4.5:1, `prefers-reduced-motion`.
+- **UI/UX craft**: carga la skill `frontend` y `impeccable` para decisiones de
+  diseño, layout, tipografía y motion. Design tokens en `global.css` son la
+  única fuente de color/tipografía.
+
+### Living documentation — componente showcase
+
+Cada componente es **visible**, no solo documentado con JSDoc. El repo mantiene
+un *component showcase* (route `src/pages/showcase.astro` + `fixtures/` por
+dominio) que renderiza cada componente **con datos vivos**:
+
+- El showcase es **dinámico**: consume la API/dominio real del registro (su
+  service + API route), igual que las páginas de producción. Según párametro
+  (p. ej. `?id=` / ruta con id), muestra el registro actual de la API — refleja
+  cambios de datos, no fixtures hardcodeadas.
+- Los `fixtures/` por dominio sirven como **fallback de arranque** (cuando la
+  API aún no tiene datos o el índice va sin selección). El fetch lo hace el
+  contenedor (la page route), nunca el componente.
+- Cada componente presentacional recibe su demo en el mismo task que lo crea.
+- JSDoc: `@module` por archivo, `@remarks`/`@see`/`@example` en miembros
+  públicos, e `interface Props` tipada que auto-documenta la API.
+  Nuevos componentes listan su showcase en sus `index.ts` barrels.
+
 ### Max file size
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
 
 ## Path Aliases (tsconfig + Vite)
-`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`).
+`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
 
 ## API Route Patterns
 Two composition styles:
@@ -200,6 +249,10 @@ Validated eagerly at import via Zod in `src/config/env.ts` — missing required 
 | **SEO** | Structured JSON-LD, OG tags in `base-layout.astro`, canonical URLs, meta descriptions |
 | **Core Web Vitals** | Preload LCP image; `aspect-ratio` for CLS; no tasks >50ms for INP; `font-display: optional` |
 | **Astro** | `astro:middleware` for session; `src/pages/` file-based routing; adapter configures output target |
+| **Frontend flow** | Load the repo skill `frontend` (rendering, composition, styling, living docs) and `presentational-container` (separation of concerns) before any UI task; see "Frontend & UI" above |
+| **UI/UX craft (impeccable)** | Load `impeccable` for design/layout/motion decisions; global tokens in `global.css` are the only source of color/typography |
+| **Web quality (audit/testing)** | `web-quality-audit` for perf/a11y/SEO on new pages; `webapp-testing` (Playwright) to verify UI against a browser |
+| **Component showcase** | Every presentational component needs a **dynamic** live demo on `/showcase` fed by the domain API/service (`fixtures/` only as fallback) + JSDoc — see "Living documentation" above |
 
 When a task references a library/framework, fetch its current docs first via `context7` or `find-docs` — do not rely on memory for API details.
 
