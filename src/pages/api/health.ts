@@ -11,13 +11,15 @@
  * request. The log flows through the Pino → Sentry/Rustrak bridge
  * ({@link module:lib/monitoring/sentry}) when a monitoring DSN is configured,
  * which makes this endpoint a deterministic end-to-end smoke test for the log
- * pipeline.
+ * pipeline. It also sends an explicit `captureMessage` event so connectivity can
+ * be verified independently of the Pino bridge.
  *
  * @see {@link logger} — app logger that forwards to the monitoring bridge
  * @see {@link module:lib/monitoring/sentry} — pinoIntegration bridge to Rustrak
  * @see {@link withErrorHandling} — standardized JSON envelope wrapper
  */
 
+import * as Sentry from '@sentry/astro'
 import { logger } from '@utils/logger-util'
 import { withErrorHandling } from '@http/with-error-handling'
 
@@ -43,6 +45,7 @@ import { withErrorHandling } from '@http/with-error-handling'
  */
 export const GET = withErrorHandling(async () => {
   logger.info({ route: '/api/health' }, 'Health check requested')
+  Sentry.captureMessage('Health check')
 
   return { data: { status: 'ok' }, status: 200 }
 })
