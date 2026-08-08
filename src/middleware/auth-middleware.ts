@@ -16,10 +16,18 @@
  * @see {@link module:config/public-routes} for routes that skip session enforcement
  * @see {@link module:types/env.d} for `App.Locals` typing
  * @see {@link module:lib/auth/server} for the Better Auth server instance
+ * @see {@link module:lib/monitoring/sentry.initAstroSentry} for the monitoring bootstrap
  */
 import { defineMiddleware } from 'astro:middleware'
 import { isPublicRoute } from '@config/public-routes'
 import { resolveAuthActor } from '@auth/middleware'
+import { initAstroSentry } from '@lib/monitoring/sentry'
+
+// Initialize monitoring at middleware load so the SDK is active before any
+// request — page or API endpoint — is handled. `@sentry/astro` only injects
+// `sentry.server.config` on page renders, so API-first traffic would otherwise
+// never wire the pino bridge. No-op when SENTRY_DSN is unset.
+initAstroSentry()
 
 /** Cookie substrings that indicate a Better Auth session may be present. */
 const authCookieMarkers = ['session_token=', 'session_data=']

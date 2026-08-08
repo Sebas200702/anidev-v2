@@ -31,6 +31,13 @@ import { env } from '@config/env'
 const isEnabled = !!env.SENTRY_DSN
 
 /**
+ * Guards against double-initializing the Astro SDK. Both the session middleware
+ * and `@sentry/astro`'s page-ssr injection call {@link initAstroSentry}; the flag
+ * makes repeat calls no-ops.
+ */
+let hasInitialized = false
+
+/**
  * Initializes Sentry for Node/server-side error and trace reporting.
  *
  * @returns `void`. Side effect: registers Sentry Node SDK when enabled.
@@ -85,6 +92,8 @@ export const initServerSentry = () => {
  */
 export const initAstroSentry = () => {
   if (!isEnabled) return
+  if (hasInitialized) return
+  hasInitialized = true
 
   SentryAstro.init({
     dsn: env.SENTRY_DSN,
