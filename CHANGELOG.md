@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/Sebas200702/anidev-v2/compare/v0.1.3...v0.2.0) (2026-08-08)
+
+
+### Features
+
+* **api:** Add public health check endpoint with info logging ([7a81bf2](https://github.com/Sebas200702/anidev-v2/commit/7a81bf29898502613f5c54a5797f6f21385daef7))
+
 ### [0.1.3](https://github.com/Sebas200702/anidev-v2/compare/v0.1.2...v0.1.3) (2026-08-07)
 
 

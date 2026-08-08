@@ -10,8 +10,8 @@
  * Matching is prefix-based: a pathname is public if it equals a listed route
  * or starts with `{route}/`. Trailing slashes on the incoming pathname are
  * not normalized; callers should pass `context.url.pathname` as-is. API list
- * endpoints under `/api/anime` and `/api/music` are intentionally public for
- * browse-before-login flows.
+ * endpoints under `/api/anime` and `/api/music`, plus the `/api/health` liveness
+ * check, are intentionally public for browse-before-login flows and monitoring.
  *
  * @see {@link module:middleware/auth-middleware} for runtime enforcement
  * @see {@link isPublicRoute} for the matching helper
@@ -32,6 +32,7 @@ export const publicRoutes = [
   '/api/auth/register',
   '/api/anime',
   '/api/music',
+  '/api/health',
   '/media',
 ] as const
 
