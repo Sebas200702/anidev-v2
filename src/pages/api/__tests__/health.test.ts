@@ -10,6 +10,12 @@
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
+const sentryMock = vi.hoisted(() => ({
+  captureMessage: vi.fn(),
+}))
+
+vi.mock('@sentry/astro', () => sentryMock)
+
 vi.mock('@config/env', () => ({
   env: {
     NODE_ENV: 'production',
@@ -29,6 +35,7 @@ const createContext = () =>
 
 beforeEach(() => {
   vi.restoreAllMocks()
+  sentryMock.captureMessage.mockClear()
 })
 
 describe('GET /api/health', () => {
@@ -49,5 +56,12 @@ describe('GET /api/health', () => {
 
     expect(infoSpy).toHaveBeenCalledTimes(1)
     expect(infoSpy.mock.calls[0][0]).toEqual({ route: '/api/health' })
+  })
+
+  it('emits an explicit Sentry event on each request', async () => {
+    await GET(createContext())
+
+    expect(sentryMock.captureMessage).toHaveBeenCalledTimes(1)
+    expect(sentryMock.captureMessage).toHaveBeenCalledWith('Health check')
   })
 })

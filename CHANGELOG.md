@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/Sebas200702/anidev-v2/compare/v0.2.1...v0.2.2) (2026-08-08)
+
+
+### Bug Fixes
+
+* **monitoring:** Emit explicit Sentry event from health check endpoint ([9b40265](https://github.com/Sebas200702/anidev-v2/commit/9b402659eb234f468fcec715f98d48d797759723))
+
 ### [0.2.1](https://github.com/Sebas200702/anidev-v2/compare/v0.2.0...v0.2.1) (2026-08-08)
 
 
