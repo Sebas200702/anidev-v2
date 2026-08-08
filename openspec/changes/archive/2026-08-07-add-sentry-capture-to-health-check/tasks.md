@@ -7,4 +7,4 @@
 
 - [x] 2.1 Run the Verification gate (`format → check → check:types → test → build`)
 - [x] 2.2 Build with `ASTRO_ADAPTER=bun` and smoke-test that `/api/health` alone produces an `event` envelope to local Rustrak (in addition to the log envelope)
-- [ ] 2.3 Open a PR to `master` on branch `fix/health-sentry-capture`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image; then confirm `captureMessage` appears in production Rustrak
+- [x] 2.3 Open a PR to `master` on branch `fix/health-sentry-capture`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image; then confirm `captureMessage` appears in production Rustrak

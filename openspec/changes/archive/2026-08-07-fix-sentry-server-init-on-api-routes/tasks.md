@@ -9,6 +9,6 @@
 
 ## 3. Verify and release
 
-- [ ] 3.1 Run the Verification gate (`format → check → check:types → test → build`)
-- [ ] 3.2 Build with `ASTRO_ADAPTER=bun` and smoke-test that `/api/health` alone (without loading any page) forwards the log to local Rustrak
-- [ ] 3.3 Open a PR to `master` on branch `fix/sentry-server-init-on-api-routes`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image
+- [x] 3.1 Run the Verification gate (`format → check → check:types → test → build`)
+- [x] 3.2 Build with `ASTRO_ADAPTER=bun` and smoke-test that `/api/health` alone (without loading any page) forwards the log to local Rustrak
+- [x] 3.3 Open a PR to `master` on branch `fix/sentry-server-init-on-api-routes`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image

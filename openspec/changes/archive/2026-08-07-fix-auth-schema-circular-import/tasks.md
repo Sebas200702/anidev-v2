@@ -8,4 +8,4 @@
 
 - [x] 2.1 Confirm no other file imports the relations from `auth-schema` (grep) and the public export surface is unchanged
 - [x] 2.2 Run the Verification gate and build with `ASTRO_ADAPTER=bun`, confirming the produced chunk orders `const user` before the `relations(user, ...)` calls
-- [ ] 2.3 Open a PR to `master` on branch `fix/auth-schema-circular-import`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image
+- [x] 2.3 Open a PR to `master` on branch `fix/auth-schema-circular-import`, run `bun run release:patch` on the branch, merge, and push the tag to rebuild the Docker image

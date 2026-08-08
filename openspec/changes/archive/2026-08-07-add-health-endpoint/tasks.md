@@ -11,4 +11,4 @@
 
 - [x] 3.1 Run the Verification gate (`format → check → check:types → test → build`)
 - [x] 3.2 Smoke-test locally with `ASTRO_ADAPTER=bun` (dev or built server) hitting `/api/health` and confirming the `info` log line appears
-- [ ] 3.3 Open a PR to `master` on branch `feat/health-endpoint`, run `bun run release:minor` on the branch, merge, and push the tag to rebuild the Docker image; then confirm the request appears in Rustrak
+- [x] 3.3 Open a PR to `master` on branch `feat/health-endpoint`, run `bun run release:minor` on the branch, merge, and push the tag to rebuild the Docker image; then confirm the request appears in Rustrak
