@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/Sebas200702/anidev-v2/compare/v0.2.0...v0.2.1) (2026-08-08)
+
+
+### Bug Fixes
+
+* **monitoring:** Initialize Sentry before API requests via middleware ([1ea8567](https://github.com/Sebas200702/anidev-v2/commit/1ea856737b31d296b475bda0c3bcc54178d2d541))
+
 ## [0.2.0](https://github.com/Sebas200702/anidev-v2/compare/v0.1.3...v0.2.0) (2026-08-08)
 
 

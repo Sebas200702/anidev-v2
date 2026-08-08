@@ -99,4 +99,14 @@ describe('monitoring log capture', () => {
     )
     expect(sentryAstroPino).toHaveBeenCalled()
   })
+
+  it('initializes the Astro SDK exactly once across repeated calls', async () => {
+    mockEnv.SENTRY_DSN = 'http://key@localhost:8080/1'
+    const { initAstroSentry } = await loadSentry()
+
+    initAstroSentry()
+    initAstroSentry()
+
+    expect(sentryAstroInit).toHaveBeenCalledTimes(1)
+  })
 })
