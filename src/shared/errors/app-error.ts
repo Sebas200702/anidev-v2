@@ -10,7 +10,7 @@
  * - {@link ValidationError} → 400
  * - {@link AuthError} → 401 / 403 (by code)
  * - {@link DomainError} → 404 / 400 (by code)
- * - {@link InfraError} → 500 (Sentry reported)
+ * - {@link InfraError} → 503 (Sentry reported)
  *
  * **Details shape**
  * `details` is intentionally `unknown` — factories may attach Zod `issues`, entity ids, operation names,
@@ -31,7 +31,7 @@ import { BaseError } from '@shared/errors/base-error'
  *
  * @remarks
  * Mapped to **404** when `code` is a known not-found code; otherwise **400**. Logged at `warn` or `error`
- * depending on status. Not reported to Sentry.
+ * depending on status. Reported to Sentry at `warning` level.
  *
  * @see {@link mapErrorToHttp}
  */
@@ -56,8 +56,8 @@ export class DomainError extends BaseError {
  * Infrastructure failure: database, cache, external APIs, or other operational errors.
  *
  * @remarks
- * Always mapped to **500** with a generic client message. Logged at `error` and sent to Sentry.
- * Severity is `critical` on the error instance.
+ * Always mapped to **503** with a generic client message (`Retry-After` header included). Logged at `error`
+ * and sent to Sentry at `error` level. Severity is `critical` on the error instance.
  *
  * @see {@link dbError} — factory for `DB_ERROR`
  */
@@ -83,7 +83,7 @@ export class InfraError extends BaseError {
  *
  * @remarks
  * Mapped to **400**. Typical `details` shape: `{ issues: ZodIssue[] }` from {@link withZodValidation}.
- * Logged at `warn`. Not reported to Sentry.
+ * Logged at `warn` and sent to Sentry at `warning` level.
  */
 export class ValidationError extends BaseError {
   /**
@@ -107,7 +107,7 @@ export class ValidationError extends BaseError {
  *
  * @remarks
  * Mapped to **401** for missing/invalid/expired credentials, **403** for `AUTH_FORBIDDEN`.
- * Logged at `warn`. Not reported to Sentry.
+ * Logged at `warn` and sent to Sentry at `warning` level.
  *
  * @see {@link authRequired} and related factories in `auth-errors.ts`
  */

@@ -18,6 +18,8 @@ import type { ApiEnvelope } from './api-envelope-types'
  *
  * @remarks
  * When `initHeaders` is a `Headers` instance, entries are copied into a plain object before merge.
+ * A `meta.stale === true` on the envelope is surfaced as an `x-stale: true` header so clients can
+ * detect degraded stale-serve responses.
  *
  * @see {@link withErrorHandling}
  */
@@ -35,6 +37,7 @@ export const jsonResponse = (
       ...(initHeaders instanceof Headers
         ? Object.fromEntries(initHeaders.entries())
         : initHeaders),
+      ...(payload.meta?.stale === true ? { 'x-stale': 'true' } : {}),
     },
   })
 }

@@ -4,7 +4,7 @@
  * @module shared/errors/error-http-maps
  * @remarks Consumed by {@link mapErrorToHttp}. Each helper maps a specific {@link BaseError}
  * subclass to a status/body pair and performs the appropriate logging (no Sentry here; Sentry
- * capture for 500s happens in the top-level mapper).
+ * capture for every mapped error happens in the top-level mapper via {@link captureError}).
  */
 
 import type { AuthError, DomainError } from '@shared/errors/app-error'
@@ -107,7 +107,8 @@ export const mapAuthErrorToHttp = (
  * @returns **404** when `error.code` is in {@link NOT_FOUND_DOMAIN_CODES}; otherwise **400**
  *
  * @remarks
- * Not-found codes are logged at `warn`; other domain errors at `error`. Neither path reports to Sentry.
+ * Not-found codes are logged at `warn`; other domain errors at `error`. Neither path reports
+ * to Sentry here — capture happens once in the top-level mapper.
  *
  * @internal
  */

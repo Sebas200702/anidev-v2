@@ -1,0 +1,45 @@
+---
+/**
+ * Presentational "service unavailable" fallback for degraded SSR pages.
+ *
+ * @module shared/components/service-unavailable
+ */
+interface Props {
+  /** Short heading shown under the "503" marker. */
+  title: string
+  /** Client-safe explanation of the transient outage. */
+  message: string
+  /** Where the primary "Retry" link points (e.g. the same page URL). */
+  retryHref: string
+}
+
+const { title, message, retryHref } = Astro.props
+---
+
+<section
+  class="grid min-h-[60dvh] place-items-center px-6 py-24"
+  role="alert"
+  aria-live="polite"
+  aria-labelledby="service-unavailable-title"
+>
+  <div class="flex flex-col items-center gap-6 text-center">
+    <p class="text-4xl font-bold text-brand-500 md:text-5xl" aria-hidden="true">
+      503
+    </p>
+    <h1
+      id="service-unavailable-title"
+      class="max-w-[24ch] text-balance text-2xl font-bold text-neutral-50 md:text-3xl"
+    >
+      {title}
+    </h1>
+    <p class="max-w-[42ch] text-pretty text-base leading-relaxed text-neutral-300">
+      {message}
+    </p>
+    <a
+      href={retryHref}
+      class="rounded-md border border-brand-600 px-6 py-3 font-semibold text-brand-200 transition-colors hover:border-brand-400 hover:text-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+    >
+      Retry
+    </a>
+  </div>
+</section>

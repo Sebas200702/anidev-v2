@@ -12,7 +12,7 @@
  *
  * **Re-exports:**
  * - `./cache-primitives` — `cacheGet`, `cacheSet`, `cacheDel`
- * - `./cache-store` — `withCache`
+ * - `./cache-store` — `withCache`, `withStaleCache`, `StaleResult`
  * - `./client` — shared `redis` Dragonfly instance
  * - `./config` — `CacheKeyPrefix`, `CacheTtl` enums
  *
@@ -22,6 +22,7 @@
 
 export type { CacheGetSetOptions } from './cache-primitives'
 export { cacheGet, cacheSet, cacheDel } from './cache-primitives'
-export { withCache } from './cache-store'
+export type { StaleResult } from './cache-store-types'
+export { withCache, withStaleCache } from './cache-store'
 export { redis } from './client'
 export { CacheKeyPrefix, CacheTtl } from './config'

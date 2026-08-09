@@ -14,20 +14,23 @@ import type {
   MusicResolutionDB,
   MusicVersionDB,
 } from '@music/types/music-db-types'
-import { withCache } from '@lib/cache'
+import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
+import { CacheTtl } from '@lib/cache/config'
+import type { StaleResult } from '@lib/cache/cache-store-types'
 
 /**
  * Coordinates repository access, mapping, and caching for music details.
  *
- * @remarks Uses {@link withCache} with {@link musicCache} keys so repeated detail requests
- * avoid redundant database round-trips and resolution fan-out queries.
+ * @remarks Uses {@link withStaleCache} with {@link musicCache} keys so repeated detail
+ * requests avoid redundant database round-trips and resolution fan-out queries. On
+ * infra failure serves last-known-good cached data tagged stale.
  * @see {@link mapMusicDetail} for payload assembly
  * @see {@link musicCache} for cache key and TTL configuration
  * @example
  * ```typescript
  * import { musicService } from '@music/services/music'
  *
- * const details = await musicService.getMusicDetailsById(42)
+ * const { value: details, isStale } = await musicService.getMusicDetailsById(42)
  * console.log(details.title, details.versions.length)
  * ```
  */
@@ -39,13 +42,15 @@ export const musicService = {
    * resolutions for each version in parallel. Missing music rows raise
    * {@link MusicNotFoundError}.
    * @param id - Internal music identifier
-   * @returns Cached or freshly loaded {@link MusicDetails} payload
+   * @returns `{ value, isStale }` — cached or freshly loaded {@link MusicDetails}
+   * payload plus a stale flag
    * @throws {MusicNotFoundError} When no music record exists for the ID
-   * @see {@link musicCache.key} for the cache key used by {@link withCache}
+   * @throws {InfraError} When the database fails and no stale value exists
+   * @see {@link musicCache.key} for the cache key used by {@link withStaleCache}
    * @example
    * ```typescript
    * try {
-   *   const details = await musicService.getMusicDetailsById(42)
+   *   const { value: details } = await musicService.getMusicDetailsById(42)
    *   console.log(details.artist[0]?.name)
    * } catch (error) {
    *   if (error instanceof MusicNotFoundError) {
@@ -54,11 +59,15 @@ export const musicService = {
    * }
    * ```
    */
-  async getMusicDetailsById(id: number): Promise<MusicDetails> {
-    return withCache({
+  async getMusicDetailsById(id: number): Promise<StaleResult<MusicDetails>> {
+    return withStaleCache({
       key: musicCache.key(id),
+      staleKey: `${musicCache.key(id)}:stale`,
       getCache: () => musicCache.get(id),
+      getStaleCache: (key) => cacheGet<MusicDetails>(key),
       setCache: (_, value) => musicCache.set(id, value),
+      setStaleCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
         const [music, versions, relations] = await Promise.all([
           musicRepository.getMusicById(id),

@@ -10,3 +10,4 @@
  */
 
 export { default as Picture } from './picture/picture.astro'
+export { default as ServiceUnavailable } from './service-unavailable/service-unavailable.astro'

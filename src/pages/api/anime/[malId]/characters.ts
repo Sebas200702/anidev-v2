@@ -23,6 +23,7 @@ import {
 } from '@anime/schemas/anime-character-schema'
 import { withZodValidation } from '@http/with-validation'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import { logger } from '@shared/utils/logger-util'
 
 /**
@@ -83,21 +84,20 @@ export const GET: APIRoute = withZodValidation(getAnimeCharacterSchema)(
     try {
       const { malId } = validated.params
 
-      const characters = await animeCharacterService.getAnimeCharacters(malId)
+      const { value: characters, isStale } =
+        await animeCharacterService.getAnimeCharacters(malId)
 
       const payload = {
         data: characters,
         status: 200,
         meta: {
+          stale: isStale,
           count: characters.length,
         },
       }
       const responseBody = animeCharacterResponseSchema.parse(payload)
 
-      return new Response(JSON.stringify(responseBody), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return jsonResponse(responseBody, undefined, 200)
     } catch (error) {
       logger.error(
         { err: error, malId: validated.params.malId },

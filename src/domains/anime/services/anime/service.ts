@@ -3,7 +3,9 @@
  *
  * @module domains/anime/services/anime/service
  */
-import { withCache } from '@lib/cache'
+import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
+import { CacheTtl } from '@lib/cache/config'
+import type { StaleResult } from '@lib/cache/cache-store-types'
 import { animeDetailsCache } from '@anime/cache/anime'
 import { animeNotFound } from '@anime/errors'
 import { mapAnimeDetails } from '@anime/mappers/anime'
@@ -31,22 +33,27 @@ export const animeService = {
    * Loads anime details for a MAL ID, using cache when available.
    *
    * @param malId - MyAnimeList identifier
-   * @returns {@link AnimeDetails} — poster URLs, taxonomy strings, trailer, slug, share links
+   * @returns `{ value, isStale }` — {@link AnimeDetails} payload plus a stale flag
+   * when served from last-known-good data after an infra failure
    *
    * @throws {AnimeNotFoundError} When `anime` row does not exist
-   * @throws {InfraError} When any repository or cache layer fails
+   * @throws {InfraError} When any repository fails and no stale value exists
    *
    * @example
    * ```typescript
-   * const details = await animeService.getAnimeDetails(5114)
+   * const { value: details, isStale } = await animeService.getAnimeDetails(5114)
    * // { malId, title, genres, imageUrl, slug, watchUrl, ... }
    * ```
    */
-  async getAnimeDetails(malId: number): Promise<AnimeDetails> {
-    return withCache({
+  async getAnimeDetails(malId: number): Promise<StaleResult<AnimeDetails>> {
+    return withStaleCache({
       key: animeDetailsCache.key(malId),
+      staleKey: `${animeDetailsCache.key(malId)}:stale`,
       getCache: () => animeDetailsCache.get(malId),
+      getStaleCache: (key) => cacheGet<AnimeDetails>(key),
       setCache: (_, value) => animeDetailsCache.set(malId, value),
+      setStaleCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
         const anime = await animeRepository.getAnimeByMalId(malId)
         if (!anime) {

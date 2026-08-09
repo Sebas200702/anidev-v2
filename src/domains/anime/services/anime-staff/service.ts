@@ -6,7 +6,9 @@
 import type { AnimeStaff } from '@anime/types'
 import { animeStaffCache } from '@anime/cache/anime-staff'
 import { staffRepository } from '@anime/repositories/staff'
-import { withCache } from '@lib/cache'
+import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
+import { CacheTtl } from '@lib/cache/config'
+import type { StaleResult } from '@lib/cache/cache-store-types'
 import { mapAnimeStaff } from '@anime/mappers/anime-staff'
 import { animeStaffRepository } from '@anime/repositories/anime-staff'
 
@@ -28,21 +30,26 @@ export const animeStaffService = {
    * Loads production staff for an anime, using cache when available.
    *
    * @param malId - Parent anime MAL ID
-   * @returns {@link AnimeStaff}[] with person URLs and split `positions`
+   * @returns `{ value, isStale }` — {@link AnimeStaff}[] with person URLs and
+   * split `positions`, plus a stale flag
    *
    * @throws {InfraError} On repository or cache failures
    *
    * @example
    * ```typescript
-   * const staff = await animeStaffService.getAnimeStaff(1)
+   * const { value: staff, isStale } = await animeStaffService.getAnimeStaff(1)
    * // [{ person: { malId, name, imageUrl, url }, positions: ['Director'] }]
    * ```
    */
-  async getAnimeStaff(malId: number): Promise<AnimeStaff[]> {
-    return withCache({
+  async getAnimeStaff(malId: number): Promise<StaleResult<AnimeStaff[]>> {
+    return withStaleCache({
       key: animeStaffCache.key(malId),
+      staleKey: `${animeStaffCache.key(malId)}:stale`,
       getCache: () => animeStaffCache.get(malId),
+      getStaleCache: (key) => cacheGet<AnimeStaff[]>(key),
       setCache: (_, value) => animeStaffCache.set(malId, value),
+      setStaleCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
         const staffRefs =
           await animeStaffRepository.getAnimeStaffByAnimeMalId(malId)

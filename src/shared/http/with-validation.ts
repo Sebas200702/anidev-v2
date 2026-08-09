@@ -10,7 +10,9 @@
  * 4. On failure: a {@link ValidationError} is created, mapped with {@link mapErrorToHttp}, and returned
  *    as JSON with status **400** — same envelope shape as {@link withErrorHandling} errors
  *    (`{ data: null, status, error, meta }`).
- * 5. On success: the handler runs with `context` spread plus a `validated` property holding parsed data.
+ * 5. On success: the same `context` object with a `validated` property holding parsed data is
+ *    passed to the handler. `validated` is attached without re-copying the context, so Astro's
+ *    accessor properties (`session`, `csp`, …) are never evaluated during the hand-off.
  *
  * **Validated input shape** (what the Zod schema receives)
  * ```typescript
@@ -114,10 +116,17 @@ export const withZodValidation = <T>(schema: ZodType<T>) => {
         })
       }
 
-      return handler({
-        ...context,
-        validated: result.data,
+      // Attach `validated` without copying the context. Spreading the context
+      // would invoke every own accessor property — including Astro's `session`
+      // and `csp` getters — triggering configuration warnings on each request.
+      Object.defineProperty(context, 'validated', {
+        value: result.data,
+        enumerable: true,
+        configurable: true,
+        writable: true,
       })
+
+      return handler(context as APIContext & { validated: T })
     }
   }
 }

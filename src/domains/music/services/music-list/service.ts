@@ -3,7 +3,9 @@
  *
  * @module domains/music/services/music-list/service
  */
-import { withCache } from '@lib/cache'
+import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
+import { CacheTtl } from '@lib/cache/config'
+import type { StaleResult } from '@lib/cache/cache-store-types'
 import { musicListCache } from '@music/cache/music-list'
 import { mapMusicListToCards } from '@music/mappers/music-card'
 import { mapMusicListFilters } from '@music/mappers/music-filters'
@@ -50,26 +52,32 @@ export const musicListService = {
    * Loads a filtered, paginated music list with total count.
    *
    * @param filtersParams - Raw query parameters (coerced by Zod at the route)
-   * @returns `{ list: MusicCard[], total: number }` for the current filter page
+   * @returns `{ value, isStale }` — `{ list: MusicCard[], total: number }`
+   * payload plus a stale flag
    *
    * @throws {InfraError} On repository or cache failures
    *
    * @example
    * ```typescript
-   * const { list, total } = await musicListService.getMusicList({
+   * const { value, isStale } = await musicListService.getMusicList({
    *   page: 1, limit: 10, type: 'OP',
    * })
    * ```
    */
   async getMusicList(
     filtersParams: MusicListFiltersParams
-  ): Promise<{ list: MusicCard[]; total: number }> {
+  ): Promise<StaleResult<{ list: MusicCard[]; total: number }>> {
     const filters: MusicListFilters = mapMusicListFilters(filtersParams)
 
-    return withCache({
+    return withStaleCache({
       key: musicListCache.key(filters),
+      staleKey: `${musicListCache.key(filters)}:stale`,
       getCache: () => musicListCache.get(filters),
+      getStaleCache: (key) =>
+        cacheGet<{ list: MusicCard[]; total: number }>(key),
       setCache: (_, value) => musicListCache.set(filters, value),
+      setStaleCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
         const [musicList, total] = await Promise.all([
           musicListRepository.getMusicList(filters),

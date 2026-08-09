@@ -1,13 +1,13 @@
 /**
  * Tests that database repositories translate connection failures into mappable
- * {@link InfraError} instances (task: DB down degrades to an elegant 500).
+ * {@link InfraError} instances (task: DB down degrades to an elegant response).
  *
  * @module domains/anime/__tests__/repositories/db-degradation.test
  * @remarks
  * Mocks the Drizzle `db` client so `.select().from()` rejects, then asserts the
  * repository throws `dbError` (an {@link InfraError}) which `mapErrorToHttp`
- * maps to HTTP 500 — the client gets a generic message, never a raw stack trace
- * or process crash.
+ * maps to HTTP 503 with a `Retry-After` hint — the client gets a generic
+ * message, never a raw stack trace or process crash.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
@@ -61,7 +61,7 @@ describe('DB repository degradation', () => {
     ).rejects.toBeInstanceOf(InfraError)
   })
 
-  it('maps the degraded DB error to a 500 response with a generic client message', async () => {
+  it('maps the degraded DB error to a 503 response with a generic client message', async () => {
     selectMock.mockReturnValue({
       from: () => ({
         where: () => ({
@@ -77,10 +77,12 @@ describe('DB repository degradation', () => {
       caught = error
     }
 
-    const { status, body } = mapErrorToHttp(caught)
+    const { status, body, headers } = mapErrorToHttp(caught)
 
-    expect(status).toBe(500)
+    expect(status).toBe(503)
+    expect(headers?.['Retry-After']).toBeDefined()
     expect((caught as InfraError).code).toBe(ErrorCodes.DB_ERROR)
-    expect(body.message).toMatch(/Internal server error/i)
+    expect(body.code).toBe(ErrorCodes.DB_ERROR)
+    expect(body.message).toMatch(/service unavailable/i)
   })
 })

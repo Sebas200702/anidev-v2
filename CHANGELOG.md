@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/Sebas200702/anidev-v2/compare/v0.2.4...v0.3.0) (2026-08-09)
+
+
+### Features
+
+* **api:** public readiness endpoint probing db and cache ([3397453](https://github.com/Sebas200702/anidev-v2/commit/3397453d7b0dfe430f74f9e2843059452b069c28))
+* **api:** surface stale reads via x-stale header ([c352714](https://github.com/Sebas200702/anidev-v2/commit/c3527142ef76d1670693ad2709deed417c257a1b))
+* **cache:** add stale-serve fallback with withStaleCache ([22f15cc](https://github.com/Sebas200702/anidev-v2/commit/22f15cce5355ecc846efdd6a964d80ee85402d4b))
+* **domains:** adopt stale-serve in cache-first services ([bb57e8d](https://github.com/Sebas200702/anidev-v2/commit/bb57e8da117e7ed5270c2dbcb36d46aebb02e96b))
+* **monitoring:** capture browser errors via client Sentry SDK ([448ea5e](https://github.com/Sebas200702/anidev-v2/commit/448ea5ee1ff4d16450781e1901d5d6d8ad3b20c0))
+* **ui:** render service-unavailable view on infra errors ([1f5f059](https://github.com/Sebas200702/anidev-v2/commit/1f5f059ca506701c0db34fe43ccac0ce3174e2d6))
+
+
+### Bug Fixes
+
+* **errors:** report every handled error to monitoring with status-based severity ([23f3f8b](https://github.com/Sebas200702/anidev-v2/commit/23f3f8be674b46b460ca1670af603603fed885dd))
+* **http:** attach validated without spreading route context ([c4a90d7](https://github.com/Sebas200702/anidev-v2/commit/c4a90d7abf8dd0d697758daceb9a853340245156))
+* **http:** pipe API route errors through the app logger ([0af61a6](https://github.com/Sebas200702/anidev-v2/commit/0af61a6a9f7417a34d53cc1f5225854c06c06c46))
+* **media:** respond 400 for malformed media paths ([dad4a17](https://github.com/Sebas200702/anidev-v2/commit/dad4a17c621744bec93dd88251cc6c1f1d6b931c))
+* **shared:** map infra errors to 503 and expose code in envelope ([7335173](https://github.com/Sebas200702/anidev-v2/commit/7335173315be6f001786a0c67fd0983ef2d9c927))
+* **tests:** update mock paths after module-unit-folder merge ([cf19b2d](https://github.com/Sebas200702/anidev-v2/commit/cf19b2d643100a4941621c4af929b85550e58761))
+
 ### [0.2.4](https://github.com/Sebas200702/anidev-v2/compare/v0.2.3...v0.2.4) (2026-08-09)
 
 

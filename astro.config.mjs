@@ -43,12 +43,13 @@ export default defineConfig({
   integrations: [
     sessionMiddlewareIntegration,
     react(),
-    // Sentry/Rustrak: discovers sentry.server.config.ts at the project root and
-    // injects it at SSR startup (init no-ops when SENTRY_DSN is unset). Client
-    // SDK stays disabled — browser error boundaries go through
-    // wrapReactComponentWithSentry instead.
+    // Sentry/Rustrak: discovers sentry.server.config.ts and sentry.client.config.ts
+    // at the project root. The server config is injected at SSR startup (init
+    // no-ops when SENTRY_DSN is unset); the client SDK is injected on every page
+    // and reports browser errors when PUBLIC_SENTRY_DSN is set (no-op otherwise).
+    // React islands can additionally use wrapReactComponentWithSentry for boundaries.
     sentryAstro({
-      enabled: { server: true, client: false },
+      enabled: { server: true, client: true },
     }),
   ],
   output: 'server',

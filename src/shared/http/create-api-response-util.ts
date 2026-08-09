@@ -12,6 +12,7 @@
  *   data: T | null,    // Business payload; null on error
  *   status: number,    // HTTP status mirrored in JSON
  *   error?: string,    // Client-safe message when data is null
+ *   code?: string,     // Stable error code when data is null
  *   meta?: Record<string, unknown>  // Extra fields (error details, pagination, etc.)
  * }
  * ```
@@ -57,28 +58,39 @@ export const createSuccessResponse = <T>(
  * Builds an error API envelope from any thrown value.
  *
  * @param error - Thrown value from handler, service, or middleware
- * @returns Envelope with `data: null`, `status` from {@link mapErrorToHttp}, `error` from mapped message,
- *   and `meta` from the mapper (often includes `details`)
+ * @returns An `{ payload, headers }` pair: the envelope has `data: null`, `status` from
+ *   {@link mapErrorToHttp}, `error` from mapped message, `code` (stable error code), `meta`
+ *   from the mapper (often includes `details`); `headers` carries transport hints such as
+ *   `Retry-After` for infra outages.
  *
  * @remarks
  * Does not report to Sentry itself — {@link mapErrorToHttp} handles Sentry for infra/unknown errors.
  *
  * @example
  * ```typescript
- * const envelope = createErrorResponse(authRequired())
- * // { data: null, status: 401, error: 'Authentication required', meta: { details: undefined } }
+ * const { payload } = createErrorResponse(authRequired())
+ * // { data: null, status: 401, error: 'Authentication required', code: 'AUTH_REQUIRED', meta: { details: undefined } }
  * ```
  *
  * @see {@link mapErrorToHttp}
  */
-export const createErrorResponse = (error: unknown): ApiEnvelope<null> => {
-  const { status, body } = mapErrorToHttp(error)
+export const createErrorResponse = (
+  error: unknown
+): {
+  payload: ApiEnvelope<null>
+  headers?: Record<string, string>
+} => {
+  const { status, body, headers } = mapErrorToHttp(error)
 
   return {
-    data: null,
-    status,
-    error: body.message ?? 'Unexpected error',
-    meta: (body.meta as Record<string, unknown>) ?? {},
+    payload: {
+      data: null,
+      status,
+      error: body.message ?? 'Unexpected error',
+      code: body.code,
+      meta: (body.meta as Record<string, unknown>) ?? {},
+    },
+    headers,
   }
 }
 // jsonResponse and mergeResponseHeaders are re-exported via the barrel at

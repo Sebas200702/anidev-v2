@@ -16,6 +16,7 @@
  */
 
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import { withZodValidation } from '@http/with-validation'
 import {
   animeListRequestSchema,
@@ -89,13 +90,15 @@ import type { APIRoute } from 'astro'
 export const GET: APIRoute = withZodValidation(animeListRequestSchema)(
   async ({ validated }) => {
     try {
-      const { list: animeCards, total } = await animeListService.getAnimeList(
-        validated.query
-      )
+      const {
+        value: { list: animeCards, total },
+        isStale,
+      } = await animeListService.getAnimeList(validated.query)
       const payload = {
         data: animeCards,
         status: 200,
         meta: {
+          stale: isStale,
           page: validated.query.page,
           total,
           hasNext: validated.query.page * validated.query.limit < total,
@@ -103,9 +106,7 @@ export const GET: APIRoute = withZodValidation(animeListRequestSchema)(
       }
       const responseBody = animeListResponseSchema.parse(payload)
 
-      return new Response(JSON.stringify(responseBody), {
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return jsonResponse(responseBody)
     } catch (error) {
       const { status, body } = mapErrorToHttp(error)
       const payload = {

@@ -258,17 +258,26 @@ Two composition styles:
 1. `withZodValidation(schema)(handler)` — validates `{ params, query, body }` as single Zod object, returns 400 on failure
 2. Error handling: `withErrorHandling(handler)` (try/catch wrapper) OR manual try/catch + `mapErrorToHttp(error)`
 
-Response envelope: `{ data, status, error?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`.
+Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`. `InfraError` maps to 503 with a `Retry-After` header and the original `code` preserved (e.g. `DB_ERROR`); stale-serve responses surface `meta.stale === true` as an `x-stale: true` header via `jsonResponse`. Dependencies are probed per-component by `GET /api/health/readiness` (200 when all up, 503 under the `/api/health` public prefix).
+
+## Monitoring & Error Capture (Rustrak / Sentry SDK)
+
+- **Server capture is total**: `mapErrorToHttp` reports **every** handled application error to the backend before building the response — `ValidationError`, `AuthError`, `DomainError`, `InfraError`, and unknown throwables. Severity follows the HTTP class via `captureError` (`@shared/errors/capture-error`): client-caused 4xx are captured at `warning` (groupable and excludable from alerts), server 5xx at `error`. `captureException` never throws and Rustrak no-ops when `SENTRY_DSN` is unset.
+- **Browser capture**: `sentryAstro` runs with `enabled: { server: true, client: true }`. The client SDK (`sentry.client.config.ts`, auto-injected on every page by `@sentry/astro`) reports `window.onerror` / `unhandledrejection` when `PUBLIC_SENTRY_DSN` is set, and no-ops otherwise (zero client capture without it). `tracesSampleRate: 0` — errors only, no browser tracing/replay. React islands can additionally use `wrapReactComponentWithSentry` per-component.
+- **Route error logs reach the app logger**: `withErrorHandling` logs caught errors via `@utils/logger-util` (pino → Sentry log bridge), never Better Auth's logger.
+- **Malformed media paths are client errors**: `GET /media` returns `400 INVALID_IMAGE_PATH` (not a 503 infra error) for unparseable or oversized paths — guarded in `src/pages/media/[...path].ts` before the optimize/fetch pipeline so `optimizeMedia` never receives `null`.
+- **Validation hand-off avoids proxy warnings**: `withZodValidation` attaches `validated` via `Object.defineProperty` instead of spreading `context`, so Astro's `session`/`csp` accessors are never evaluated per request (no config warnings, no leaks).
+- **Noise policy**: 4xx capture at `warning` — Rustrak `new_issue`/`regression` alerts should target `error` only (`INFRA_*`, `UNKNOWN_ERROR`) to avoid bot/scraper 400s. For full browser coverage set `PUBLIC_SENTRY_DSN` mirroring `SENTRY_DSN`, and make sure the page CSP `connect-src` allows the Rustrak host.
 
 ## Auth & Middleware
-- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/music`, `/media`
+- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/health`, `/api/music`, `/media`
 - Middleware populates `locals.user` / `locals.session` via `resolveAuthActor()` (swallows errors, returns null)
 - For strict auth in API routes: `sessionService.getSession()` throws typed errors
 
 ## Environment (matches `src/config/env.ts`)
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
 - **Required**: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars), `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
-- **Optional**: `SENTRY_DSN` (monitoring no-ops when absent), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
+- **Optional**: `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 
 ## Skills & Key Guidelines

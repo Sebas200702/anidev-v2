@@ -19,6 +19,7 @@ import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { musicService } from '@music/services/music'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {
   getMusicSchema,
   musicDetailsResponseSchema,
@@ -87,19 +88,17 @@ export const GET: APIRoute = withZodValidation(getMusicSchema)(
   async ({ validated }) => {
     try {
       const { id } = validated.params
-      const musicDetails = await musicService.getMusicDetailsById(Number(id))
+      const { value: musicDetails, isStale } =
+        await musicService.getMusicDetailsById(Number(id))
 
       const payload = {
         data: musicDetails,
         status: 200,
-        meta: {},
+        meta: { stale: isStale },
       }
       const responseBody = musicDetailsResponseSchema.parse(payload)
 
-      return new Response(JSON.stringify(responseBody), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return jsonResponse(responseBody, undefined, 200)
     } catch (error) {
       const { body, status } = mapErrorToHttp(error)
       const payload = {

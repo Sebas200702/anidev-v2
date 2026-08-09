@@ -3,7 +3,9 @@
  *
  * @module domains/anime/services/anime-full/service
  */
-import { withCache } from '@lib/cache'
+import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
+import { CacheTtl } from '@lib/cache/config'
+import type { StaleResult } from '@lib/cache/cache-store-types'
 import { animeFullCache } from '@anime/cache/anime-full'
 import { animeNotFound } from '@anime/errors'
 import { mapAnimeToFullDetails } from '@anime/mappers/anime-full'
@@ -35,21 +37,29 @@ export const animeFullService = {
    * Loads the expanded anime detail payload for a MAL ID.
    *
    * @param malId - MyAnimeList identifier
-   * @returns {@link AnimeFullDetails} — titles, relations, music, external IDs, rich taxonomy
+   * @returns `{ value, isStale }` — {@link AnimeFullDetails} payload plus a stale flag
    *
    * @throws {AnimeNotFoundError}
-   * @throws {InfraError}
+   * @throws {InfraError} When the database fails and no stale value exists
    *
    * @example
    * ```typescript
-   * const full = await animeFullService.getAnimeFullByMalId(5114)
+   * const { value: full, isStale } =
+   *   await animeFullService.getAnimeFullByMalId(5114)
    * ```
    */
-  async getAnimeFullByMalId(malId: number): Promise<AnimeFullDetails> {
-    return withCache({
+  async getAnimeFullByMalId(
+    malId: number
+  ): Promise<StaleResult<AnimeFullDetails>> {
+    let musicIsStale = false
+    const result = await withStaleCache({
       key: animeFullCache.key(malId),
+      staleKey: `${animeFullCache.key(malId)}:stale`,
       getCache: () => animeFullCache.get(malId),
+      getStaleCache: (key) => cacheGet<AnimeFullDetails>(key),
       setCache: (_, value) => animeFullCache.set(malId, value),
+      setStaleCache: (key, value) =>
+        cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
         const anime = await animeRepository.getAnimeByMalId(malId)
         if (!anime) {
@@ -78,6 +88,8 @@ export const animeFullService = {
           getMusicByAnimeId(malId),
         ])
 
+        musicIsStale = animeMusic.isStale
+
         return mapAnimeToFullDetails({
           anime,
           genres,
@@ -88,9 +100,11 @@ export const animeFullService = {
           relations,
           relationData,
           externalIds,
-          animeMusic,
+          animeMusic: animeMusic.value,
         })
       },
     })
+
+    return { value: result.value, isStale: result.isStale || musicIsStale }
   },
 }

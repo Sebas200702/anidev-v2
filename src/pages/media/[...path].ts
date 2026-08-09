@@ -17,6 +17,8 @@
  */
 
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { DomainError } from '@shared/errors/app-error'
+import { ErrorCodes } from '@shared/errors/codes'
 import { withZodValidation } from '@http/with-validation'
 import { mediaRequestSchema } from '@media/schemas/media-schema'
 import { mediaService } from '@media/services/media'
@@ -46,7 +48,7 @@ import type { APIRoute } from 'astro'
  * | Status | Code | When |
  * |--------|------|------|
  * | 400 | `VALIDATION_ERROR` | Params or query fail {@link mediaRequestSchema} validation |
- * | 500 | `INVALID_IMAGE_PATH` | Semantic path cannot be parsed or is invalid |
+ * | 400 | `INVALID_IMAGE_PATH` | Semantic path cannot be parsed or is invalid |
  * | 500 | `EXTERNAL_API_ERROR` | Upstream media fetch failed |
  * | 500 | `DB_ERROR` | Database lookup for media metadata failed |
  * | 500 | `CACHE_ERROR` | Cache read/write failure |
@@ -73,6 +75,14 @@ export const GET: APIRoute = withZodValidation(mediaRequestSchema)(
   async ({ validated }) => {
     try {
       const parsed = mediaService.parsePath(validated.params.path)
+
+      if (!parsed) {
+        throw new DomainError(
+          ErrorCodes.INVALID_IMAGE_PATH,
+          'Invalid media path',
+          { path: validated.params.path }
+        )
+      }
 
       const isRawMedia =
         parsed?.entityType === MediaEntity.EPISODE ||

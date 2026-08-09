@@ -17,6 +17,8 @@ export interface ApiEnvelope<T> {
   status: number
   /** Human-readable error message when `data` is `null`. */
   error?: string
+  /** Stable application error code (e.g. `DB_ERROR`, `ANIME_NOT_FOUND`) when `data` is `null`. */
+  code?: string
   /** Optional metadata — pagination, or `details` from mapped errors in `meta`. */
   meta?: Record<string, unknown>
 }
