@@ -42,6 +42,9 @@ export enum CacheKeyPrefix {
   /** Music track detail payloads. Value: `'music:details'`. */
   MusicDetails = 'music:details',
 
+  /** Music tracks linked to an anime used by anime detail pages. Value: `'music:anime'`. */
+  MusicByAnime = 'music:anime',
+
   /** Paginated or filtered music list responses. Value: `'music:list'`. */
   MusicList = 'music:list',
 
@@ -71,4 +74,7 @@ export enum CacheTtl {
 
   /** 604800 seconds (7 days). Use for immutable or bulk-imported catalog blobs. */
   VeryLong = 604800,
+
+  /** 2592000 seconds (30 days). Use for the last-known-good snapshot produced by `withStaleCache`. */
+  Stale = 2592000,
 }
