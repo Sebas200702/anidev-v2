@@ -29,7 +29,7 @@ page route and pass the result as props.
   ```text
   Name/
     Name.astro      # the SFC
-    index.ts        # barrel: export { default as Name } from './Name.astro'
+    index.ts        # barrel: export { default as Name } from '@anime/components/name/name.astro'
   ```
   Add `@module Name` JSDoc in the barrel. Export PascalCase names; import via
   the domain/shared barrel (`@anime/components`, `@shared/components`) or the

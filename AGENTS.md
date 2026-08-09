@@ -164,7 +164,7 @@ Reglas que gobiernan todo trabajo en el frontend, además de las anteriores. El
 flujo completo está en la skill `frontend`; aquí están las reglas vinculantes:
 
 - **Renderizado — "zero-JS + Islands on demand".** Todo componente es un SFC
-  `.astro` renderizado en SSR estático. Zero JS de cliente por defecto; React
+  `.astro` renderizado en SSR. Zero JS de cliente por defecto; React
   islands (`@astrojs/react` + React 19, `client:load`/`client:visible`) solo
   cuando la interacción lo exige (un player, un toggle, una votación). Si un
   formulario puede resolverlo, usa `<form>` + API route antes que una island.

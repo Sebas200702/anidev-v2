@@ -51,7 +51,7 @@
       "refersTo": "button-primary",
       "description": "Primary action with the user's selected accent.",
       "html": "<button class=\"ds-btn-primary\">Explore</button>",
-      "css": ".ds-btn-primary { background: var(--brand-500); color: white; padding: 0.25rem; border: 2px solid var(--brand-500); border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: transparent; color: var(--brand-500); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }"
+      "css": ".ds-btn-primary { background: var(--brand-500); color: white; padding: 0.25rem; border: 2px solid var(--brand-500); border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: transparent; color: var(--brand-500); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } }"
     },
     {
       "name": "Secondary Button",
@@ -59,7 +59,7 @@
       "refersTo": "button-secondary",
       "description": "Quiet secondary action that stays visible on dark surfaces.",
       "html": "<button class=\"ds-btn-secondary\">More</button>",
-      "css": ".ds-btn-secondary { background: transparent; color: white; padding: 0.25rem; border: 2px solid currentColor; border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-secondary:hover, .ds-btn-secondary:focus-visible { opacity: 0.5; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }"
+      "css": ".ds-btn-secondary { background: transparent; color: white; padding: 0.25rem; border: 2px solid currentColor; border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-secondary:hover { opacity: 0.5; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); } .ds-btn-secondary:focus-visible { opacity: 1; outline: 3px solid currentColor; outline-offset: 2px; box-shadow: 0 0 0 2px #121212; } @media (prefers-reduced-motion: reduce) { .ds-btn-secondary { transition: none; } }"
     }
   ],
   "narrative": {
@@ -74,7 +74,7 @@
     "rules": [
       {
         "name": "The Personal Accent Rule",
-        "body": "El acento puede ser expresivo, pero siempre debe respetar la elección de la persona y mantener contraste suficiente.",
+        "body": "El acento puede ser expresivo, pero el texto del botón primario debe mantener un contraste mínimo de 4.5:1 con su fondo. Restringe los acentos seleccionables a valores compatibles con el foreground elegido o selecciona dinámicamente un foreground conforme; nunca renderices una combinación que incumpla el contraste.",
         "section": "colors"
       }
     ],

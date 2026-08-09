@@ -1,17 +1,21 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
 import { fileURLToPath } from 'node:url'
-
+import { loadEnv } from 'vite'
 import react from '@astrojs/react'
-
 import tailwindcss from '@tailwindcss/vite'
 import bun from '@nurodev/astro-bun'
-
 import vercel from '@astrojs/vercel'
 
 import sentryAstro from '@sentry/astro'
 
 const src = fileURLToPath(new URL('./src', import.meta.url))
+const loadedEnv = loadEnv(
+  process.env.NODE_ENV ?? 'development',
+  process.cwd(),
+  ''
+)
+Object.assign(process.env, loadedEnv)
 
 // ASTRO_ADAPTER=bun emits a standalone Bun server (dist/server/entry.mjs),
 // used by the Docker image runtime. Default (Vercel) targets the serverless

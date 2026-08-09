@@ -75,11 +75,11 @@ const envSchema = z.object({
  * @see {@link module:config} for derived site config built from these values
  */
 export const env = envSchema.parse({
-  NODE_ENV: import.meta.env.NODE_ENV,
-  DATABASE_URL: import.meta.env.DATABASE_URL,
-  REDIS_URL: import.meta.env.REDIS_URL,
-  SENTRY_DSN: import.meta.env.SENTRY_DSN,
-  APP_BASE_URL: import.meta.env.APP_BASE_URL,
-  BETTER_AUTH_SECRET: import.meta.env.BETTER_AUTH_SECRET,
+  NODE_ENV: process.env.NODE_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+  REDIS_URL: process.env.REDIS_URL,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  APP_BASE_URL: process.env.APP_BASE_URL,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   LOG_LEVEL: import.meta.env.LOG_LEVEL,
 })

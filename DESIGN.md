@@ -67,7 +67,10 @@ persona en configuración.
 ### Primary
 
 - **Acento personal** (`var(--brand-500)`): acciones primarias, selección y
-  señales de descubrimiento.
+  señales de descubrimiento. El texto del botón primario debe mantener un
+  contraste mínimo de 4.5:1 con su fondo; restringe los acentos seleccionables
+  a valores compatibles con el foreground elegido o selecciona dinámicamente
+  un foreground conforme.
 
 ### Neutral
 
@@ -78,8 +81,11 @@ persona en configuración.
 
 ### Named Rules
 
-**The Personal Accent Rule.** El acento puede ser expresivo, pero siempre debe
-respetar la elección de la persona y mantener contraste suficiente.
+**The Personal Accent Rule.** El acento puede ser expresivo, pero el texto del
+botón primario debe mantener un contraste mínimo de 4.5:1 con su fondo.
+Restringe los acentos seleccionables a valores compatibles con el foreground
+elegido o selecciona dinámicamente un foreground conforme; nunca renderices una
+combinación que incumpla el contraste.
 
 ## Typography
 
