@@ -53,13 +53,13 @@ const {
   mapAnimeDetailsMock: vi.fn(),
 }))
 
-vi.mock('@anime/repositories/anime-repository', () => ({
+vi.mock('@anime/repositories/anime', () => ({
   animeRepository: {
     getAnimeByMalId: getAnimeByMalIdMock,
   },
 }))
 
-vi.mock('@anime/repositories/anime-taxonomy-repository', () => ({
+vi.mock('@anime/repositories/anime-taxonomy', () => ({
   animeTaxonomyRepository: {
     getGenresByAnimeId: taxonomyGetGenresMock,
     getThemesByAnimeId: taxonomyGetThemesMock,
@@ -67,15 +67,15 @@ vi.mock('@anime/repositories/anime-taxonomy-repository', () => ({
   },
 }))
 
-vi.mock('@media/services/get-anime-media-service', () => ({
+vi.mock('@media/services/get-anime-media', () => ({
   getAnimeMedia: getAnimeMediaMock,
 }))
 
-vi.mock('@anime/mappers/anime-mapper', () => ({
+vi.mock('@anime/mappers/anime', () => ({
   mapAnimeDetails: mapAnimeDetailsMock,
 }))
 
-import { animeService } from '@anime/services/anime-service'
+import { animeService } from '@anime/services/anime'
 import { CacheTtl } from '@lib/cache/config'
 
 const DETAILS = {

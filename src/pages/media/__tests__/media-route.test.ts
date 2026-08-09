@@ -19,13 +19,14 @@ const mediaServiceMock = vi.hoisted(() => ({
   fetchImageBuffer: vi.fn(),
 }))
 
-vi.mock('@media/services/media-service', () => ({
+vi.mock('@media/services/media', () => ({
   mediaService: mediaServiceMock,
 }))
 
 vi.mock('@config/env', () => ({
   env: {
     NODE_ENV: 'production',
+    APP_BASE_URL: 'http://localhost:4321',
     LOG_LEVEL: 'info',
     SENTRY_DSN: undefined,
   },

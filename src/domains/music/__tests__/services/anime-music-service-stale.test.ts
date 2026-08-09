@@ -40,13 +40,13 @@ const { findMusicByAnimeIdMock } = vi.hoisted(() => ({
   findMusicByAnimeIdMock: vi.fn(),
 }))
 
-vi.mock('@music/repositories/anime-music-repository', () => ({
+vi.mock('@music/repositories/anime-music', () => ({
   animeMusicRepository: {
     findMusicByAnimeId: findMusicByAnimeIdMock,
   },
 }))
 
-import { getMusicByAnimeId } from '@music/services/anime-music-service'
+import { getMusicByAnimeId } from '@music/services/anime-music'
 import { CacheTtl } from '@lib/cache/config'
 
 const TRACKS = [
