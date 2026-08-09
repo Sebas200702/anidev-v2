@@ -11,9 +11,12 @@
 
 export {
   type CachedOptimizedMedia,
+  type RawMeta,
   serializeImage,
   deserializeImage,
-} from './media-cache-serialization'
-export { buildKey, buildRawKey, buildRawMetaKey } from './media-cache-keys'
-export type { RawMeta } from './media-cache-store'
-export { mediaCache, imageCache } from './media-cache'
+  buildKey,
+  buildRawKey,
+  buildRawMetaKey,
+  mediaCache,
+  imageCache,
+} from './media-cache'

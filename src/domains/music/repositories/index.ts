@@ -10,11 +10,8 @@
  * ```
  */
 
-export { animeMusicRepository } from './anime-music-repository'
-export {
-  buildMusicListFilters,
-  musicListRepository,
-} from './music-list-repository'
-export { musicRelationRepository } from './music-relation-repository'
-export { musicRepository } from './music-repository'
-export { musicVersionRepository } from './music-version-repository'
+export { animeMusicRepository } from './anime-music'
+export { buildMusicListFilters, musicListRepository } from './music-list'
+export { musicRelationRepository } from './music-relation'
+export { musicRepository } from './music'
+export { musicVersionRepository } from './music-version'

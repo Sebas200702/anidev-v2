@@ -11,12 +11,12 @@
  * ```
  */
 
-export { optimizeMediaImageBuffer } from './image-optimizer-service'
-export { fetchMediaAsset } from './media-fetch-service'
-export { resolveMedia } from './resolve-media-service'
-export { fetchImageBuffer } from './fetch-image-buffer-service'
-export { optimizeMedia } from './optimize-media-service'
-export { optimizeMediaByUrl } from './optimize-media-url-service'
-export { fetchRawMedia } from './fetch-raw-media-service'
-export { getAnimeMedia } from './get-anime-media-service'
-export { mediaService } from './media-service'
+export { optimizeMediaImageBuffer } from './image-optimizer'
+export { fetchMediaAsset } from './media-fetch'
+export { resolveMedia } from './resolve-media'
+export { fetchImageBuffer } from './fetch-image-buffer'
+export { optimizeMedia } from './optimize-media'
+export { optimizeMediaByUrl } from './optimize-media-url'
+export { fetchRawMedia } from './fetch-raw-media'
+export { getAnimeMedia } from './get-anime-media'
+export { mediaService } from './media'

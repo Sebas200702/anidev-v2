@@ -14,5 +14,5 @@ export {
   detectMediaSource,
   mapFilteredMediaAssets,
   mapIndexedMediaAsset,
-} from './media-assets-mapper'
-export { buildMediaUrl } from './media-url-mapper'
+} from './media-assets'
+export { buildMediaUrl } from './media-url'

@@ -11,4 +11,4 @@
  * ```
  */
 
-export { mapUserProfile } from './user-mapper'
+export { mapUserProfile } from './user'

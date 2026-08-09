@@ -16,7 +16,7 @@
  */
 
 import type { APIRoute } from 'astro'
-import { animeStaffService } from '@anime/services/anime-staff-service'
+import { animeStaffService } from '@anime/services/anime-staff'
 import {
   getAnimeStaffSchema,
   animeStaffResponseSchema,

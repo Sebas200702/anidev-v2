@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.4](https://github.com/Sebas200702/anidev-v2/compare/v0.2.3...v0.2.4) (2026-08-09)
+
+
+### Features
+
+* implement runtime environment variable validation using Zod schema ([cb7c36b](https://github.com/Sebas200702/anidev-v2/commit/cb7c36bd8fc66b014c4a7886b326d72b99c26124))
+* implement Zod-based environment variable validation and document design system accessibility requirements ([e96f975](https://github.com/Sebas200702/anidev-v2/commit/e96f975b8d303b9d087f23b68168ace64984efae))
+
 ## [0.2.3](https://github.com/Sebas200702/anidev-v2/compare/v0.2.2...v0.2.3) (2026-08-09)
 
 ### [0.2.2](https://github.com/Sebas200702/anidev-v2/compare/v0.2.1...v0.2.2) (2026-08-08)

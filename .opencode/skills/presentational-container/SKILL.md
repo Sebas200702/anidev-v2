@@ -34,6 +34,21 @@ page route and pass the result as props.
   Add `@module Name` JSDoc in the barrel. Export PascalCase names; import via
   the domain/shared barrel (`@anime/components`, `@shared/components`) or the
   deep-path only where the barrel does not reach.
+- **Co-locate component-scoped code.** A `Props`/type, subcomponent, local
+  fixture, or a hook/store used **only** by this component lives **inside** the
+  component folder — same unit-folder rule as the logic layers (AGENTS.md →
+  "Module unit folders").
+  ```text
+  anime-player/
+    index.ts
+    anime-player.tsx     # island (keep the named file, not component.tsx)
+    use-anime-player.ts  # hook used only here
+    types.ts             # Props + hook types
+  ```
+- **Shared hooks/stores** (used by more than one component) go in
+  `domains/<d>/hooks|stores/` — or `@hooks`/`@stores` app-wide — each a unit
+  folder when it has companions. `use`+PascalCase hooks, `use[Name]Store` stores.
+  Never pre-create empty `hooks/`/`stores/` directories.
 - **Props**: `interface Props` in the frontmatter, destructure right away.
   ```astro
   interface Props {

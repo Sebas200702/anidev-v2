@@ -20,5 +20,5 @@
  * ```
  */
 
-export { credentialsService } from './credentials-service'
-export { sessionService } from './session-service'
+export { credentialsService } from './credentials'
+export { sessionService } from './session'

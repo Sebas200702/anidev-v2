@@ -12,11 +12,11 @@
 
 import { ErrorCodes } from '@shared/errors/codes'
 import { InfraError } from '@shared/errors/app-error'
-import { animeMediaRepository } from '@media/repositories/anime-media-repository'
-import { characterMediaRepository } from '@media/repositories/character-media-repository'
-import { staffMediaRepository } from '@media/repositories/staff-media-repository'
-import { episodeMediaRepository } from '@media/repositories/episode-media-repository'
-import { musicMediaRepository } from '@media/repositories/music-media-repository'
+import { animeMediaRepository } from '@media/repositories/anime-media'
+import { characterMediaRepository } from '@media/repositories/character-media'
+import { staffMediaRepository } from '@media/repositories/staff-media'
+import { episodeMediaRepository } from '@media/repositories/episode-media'
+import { musicMediaRepository } from '@media/repositories/music-media'
 import {
   MediaSize,
   type MediaAsset,

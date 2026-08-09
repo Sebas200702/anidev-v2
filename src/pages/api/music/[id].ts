@@ -17,7 +17,7 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { musicService } from '@music/services/music-service'
+import { musicService } from '@music/services/music'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {

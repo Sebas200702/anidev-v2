@@ -18,7 +18,7 @@
 
 import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
-import { animeFullService } from '@anime/services/anime-full-service'
+import { animeFullService } from '@anime/services/anime-full'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {

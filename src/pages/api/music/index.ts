@@ -22,7 +22,7 @@ import {
   musicListRequestSchema,
   musicListResponseSchema,
 } from '@music/schemas/music-list-schema'
-import { musicListService } from '@music/services/music-list-service'
+import { musicListService } from '@music/services/music-list'
 import type { APIRoute } from 'astro'
 
 /**

@@ -21,7 +21,7 @@ import { DomainError } from '@shared/errors/app-error'
 import { ErrorCodes } from '@shared/errors/codes'
 import { withZodValidation } from '@http/with-validation'
 import { mediaRequestSchema } from '@media/schemas/media-schema'
-import { mediaService } from '@media/services/media-service'
+import { mediaService } from '@media/services/media'
 import { MediaEntity } from '@media/types'
 import type { APIRoute } from 'astro'
 

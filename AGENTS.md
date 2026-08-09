@@ -147,6 +147,44 @@ Each domain has: `cache/ components/ errors/ mappers/ repositories/ schemas/ ser
 
 Strict barrel exports at every level.
 
+### Module unit folders (co-location)
+Inside each **logic** layer (`cache/ mappers/ repositories/ services/ policies/ middleware/`)
+every element lives in its **own folder** with its logic + type/helper companions
+co-located behind a barrel — never as loose `*-types.ts` siblings next to the logic:
+
+```
+mappers/anime-card/
+├── index.ts     → unit barrel (export * from leaves)
+├── mapper.ts    → logic, kind-named (mapper|repository|service|cache|policy|middleware|util)
+├── types.ts     → element-specific types (was anime-card-mapper-types.ts)
+└── helpers.ts   → optional
+```
+
+- Folder name = the element (`anime-card`, `anime-list`); the file inside is the
+  generic kind (`mapper.ts`, `repository.ts`, …). A cohesive multi-file subsystem is
+  **one** unit folder (e.g. `cache/media-cache/` = `cache.ts` + `keys.ts` +
+  `serialization.ts` + `store.ts` + their `*.types.ts`).
+- Layer barrels (`@anime/mappers`) re-export from the unit folders, so deep import
+  paths are `@anime/mappers/<unit>` (the unit barrel), not `@anime/mappers/<unit>-mapper`.
+- Create a folder / `types.ts` / `helpers.ts` only when the element actually needs it —
+  no artificial scaffolding, no empty barrels-for-symmetry.
+- Pure-type layers (`types/`), single-file `schemas/`, and `errors/` stay flat; the
+  cross-cutting `*DB` row types remain shared in the domain `types/` barrel.
+- A type file exists because *these types belong to this module*, not because *it is a type*.
+
+**UI layers (`components/ hooks/ stores/`)** follow the same rule, with two nuances:
+- A component is **already** a unit folder — `Name/Name.astro` + `index.ts` barrel.
+  UI keeps the **named** file (`AnimeDetails.astro`), not a generic `component.astro`.
+  Its `Props`/`interface`, subcomponents, local fixture, and any component-only
+  hook/store live **inside that folder**.
+- A hook / store / type used by **one** component belongs **inside that component's
+  folder** (maximum co-location) — not in a shared `hooks/`/`stores/`. Only
+  cross-component state goes in `domains/<d>/hooks|stores/` (or `@hooks`/`@stores`
+  app-wide), and there it is a unit folder when it has companions. Hooks are
+  `use`+PascalCase, stores `use[Name]Store`.
+- `hooks/`/`stores/` do not exist yet: create them (as unit folders) with the first
+  real hook/store — never pre-create empty directories.
+
 ### Data flow
 ```
 DB schema (lib/db/schemas/) → Repository → Mapper → Service → Page/API route

@@ -22,7 +22,7 @@ import {
   animeListRequestSchema,
   animeListResponseSchema,
 } from '@anime/schemas/anime-list-schema'
-import { animeListService } from '@anime/services/anime-list-service'
+import { animeListService } from '@anime/services/anime-list'
 import type { APIRoute } from 'astro'
 
 /**
