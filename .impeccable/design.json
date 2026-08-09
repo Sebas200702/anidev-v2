@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-09T00:00:00.000Z",
+  "title": "Design System: AniDev",
+  "extensions": {
+    "colorMeta": {
+      "brand-accent": {
+        "role": "primary",
+        "displayName": "Personal Accent",
+        "canonical": "var(--brand-500)",
+        "tonalRamp": [
+          "var(--brand-950)",
+          "var(--brand-900)",
+          "var(--brand-800)",
+          "var(--brand-700)",
+          "var(--brand-600)",
+          "var(--brand-500)",
+          "var(--brand-300)",
+          "var(--brand-100)"
+        ]
+      },
+      "neutral-950": {
+        "role": "neutral",
+        "displayName": "Application Black",
+        "canonical": "#121212",
+        "tonalRamp": [
+          "#121212",
+          "#1c1c1c",
+          "#3d3d3d",
+          "#4f4f4f",
+          "#6d6d6d",
+          "#888888",
+          "#d1d1d1",
+          "#f6f6f6"
+        ]
+      }
+    },
+    "shadows": [
+      {
+        "name": "interactive-md",
+        "value": "shadow-md",
+        "purpose": "Hover feedback on primary and secondary controls."
+      }
+    ],
+    "breakpoints": [{ "name": "md", "value": "768px" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action with the user's selected accent.",
+      "html": "<button class=\"ds-btn-primary\">Explore</button>",
+      "css": ".ds-btn-primary { background: var(--brand-500); color: white; padding: 0.25rem; border: 2px solid var(--brand-500); border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-primary:hover, .ds-btn-primary:focus-visible { background: transparent; color: var(--brand-500); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet secondary action that stays visible on dark surfaces.",
+      "html": "<button class=\"ds-btn-secondary\">More</button>",
+      "css": ".ds-btn-secondary { background: transparent; color: white; padding: 0.25rem; border: 2px solid currentColor; border-radius: 0.375rem; transition: all 0.3s ease-in-out; } .ds-btn-secondary:hover { opacity: 0.5; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); } .ds-btn-secondary:focus-visible { opacity: 1; outline: 3px solid currentColor; outline-offset: 2px; box-shadow: 0 0 0 2px #121212; } @media (prefers-reduced-motion: reduce) { .ds-btn-secondary { transition: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Libertad de exploración",
+    "overview": "AniDev debe sentirse cómodo, libre, versátil y bajo control de la persona. La interfaz acompaña el descubrimiento con jerarquía editorial y un acento personalizable.",
+    "keyCharacteristics": [
+      "Exploración cómoda y controlable.",
+      "Base oscura con capas tonales cercanas.",
+      "Acento expresivo y personalizable.",
+      "Controles claros y confiables."
+    ],
+    "rules": [
+      {
+        "name": "The Personal Accent Rule",
+        "body": "El acento puede ser expresivo, pero el texto del botón primario debe mantener un contraste mínimo de 4.5:1 con su fondo. Restringe los acentos seleccionables a valores compatibles con el foreground elegido o selecciona dinámicamente un foreground conforme; nunca renderices una combinación que incumpla el contraste.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preserve the user's accent-color choice across interactive states.",
+      "Do use semantic HTML, visible focus, and readable contrast.",
+      "Do keep discovery flexible through responsive layouts and clear hierarchy."
+    ],
+    "donts": [
+      "Don't make the catalog feel like a rigid administrative table.",
+      "Don't use decoration that competes with titles, artwork, or metadata.",
+      "Don't assume one fixed accent color when the product supports customization."
+    ]
+  }
+}
