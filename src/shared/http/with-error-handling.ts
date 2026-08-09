@@ -35,6 +35,7 @@ import {
   mergeResponseHeaders,
 } from '@shared/http/api-response-serialize-util'
 import type { RouteHandler } from './with-error-handling-types'
+import { logger } from '@utils/logger-util'
 
 /**
  * Wraps an Astro API handler with standardized success and error JSON envelopes.
@@ -77,6 +78,7 @@ export const withErrorHandling = <TContext extends APIContext>(
       return response
     } catch (error) {
       const { payload, headers } = createErrorResponse(error)
+      logger.error({ error, payload, headers }, 'Error in API route')
       return jsonResponse(payload, headers, payload.status)
     }
   }
