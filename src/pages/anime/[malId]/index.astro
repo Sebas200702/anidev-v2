@@ -1,5 +1,8 @@
 ---
 import { animeService } from '@anime/services/anime-service'
+import { InfraError } from '@shared/errors/app-error'
+import ServiceUnavailable from '@components/service-unavailable/service-unavailable.astro'
+import Base from '@layouts/base-layout.astro'
 
 const { malId } = Astro.params
 
@@ -7,11 +10,40 @@ if (!malId || isNaN(Number(malId))) {
   return Astro.redirect('/404')
 }
 
-const anime = await animeService.getAnimeDetails(Number(malId))
+let degraded = false
 
-if (!anime?.slug) {
-  return Astro.redirect('/404')
+try {
+  const result = await animeService.getAnimeDetails(Number(malId))
+  const anime = result.value
+
+  if (!anime?.slug) {
+    return Astro.redirect('/404')
+  }
+
+  return Astro.redirect(`/anime/${malId}/${anime.slug}`, 301)
+} catch (error) {
+  if (error instanceof InfraError) {
+    degraded = true
+    Astro.response.status = 503
+  } else {
+    return Astro.redirect('/404')
+  }
 }
-
-return Astro.redirect(`/anime/${malId}/${anime.slug}`, 301)
 ---
+
+{
+  degraded && (
+    <Base
+      title="Service unavailable - AniDev"
+      description="AniDev is temporarily unavailable. Please retry shortly."
+      imageUrl=""
+      url={Astro.url.pathname}
+    >
+      <ServiceUnavailable
+        title="We could not load this anime right now"
+        message="Something went wrong on our side. Please retry in a moment."
+        retryHref={Astro.url.pathname}
+      />
+    </Base>
+  )
+}
