@@ -12,6 +12,6 @@
  * ```
  */
 
-export { userProfilePolicies } from './user-profile-policy'
-export { userContentPolicies } from './user-content-policy'
-export { userPolicies } from './user-policy'
+export { userProfilePolicies } from './user-profile'
+export { userContentPolicies } from './user-content'
+export { userPolicies } from './user'

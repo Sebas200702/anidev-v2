@@ -10,6 +10,6 @@
  * ```
  */
 
-export { getMusicByAnimeId } from './anime-music-service'
-export { musicListService } from './music-list-service'
-export { musicService } from './music-service'
+export { getMusicByAnimeId } from './anime-music'
+export { musicListService } from './music-list'
+export { musicService } from './music'

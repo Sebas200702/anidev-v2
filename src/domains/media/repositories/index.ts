@@ -11,8 +11,8 @@
  * ```
  */
 
-export { animeMediaRepository } from './anime-media-repository'
-export { characterMediaRepository } from './character-media-repository'
-export { staffMediaRepository } from './staff-media-repository'
-export { episodeMediaRepository } from './episode-media-repository'
-export { musicMediaRepository } from './music-media-repository'
+export { animeMediaRepository } from './anime-media'
+export { characterMediaRepository } from './character-media'
+export { staffMediaRepository } from './staff-media'
+export { episodeMediaRepository } from './episode-media'
+export { musicMediaRepository } from './music-media'
