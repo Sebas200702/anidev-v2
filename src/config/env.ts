@@ -81,5 +81,5 @@ export const env = envSchema.parse({
   SENTRY_DSN: process.env.SENTRY_DSN,
   APP_BASE_URL: process.env.APP_BASE_URL,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-  LOG_LEVEL: import.meta.env.LOG_LEVEL,
+  LOG_LEVEL: process.env.LOG_LEVEL,
 })
