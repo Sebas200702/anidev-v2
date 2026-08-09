@@ -20,6 +20,7 @@ import type { APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { animeFullService } from '@anime/services/anime-full-service'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {
   animeFullDetailsResponseSchema,
   getAnimeFullSchema,
@@ -95,20 +96,18 @@ export const GET: APIRoute = withZodValidation(getAnimeFullSchema)(
     try {
       const { malId } = validated.params
 
-      const anime = await animeFullService.getAnimeFullByMalId(malId)
+      const { value: anime, isStale } =
+        await animeFullService.getAnimeFullByMalId(malId)
 
       const payload = {
         data: anime,
         status: 200,
-        meta: {},
+        meta: { stale: isStale },
       }
 
       const responseBody = animeFullDetailsResponseSchema.parse(payload)
 
-      return new Response(JSON.stringify(responseBody), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return jsonResponse(responseBody, undefined, 200)
     } catch (error) {
       const { status, body } = mapErrorToHttp(error)
       const payload = {

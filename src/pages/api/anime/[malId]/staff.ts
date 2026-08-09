@@ -23,6 +23,7 @@ import {
 } from '@anime/schemas/anime-staff-schema'
 import { withZodValidation } from '@http/with-validation'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 
 /**
  * Returns the staff list for a MyAnimeList anime ID.
@@ -75,21 +76,20 @@ export const GET: APIRoute = withZodValidation(getAnimeStaffSchema)(
     try {
       const { malId } = validated.params
 
-      const staff = await animeStaffService.getAnimeStaff(malId)
+      const { value: staff, isStale } =
+        await animeStaffService.getAnimeStaff(malId)
 
       const payload = {
         data: staff,
         status: 200,
         meta: {
+          stale: isStale,
           count: staff.length,
         },
       }
       const responseBody = animeStaffResponseSchema.parse(payload)
 
-      return new Response(JSON.stringify(responseBody), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return jsonResponse(responseBody, undefined, 200)
     } catch (error) {
       const { status, body } = mapErrorToHttp(error)
       const payload = {
