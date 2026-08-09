@@ -23,4 +23,4 @@
 
 ## 6. Verify
 - [x] 6.1 Gate: `bun run check` (Biome; 7 single-line imports auto-collapsed), `bun run check:types` (369 files, 0 errors), `bun run test` (45 passing), `bun run build` (Complete).
-- [ ] 6.2 Commit per docs (Conventional Commits on `refactor/modularize-domain-units`), open PR against `master`.
+- [x] 6.2 Committed on `refactor/modularize-domain-units` (refactor + docs), PR #94 opened against `master`.
