@@ -160,6 +160,7 @@ in `tsconfig.json`.
 | `GET /api/music` / `GET /api/music/:id` | Music (public) |
 | `GET /api/user/:userId` | User (session) |
 | `GET /api/health/readiness` | Dependency probes (db/cache) (public) |
+| `GET /api/health` | Liveness (public, no dependencies) |
 
 Routes validate via `withZodValidation(schema)(handler)` and respond enveloped as
 `{ data, status, error?, code?, meta? }`. `InfraError` responses map to `503`
@@ -167,6 +168,16 @@ with a `Retry-After` header and the error's `code` preserved; stale-serve
 responses carry `meta.stale` surfaced as an `x-stale: true` header. Public
 routes: `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`,
 `/api/health`, `/api/music`, `/media`.
+
+## Error monitoring
+
+All handled errors are reported to a self-hosted Sentry-compatible backend
+(Rustrak): server routes capture every error class — 4xx (`ValidationError`,
+`AuthError`, `DomainError`) at `warning` level, 5xx (`InfraError`, unknown) at
+`error` level — via `mapErrorToHttp`, and the browser SDK reports global errors
+and unhandled rejections when `PUBLIC_SENTRY_DSN` is set (no-op otherwise).
+Malformed media paths return `400 INVALID_IMAGE_PATH` rather than a 503.
+Both DSNs are optional; monitoring is a no-op without them.
 
 ## Versioning
 
