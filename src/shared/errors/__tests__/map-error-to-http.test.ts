@@ -8,9 +8,15 @@
  * Mocks `@config/env` and `@sentry/node` per project convention (the runner
  * does not load `.env`; Sentry is captured but must stay a no-op in tests).
  */
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import * as SentryNode from '@sentry/node'
 import { ErrorCodes } from '@shared/errors/codes'
-import { InfraError } from '@shared/errors/app-error'
+import {
+  AuthError,
+  DomainError,
+  InfraError,
+  ValidationError,
+} from '@shared/errors/app-error'
 import { dbError } from '@shared/errors/db-errors'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 
@@ -64,5 +70,95 @@ describe('mapErrorToHttp infra errors', () => {
     expect(result.body.code).toBe(ErrorCodes.UNKNOWN_ERROR)
     expect(result.headers).toBeUndefined()
     expect(result.body.message).toMatch(/internal server error/i)
+  })
+})
+
+describe('mapErrorToHttp sentry capture', () => {
+  beforeEach(() => {
+    vi.mocked(SentryNode.captureException).mockClear()
+  })
+
+  it('reports ValidationError as warning for a 400 response', () => {
+    const error = new ValidationError(
+      ErrorCodes.VALIDATION_ERROR,
+      'Invalid request',
+      {
+        issues: [],
+      }
+    )
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(400)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'warning',
+    })
+  })
+
+  it('reports AuthError as warning for a 401 response', () => {
+    const error = new AuthError(
+      ErrorCodes.AUTH_REQUIRED,
+      'Authentication required'
+    )
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(401)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'warning',
+    })
+  })
+
+  it('reports DomainError as warning for a 404 response', () => {
+    const error = new DomainError(ErrorCodes.ANIME_NOT_FOUND, 'Anime not found')
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(404)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'warning',
+    })
+  })
+
+  it('reports DomainError as warning for a 400 response', () => {
+    const error = new DomainError(
+      ErrorCodes.INVALID_IMAGE_PATH,
+      'Invalid media path'
+    )
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(400)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'warning',
+    })
+  })
+
+  it('reports InfraError as error for a 503 response', () => {
+    const error = dbError('findAnimeById', { malId: 1 })
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(503)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'error',
+    })
+  })
+
+  it('reports unknown errors as error for a 500 response', () => {
+    const error = new Error('boom')
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(500)
+    expect(SentryNode.captureException).toHaveBeenCalledTimes(1)
+    expect(SentryNode.captureException).toHaveBeenCalledWith(error, {
+      level: 'error',
+    })
   })
 })

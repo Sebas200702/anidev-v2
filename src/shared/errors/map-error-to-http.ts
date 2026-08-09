@@ -22,9 +22,10 @@
  * | 500 | Unknown / non-{@link BaseError} throwables | `UNKNOWN_ERROR` |
  *
  * **Sentry behavior**
- * - {@link InfraError}: always reported via `SentryNode.captureException` before returning 503.
- * - Unknown errors: reported via `SentryNode.captureException` before returning 500 with `UNKNOWN_ERROR`.
- * - {@link ValidationError}, {@link AuthError}, and {@link DomainError}: logged only (no Sentry).
+ * - Every handled error class is reported via {@link captureError} before the response is built.
+ * - Client-caused errors — {@link ValidationError}, {@link AuthError}, {@link DomainError} —
+ *   are reported at `warning` level.
+ * - Server errors — {@link InfraError} and unknown throwables — are reported at `error` level.
  *
  * **Response body shape** (`HttpErrorBody`)
  * - `code` — stable {@link ErrorCode} string from the error instance.
@@ -47,6 +48,7 @@ import {
   InfraError,
   ValidationError,
 } from '@shared/errors/app-error'
+import { captureError } from '@shared/errors/capture-error'
 import { ErrorCodes } from '@shared/errors/codes'
 import type { HttpErrorResponse } from '@shared/errors/http-error-types'
 import {
@@ -55,7 +57,6 @@ import {
   mapDomainErrorToHttp,
 } from '@shared/errors/error-http-maps'
 import { logger } from '@utils/logger-util'
-import * as SentryNode from '@sentry/node'
 
 /** Seconds a client/load balancer should wait before retrying a 503 response. */
 export const INFRA_RETRY_AFTER_SECONDS = 30
@@ -68,11 +69,11 @@ export const INFRA_RETRY_AFTER_SECONDS = 30
  *
  * @remarks
  * **Dispatch order** (first match wins):
- * 1. {@link ValidationError} → 400, `warn` log
- * 2. {@link AuthError} → 401 / 403 via {@link mapAuthErrorToHttp}, or fall through if unhandled
- * 3. {@link DomainError} → 404 / 400 via {@link mapDomainErrorToHttp}
- * 4. {@link InfraError} → 503, `error` log, **Sentry capture**, generic client message, `Retry-After`
- * 5. Everything else → 500, `error` log, **Sentry capture**, `UNKNOWN_ERROR` code
+ * 1. {@link ValidationError} → 400, `warn` log, Sentry capture at `warning`
+ * 2. {@link AuthError} → 401 / 403 via {@link mapAuthErrorToHttp}, or fall through if unhandled; Sentry capture at `warning`
+ * 3. {@link DomainError} → 404 / 400 via {@link mapDomainErrorToHttp}; Sentry capture at `warning`
+ * 4. {@link InfraError} → 503, `error` log, Sentry capture at `error`, generic client message, `Retry-After`
+ * 5. Everything else → 500, `error` log, Sentry capture at `error`, `UNKNOWN_ERROR` code
  *
  * **Client-visible messages on 5xx**
  * - {@link InfraError}: `message` is replaced with `"Service unavailable"`; original message and `details` stay in logs/Sentry.
@@ -94,6 +95,7 @@ export const INFRA_RETRY_AFTER_SECONDS = 30
 export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof ValidationError) {
     logger.warn({ err: error }, 'Validation error')
+    captureError(error, 'warning')
     return {
       status: 400,
       body: buildAppErrorBody(error),
@@ -103,17 +105,19 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof AuthError) {
     const authResponse = mapAuthErrorToHttp(error)
     if (authResponse) {
+      captureError(error, 'warning')
       return authResponse
     }
   }
 
   if (error instanceof DomainError) {
+    captureError(error, 'warning')
     return mapDomainErrorToHttp(error)
   }
 
   if (error instanceof InfraError) {
     logger.error({ err: error }, 'Infra error')
-    SentryNode.captureException(error)
+    captureError(error)
 
     return {
       status: 503,
@@ -129,7 +133,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   }
 
   logger.error({ err: error }, 'Unknown error')
-  SentryNode.captureException(error as Error)
+  captureError(error)
 
   return {
     status: 500,
