@@ -10,10 +10,10 @@
 
 ## 2. Readiness por-dependencia
 
-- [ ] 2.1 TDD: test de `probeDatabase`/`probeCache` (o del módulo de health) con `@db/client` y cache mockeados: `select 1` ok → `'ok'`; fallo → `'down'` sin lanzar.
-- [ ] 2.2 Implementar `src/pages/api/health/readiness.ts` con `withErrorHandling` y las probes `probeDatabase`/`probeCache` (cache: key con sufijo timestamp, TTL corto, round-trip SET+GET, `cacheDel` best-effort), respuesta `data: { db, cache }` con `200` si ambos arriba o `503` si alguno cae.
-- [ ] 2.3 Test de la ruta: 200 con ambas dependencias ok; 503 y lista de caídas con una o ambas down; sin excepción cuando una probe falla.
-- [ ] 2.4 Confirmar que `/api/health/readiness` queda público vía prefijo `/api/health` (test de `isPublicRoute`), sin tocar `public-routes.ts`.
+- [x] 2.1 TDD: test de `probeDatabase`/`probeCache` (o del módulo de health) con `@db/client` y cache mockeados: `select 1` ok → `'ok'`; fallo → `'down'` sin lanzar.
+- [x] 2.2 Implementar `src/pages/api/health/readiness.ts` con `withErrorHandling` y las probes `probeDatabase`/`probeCache` (cache: key con sufijo timestamp, TTL corto, round-trip SET+GET, `cacheDel` best-effort), respuesta `data: { db, cache }` con `200` si ambos arriba o `503` si alguno cae.
+- [x] 2.3 Test de la ruta: 200 con ambas dependencias ok; 503 y lista de caídas con una o ambas down; sin excepción cuando una probe falla.
+- [x] 2.4 Confirmar que `/api/health/readiness` queda público vía prefijo `/api/health` (test de `isPublicRoute`), sin tocar `public-routes.ts`.
 
 ## 3. Degradación elegante (stale-serve)
 
