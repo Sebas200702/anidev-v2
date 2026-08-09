@@ -12,4 +12,4 @@
  * const cached = await userProfileCache.get('user-123')
  * ```
  */
-export { userProfileCache } from './user-profile-cache'
+export { userProfileCache } from './user-profile'

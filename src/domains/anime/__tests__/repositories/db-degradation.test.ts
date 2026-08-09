@@ -2,7 +2,7 @@
  * Tests that database repositories translate connection failures into mappable
  * {@link InfraError} instances (task: DB down degrades to an elegant 500).
  *
- * @module domains/anime/__tests__/repositories/db-degradation
+ * @module domains/anime/__tests__/repositories/db-degradation.test
  * @remarks
  * Mocks the Drizzle `db` client so `.select().from()` rejects, then asserts the
  * repository throws `dbError` (an {@link InfraError}) which `mapErrorToHttp`
@@ -40,7 +40,7 @@ vi.mock('@db/client', () => ({
   },
 }))
 
-import { animeExternalRepository } from '@anime/repositories/anime-external-repository'
+import { animeExternalRepository } from '@anime/repositories/anime-external'
 
 describe('DB repository degradation', () => {
   beforeEach(() => {

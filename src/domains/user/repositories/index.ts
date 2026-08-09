@@ -11,4 +11,4 @@
  * ```
  */
 
-export { userRepository } from './user-repository'
+export { userRepository } from './user'

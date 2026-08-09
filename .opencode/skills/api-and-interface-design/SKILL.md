@@ -1,6 +1,6 @@
 ---
 name: api-and-interface-design
-description: Design stable APIs and module boundaries the way this repo does. Use when creating or changing REST/API routes, defining type contracts between layers, or establishing boundaries (backend/frontend, domains). Use when designing Zod schemas, error contracts, or HTTP endpoints.
+description: Design stable APIs and module boundaries the way this repo does. Use when creating or changing REST/API routes, defining type contracts between layers, establishing boundaries (backend/frontend, domains), or organizing a domain layer into module unit folders. Use when designing Zod schemas, error contracts, or HTTP endpoints.
 lifecycle-phase: PLAN / IMPLEMENT
 ---
 
@@ -27,7 +27,15 @@ APIs here are thin and schema-first. The contract is a Zod schema at the boundar
 - Repos return `undefined` (never `null`); services map `undefined` to `DomainError`/`*_NOT_FOUND` for 404.
 - Keep API route files small (≤150 lines); move logic into the domain service, not into the route handler.
 
-## 5. Design review (doubt pass)
+## 5. Module structure (unit folders)
+Every element in a domain **logic layer** (`cache/ mappers/ repositories/ services/ policies/ middleware/ utils/`) is a **unit folder**, not loose files: the logic (`mapper.ts`, `repository.ts`, `service.ts`, …) plus its own `types.ts`/`helpers.ts`, behind an `index.ts` barrel. Folder name = the element (`anime-card`); the file is the generic kind.
+- A companion type file exists because *these types belong to this module* — never a layer-wide `*-types.ts` sibling. Only cross-cutting `*DB` row types stay in the shared domain `types/` barrel.
+- A cohesive multi-file subsystem is **one** unit (e.g. `media/cache/media-cache/` = `cache.ts` + `keys.ts` + `serialization.ts` + `store.ts` + `*.types.ts`), not one folder per file.
+- Layer barrels re-export from units, so deep imports are `@x/<layer>/<unit>` (not `@x/<layer>/<unit>-mapper`). Create a folder / `types.ts` / `helpers.ts` only when the element needs it — no empty scaffolding.
+- Pure-type layers (`types/`), single-file `schemas/`, and `errors/` stay flat. UI (`components/`) is a unit folder with the **named** file (`AnimeDetails.astro`); component-scoped hooks/types live inside it (see `presentational-container`).
+- Full convention: AGENTS.md → "Module unit folders (co-location)".
+
+## 6. Design review (doubt pass)
 - Does the envelope hold for success AND every failure path?
 - Is the status derivable by class (`mapErrorToHttp`) instead of hard-coded per route?
 - Would a client break if I renamed the code string? Add a new code in `codes.ts` instead of repurposing one.

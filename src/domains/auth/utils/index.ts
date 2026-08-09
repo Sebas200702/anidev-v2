@@ -21,4 +21,4 @@
  * ```
  */
 
-export { mapBetterAuthError } from './map-better-auth-error-util'
+export { mapBetterAuthError } from './map-better-auth-error'
