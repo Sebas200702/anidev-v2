@@ -27,8 +27,10 @@ export type HttpErrorBody = {
  * HTTP status plus structured error body produced by the mapper.
  */
 export type HttpErrorResponse = {
-  /** HTTP status code (400, 401, 403, 404, or 500). */
+  /** HTTP status code (400, 401, 403, 404, 503, or 500). */
   status: number
   /** JSON error body with `code`, `message`, and optional `meta`. */
   body: HttpErrorBody
+  /** Optional headers attached to the HTTP response (e.g. `Retry-After` on 503). */
+  headers?: Record<string, string>
 }

@@ -76,8 +76,8 @@ export const withErrorHandling = <TContext extends APIContext>(
 
       return response
     } catch (error) {
-      const payload = createErrorResponse(error)
-      return jsonResponse(payload, undefined, payload.status)
+      const { payload, headers } = createErrorResponse(error)
+      return jsonResponse(payload, headers, payload.status)
     }
   }
 }

@@ -13,6 +13,7 @@
  *   data: T | null,           // Payload on success; null on error
  *   status: number,           // HTTP status code mirrored in the JSON body
  *   error?: string,           // Present on failure — human-readable message
+ *   code?: string,            // Present on failure — stable error code (e.g. DB_ERROR)
  *   meta?: Record<string, unknown>  // Optional metadata (pagination, error details, etc.)
  * }
  * ```
@@ -53,6 +54,7 @@ type InferableZodSchema = z.ZodType<
  * - `data` — `dataSchema.nullable()`; must be `null` on error responses.
  * - `status` — integer HTTP status code.
  * - `error` — optional string; expected on error responses.
+ * - `code` — optional string; stable error code expected on error responses.
  * - `meta` — optional record for arbitrary metadata (error `details`, page info, etc.).
  *
  * @example
@@ -78,6 +80,8 @@ export const createApiResponseSchema = <T extends z.ZodTypeAny>(
     status: z.number().int(),
     /** Human-readable error message; omitted on successful responses. */
     error: z.string().optional(),
+    /** Stable error code (e.g. `DB_ERROR`); expected on error responses. */
+    code: z.string().optional(),
     /** Optional metadata (pagination, validation issues, etc.). */
     meta: z.record(z.any(), z.any()).optional(),
   })
