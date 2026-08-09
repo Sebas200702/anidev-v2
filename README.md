@@ -159,10 +159,14 @@ in `tsconfig.json`.
 | `GET /api/anime/:malId/full` · `characters` · `staff` | Extra detail |
 | `GET /api/music` / `GET /api/music/:id` | Music (public) |
 | `GET /api/user/:userId` | User (session) |
+| `GET /api/health/readiness` | Dependency probes (db/cache) (public) |
 
 Routes validate via `withZodValidation(schema)(handler)` and respond enveloped as
-`{ data, status, error?, meta? }`. Public routes: `/`, `/api/auth/login`,
-`/api/auth/register`, `/api/anime`, `/api/music`, `/media`.
+`{ data, status, error?, code?, meta? }`. `InfraError` responses map to `503`
+with a `Retry-After` header and the error's `code` preserved; stale-serve
+responses carry `meta.stale` surfaced as an `x-stale: true` header. Public
+routes: `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`,
+`/api/health`, `/api/music`, `/media`.
 
 ## Versioning
 

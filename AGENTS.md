@@ -220,10 +220,10 @@ Two composition styles:
 1. `withZodValidation(schema)(handler)` — validates `{ params, query, body }` as single Zod object, returns 400 on failure
 2. Error handling: `withErrorHandling(handler)` (try/catch wrapper) OR manual try/catch + `mapErrorToHttp(error)`
 
-Response envelope: `{ data, status, error?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`.
+Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`. `InfraError` maps to 503 with a `Retry-After` header and the original `code` preserved (e.g. `DB_ERROR`); stale-serve responses surface `meta.stale === true` as an `x-stale: true` header via `jsonResponse`. Dependencies are probed per-component by `GET /api/health/readiness` (200 when all up, 503 under the `/api/health` public prefix).
 
 ## Auth & Middleware
-- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/music`, `/media`
+- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/health`, `/api/music`, `/media`
 - Middleware populates `locals.user` / `locals.session` via `resolveAuthActor()` (swallows errors, returns null)
 - For strict auth in API routes: `sessionService.getSession()` throws typed errors
 

@@ -17,21 +17,21 @@
 
 ## 3. Degradación elegante (stale-serve)
 
-- [ ] 3.1 Añadir `CacheTtl.Stale` (30 días) a `src/lib/cache/config.ts` (o constate de la capa cache).
-- [ ] 3.2 TDD: test de `withStaleCache` en `@lib/cache/cache-store` (mocks de primitivos): hit → `{ isStale: false }`; miss+compute ok → set de ambas keys y `{ isStale: false }`; compute con `InfraError` y valor `:stale` → `{ value: stale, isStale: true }`; sin valor `:stale` → rethrow del `InfraError`; error de dominio → rethrow sin stale.
-- [ ] 3.3 Implementar `withStaleCache` en `src/lib/cache/cache-store.ts` (y exportarlo por el barrel `@lib/cache`), con firma genérica `{ key, staleKey, getCache, getStaleCache, setCache, setStaleCache, compute, shouldCache }`.
-- [ ] 3.4 Adoptar `withStaleCache` en los servicios cache-first de DB (detalle `anime`, `anime-full`, `anime-list`, `anime-characters`, `anime-staff` y `music` donde existan): `key`/`staleKey` derivados del cache de dominio, `setStaleCache` con `CacheTtl.Stale`, retorno `{ value, isStale }`.
-- [ ] 3.5 Propagar la marca: rutas API que usan estos servicios pasan `meta: { stale: isStale }` y `withErrorHandling`/`jsonResponse` convierte `meta.stale === true` en header `x-stale: true` (añadir test del wrapper).
-- [ ] 3.6 Actualizar tests de los servicios adoptados (retorno `{ value, isStale }`) y añadir test de integración: cache con valor stale + DB caída → se sirve `isStale: true`; cache caída + DB ok → bypass a DB.
+- [x] 3.1 Añadir `CacheTtl.Stale` (30 días) a `src/lib/cache/config.ts` (o constate de la capa cache).
+- [x] 3.2 TDD: test de `withStaleCache` en `@lib/cache/cache-store` (mocks de primitivos): hit → `{ isStale: false }`; miss+compute ok → set de ambas keys y `{ isStale: false }`; compute con `InfraError` y valor `:stale` → `{ value: stale, isStale: true }`; sin valor `:stale` → rethrow del `InfraError`; error de dominio → rethrow sin stale.
+- [x] 3.3 Implementar `withStaleCache` en `src/lib/cache/cache-store.ts` (y exportarlo por el barrel `@lib/cache`), con firma genérica `{ key, staleKey, getCache, getStaleCache, setCache, setStaleCache, compute, shouldCache }`.
+- [x] 3.4 Adoptar `withStaleCache` en los servicios cache-first de DB (detalle `anime`, `anime-full`, `anime-list`, `anime-characters`, `anime-staff` y `music` donde existan): `key`/`staleKey` derivados del cache de dominio, `setStaleCache` con `CacheTtl.Stale`, retorno `{ value, isStale }`.
+- [x] 3.5 Propagar la marca: rutas API que usan estos servicios pasan `meta: { stale: isStale }` y `withErrorHandling`/`jsonResponse` convierte `meta.stale === true` en header `x-stale: true` (añadir test del wrapper).
+- [x] 3.6 Actualizar tests de los servicios adoptados (retorno `{ value, isStale }`) y añadir test de integración: cache con valor stale + DB caída → se sirve `isStale: true`; cache caída + DB ok → bypass a DB.
 
 ## 4. Página "Servicio no disponible"
 
-- [ ] 4.1 Crear componente presentacional compartido `src/shared/components/service-unavailable/` (`ServiceUnavailable.astro` + `index.ts` barrel) con props `{ title, message, retryHref }`, heading + párrafo + `<a>` real (zero-JS), colores de tokens `@theme` y semántica/a11y (40h de TDD no aplica al .astro; verificación manual/build).
-- [ ] 4.2 Actualizar páginas contenedoras SSR (`anime/[malId]/[slug].astro`, `anime/[malId]/index.astro`): try/catch del fetch; `InfraError` ⇒ `Astro.response.status = 503` + `<ServiceUnavailable />` dentro de `Base`; `DomainError`/not-found ⇒ mantener redirect `/404`.
-- [ ] 4.3 Verificar que las páginas hoy sin fetch (`/`) no requieren cambios.
+- [x] 4.1 Crear componente presentacional compartido `src/shared/components/service-unavailable/` (`ServiceUnavailable.astro` + `index.ts` barrel) con props `{ title, message, retryHref }`, heading + párrafo + `<a>` real (zero-JS), colores de tokens `@theme` y semántica/a11y (40h de TDD no aplica al .astro; verificación manual/build).
+- [x] 4.2 Actualizar páginas contenedoras SSR (`anime/[malId]/[slug].astro`, `anime/[malId]/index.astro`): try/catch del fetch; `InfraError` ⇒ `Astro.response.status = 503` + `<ServiceUnavailable />` dentro de `Base`; `DomainError`/not-found ⇒ mantener redirect `/404`.
+- [x] 4.3 Verificar que las páginas hoy sin fetch (`/`) no requieren cambios.
 
 ## 5. Docs y gate de verificación
 
-- [ ] 5.1 Actualizar `AGENTS.md` (tabla de API routes con `/api/health/readiness`, patrón de errores: `InfraError` → 503 + `Retry-After`, `code` en envelope) y `README.md` (sección API/current status).
-- [ ] 5.2 Ejecutar el gate completo local: `bun run format` → `bun run check` → `bun run check:types` → `bun run test` → `bun run build`.
-- [ ] 5.3 Revisión DOUBT del cambio completo contra specs/diseño y `AGENTS.md` antes de abrir PR.
+- [x] 5.1 Actualizar `AGENTS.md` (tabla de API routes con `/api/health/readiness`, patrón de errores: `InfraError` → 503 + `Retry-After`, `code` en envelope) y `README.md` (sección API/current status).
+- [x] 5.2 Ejecutar el gate completo local: `bun run format` → `bun run check` → `bun run check:types` → `bun run test` → `bun run build`.
+- [x] 5.3 Revisión DOUBT del cambio completo contra specs/diseño y `AGENTS.md` antes de abrir PR.
