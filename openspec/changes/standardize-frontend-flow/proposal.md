@@ -22,9 +22,10 @@ needs a normative, documented workflow so every agent builds UI the same way.
     (render, composition, styling, living docs, done-checklist).
   - `.opencode/skills/presentational-container/SKILL.md` — the
     presentational/container separation for this repo.
-- Register ecosystem skills (astro, impeccable, tailwind-css-patterns,
-  web-quality-audit, webapp-testing, jsdoc-typescript-docs) in `AGENTS.md`
-  Skills table and Skills list.
+- Register the available ecosystem skills (`astro`, `impeccable`,
+  `tailwind-css-patterns`, `web-quality-audit`, `webapp-testing`,
+  `jsdoc-typescript-docs`) in both the `AGENTS.md` Skills table and Skills
+  list.
 - Note the reserved `@hooks` (`src/shared/hooks/`) and `@stores`
   (`src/shared/stores/`) aliases in Path Aliases.
 

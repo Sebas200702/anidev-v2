@@ -32,8 +32,9 @@ page route.
 
 ## 2. Page → data flow (containers)
 
-Pages in `src/pages/` are the only place that fetches. Pattern (see
-`src/pages/anime/[malId]/[slug].astro`):
+Page routes in `src/pages/` own service data for rendered UI and pass it to
+presentational components. API routes may call services to produce API
+responses. Page route pattern (see `src/pages/anime/[malId]/[slug].astro`):
 
 1. Validate `Astro.params` / `Astro.url`; on bad input
    `return Astro.redirect('/404')`.
@@ -59,20 +60,22 @@ Pages in `src/pages/` are the only place that fetches. Pattern (see
 - Load **impeccable** for anything that touches visual design, layout, motion or
   UX copy; follow its routing. It governs typography, tokens, color and layout
   decisions in this repo.
-- **Tailwind v4 only.** No inline `<style>` blocks inside components; global
-  utility classes (`.title`, `.subtitle`, `.text-*`, `.button-*`) are defined in
-  `src/styles/global.css` via `@apply`. Color exclusively from `@theme` tokens
-  (`brand` scale, `neutral` scale) — never raw hex inside a component.
+- **Tailwind v4 only.** No inline `<style>` blocks inside components; `@apply`
+  is allowed only for shared global utility classes in
+  `src/styles/global.css`, while component styles compose utilities directly
+  and avoid `@apply`. Color exclusively from `@theme` tokens (`brand` scale,
+  `neutral` scale) — never raw hex inside a component.
 - Accessibility first: semantic HTML, ARIA when the element is not semantic,
   `focus-visible`, contrast ≥ 4.5:1, `prefers-reduced-motion`. Preload the LCP
   image; use `Picture` (LQIP blur-up) with `aspect-*` and explicit sizes on
   banners.
 
-## 5. Living documentation — every component is visible, and dynamic
+## 5. Living documentation — planned when the showcase is available
 
-Components are not only JSDoc-commented — they are *seen in action* with **live
-data**. The repo keeps a **component showcase** (route `src/pages/showcase.astro`
-+ `fixtures/` per domain) rendering every presentational component:
+When `src/pages/showcase.astro` is available, components are not only
+JSDoc-commented — they are *seen in action* with **live data**. The repo then
+keeps a **component showcase** (route `src/pages/showcase.astro` + `fixtures/`
+per domain) rendering every presentational component:
 
 - **Dynamic, not static**: the showcase consumes the domain's real API/service,
   same as production pages. Its container (the page route) fetches the current
@@ -92,7 +95,8 @@ data**. The repo keeps a **component showcase** (route `src/pages/showcase.astro
 - [ ] Components never fetch; pages do.
 - [ ] No `client:*` unless the interaction requires JS.
 - [ ] Own directory + barrel export per component.
-- [ ] Showcase demo fed by the domain API + `fixtures/` fallback added.
+- [ ] When `src/pages/showcase.astro` is available, add a showcase demo fed by
+      the domain API + `fixtures/` fallback.
 - [ ] Tokens only for color; no `<style>` blocks.
 - [ ] Contrast, focus-visible, reduced-motion covered.
 - [ ] Gate: `bun run format → bun run check → bun run check:types → bun run test → bun run build`; `web-quality-audit` on new pages.

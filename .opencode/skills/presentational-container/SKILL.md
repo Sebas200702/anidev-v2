@@ -26,7 +26,7 @@ page route and pass the result as props.
 - **Receives everything it needs as props.** No `Astro.fetch`, no service import,
   no `import.meta.env` reads inside the SFC.
 - **Directory convention**: one per component.
-  ```
+  ```text
   Name/
     Name.astro      # the SFC
     index.ts        # barrel: export { default as Name } from './Name.astro'
@@ -44,9 +44,10 @@ page route and pass the result as props.
   ```
 - **Booleans** `is*`/`has*`. **Plain serializable data**, never `null` —
   optional fields are `undefined`. Arrays for lists.
-- **No state, no effects, no data-fetch in presentational.**
-  Interactivity creates a *client island* (React, `client:load` where
-  necessary) which is still data-fed via props.
+- **Server-rendered Astro SFCs have no state, effects, or data-fetching.**
+  Client islands may use local UI state and effects when interaction requires
+  them, but service/repository data-fetching remains outside the island and
+  islands still receive data through props.
 
 ## Rules of thumb
 
