@@ -16,8 +16,7 @@ vi.mock('@config/env', () => ({
     DATABASE_URL: 'postgres://test:test@localhost:5432/test',
     REDIS_URL: 'redis://localhost:6379',
     APP_BASE_URL: 'http://localhost:4321',
-    BETTER_AUTH_SECRET:
-      'test-secret-test-secret-test-secret-test-secret',
+    BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-test-secret',
     SENTRY_DSN: undefined,
     LOG_LEVEL: 'silent',
   },
@@ -51,7 +50,6 @@ vi.mock('@user/policies/user', () => ({
 }))
 
 import { userService } from '@user/services/user'
-import { userNotFound, userProfileConflict, userUnauthorized } from '@user/errors'
 
 const sessionId = 'user-1'
 
@@ -132,7 +130,11 @@ describe('userService.updateUserProfile', () => {
       userService.updateUserProfile({
         userId: sessionId,
         targetId: sessionId,
-        input: { body: { name: 'Grace' }, params: { userId: sessionId }, query: {} },
+        input: {
+          body: { name: 'Grace' },
+          params: { userId: sessionId },
+          query: {},
+        },
       })
     ).rejects.toBeInstanceOf(Error)
   })
@@ -144,7 +146,11 @@ describe('userService.updateUserProfile', () => {
     const result = await userService.updateUserProfile({
       userId: sessionId,
       targetId: sessionId,
-      input: { body: { name: 'Grace' }, params: { userId: sessionId }, query: {} },
+      input: {
+        body: { name: 'Grace' },
+        params: { userId: sessionId },
+        query: {},
+      },
     })
 
     expect(updateMock).toHaveBeenCalledWith(sessionId, { name: 'Grace' })

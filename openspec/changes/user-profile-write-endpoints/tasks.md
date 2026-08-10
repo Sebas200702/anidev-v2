@@ -24,10 +24,10 @@
 
 ## 5. API routes (TDD)
 
-- [ ] 5.1 Write failing route tests for `POST /api/user` and `PATCH /api/user/:userId` (401/403, 400 validation, 409 conflict, 404, 201/200 envelopes)
-- [ ] 5.2 Implement `POST` create route (session required, Zod body, service, response envelope)
-- [ ] 5.3 Implement `PATCH` on `[userId]` (session required, Zod params/body, service, response envelope); keep existing `GET` behavior
-- [ ] 5.4 Confirm public-route / middleware behavior: writes require auth; document any `publicRoutes` change only if needed
+- [x] 5.1 Write failing route tests for `POST /api/user` and `PATCH /api/user/:userId` (401/403, 400 validation, 409 conflict, 404, 201/200 envelopes)
+- [x] 5.2 Implement `POST` create route (session required, Zod body, service, response envelope)
+- [x] 5.3 Implement `PATCH` on `[userId]` (session required, Zod params/body, service, response envelope); keep existing `GET` behavior
+- [x] 5.4 Confirm public-route / middleware behavior: writes require auth; document any `publicRoutes` change only if needed
 
 ## 6. Verification
 

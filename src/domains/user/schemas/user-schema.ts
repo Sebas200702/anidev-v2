@@ -160,14 +160,14 @@ export const createUserProfileSchema = z.object({
  * @see {@link profileIdentitySchema}
  * @see {@link userService.updateUserProfile}
  */
-export const updateUserProfileSchema = z
-  .object({
-    params: z.object({
-      userId: z.coerce.string(),
+export const updateUserProfileSchema = z.object({
+  params: z.object({
+    userId: z.coerce.string(),
+  }),
+  body: profileIdentitySchema
+    .partial()
+    .refine((value) => Object.keys(value).length > 0, {
+      message: 'At least one identity field is required',
     }),
-    body: profileIdentitySchema.partial().refine(
-      (value) => Object.keys(value).length > 0,
-      { message: 'At least one identity field is required' }
-    ),
-    query: z.object({}).optional().default({}),
-  })
+  query: z.object({}).optional().default({}),
+})

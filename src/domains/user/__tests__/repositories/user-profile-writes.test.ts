@@ -17,8 +17,7 @@ vi.mock('@config/env', () => ({
     DATABASE_URL: 'postgres://test:test@localhost:5432/test',
     REDIS_URL: 'redis://localhost:6379',
     APP_BASE_URL: 'http://localhost:4321',
-    BETTER_AUTH_SECRET:
-      'test-secret-test-secret-test-secret-test-secret',
+    BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-test-secret',
     SENTRY_DSN: undefined,
     LOG_LEVEL: 'silent',
   },

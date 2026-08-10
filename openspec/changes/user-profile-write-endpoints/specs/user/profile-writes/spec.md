@@ -35,7 +35,7 @@ The system MUST allow an authenticated user to partially update their own profil
 #### Scenario: Update another user’s profile
 
 - **WHEN** an authenticated user attempts to update a `userId` that is not their own
-- **THEN** the system responds with an authorization error and does not change the target profile
+- **THEN** the system responds with a `403` authorization error and does not change the target profile
 
 #### Scenario: Update missing profile
 

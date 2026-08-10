@@ -3,18 +3,20 @@
  *
  * @module pages/api/user/[userId]
  *
- * **Route:** `GET /api/user/:userId`
+ * **Route:** `GET /api/user/:userId`, `PATCH /api/user/:userId`
  *
- * **Authentication:** Session optional — profile reads are public per
- * {@link userPolicies.canViewUserProfile}. When no session is present the actor is
- * treated as `'anonymous'`. Not listed in {@link publicRoutes}; middleware may clear
- * invalid session locals but does not block unauthenticated profile reads.
+ * **Authentication:**
+ * - `GET` is session-optional — profile reads are public per
+ *   {@link userPolicies.canViewUserProfile}. When no session is present the actor is
+ *   treated as `'anonymous'`.
+ * - `PATCH` is session-required and owner-only — the path `userId` MUST equal
+ *   the session user id; {@link requireAuthSession} enforces the gate.
  *
- * Returns a public user profile including preferences and watch history fields.
- *
- * @see {@link getUserProfileSchema} — request validation schema
- * @see {@link userProfileResponseSchema} — response validation schema
- * @see {@link userService.getUserProfile} — profile query service
+ * @see {@link getUserProfileSchema} — read request validation
+ * @see {@link updateUserProfileSchema} — patch request validation
+ * @see {@link userService.getUserProfile} — read service
+ * @see {@link userService.updateUserProfile} — write service
+ * @see {@link requireAuthSession} — write auth gate
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
@@ -24,8 +26,11 @@ import { userService } from '@user/services/user'
 import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import {
   getUserProfileSchema,
+  updateUserProfileSchema,
   userProfileResponseSchema,
-} from '@user/schemas/user-schema'
+} from '@user/schemas'
+import { requireAuthSession } from '@auth/utils'
+import type { User } from '@lib/auth/server'
 
 /**
  * Returns a public user profile for the given user ID.
@@ -126,6 +131,96 @@ export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
         status,
         headers: { 'Content-Type': 'application/json' },
       })
+    }
+  }
+)
+
+/**
+ * Applies a partial identity update to the profile for the given `userId`.
+ *
+ * @remarks
+ * **Request**
+ *
+ * | Source | Field | Type | Required | Description |
+ * |--------|-------|------|----------|-------------|
+ * | Params | `userId` | `string` | Yes | Target user (must equal session id) |
+ * | Body | `name` | `string` | No | Given name |
+ * | Body | `lastName` | `string` | No | Family name |
+ * | Body | `avatar` | URL `string` | No | Profile image URL |
+ * | Body | `birthday` | `string` | No | ISO or display date string |
+ * | Body | `gender` | `'male' \| 'female' \| 'other'` | No | Gender identity |
+ *
+ * **Success response — `200 OK`**
+ *
+ * ```typescript
+ * { data: UserProfile, status: 200, meta: {} }
+ * ```
+ *
+ * **Error responses** (envelope `{ data: null, status, error, meta }`)
+ *
+ * | Status | Code | When |
+ * |--------|------|------|
+ * | 400 | `VALIDATION_ERROR` | Body or params fail {@link updateUserProfileSchema} |
+ * | 401 | `AUTH_REQUIRED` | No session user present |
+ * | 401 | `USER_UNAUTHORIZED` | Path `userId` does not match session id |
+ * | 404 | `USER_NOT_FOUND` | No profile row for the target id |
+ * | 503 | `DB_ERROR` | Database update failed |
+ * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
+ *
+ * @example
+ * ```bash
+ * curl -X PATCH "http://localhost:4321/api/user/usr_abc" \
+ *   -H "Content-Type: application/json" \
+ *   -b cookies.txt \
+ *   -d '{"name":"Grace"}'
+ * ```
+ */
+export const PATCH: APIRoute = withZodValidation(updateUserProfileSchema)(
+  async ({ locals, validated }) => {
+    try {
+      const user = locals.user as User | null
+      const sessionId = requireAuthSession({ user })
+      const { userId: targetId } = validated.params
+      if (targetId !== sessionId) {
+        const { status, body } = mapErrorToHttp(
+          (await import('@shared/errors/auth-errors')).authForbidden({
+            targetId,
+          })
+        )
+        return new Response(
+          JSON.stringify({
+            data: null,
+            status,
+            code: body.code,
+            error: body.message ?? 'Unexpected error',
+            meta: body.meta ?? {},
+          }),
+          { status, headers: { 'Content-Type': 'application/json' } }
+        )
+      }
+
+      const profile = await userService.updateUserProfile({
+        userId: sessionId,
+        targetId,
+        input: validated,
+      })
+      const payload = { data: profile, status: 200, meta: {} }
+      return new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    } catch (error) {
+      const { status, body } = mapErrorToHttp(error)
+      return new Response(
+        JSON.stringify({
+          data: null,
+          status,
+          code: body.code,
+          error: body.message ?? 'Unexpected error',
+          meta: body.meta ?? {},
+        }),
+        { status, headers: { 'Content-Type': 'application/json' } }
+      )
     }
   }
 )
