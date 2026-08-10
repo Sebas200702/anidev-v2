@@ -22,4 +22,7 @@ export {
   userProfileSchema,
   userProfileResponseSchema,
   getUserProfileSchema,
+  profileIdentitySchema,
+  createUserProfileSchema,
+  updateUserProfileSchema,
 } from './user-schema'
