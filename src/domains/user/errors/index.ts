@@ -24,4 +24,5 @@ export {
   userNotFound,
   userInvalidId,
   userUnauthorized,
+  userProfileConflict,
 } from './user-not-found-error'

@@ -14,8 +14,7 @@ vi.mock('@config/env', () => ({
     DATABASE_URL: 'postgres://test:test@localhost:5432/test',
     REDIS_URL: 'redis://localhost:6379',
     APP_BASE_URL: 'http://localhost:4321',
-    BETTER_AUTH_SECRET:
-      'test-secret-test-secret-test-secret-test-secret',
+    BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-test-secret',
     SENTRY_DSN: undefined,
     LOG_LEVEL: 'silent',
   },
@@ -51,8 +50,15 @@ const buildContext = (
       body: overrides.body !== undefined ? JSON.stringify(overrides.body) : '',
     }),
     params: { userId: targetId },
-    locals: { user: overrides.user === undefined ? sessionUser : overrides.user },
+    locals: {
+      user: overrides.user === undefined ? sessionUser : overrides.user,
+    },
   }) as unknown as Parameters<typeof PATCH>[0]
+
+const callPatch = (context: Parameters<typeof PATCH>[0]) =>
+  (PATCH as unknown as (ctx: typeof context) => Response | Promise<Response>)(
+    context
+  )
 
 describe('PATCH /api/user/:userId', () => {
   beforeEach(() => {
@@ -61,29 +67,24 @@ describe('PATCH /api/user/:userId', () => {
   })
 
   it('rejects unauthenticated requests with 401', async () => {
-    const response = await PATCH(
+    const response = await callPatch(
       buildContext('session-1', {
         user: null,
         body: { name: 'Grace' },
-      }),
-      () => undefined
+      })
     )
     expect(response.status).toBe(401)
   })
 
   it('rejects an empty patch body with 400', async () => {
-    const response = await PATCH(
-      buildContext('session-1', { body: {} }),
-      () => undefined
-    )
+    const response = await callPatch(buildContext('session-1', { body: {} }))
     expect(response.status).toBe(400)
     expect(updateMock).not.toHaveBeenCalled()
   })
 
   it('rejects cross-user patches with 403', async () => {
-    const response = await PATCH(
-      buildContext('someone-else', { body: { name: 'X' } }),
-      () => undefined
+    const response = await callPatch(
+      buildContext('someone-else', { body: { name: 'X' } })
     )
     expect(response.status).toBe(403)
   })
@@ -97,9 +98,8 @@ describe('PATCH /api/user/:userId', () => {
       gender: 'female',
     })
 
-    const response = await PATCH(
-      buildContext('session-1', { body: { name: 'Grace' } }),
-      () => undefined
+    const response = await callPatch(
+      buildContext('session-1', { body: { name: 'Grace' } })
     )
 
     expect(response.status).toBe(200)
@@ -109,13 +109,14 @@ describe('PATCH /api/user/:userId', () => {
   })
 
   it('returns 404 when the target profile is missing', async () => {
-    const { UserNotFoundError } = await import('@user/errors/user-error-classes')
+    const { UserNotFoundError } = await import(
+      '@user/errors/user-error-classes'
+    )
     const { ErrorCodes } = await import('@shared/errors/codes')
     updateMock.mockRejectedValueOnce(new UserNotFoundError('session-1'))
 
-    const response = await PATCH(
-      buildContext('session-1', { body: { name: 'X' } }),
-      () => undefined
+    const response = await callPatch(
+      buildContext('session-1', { body: { name: 'X' } })
     )
 
     expect(response.status).toBe(404)

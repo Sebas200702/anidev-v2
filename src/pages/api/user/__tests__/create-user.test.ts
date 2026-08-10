@@ -14,8 +14,7 @@ vi.mock('@config/env', () => ({
     DATABASE_URL: 'postgres://test:test@localhost:5432/test',
     REDIS_URL: 'redis://localhost:6379',
     APP_BASE_URL: 'http://localhost:4321',
-    BETTER_AUTH_SECRET:
-      'test-secret-test-secret-test-secret-test-secret',
+    BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-test-secret',
     SENTRY_DSN: undefined,
     LOG_LEVEL: 'silent',
   },
@@ -40,15 +39,26 @@ import { POST } from '../index'
 
 const sessionUser = { id: 'session-1' }
 
-const buildContext = (overrides: Partial<{ user: unknown; body: unknown }> = {}) =>
+const buildContext = (
+  overrides: Partial<{ user: unknown; body: unknown }> = {}
+) =>
   ({
     request: new Request('http://localhost:4321/api/user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: overrides.body !== undefined ? JSON.stringify(overrides.body) : '',
     }),
-    locals: { user: overrides.user === undefined ? sessionUser : overrides.user },
+    locals: {
+      user: overrides.user === undefined ? sessionUser : overrides.user,
+    },
   }) as unknown as Parameters<typeof POST>[0]
+
+// `POST` is typed for Astro (`(context) => Response`); in tests we invoke it
+// directly with a single context argument.
+const callPost = (context: Parameters<typeof POST>[0]) =>
+  (POST as unknown as (ctx: typeof context) => Response | Promise<Response>)(
+    context
+  )
 
 describe('POST /api/user', () => {
   beforeEach(() => {
@@ -57,22 +67,18 @@ describe('POST /api/user', () => {
   })
 
   it('rejects unauthenticated requests with 401', async () => {
-    const response = await POST(
+    const response = await callPost(
       buildContext({
         user: null,
         body: { name: 'Ada', lastName: 'Lovelace', gender: 'female' },
-      }),
-      () => undefined
+      })
     )
     expect(response.status).toBe(401)
     expect(createMock).not.toHaveBeenCalled()
   })
 
   it('rejects invalid bodies with 400', async () => {
-    const response = await POST(
-      buildContext({ body: { name: 'Ada' } }),
-      () => undefined
-    )
+    const response = await callPost(buildContext({ body: { name: 'Ada' } }))
     expect(response.status).toBe(400)
     expect(createMock).not.toHaveBeenCalled()
   })
@@ -86,15 +92,14 @@ describe('POST /api/user', () => {
       gender: 'female',
     })
 
-    const response = await POST(
+    const response = await callPost(
       buildContext({
         body: {
           name: 'Ada',
           lastName: 'Lovelace',
           gender: 'female',
         },
-      }),
-      () => undefined
+      })
     )
 
     expect(response.status).toBe(201)
@@ -104,19 +109,20 @@ describe('POST /api/user', () => {
   })
 
   it('returns 409 when the user already has a profile', async () => {
-    const { UserProfileConflictError } = await import('@user/errors/user-error-classes')
+    const { UserProfileConflictError } = await import(
+      '@user/errors/user-error-classes'
+    )
     const { ErrorCodes } = await import('@shared/errors/codes')
     createMock.mockRejectedValueOnce(new UserProfileConflictError('session-1'))
 
-    const response = await POST(
+    const response = await callPost(
       buildContext({
         body: {
           name: 'Ada',
           lastName: 'Lovelace',
           gender: 'female',
         },
-      }),
-      () => undefined
+      })
     )
 
     expect(response.status).toBe(409)
