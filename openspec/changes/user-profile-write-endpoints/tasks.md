@@ -12,9 +12,9 @@
 
 ## 3. Repository writes (TDD)
 
-- [ ] 3.1 Write failing tests for create profile (insert + return row) and update profile (partial update + return row / undefined when missing), including `dbError` on failure
-- [ ] 3.2 Implement `createProfile` / `updateProfile` on `userRepository`; resolve `profile.id` / `userId` column strategy against live schema without drive-by full migrations unless insert is blocked
-- [ ] 3.3 Detect existing row on create (query or unique violation) so the service can surface conflict
+- [x] 3.1 Write failing tests for create profile (insert + return row) and update profile (partial update + return row / undefined when missing), including `dbError` on failure
+- [x] 3.2 Implement `createProfile` / `updateProfile` on `userRepository`; resolve `profile.id` / `userId` column strategy against live schema without drive-by full migrations unless insert is blocked
+- [x] 3.3 Detect existing row on create (query or unique violation) so the service can surface conflict
 
 ## 4. Service writes (TDD)
 
