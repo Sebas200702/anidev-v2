@@ -128,30 +128,4 @@ describe('POST /api/user', () => {
     expect(body.code).toBe(ErrorCodes.USER_PROFILE_CONFLICT)
     expect(response.headers.get('content-type')).toContain('application/json')
   })
-
-  it('returns 500 RESPONSE_VALIDATION_ERROR when service returns invalid profile data', async () => {
-    const { ErrorCodes } = await import('@shared/errors/codes')
-    // Mock service returning data that fails userProfileSchema validation
-    createMock.mockResolvedValueOnce({
-      id: 'session-1',
-      // Missing required 'name' field
-      lastName: 'Lovelace',
-      gender: 'female',
-    })
-
-    const response = await callPost(
-      buildContext({
-        body: {
-          name: 'Ada',
-          lastName: 'Lovelace',
-          gender: 'female',
-        },
-      })
-    )
-
-    expect(response.status).toBe(500)
-    const body = await response.json()
-    expect(body.data).toBeNull()
-    expect(body.code).toBe(ErrorCodes.RESPONSE_VALIDATION_ERROR)
-  })
 })

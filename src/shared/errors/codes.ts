@@ -40,8 +40,6 @@ export const ErrorCodes = {
 
   /** Zod or manual request validation failed — HTTP 400. */
   VALIDATION_ERROR: 'VALIDATION_ERROR',
-  /** Successful handler data failed response schema validation — HTTP 500. */
-  RESPONSE_VALIDATION_ERROR: 'RESPONSE_VALIDATION_ERROR',
 
   /** Database operation failed — HTTP 500, Sentry. */
   DB_ERROR: 'DB_ERROR',

@@ -34,19 +34,13 @@ import {
   jsonResponse,
   mergeResponseHeaders,
 } from '@shared/http/api-response-serialize-util'
-import type {
-  RouteHandler,
-  WithErrorHandlingOptions,
-} from './with-error-handling-types'
+import type { RouteHandler } from './with-error-handling-types'
 import { logger } from '@utils/logger-util'
-import { InfraError } from '@shared/errors/app-error'
-import { ErrorCodes } from '@shared/errors/codes'
 
 /**
  * Wraps an Astro API handler with standardized success and error JSON envelopes.
  *
  * @param handler - Route logic returning {@link HandlerResult}; may throw {@link BaseError} subclasses
- * @param options - Optional configuration including response schema validation
  * @returns Astro-compatible `APIRoute` that always resolves to a `Response` (never throws to the framework)
  *
  * @remarks
@@ -54,41 +48,22 @@ import { ErrorCodes } from '@shared/errors/codes'
  * All thrown values pass through {@link mapErrorToHttp}. Clients receive the envelope shape with
  * appropriate status (e.g. 404 for `ANIME_NOT_FOUND`, 500 for {@link InfraError} with generic message).
  *
- * **Response validation**
- * When `options.responseSchema` is provided, successful `result.data` is validated before serialization.
- * Invalid data results in a 500 `RESPONSE_VALIDATION_ERROR` response.
- *
  * @example
  * ```typescript
  * export const GET = withErrorHandling(async () => {
  *   const anime = await animeService.getById(1)
  *   return { data: anime, status: 200 }
- * }, { responseSchema: userProfileResponseSchema })
+ * })
  * ```
  *
  * @see {@link HandlerResult}
- * @see {@link WithErrorHandlingOptions}
  */
 export const withErrorHandling = <TContext extends APIContext>(
-  handler: RouteHandler<TContext>,
-  options?: WithErrorHandlingOptions
+  handler: RouteHandler<TContext>
 ): ((context: TContext) => Promise<Response>) => {
   return async (context: TContext) => {
     try {
       const result = await handler(context)
-
-      // Validate successful response data if schema provided
-      if (options?.responseSchema) {
-        const validation = options.responseSchema.safeParse(result.data)
-        if (!validation.success) {
-          throw new InfraError(
-            ErrorCodes.RESPONSE_VALIDATION_ERROR,
-            'Response validation failed',
-            { issues: validation.error.issues }
-          )
-        }
-      }
-
       const payload = createSuccessResponse(
         result.data,
         result.status ?? 200,

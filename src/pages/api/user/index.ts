@@ -23,7 +23,7 @@ import type { APIContext } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
 import { userService } from '@user/services/user'
-import { createUserProfileSchema, userProfileSchema } from '@user/schemas'
+import { createUserProfileSchema } from '@user/schemas'
 import { requireAuthSession } from '@auth/utils'
 import type { User } from '@lib/auth/server'
 
@@ -72,16 +72,13 @@ import type { User } from '@lib/auth/server'
  */
 export const POST: (context: APIContext) => Promise<Response> =
   withZodValidation(createUserProfileSchema)(
-    withErrorHandling(
-      async ({ locals, validated }) => {
-        const user = locals.user as User | null
-        const userId = requireAuthSession({ user })
-        const profile = await userService.createUserProfile({
-          userId,
-          input: validated,
-        })
-        return { data: profile, status: 201, meta: {} }
-      },
-      { responseSchema: userProfileSchema }
-    )
+    withErrorHandling(async ({ locals, validated }) => {
+      const user = locals.user as User | null
+      const userId = requireAuthSession({ user })
+      const profile = await userService.createUserProfile({
+        userId,
+        input: validated,
+      })
+      return { data: profile, status: 201, meta: {} }
+    })
   )

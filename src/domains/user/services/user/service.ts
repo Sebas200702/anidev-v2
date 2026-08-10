@@ -104,15 +104,16 @@ export const userService = {
       throw userUnauthorized(userId)
     }
 
-    const row = mapProfileIdentityToDb({ id: userId, input })
-    const result = await userRepository.createProfile(row)
-
-    if ('conflict' in result) {
+    const existing = await userRepository.getUserProfileById(userId)
+    if (existing) {
       throw userProfileConflict(userId)
     }
 
+    const row = mapProfileIdentityToDb({ id: userId, input })
+    const inserted = await userRepository.createProfile(row)
     await userProfileCache.invalidate(userId)
-    return mapUserProfile({ userProfile: result })
+
+    return mapUserProfile({ userProfile: inserted })
   },
 
   /**
