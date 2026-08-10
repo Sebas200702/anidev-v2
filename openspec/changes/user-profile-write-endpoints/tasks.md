@@ -1,14 +1,14 @@
 ## 1. Schemas and types
 
-- [ ] 1.1 Add Zod create/update request schemas for identity fields (create body; patch params + partial body with ≥1 field) and export from `@user/schemas`
-- [ ] 1.2 Add any service param types for create/update (actor id + payload) under the user service unit folder
+- [x] 1.1 Add Zod create/update request schemas for identity fields (create body; patch params + partial body with ≥1 field) and export from `@user/schemas`
+- [x] 1.2 Add any service param types for create/update (actor id + payload) under the user service unit folder
 
 ## 2. Mapper and cache (TDD)
 
 - [ ] 2.1 Write failing tests for reverse/identity persistence mapping (API identity fields → DB columns; empty list columns only if required on insert)
 - [ ] 2.2 Implement reverse/identity-to-DB mapping helpers co-located in the user mapper unit
-- [ ] 2.3 Write failing tests for `userProfileCache.invalidate` (or delete) by user id
-- [ ] 2.4 Implement cache invalidation using existing cache delete primitives
+- [x] 2.3 Write failing tests for `userProfileCache.invalidate` (or delete) by user id
+- [x] 2.4 Implement cache invalidation using existing cache delete primitives
 
 ## 3. Repository writes (TDD)
 
