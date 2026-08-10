@@ -31,5 +31,5 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Run `bun run format`, `bun run check`, `bun run check:types`, `bun run test`, `bun run build`
-- [ ] 6.2 Mark tasks complete; Conventional Commits per task group; release only when user requests PR/release per AGENTS.md
+- [x] 6.1 Run `bun run format`, `bun run check`, `bun run check:types`, `bun run test`, `bun run build`
+- [x] 6.2 Mark tasks complete; Conventional Commits per task group; release only when user requests PR/release per AGENTS.md
