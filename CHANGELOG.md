@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/Sebas200702/anidev-v2/compare/v0.3.0...v0.4.0) (2026-08-10)
+
+
+### Features
+
+* implement type-safe environment variable validation using Zod and update .env.local.example ([f4e3d38](https://github.com/Sebas200702/anidev-v2/commit/f4e3d38729c982ebc1cb5ebd53d91792983dd4db))
+* **user:** add identity reverse mappers for create and patch ([1a6bf61](https://github.com/Sebas200702/anidev-v2/commit/1a6bf61e0f8c67f82c9163d8f125a32f8ffbb778))
+* **user:** add POST /api/user and PATCH /api/user/:userId with auth gate ([3d665a1](https://github.com/Sebas200702/anidev-v2/commit/3d665a165e22e9080d85abc1d34d0d1877056d5e))
+* **user:** add profile repository create and update methods ([bdbcf64](https://github.com/Sebas200702/anidev-v2/commit/bdbcf6470094c8be031cf94287ff6a43b8b8a10b))
+* **user:** add profile write schemas and service param types ([e6b2de9](https://github.com/Sebas200702/anidev-v2/commit/e6b2de9b95a9a1626e3edd073d10665781cb0585))
+* **user:** add profile write service methods and conflict error ([feb5229](https://github.com/Sebas200702/anidev-v2/commit/feb522917d9c26745b999d4cb194fcfa67e3c03a))
+* **user:** add userProfileCache.invalidate for write paths ([c3c6e6f](https://github.com/Sebas200702/anidev-v2/commit/c3c6e6f3f8ef55a05aa59a8b0f3d94777c3fff68))
+
+
+### Bug Fixes
+
+* **user:** apply valid write-endpoint review findings ([4c1174a](https://github.com/Sebas200702/anidev-v2/commit/4c1174a62718097741835d73442be96362b48d51))
+
 ## [0.3.0](https://github.com/Sebas200702/anidev-v2/compare/v0.2.4...v0.3.0) (2026-08-09)
 
 
