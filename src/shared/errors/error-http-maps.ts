@@ -49,6 +49,18 @@ const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
 ])
 
 /**
+ * Domain error codes that map to **409 Conflict**.
+ *
+ * @remarks
+ * Any other {@link DomainError} code maps to **400 Bad Request**.
+ *
+ * @internal
+ */
+const CONFLICT_DOMAIN_CODES = new Set<ErrorCode>([
+  ErrorCodes.USER_PROFILE_CONFLICT,
+])
+
+/**
  * Builds the standard HTTP error body from a {@link BaseError} instance.
  *
  * @param error - Application error with `code`, `message`, and optional `details`
@@ -117,6 +129,14 @@ export const mapDomainErrorToHttp = (error: DomainError): HttpErrorResponse => {
     logger.warn({ err: error }, 'Domain error - not found')
     return {
       status: 404,
+      body: buildAppErrorBody(error),
+    }
+  }
+
+  if (CONFLICT_DOMAIN_CODES.has(error.code)) {
+    logger.warn({ err: error }, 'Domain error - conflict')
+    return {
+      status: 409,
       body: buildAppErrorBody(error),
     }
   }

@@ -23,3 +23,8 @@ export {
   userProfileResponseSchema,
   getUserProfileSchema,
 } from './user-schema'
+export {
+  profileIdentitySchema,
+  createUserProfileSchema,
+  updateUserProfileSchema,
+} from './user-profile-write-schema'

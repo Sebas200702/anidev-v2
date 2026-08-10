@@ -18,7 +18,7 @@
  * }
  * ```
  */
-import { cacheGet, cacheSet } from '@lib/cache'
+import { cacheDel, cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 import type { UserProfile } from '@user/types/user-types'
 
@@ -94,5 +94,26 @@ export const userProfileCache = {
     return cacheSet<UserProfile>(this.key(userId), value, {
       ttlSeconds: CacheTtl.Medium,
     })
+  },
+
+  /**
+   * Removes any cached entry for the given user id.
+   *
+   * @param userId - Target user identifier
+   * @returns Resolves when the underlying delete completes
+   * @throws May propagate underlying cache client errors from {@link cacheDel}
+   * @remarks
+   * Called from write paths (create/update) so subsequent reads do not
+   * return pre-write snapshots. Best-effort — callers should not fail
+   * a successful write when invalidation errors.
+   * @see {@link userProfileCache.key}
+   * @example
+   * ```typescript
+   * await userService.updateUserProfile({ ... })
+   * await userProfileCache.invalidate(targetId)
+   * ```
+   */
+  async invalidate(userId: string) {
+    return cacheDel(this.key(userId))
   },
 }

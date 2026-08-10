@@ -13,7 +13,7 @@
  * @see {@link module:lib/db/schemas/auth-schema.user} for auth user root
  * @see {@link module:lib/cache/config.CacheKeyPrefix.UserProfile} for profile cache keys
  */
-import { integer, text, pgTable } from 'drizzle-orm/pg-core'
+import { text, pgTable } from 'drizzle-orm/pg-core'
 import { user } from '@db/schemas/auth-schema'
 
 /**
@@ -31,7 +31,7 @@ import { user } from '@db/schemas/auth-schema'
  */
 export const profile = pgTable('profile', {
   id: text('id').primaryKey().notNull(),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
   avatar: text('avatar'),

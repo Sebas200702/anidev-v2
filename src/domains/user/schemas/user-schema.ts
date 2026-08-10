@@ -92,7 +92,7 @@ export const userProfileResponseSchema =
  * Validates route parameters for user profile requests.
  *
  * @returns A Zod object schema for `{ params: { userId }, query?, body? }`
- * @throws {ZodError} When validation runs and `params.userId` cannot be coerced to string
+ * @throws {ZodError} When validation runs and `userId` cannot be coerced to string
  * @remarks
  * Used by profile GET routes. Coerces `userId` from route params to string.
  * Query defaults to `{}`; body is accepted as unknown for middleware compatibility.
