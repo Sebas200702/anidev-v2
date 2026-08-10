@@ -121,4 +121,25 @@ describe('PATCH /api/user/:userId', () => {
     const body = await response.json()
     expect(body.code).toBe(ErrorCodes.USER_NOT_FOUND)
   })
+
+  it('returns 500 RESPONSE_VALIDATION_ERROR when service returns invalid profile data', async () => {
+    const { ErrorCodes } = await import('@shared/errors/codes')
+    // Mock service returning data that fails userProfileSchema validation
+    updateMock.mockResolvedValueOnce({
+      id: 'session-1',
+      avatar: '/placeholder.webp',
+      // Missing required 'lastName' field
+      name: 'Grace',
+      gender: 'female',
+    })
+
+    const response = await callPatch(
+      buildContext('session-1', { body: { name: 'Grace' } })
+    )
+
+    expect(response.status).toBe(500)
+    const body = await response.json()
+    expect(body.data).toBeNull()
+    expect(body.code).toBe(ErrorCodes.RESPONSE_VALIDATION_ERROR)
+  })
 })

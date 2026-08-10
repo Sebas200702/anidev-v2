@@ -10,6 +10,7 @@
  */
 
 import type { APIContext } from 'astro'
+import type { z } from 'zod'
 
 /**
  * Value returned by a route handler before envelope serialization.
@@ -31,3 +32,11 @@ export interface HandlerResult {
 export type RouteHandler<TContext extends APIContext = APIContext> = (
   context: TContext
 ) => Promise<HandlerResult> | HandlerResult
+
+/**
+ * Configuration options for {@link withErrorHandling}.
+ */
+export interface WithErrorHandlingOptions {
+  /** Optional Zod schema to validate successful `result.data` before serialization. */
+  responseSchema?: z.ZodTypeAny
+}

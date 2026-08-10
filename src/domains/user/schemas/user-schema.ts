@@ -124,13 +124,15 @@ export const getUserProfileSchema = z.object({
  * @see {@link createUserProfileSchema}
  * @see {@link updateUserProfileSchema}
  */
-export const profileIdentitySchema = z.object({
-  name: z.string().min(1),
-  lastName: z.string().min(1),
-  avatar: z.url().optional(),
-  birthday: z.string().optional(),
-  gender: z.enum(['male', 'female', 'other']),
-})
+export const profileIdentitySchema = z
+  .object({
+    name: z.string().min(1),
+    lastName: z.string().min(1),
+    avatar: z.url().optional(),
+    birthday: z.string().optional(),
+    gender: z.enum(['male', 'female', 'other']),
+  })
+  .strict()
 
 /**
  * Validates the body for `POST /api/user` profile creation.
@@ -143,11 +145,13 @@ export const profileIdentitySchema = z.object({
  * @see {@link profileIdentitySchema}
  * @see {@link userService.createUserProfile}
  */
-export const createUserProfileSchema = z.object({
-  body: profileIdentitySchema,
-  params: z.object({}).optional().default({}),
-  query: z.object({}).optional().default({}),
-})
+export const createUserProfileSchema = z
+  .object({
+    body: profileIdentitySchema,
+    params: z.object({}).strict().optional().default({}),
+    query: z.object({}).strict().optional().default({}),
+  })
+  .strict()
 
 /**
  * Validates the request for `PATCH /api/user/:userId` partial updates.
@@ -160,14 +164,18 @@ export const createUserProfileSchema = z.object({
  * @see {@link profileIdentitySchema}
  * @see {@link userService.updateUserProfile}
  */
-export const updateUserProfileSchema = z.object({
-  params: z.object({
-    userId: z.coerce.string(),
-  }),
-  body: profileIdentitySchema
-    .partial()
-    .refine((value) => Object.keys(value).length > 0, {
-      message: 'At least one identity field is required',
-    }),
-  query: z.object({}).optional().default({}),
-})
+export const updateUserProfileSchema = z
+  .object({
+    params: z
+      .object({
+        userId: z.coerce.string(),
+      })
+      .strict(),
+    body: profileIdentitySchema
+      .partial()
+      .refine((value) => Object.keys(value).length > 0, {
+        message: 'At least one identity field is required',
+      }),
+    query: z.object({}).strict().optional().default({}),
+  })
+  .strict()

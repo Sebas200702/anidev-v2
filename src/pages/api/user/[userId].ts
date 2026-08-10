@@ -24,7 +24,11 @@ import type { APIContext, APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
 import { userService } from '@user/services/user'
-import { getUserProfileSchema, updateUserProfileSchema } from '@user/schemas'
+import {
+  getUserProfileSchema,
+  updateUserProfileSchema,
+  userProfileSchema,
+} from '@user/schemas'
 import { requireAuthSession } from '@auth/utils'
 import { authForbidden } from '@shared/errors/auth-errors'
 import type { User } from '@lib/auth/server'
@@ -93,73 +97,43 @@ import type { User } from '@lib/auth/server'
  * ```
  */
 export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
-  withErrorHandling(async ({ locals, validated }) => {
-    const { userId: targetId } = validated.params
-    const { user } = locals
-    const userProfile = await userService.getUserProfile({
-      userId: user?.id ?? 'anonymous',
-      targetId,
-    })
-    return { data: userProfile, status: 200, meta: {} }
-  })
+  withErrorHandling(
+    async ({ locals, validated }) => {
+      const { userId: targetId } = validated.params
+      const { user } = locals
+      const userProfile = await userService.getUserProfile({
+        userId: user?.id ?? 'anonymous',
+        targetId,
+      })
+      return { data: userProfile, status: 200, meta: {} }
+    },
+    { responseSchema: userProfileSchema }
+  )
 )
 
 /**
  * Applies a partial identity update to the profile for the given `userId`.
  *
- * @remarks
- * **Request**
- *
- * | Source | Field | Type | Required | Description |
- * |--------|-------|------|----------|-------------|
- * | Params | `userId` | `string` | Yes | Target user (must equal session id) |
- * | Body | `name` | `string` | No | Given name |
- * | Body | `lastName` | `string` | No | Family name |
- * | Body | `avatar` | URL `string` | No | Profile image URL |
- * | Body | `birthday` | `string` | No | ISO or display date string |
- * | Body | `gender` | `'male' \| 'female' \| 'other'` | No | Gender identity |
- *
- * **Success response — `200 OK`**
- *
- * ```typescript
- * { data: UserProfile, status: 200, meta: {} }
- * ```
- *
- * **Error responses** (envelope `{ data: null, status, error, code, meta }`)
- *
- * | Status | Code | When |
- * |--------|------|------|
- * | 400 | `VALIDATION_ERROR` | Body or params fail {@link updateUserProfileSchema} |
- * | 401 | `AUTH_REQUIRED` | No session user present |
- * | 403 | `AUTH_FORBIDDEN` | Path `userId` does not match session id |
- * | 400 | `USER_UNAUTHORIZED` | Policy denies edit for the actor |
- * | 404 | `USER_NOT_FOUND` | No profile row for the target id |
- * | 503 | `DB_ERROR` | Database update failed |
- * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
- *
- * @example
- * ```bash
- * curl -X PATCH "http://localhost:4321/api/user/usr_abc" \
- *   -H "Content-Type: application/json" \
- *   -b cookies.txt \
- *   -d '{"name":"Grace"}'
- * ```
+ * @see {@link file://./docs/patch-profile.md} for detailed request/response documentation
  */
 export const PATCH: (context: APIContext) => Promise<Response> =
   withZodValidation(updateUserProfileSchema)(
-    withErrorHandling(async ({ locals, validated }) => {
-      const user = locals.user as User | null
-      const sessionId = requireAuthSession({ user })
-      const { userId: targetId } = validated.params
-      if (targetId !== sessionId) {
-        throw authForbidden({ targetId, sessionId })
-      }
+    withErrorHandling(
+      async ({ locals, validated }) => {
+        const user = locals.user as User | null
+        const sessionId = requireAuthSession({ user })
+        const { userId: targetId } = validated.params
+        if (targetId !== sessionId) {
+          throw authForbidden({ targetId, sessionId })
+        }
 
-      const profile = await userService.updateUserProfile({
-        userId: sessionId,
-        targetId,
-        input: validated,
-      })
-      return { data: profile, status: 200, meta: {} }
-    })
+        const profile = await userService.updateUserProfile({
+          userId: sessionId,
+          targetId,
+          input: validated,
+        })
+        return { data: profile, status: 200, meta: {} }
+      },
+      { responseSchema: userProfileSchema }
+    )
   )

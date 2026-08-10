@@ -57,29 +57,39 @@ export const userRepository = {
   },
 
   /**
-   * Inserts a profile row and returns the persisted record.
+   * Inserts a profile row and returns the persisted record or conflict signal.
    *
    * @param values - {@link NewUserProfileDB} row built by the reverse mapper
-   * @returns Inserted {@link UserProfileDB} row
-   * @throws {DbError} When the database insert fails (e.g. duplicate id, FK violation)
+   * @returns Inserted {@link UserProfileDB} row, or `{ conflict: true }` when `id` already exists
+   * @throws {DbError} When the database insert fails due to non-conflict errors
    * @remarks
-   * Conflict detection (duplicate id) is handled in the service layer by
-   * calling {@link userRepository.getUserProfileById} first. A unique
-   * violation thrown here is also caught and re-thrown via {@link dbError}.
+   * Duplicate `id` is detected atomically via the unique constraint violation (PostgreSQL error 23505).
+   * The service layer maps `{ conflict: true }` to {@link userProfileConflict}, preserving
+   * conflict signaling without needing a prior `getUserProfileById` check.
    * @see {@link mapProfileIdentityToDb}
    * @see {@link userService.createUserProfile}
    * @example
    * ```typescript
-   * const row = await userRepository.createProfile({
-   *   id: sessionId, userId: sessionId, name: 'Ada', lastName: 'Lovelace', gender: 'female',
-   * })
+   * const result = await userRepository.createProfile({ id: sessionId, ... })
+   * if ('conflict' in result) throw userProfileConflict(sessionId)
    * ```
    */
-  async createProfile(values: NewUserProfileDB): Promise<UserProfileDB> {
+  async createProfile(
+    values: NewUserProfileDB
+  ): Promise<UserProfileDB | { conflict: true }> {
     try {
       const [row] = await db.insert(profile).values(values).returning()
       return row
     } catch (error) {
+      // Detect PostgreSQL unique constraint violation (23505) for profile.id
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === '23505'
+      ) {
+        return { conflict: true }
+      }
       throw dbError('[CREATE_USER_PROFILE]', { id: values.id }, error)
     }
   },
