@@ -54,6 +54,8 @@ export const ErrorCodes = {
   USER_INVALID_ID: 'USER_INVALID_ID',
   /** User not authorized for resource — HTTP 400 (domain) unless wrapped as {@link AuthError}. */
   USER_UNAUTHORIZED: 'USER_UNAUTHORIZED',
+  /** User profile already exists for the actor — HTTP 409. */
+  USER_PROFILE_CONFLICT: 'USER_PROFILE_CONFLICT',
 
   /** Character referenced by anime join table does not exist — HTTP 400. */
   ANIME_CHARACTER_NOT_FOUND: 'ANIME_CHARACTER_NOT_FOUND',

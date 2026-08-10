@@ -18,9 +18,9 @@
 
 ## 4. Service writes (TDD)
 
-- [ ] 4.1 Write failing tests for `createUserProfile` / `updateUserProfile`: authz via `canEditUserProfile`, not-found, conflict, happy path, cache invalidate after success
-- [ ] 4.2 Implement service methods: session actor ownership, policy gate, repo, map to `UserProfile`, invalidate cache, return mapped profile
-- [ ] 4.3 Add conflict error factory/class + `ErrorCodes` + HTTP mapping if 409/conflict is not already supported
+- [x] 4.1 Write failing tests for `createUserProfile` / `updateUserProfile`: authz via `canEditUserProfile`, not-found, conflict, happy path, cache invalidate after success
+- [x] 4.2 Implement service methods: session actor ownership, policy gate, repo, map to `UserProfile`, invalidate cache, return mapped profile
+- [x] 4.3 Add conflict error factory/class + `ErrorCodes` + HTTP mapping if 409/conflict is not already supported
 
 ## 5. API routes (TDD)
 

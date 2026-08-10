@@ -18,6 +18,7 @@ export {
   UserNotFoundError,
   UserInvalidIdError,
   UserUnauthorizedError,
+  UserProfileConflictError,
 } from './user-error-classes'
 export {
   userNotFound,

@@ -10,12 +10,13 @@
 import {
   UserInvalidIdError,
   UserNotFoundError,
+  UserProfileConflictError,
   UserUnauthorizedError,
 } from '@user/errors/user-error-classes'
 
-// UserNotFoundError, UserInvalidIdError, and UserUnauthorizedError are
-// re-exported via the barrel at `@user/errors`. Import them from there
-// or from `@user/errors/user-error-classes` directly.
+// UserNotFoundError, UserInvalidIdError, UserUnauthorizedError, and
+// UserProfileConflictError are re-exported via the barrel at `@user/errors`.
+// Import them from there or from `@user/errors/user-error-classes` directly.
 
 /**
  * Creates a {@link UserNotFoundError} for the given user identifier.
@@ -71,4 +72,21 @@ export const userInvalidId = (rawId: unknown) => {
  */
 export const userUnauthorized = (userId: string) => {
   return new UserUnauthorizedError(userId)
+}
+
+/**
+ * Creates a {@link UserProfileConflictError} for a duplicate profile write.
+ *
+ * @param userId - User identifier for which a profile already exists
+ * @returns A {@link UserProfileConflictError} ready to be thrown
+ * @remarks
+ * Maps to HTTP 409 via {@link mapErrorToHttp}.
+ * @see {@link UserProfileConflictError}
+ * @example
+ * ```typescript
+ * if (existing) throw userProfileConflict(userId)
+ * ```
+ */
+export const userProfileConflict = (userId: string) => {
+  return new UserProfileConflictError(userId)
 }

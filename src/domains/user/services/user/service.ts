@@ -1,63 +1,59 @@
 /**
- * Application service for user profile reads.
+ * Application service for user profile reads and writes.
  *
  * @module domains/user/services/user/service
  * @remarks
  * Coordinates authorization ({@link userPolicies}), persistence
  * ({@link userRepository}), mapping ({@link mapUserProfile}), and
- * read-through caching ({@link userProfileCache}) for profile retrieval.
+ * read-through caching ({@link userProfileCache}) for profile retrieval
+ * plus owner-only create/update on the write path.
  *
- * **Cache flow for `getUserProfile`**
+ * **Read flow** (see {@link userService.getUserProfile})
+ * 1. Cache lookup via {@link withCache} for `targetId`.
+ * 2. On miss: authorize (`canViewUserProfile`), load, map, store.
  *
- * 1. Build cache key via {@link userProfileCache.key} for `targetId`.
- * 2. Attempt read-through lookup with {@link withCache}:
- *    - **Hit:** Return cached {@link UserProfile} immediately (skips auth, DB, and mapper).
- *    - **Miss:** Run the `compute` pipeline below, then store via {@link userProfileCache.set}.
- * 3. **Authorize:** {@link userPolicies.canViewUserProfile} — currently always passes.
- * 4. **Load:** {@link userRepository.getUserProfileById} fetches the profile row.
- * 5. **Map:** {@link mapUserProfile} converts the DB row to API shape.
- * 6. **Store:** Persist mapped profile in cache with medium TTL.
+ * **Write flow** (create/update)
+ * 1. Authorize ownership via `canEditUserProfile` against the session actor.
+ * 2. Detect conflict (create) or not-found (update) using the repository.
+ * 3. Persist via the repository with reverse-mapped identity columns.
+ * 4. Invalidate the cached profile so subsequent reads are fresh.
+ * 5. Map the returned row to the public {@link UserProfile} shape.
  *
- * @see {@link userPolicies} for authorization rules
- * @see {@link userProfileCache} for cache key and TTL configuration
- * @see {@link withCache} for the read-through cache helper
+ * @see {@link userPolicies}
+ * @see {@link userRepository}
+ * @see {@link userProfileCache}
  */
-import { mapUserProfile } from '@user/mappers/user'
+import {
+  mapProfileIdentityPatchToDb,
+  mapProfileIdentityToDb,
+  mapUserProfile,
+} from '@user/mappers/user'
 import { userRepository } from '@user/repositories/user'
 import { userPolicies } from '@user/policies/user'
 import { withCache } from '@lib/cache'
 import { userProfileCache } from '@user/cache'
-import { userNotFound, userUnauthorized } from '@user/errors'
-import type { GetUserProfileParams } from './types'
+import {
+  userNotFound,
+  userProfileConflict,
+  userUnauthorized,
+} from '@user/errors'
+import type {
+  CreateUserProfileParams,
+  GetUserProfileParams,
+  UpdateUserProfileParams,
+} from './types'
 
 /**
  * Coordinates authorization, persistence, mapping, and caching for profiles.
  *
- * @remarks
- * Single entry point for loading user profiles in route handlers and other
- * domains. All side effects (cache, database) are encapsulated here.
  * @see {@link GetUserProfileParams}
+ * @see {@link CreateUserProfileParams}
+ * @see {@link UpdateUserProfileParams}
  */
 export const userService = {
   /**
    * Loads a user profile when the caller is allowed to view it.
    *
-   * @param params - Actor (`userId`) and target (`targetId`) identifiers
-   * @returns Cached or freshly loaded {@link UserProfile}
-   * @throws {UserUnauthorizedError} When {@link userPolicies.canViewUserProfile} returns `false`
-   * @throws {UserNotFoundError} When no profile row exists for `targetId`
-   * @throws {DbError} When the underlying database query fails (from {@link userRepository.getUserProfileById})
-   * @remarks
-   * **Authorization:** Evaluates {@link userPolicies.canViewUserProfile} inside
-   * the cache `compute` callback on cache miss. Profiles are currently public,
-   * so this check always succeeds.
-   *
-   * **Caching:** Uses {@link withCache} with {@link userProfileCache}. Cache hits
-   * bypass authorization and database access. On miss, the mapped profile is
-   * written back with {@link CacheTtl.Medium}.
-   *
-   * **Mapping:** CSV-encoded DB columns (favorites, watched lists) are parsed
-   * into number arrays by {@link mapUserProfile}.
    * @see {@link userProfileCache.key}
    * @see {@link mapUserProfile}
    * @example
@@ -66,8 +62,6 @@ export const userService = {
    *   userId: session.userId,
    *   targetId: params.userId,
    * })
-   *
-   * console.log(profile.name, profile.preferences?.favoriteAnimes)
    * ```
    */
   async getUserProfile({ userId, targetId }: GetUserProfileParams) {
@@ -92,5 +86,63 @@ export const userService = {
         })
       },
     })
+  },
+
+  /**
+   * Creates a profile for the authenticated actor and invalidates cache.
+   *
+   * @param params - Session user id and validated create input
+   * @returns Mapped {@link UserProfile} for the new row
+   * @throws {UserUnauthorizedError} When the actor cannot edit the target
+   * @throws {UserProfileConflictError} When a profile already exists for the actor
+   * @throws {DbError} When the database insert fails
+   * @see {@link mapProfileIdentityToDb}
+   * @see {@link userProfileCache.invalidate}
+   */
+  async createUserProfile({ userId, input }: CreateUserProfileParams) {
+    if (!userPolicies.canEditUserProfile({ userId, targetId: userId })) {
+      throw userUnauthorized(userId)
+    }
+
+    const existing = await userRepository.getUserProfileById(userId)
+    if (existing) {
+      throw userProfileConflict(userId)
+    }
+
+    const row = mapProfileIdentityToDb({ id: userId, input })
+    const inserted = await userRepository.createProfile(row)
+    await userProfileCache.invalidate(userId)
+
+    return mapUserProfile({ userProfile: inserted })
+  },
+
+  /**
+   * Applies a partial identity update for the authenticated actor and busts cache.
+   *
+   * @param params - Session user id, target id, validated patch input
+   * @returns Mapped {@link UserProfile} for the updated row
+   * @throws {UserUnauthorizedError} When the actor cannot edit the target
+   * @throws {UserNotFoundError} When no profile row matches the target
+   * @throws {DbError} When the database update fails
+   * @see {@link mapProfileIdentityPatchToDb}
+   * @see {@link userProfileCache.invalidate}
+   */
+  async updateUserProfile({
+    userId,
+    targetId,
+    input,
+  }: UpdateUserProfileParams) {
+    if (!userPolicies.canEditUserProfile({ userId, targetId })) {
+      throw userUnauthorized(targetId)
+    }
+
+    const patch = mapProfileIdentityPatchToDb(input)
+    const updated = await userRepository.updateProfile(targetId, patch)
+    if (!updated) {
+      throw userNotFound(targetId)
+    }
+
+    await userProfileCache.invalidate(targetId)
+    return mapUserProfile({ userProfile: updated })
   },
 }

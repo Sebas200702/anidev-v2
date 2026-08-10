@@ -51,6 +51,34 @@ export class UserNotFoundError extends DomainError {
 }
 
 /**
+ * Thrown when a profile write collides with an existing row (e.g. duplicate create).
+ *
+ * @remarks
+ * Maps to HTTP 409 via {@link mapErrorToHttp} under the
+ * {@link ErrorCodes.USER_PROFILE_CONFLICT} code, distinct from
+ * {@link UserNotFoundError}.
+ * @see {@link userProfileConflict} for the factory helper
+ * @see {@link userService.createUserProfile}
+ */
+export class UserProfileConflictError extends DomainError {
+  /**
+   * Creates a conflict error for a duplicate profile write.
+   *
+   * @param id - User identifier for which a profile already exists
+   * @returns A configured {@link UserProfileConflictError} instance
+   * @example
+   * ```typescript
+   * throw new UserProfileConflictError('550e8400-e29b-41d4-a716-446655440000')
+   * ```
+   */
+  constructor(id: string) {
+    super(ErrorCodes.USER_PROFILE_CONFLICT, 'User profile already exists', {
+      id,
+    })
+  }
+}
+
+/**
  * Thrown when a route or query parameter is not a valid user identifier.
  *
  * @remarks
