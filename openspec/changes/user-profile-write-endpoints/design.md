@@ -42,7 +42,7 @@ See `proposal.md` — Why. Today:
 
 ### 3. Layering (same vertical slice as reads)
 
-```
+```text
 Route (Zod + error map) → userService.create|update → policy → repository → map → invalidate cache → return UserProfile
 ```
 

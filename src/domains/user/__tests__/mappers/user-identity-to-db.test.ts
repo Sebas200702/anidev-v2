@@ -10,7 +10,10 @@
  */
 import { describe, expect, it } from 'vitest'
 
-import { mapProfileIdentityToDb } from '@user/mappers/user'
+import {
+  mapProfileIdentityPatchToDb,
+  mapProfileIdentityToDb,
+} from '@user/mappers/user-identity'
 
 describe('mapProfileIdentityToDb', () => {
   it('maps required identity fields to DB columns for create', () => {
@@ -63,5 +66,40 @@ describe('mapProfileIdentityToDb', () => {
 
     expect(result.avatar).toBe('https://cdn.example.com/ada.png')
     expect(result.birthday).toBe('1815-12-10')
+  })
+})
+
+describe('mapProfileIdentityPatchToDb', () => {
+  it('includes only the identity fields supplied in the input', () => {
+    const result = mapProfileIdentityPatchToDb({
+      body: { name: 'Grace' },
+      params: { userId: 'session-user-123' },
+      query: {},
+    })
+
+    expect(result).toEqual({ name: 'Grace' })
+    expect(Object.keys(result)).toEqual(['name'])
+  })
+
+  it('maps every provided identity field into the patch', () => {
+    const result = mapProfileIdentityPatchToDb({
+      body: {
+        name: 'Grace',
+        lastName: 'Hopper',
+        avatar: 'https://cdn.example.com/grace.png',
+        birthday: '1906-12-09',
+        gender: 'female',
+      },
+      params: { userId: 'session-user-123' },
+      query: {},
+    })
+
+    expect(result).toEqual({
+      name: 'Grace',
+      lastName: 'Hopper',
+      avatar: 'https://cdn.example.com/grace.png',
+      birthday: '1906-12-09',
+      gender: 'female',
+    })
   })
 })

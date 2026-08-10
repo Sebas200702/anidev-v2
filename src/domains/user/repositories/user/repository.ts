@@ -60,12 +60,17 @@ export const userRepository = {
    * Inserts a profile row and returns the persisted record.
    *
    * @param values - {@link NewUserProfileDB} row built by the reverse mapper
-   * @returns Inserted {@link UserProfileDB} row
-   * @throws {DbError} When the database insert fails (e.g. duplicate id, FK violation)
+   * @returns Inserted {@link UserProfileDB} row, or `undefined` when a row with
+   *   the same `profile.id` already exists (duplicate — no insert performed)
+   * @throws {DbError} When the database insert fails for any reason other than
+   *   the primary-key conflict (e.g. FK violation, connection loss)
    * @remarks
-   * Conflict detection (duplicate id) is handled in the service layer by
-   * calling {@link userRepository.getUserProfileById} first. A unique
-   * violation thrown here is also caught and re-thrown via {@link dbError}.
+   * Conflict handling is atomic and database-backed: the insert uses
+   * `ON CONFLICT (profile.id) DO NOTHING`, so a duplicate id yields an empty
+   * `returning()` and the method returns `undefined` instead of racing a
+   * separate existence check. The service layer maps that `undefined` to
+   * {@link userProfileConflict}; genuine DB failures still surface via
+   * {@link dbError}.
    * @see {@link mapProfileIdentityToDb}
    * @see {@link userService.createUserProfile}
    * @example
@@ -73,11 +78,18 @@ export const userRepository = {
    * const row = await userRepository.createProfile({
    *   id: sessionId, userId: sessionId, name: 'Ada', lastName: 'Lovelace', gender: 'female',
    * })
+   * if (!row) throw userProfileConflict(sessionId)
    * ```
    */
-  async createProfile(values: NewUserProfileDB): Promise<UserProfileDB> {
+  async createProfile(
+    values: NewUserProfileDB
+  ): Promise<UserProfileDB | undefined> {
     try {
-      const [row] = await db.insert(profile).values(values).returning()
+      const [row] = await db
+        .insert(profile)
+        .values(values)
+        .onConflictDoNothing({ target: profile.id })
+        .returning()
       return row
     } catch (error) {
       throw dbError('[CREATE_USER_PROFILE]', { id: values.id }, error)

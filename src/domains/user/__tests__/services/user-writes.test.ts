@@ -50,6 +50,7 @@ vi.mock('@user/policies/user', () => ({
 }))
 
 import { userService } from '@user/services/user'
+import { ErrorCodes } from '@shared/errors/codes'
 
 const sessionId = 'user-1'
 
@@ -88,24 +89,26 @@ const reset = () => {
 describe('userService.createUserProfile', () => {
   beforeEach(reset)
 
-  it('throws when policy denies edit', async () => {
+  it('throws USER_UNAUTHORIZED when policy denies edit', async () => {
     canEditMock.mockReturnValue(false)
     await expect(
       userService.createUserProfile({ userId: sessionId, input: validInput })
-    ).rejects.toBeInstanceOf(Error)
-  })
-
-  it('throws conflict when a profile already exists for the actor', async () => {
-    getByIdMock.mockResolvedValueOnce(persistedRow)
-
-    await expect(
-      userService.createUserProfile({ userId: sessionId, input: validInput })
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toMatchObject({ code: ErrorCodes.USER_UNAUTHORIZED })
     expect(createMock).not.toHaveBeenCalled()
   })
 
+  it('throws USER_PROFILE_CONFLICT when the insert hits an existing profile', async () => {
+    // Atomic insert reports the duplicate by returning no row.
+    createMock.mockResolvedValueOnce(undefined)
+
+    await expect(
+      userService.createUserProfile({ userId: sessionId, input: validInput })
+    ).rejects.toMatchObject({ code: ErrorCodes.USER_PROFILE_CONFLICT })
+    expect(createMock).toHaveBeenCalledTimes(1)
+    expect(invalidateMock).not.toHaveBeenCalled()
+  })
+
   it('inserts, maps, invalidates the cache and returns the mapped profile', async () => {
-    getByIdMock.mockResolvedValueOnce(undefined)
     createMock.mockResolvedValueOnce(persistedRow)
     invalidateMock.mockResolvedValueOnce(undefined)
 
@@ -124,7 +127,7 @@ describe('userService.createUserProfile', () => {
 describe('userService.updateUserProfile', () => {
   beforeEach(reset)
 
-  it('throws not-found when no profile exists for the target', async () => {
+  it('throws USER_NOT_FOUND when no profile exists for the target', async () => {
     updateMock.mockResolvedValueOnce(undefined)
     await expect(
       userService.updateUserProfile({
@@ -136,7 +139,7 @@ describe('userService.updateUserProfile', () => {
           query: {},
         },
       })
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toMatchObject({ code: ErrorCodes.USER_NOT_FOUND })
   })
 
   it('applies patch, invalidates cache and returns mapped profile', async () => {
