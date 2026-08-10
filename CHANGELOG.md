@@ -15,6 +15,11 @@ All notable changes to this project will be documented in this file. See [standa
 * **user:** add profile write service methods and conflict error ([feb5229](https://github.com/Sebas200702/anidev-v2/commit/feb522917d9c26745b999d4cb194fcfa67e3c03a))
 * **user:** add userProfileCache.invalidate for write paths ([c3c6e6f](https://github.com/Sebas200702/anidev-v2/commit/c3c6e6f3f8ef55a05aa59a8b0f3d94777c3fff68))
 
+
+### Bug Fixes
+
+* **user:** apply valid write-endpoint review findings ([4c1174a](https://github.com/Sebas200702/anidev-v2/commit/4c1174a62718097741835d73442be96362b48d51))
+
 ## [0.3.0](https://github.com/Sebas200702/anidev-v2/compare/v0.2.4...v0.3.0) (2026-08-09)
 
 
