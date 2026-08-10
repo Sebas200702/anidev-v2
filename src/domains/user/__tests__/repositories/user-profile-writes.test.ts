@@ -66,7 +66,12 @@ describe('userRepository.createProfile', () => {
   it('inserts a profile row and returns it', async () => {
     const insertedRow = { id: 'user-1', name: 'Ada', lastName: 'Lovelace' }
     const returningMock = vi.fn().mockResolvedValueOnce([insertedRow])
-    const valuesMock = vi.fn().mockReturnValueOnce({ returning: returningMock })
+    const onConflictMock = vi
+      .fn()
+      .mockReturnValueOnce({ returning: returningMock })
+    const valuesMock = vi
+      .fn()
+      .mockReturnValueOnce({ onConflictDoNothing: onConflictMock })
     insertMock.mockReturnValueOnce({ values: valuesMock })
 
     const { userRepository } = await import('@user/repositories/user')
@@ -85,7 +90,30 @@ describe('userRepository.createProfile', () => {
       name: 'Ada',
       lastName: 'Lovelace',
     })
+    expect(onConflictMock).toHaveBeenCalledTimes(1)
     expect(result).toEqual(insertedRow)
+  })
+
+  it('returns undefined when the id already exists (atomic conflict)', async () => {
+    const returningMock = vi.fn().mockResolvedValueOnce([])
+    const onConflictMock = vi
+      .fn()
+      .mockReturnValueOnce({ returning: returningMock })
+    const valuesMock = vi
+      .fn()
+      .mockReturnValueOnce({ onConflictDoNothing: onConflictMock })
+    insertMock.mockReturnValueOnce({ values: valuesMock })
+
+    const { userRepository } = await import('@user/repositories/user')
+
+    const result = await userRepository.createProfile({
+      id: 'user-1',
+      userId: 'user-1',
+      name: 'Ada',
+      lastName: 'Lovelace',
+    } as never)
+
+    expect(result).toBeUndefined()
   })
 
   it('wraps DB failures in dbError', async () => {

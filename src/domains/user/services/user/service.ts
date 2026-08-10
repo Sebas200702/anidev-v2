@@ -23,11 +23,11 @@
  * @see {@link userRepository}
  * @see {@link userProfileCache}
  */
+import { mapUserProfile } from '@user/mappers/user'
 import {
   mapProfileIdentityPatchToDb,
   mapProfileIdentityToDb,
-  mapUserProfile,
-} from '@user/mappers/user'
+} from '@user/mappers/user-identity'
 import { userRepository } from '@user/repositories/user'
 import { userPolicies } from '@user/policies/user'
 import { withCache } from '@lib/cache'
@@ -104,13 +104,12 @@ export const userService = {
       throw userUnauthorized(userId)
     }
 
-    const existing = await userRepository.getUserProfileById(userId)
-    if (existing) {
+    const row = mapProfileIdentityToDb({ id: userId, input })
+    const inserted = await userRepository.createProfile(row)
+    if (!inserted) {
       throw userProfileConflict(userId)
     }
 
-    const row = mapProfileIdentityToDb({ id: userId, input })
-    const inserted = await userRepository.createProfile(row)
     await userProfileCache.invalidate(userId)
 
     return mapUserProfile({ userProfile: inserted })

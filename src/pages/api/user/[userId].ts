@@ -42,31 +42,8 @@ import type { User } from '@lib/auth/server'
  * Session context is read from `locals.user` (populated by auth middleware) but is
  * not required for public profile access.
  *
- * **Success response — `200 OK`**
- *
- * ```typescript
- * {
- *   data: {
- *     id: string
- *     avatar?: string
- *     name: string
- *     lastName: string
- *     birthday?: string
- *     gender: 'male' | 'female' | 'other'
- *     preferences?: {
- *       fanaticLevel?: 'low' | 'medium' | 'high'
- *       frequency?: 'daily' | 'weekly' | 'monthly'
- *       preferredFormat?: string
- *       favoriteGenres?: number[]
- *       favoriteStudios?: number[]
- *       favoriteAnimes?: number[]
- *     }
- *     history?: { watchedAnimes?: number[] }
- *   }
- *   status: 200
- *   meta: {}
- * }
- * ```
+ * **Success response — `200 OK`:** `{ data: UserProfile, status: 200, meta: {} }` See
+ * {@link userProfileSchema} for the full validated `data` shape.
  *
  * **Error responses** (JSON envelope: `{ data: null, status, error, meta }`)
  *
