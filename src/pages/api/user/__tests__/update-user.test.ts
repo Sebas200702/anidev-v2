@@ -109,9 +109,7 @@ describe('PATCH /api/user/:userId', () => {
   })
 
   it('returns 404 when the target profile is missing', async () => {
-    const { UserNotFoundError } = await import(
-      '@user/errors/user-error-classes'
-    )
+    const { UserNotFoundError } = await import('@user/errors')
     const { ErrorCodes } = await import('@shared/errors/codes')
     updateMock.mockRejectedValueOnce(new UserNotFoundError('session-1'))
 

@@ -17,19 +17,16 @@
  * @see {@link userService.getUserProfile} — read service
  * @see {@link userService.updateUserProfile} — write service
  * @see {@link requireAuthSession} — write auth gate
- * @see {@link mapErrorToHttp} — error-to-HTTP mapping
+ * @see {@link withErrorHandling} — error-to-HTTP envelope wrapper
  */
 
-import type { APIRoute } from 'astro'
+import type { APIContext, APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
+import { withErrorHandling } from '@http/with-error-handling'
 import { userService } from '@user/services/user'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import {
-  getUserProfileSchema,
-  updateUserProfileSchema,
-  userProfileResponseSchema,
-} from '@user/schemas'
+import { getUserProfileSchema, updateUserProfileSchema } from '@user/schemas'
 import { requireAuthSession } from '@auth/utils'
+import { authForbidden } from '@shared/errors/auth-errors'
 import type { User } from '@lib/auth/server'
 
 /**
@@ -96,43 +93,15 @@ import type { User } from '@lib/auth/server'
  * ```
  */
 export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
-  async ({ locals, validated }) => {
-    try {
-      const { userId: targetId } = validated.params
-      const { user } = locals
-      const userProfile = await userService.getUserProfile({
-        userId: user?.id ?? 'anonymous',
-        targetId,
-      })
-
-      const payload = {
-        data: userProfile,
-        status: 200,
-        meta: {},
-      }
-
-      const responseBody = userProfileResponseSchema.parse(payload)
-
-      return new Response(JSON.stringify(responseBody), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+  withErrorHandling(async ({ locals, validated }) => {
+    const { userId: targetId } = validated.params
+    const { user } = locals
+    const userProfile = await userService.getUserProfile({
+      userId: user?.id ?? 'anonymous',
+      targetId,
+    })
+    return { data: userProfile, status: 200, meta: {} }
+  })
 )
 
 /**
@@ -156,13 +125,14 @@ export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
  * { data: UserProfile, status: 200, meta: {} }
  * ```
  *
- * **Error responses** (envelope `{ data: null, status, error, meta }`)
+ * **Error responses** (envelope `{ data: null, status, error, code, meta }`)
  *
  * | Status | Code | When |
  * |--------|------|------|
  * | 400 | `VALIDATION_ERROR` | Body or params fail {@link updateUserProfileSchema} |
  * | 401 | `AUTH_REQUIRED` | No session user present |
- * | 401 | `USER_UNAUTHORIZED` | Path `userId` does not match session id |
+ * | 403 | `AUTH_FORBIDDEN` | Path `userId` does not match session id |
+ * | 400 | `USER_UNAUTHORIZED` | Policy denies edit for the actor |
  * | 404 | `USER_NOT_FOUND` | No profile row for the target id |
  * | 503 | `DB_ERROR` | Database update failed |
  * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
@@ -175,28 +145,14 @@ export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
  *   -d '{"name":"Grace"}'
  * ```
  */
-export const PATCH: APIRoute = withZodValidation(updateUserProfileSchema)(
-  async ({ locals, validated }) => {
-    try {
+export const PATCH: (context: APIContext) => Promise<Response> =
+  withZodValidation(updateUserProfileSchema)(
+    withErrorHandling(async ({ locals, validated }) => {
       const user = locals.user as User | null
       const sessionId = requireAuthSession({ user })
       const { userId: targetId } = validated.params
       if (targetId !== sessionId) {
-        const { status, body } = mapErrorToHttp(
-          (await import('@shared/errors/auth-errors')).authForbidden({
-            targetId,
-          })
-        )
-        return new Response(
-          JSON.stringify({
-            data: null,
-            status,
-            code: body.code,
-            error: body.message ?? 'Unexpected error',
-            meta: body.meta ?? {},
-          }),
-          { status, headers: { 'Content-Type': 'application/json' } }
-        )
+        throw authForbidden({ targetId, sessionId })
       }
 
       const profile = await userService.updateUserProfile({
@@ -204,23 +160,6 @@ export const PATCH: APIRoute = withZodValidation(updateUserProfileSchema)(
         targetId,
         input: validated,
       })
-      const payload = { data: profile, status: 200, meta: {} }
-      return new Response(JSON.stringify(payload), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-      return new Response(
-        JSON.stringify({
-          data: null,
-          status,
-          code: body.code,
-          error: body.message ?? 'Unexpected error',
-          meta: body.meta ?? {},
-        }),
-        { status, headers: { 'Content-Type': 'application/json' } }
-      )
-    }
-  }
-)
+      return { data: profile, status: 200, meta: {} }
+    })
+  )

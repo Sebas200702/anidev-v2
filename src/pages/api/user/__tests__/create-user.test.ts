@@ -109,9 +109,7 @@ describe('POST /api/user', () => {
   })
 
   it('returns 409 when the user already has a profile', async () => {
-    const { UserProfileConflictError } = await import(
-      '@user/errors/user-error-classes'
-    )
+    const { UserProfileConflictError } = await import('@user/errors')
     const { ErrorCodes } = await import('@shared/errors/codes')
     createMock.mockRejectedValueOnce(new UserProfileConflictError('session-1'))
 

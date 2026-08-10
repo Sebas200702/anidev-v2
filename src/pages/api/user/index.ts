@@ -16,13 +16,14 @@
  * @see {@link createUserProfileSchema} — request validation schema
  * @see {@link userService.createUserProfile} — write service
  * @see {@link requireAuthSession} — auth gate
+ * @see {@link withErrorHandling} — route wrapper
  */
 
-import type { APIRoute } from 'astro'
+import type { APIContext } from 'astro'
 import { withZodValidation } from '@http/with-validation'
+import { withErrorHandling } from '@http/with-error-handling'
 import { userService } from '@user/services/user'
 import { createUserProfileSchema } from '@user/schemas'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
 import { requireAuthSession } from '@auth/utils'
 import type { User } from '@lib/auth/server'
 
@@ -50,13 +51,13 @@ import type { User } from '@lib/auth/server'
  * }
  * ```
  *
- * **Error responses** (envelope `{ data: null, status, error, meta }`)
+ * **Error responses** (envelope `{ data: null, status, error, code, meta }`)
  *
  * | Status | Code | When |
  * |--------|------|------|
  * | 400 | `VALIDATION_ERROR` | Body fails {@link createUserProfileSchema} |
  * | 401 | `AUTH_REQUIRED` | No session user present |
- * | 401 | `USER_UNAUTHORIZED` | Policy denies edit for the actor |
+ * | 400 | `USER_UNAUTHORIZED` | Policy denies edit for the actor |
  * | 409 | `USER_PROFILE_CONFLICT` | A profile already exists for the actor |
  * | 503 | `DB_ERROR` | Underlying database failure |
  * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
@@ -69,32 +70,15 @@ import type { User } from '@lib/auth/server'
  *   -d '{"name":"Ada","lastName":"Lovelace","gender":"female"}'
  * ```
  */
-export const POST: APIRoute = withZodValidation(createUserProfileSchema)(
-  async ({ locals, validated }) => {
-    try {
+export const POST: (context: APIContext) => Promise<Response> =
+  withZodValidation(createUserProfileSchema)(
+    withErrorHandling(async ({ locals, validated }) => {
       const user = locals.user as User | null
       const userId = requireAuthSession({ user })
       const profile = await userService.createUserProfile({
         userId,
         input: validated,
       })
-      const payload = { data: profile, status: 201, meta: {} }
-      return new Response(JSON.stringify(payload), {
-        status: 201,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-      return new Response(
-        JSON.stringify({
-          data: null,
-          status,
-          code: body.code,
-          error: body.message ?? 'Unexpected error',
-          meta: body.meta ?? {},
-        }),
-        { status, headers: { 'Content-Type': 'application/json' } }
-      )
-    }
-  }
-)
+      return { data: profile, status: 201, meta: {} }
+    })
+  )
