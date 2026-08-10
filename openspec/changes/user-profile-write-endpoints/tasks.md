@@ -5,8 +5,8 @@
 
 ## 2. Mapper and cache (TDD)
 
-- [ ] 2.1 Write failing tests for reverse/identity persistence mapping (API identity fields → DB columns; empty list columns only if required on insert)
-- [ ] 2.2 Implement reverse/identity-to-DB mapping helpers co-located in the user mapper unit
+- [x] 2.1 Write failing tests for reverse/identity persistence mapping (API identity fields → DB columns; empty list columns only if required on insert)
+- [x] 2.2 Implement reverse/identity-to-DB mapping helpers co-located in the user mapper unit
 - [x] 2.3 Write failing tests for `userProfileCache.invalidate` (or delete) by user id
 - [x] 2.4 Implement cache invalidation using existing cache delete primitives
 
