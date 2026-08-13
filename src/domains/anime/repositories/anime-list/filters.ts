@@ -8,7 +8,6 @@
  */
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
-import { normalizeString } from '@utils/string/normalize-string-util'
 import {
   eq,
   gte,
@@ -111,24 +110,16 @@ export const buildAnimeListFilters = ({
   }
 
   if (query?.trim()) {
-    const normalizedQuery = normalizeString({
-      string: query,
-      removeSpaces: true,
-      separator: '',
-      toLowerCase: true,
-    })
-
-    const queryPattern = `%${normalizedQuery}%`
-
-    const normalizedTitle = sql`REPLACE(LOWER(${anime.title}), ' ', '')`
-    const normalizedTitleEng = sql`REPLACE(LOWER(COALESCE(${anime.titleEnglish}, '')), ' ', '')`
-    const normalizedTitleJpn = sql`REPLACE(LOWER(COALESCE(${anime.titleJapanese}, '')), ' ', '')`
+    // Index-backed substring match: the GIN pg_trgm indexes on these columns
+    // accelerate `ILIKE '%q%'`, so this is not a sequential scan. Ranking by
+    // similarity happens in the sort builder (relevance sort).
+    const pattern = `%${query.trim()}%`
 
     filters.push(
       sql`(
-        ${normalizedTitle} LIKE ${queryPattern}
-        OR ${normalizedTitleEng} LIKE ${queryPattern}
-        OR ${normalizedTitleJpn} LIKE ${queryPattern}
+        ${anime.title} ILIKE ${pattern}
+        OR ${anime.titleEnglish} ILIKE ${pattern}
+        OR ${anime.titleJapanese} ILIKE ${pattern}
       )`
     )
   }

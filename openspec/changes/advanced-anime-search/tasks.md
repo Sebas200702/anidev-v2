@@ -23,11 +23,11 @@
 - [x] 3a.1 SQL-generation tests via `.toSQL()`: `season` equality, score range (gte/lte), whitelist `sort`/`order` with defaults, and **deterministic pagination** (`malId` secondary key)
 - [x] 3a.2 Implement `season`/score filters + `buildAnimeListSort` (whitelist + `malId`) and wire `ORDER BY` into `getAnimeList`
 
-### 3b — pg_trgm free-text + relevance (pending: needs live Postgres / CI)
+### 3b — pg_trgm free-text + relevance (done locally; prod sync pending)
 
-- [ ] 3b.1 Migration: `CREATE EXTENSION IF NOT EXISTS pg_trgm`, GIN trigram index on `anime.title` (+ synonyms), `tsvector` as needed _(prepare SQL for the VPS to apply)_
-- [ ] 3b.2 Replace normalized `LIKE` with an **index-backed predicate** (`title % :q` / `tsvector @@ plainto_tsquery`) before `similarity()`/`ts_rank`; implement `relevance` sort (currently falls back to score)
-- [ ] 3b.3 Integration test against a real Postgres service container (index usage + adjacent-page determinism for all sorts incl. `relevance`)
+- [x] 3b.1 Migration `0001_search_text_trgm_indexes.sql`: `CREATE EXTENSION pg_trgm` + GIN trgm indexes on `anime.title` / `title_english` / `title_japanese`. Applied locally via `drizzle-kit migrate`. ⚠️ **Prod:** `drizzle.__drizzle_migrations` was empty (externally-seeded DB) — baseline 0000 before `db:migrate` (see PR notes)
+- [x] 3b.2 Replaced normalized `LIKE` with **index-backed `ILIKE '%q%'`** (GIN trgm — EXPLAIN shows `Bitmap Index Scan on anime_title_trgm_idx`); `relevance` sort ranks by `similarity(title, q)` selected as `sim_rank` alias (SELECT DISTINCT constraint)
+- [x] 3b.3 Opt-in integration test (`anime-list.integration.test.ts`, `RUN_DB_TESTS=1`) against the local DB: free-text returns Cowboy Bebop ranked first; safe floor excludes `Rx - Hentai`. Caught a real `SELECT DISTINCT` + ORDER BY bug (`42P10`/`42703`), now fixed. _(CI service container: follow-up)_
 
 ## 4. Parental floor + service (TDD) — **safe-only (fail-closed)**
 
@@ -55,5 +55,5 @@
 ## 7. Verification
 
 - [~] 7.1 Per-commit: `bun run check` (Biome), `check:types`, `test` green. **Pending pre-PR:** `format` + `build`
-- [ ] 7.2 `EXPLAIN` the text + filter query on the live dataset; confirm index usage on the VPS
+- [x] 7.2 `EXPLAIN` on the local dataset (29,705 anime) confirms `Bitmap Index Scan on anime_title_trgm_idx` for `ILIKE`. Re-confirm on the VPS after applying `0001`
 - [~] 7.3 Conventional Commits per task group (done for Stage 1); release only when the user requests a PR/release

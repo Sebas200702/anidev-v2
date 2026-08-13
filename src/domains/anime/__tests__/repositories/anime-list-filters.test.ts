@@ -44,6 +44,21 @@ describe('buildAnimeListFilters — season and score range', () => {
     expect(params).toContain(9)
   })
 
+  it('emits an index-backed ILIKE predicate for free-text query', () => {
+    const conditions = buildAnimeListFilters({
+      query: 'naruto',
+      parentalVariant: 'full',
+    })
+    const { sql, params } = db
+      .select()
+      .from(anime)
+      .where(and(...conditions))
+      .toSQL()
+
+    expect(sql.toLowerCase()).toContain('ilike')
+    expect(params).toContain('%naruto%')
+  })
+
   it('omits score bounds when not provided', () => {
     const conditions = buildAnimeListFilters({
       season: 'winter',
@@ -103,5 +118,15 @@ describe('buildAnimeListSort — deterministic ordering', () => {
     expect(sql).toContain('"score"')
     expect(sql).toContain('"mal_id"')
     expect(sql.toLowerCase()).toContain('desc')
+  })
+
+  it('orders relevance sort by the sim_rank select alias', () => {
+    const { sql } = db
+      .select()
+      .from(anime)
+      .orderBy(...buildAnimeListSort({ sort: 'relevance', query: 'cowboy' }))
+      .toSQL()
+    expect(sql).toContain('sim_rank')
+    expect(sql).toContain('"mal_id"')
   })
 })
