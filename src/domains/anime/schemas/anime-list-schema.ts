@@ -33,6 +33,9 @@ const scoreBoundSchema = z.coerce.number().min(0).max(10)
  */
 export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
 
+/** Whitelisted sort field union derived from {@link animeSortFields}. */
+export type AnimeSortField = (typeof animeSortFields)[number]
+
 export const animeFiltersParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),

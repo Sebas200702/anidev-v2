@@ -10,6 +10,7 @@ import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { dbError } from '@shared/errors/db-errors'
 import type { AnimeDB, AnimeFilters } from '@anime/types'
 import { buildAnimeListFilters, type AnimeListFilterParams } from './filters'
+import { buildAnimeListSort } from './sort'
 import { and, countDistinct, eq } from 'drizzle-orm'
 
 // buildAnimeListFilters and AnimeListFilterParams are re-exported via the barrel
@@ -60,6 +61,7 @@ export const animeListRepository = {
         .leftJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
         .leftJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
         .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+        .orderBy(...buildAnimeListSort(filterParams))
         .limit(limit)
         .offset((page - 1) * limit)
 

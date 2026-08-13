@@ -9,7 +9,7 @@
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { normalizeString } from '@utils/string/normalize-string-util'
-import { eq, inArray, sql, type SQL } from 'drizzle-orm'
+import { eq, gte, inArray, lte, sql, type SQL } from 'drizzle-orm'
 import type { AnimeListFilterParams } from './filters.types'
 
 export type { AnimeListFilterParams } from './filters.types'
@@ -40,11 +40,26 @@ export const buildAnimeListFilters = ({
   type,
   year,
   query,
+  season,
+  scoreMin,
+  scoreMax,
 }: AnimeListFilterParams): SQL[] => {
   const filters: SQL[] = []
 
   if (year) {
     filters.push(eq(anime.year, year))
+  }
+
+  if (season) {
+    filters.push(eq(anime.season, season))
+  }
+
+  if (scoreMin !== undefined) {
+    filters.push(gte(anime.score, scoreMin))
+  }
+
+  if (scoreMax !== undefined) {
+    filters.push(lte(anime.score, scoreMax))
   }
 
   if (status?.length) {
