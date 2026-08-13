@@ -11,20 +11,21 @@
 
 ## 3. Repository query (TDD)
 
-- [ ] 3.1 Write failing tests (Vitest + Postgres service container) for: `season` equality, score range (nulls excluded when bounded), whitelist `sort`/`order`, and `pg_trgm`/`tsvector` text match ranking
+- [ ] 3.1 Write failing tests (Vitest + Postgres service container) for: `season` equality, score range (nulls excluded when bounded), whitelist `sort`/`order` with defaults, index-backed text predicate + ranking, and **deterministic pagination** across adjacent `LIMIT/OFFSET` pages for `score`/`year`/`title`/`relevance` (tie-break by `malId`)
 - [ ] 3.2 Add migration: `CREATE EXTENSION IF NOT EXISTS pg_trgm`, GIN trigram index on `anime.title` (+ `anime_title_synonym`), `tsvector` expression/index as needed
-- [ ] 3.3 Implement the extended query in the anime repository: indexed text match replacing `ILIKE`, new filters, and strict whitelist sort (no raw interpolation)
+- [ ] 3.3 Implement the extended query: **index-backed match predicate** (`title % :q` / `tsvector @@ plainto_tsquery`) before `similarity()`/`ts_rank`, new filters, and strict whitelist sort with **`malId` secondary key** (no raw interpolation)
 
 ## 4. Parental floor + service (TDD)
 
-- [ ] 4.1 Write failing tests for `parentalVariant` resolution (anonymous → `safe`; authed opt-in → `full`) and that `safe` excludes `ADULT_RATINGS`
-- [ ] 4.2 Confirm `ADULT_RATINGS` set + opt-in preference location against live `profile` schema (mirror user-domain conventions; no drive-by migration)
+- [ ] 4.1 Write failing tests for `parentalVariant` resolution: anonymous → `safe`; **fail-closed** (unreadable preference/config → `safe`, never `full`); `safe` excludes `ADULT_RATINGS`
+- [ ] 4.2 Finalize `ADULT_RATINGS` strings against live `anime.rating` values. **Note: `profile` has no opt-in column → Stage-1 is safe-only**; do NOT add the preference field here (prerequisite change). Ship the `full` plumbing but leave it unreachable
 - [ ] 4.3 Implement variant resolution in `animeListService.getAnimeList` and fold the variant into `animeListCache.key`
 - [ ] 4.4 Write failing test proving cache produces at most `safe`/`full` variants per filter set (never keyed by user id)
 
 ## 5. Search history unit (TDD)
 
-- [ ] 5.1 Add migration for `search_history` (`id`, `user_id` text, `query` text, `filters` jsonb, `created_at`)
+- [ ] 5.1 Add migration for `search_history` (`id`, `user_id` text, `query` text, `filters` jsonb, `created_at`) + **index on (`user_id`, `created_at` DESC)**; enforce a **per-user row cap** (default 50) by pruning on record
+- [ ] 5.1a Write failing test proving history read is newest-first, `limit` default 20 / max 100, empty history → empty list, and per-user cap prunes older rows
 - [ ] 5.2 Write failing tests for `searchHistoryRepository` (record / list-by-user / clear-by-user, `dbError` on failure)
 - [ ] 5.3 Implement repository + `searchHistoryService` (owner-only) as anime-domain unit folders
 - [ ] 5.4 Write failing test proving `record` is best-effort: a history write failure does NOT fail the search
@@ -32,7 +33,7 @@
 ## 6. API routes (TDD)
 
 - [ ] 6.1 Write failing route tests for extended `GET /api/anime` (new params validate; existing behavior unchanged; parental variant applied; history recorded when session present)
-- [ ] 6.2 Migrate/keep `GET /api/anime` on `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))`; wire new filters + best-effort history record
+- [ ] 6.2 Migrate/keep `GET /api/anime` on `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))` (**after** `api-response-schema-in-wrapper` lands; **remove** inline `animeListResponseSchema.parse` + success-path `jsonResponse`); wire new filters + best-effort history record
 - [ ] 6.3 Write failing tests for `GET`/`DELETE /api/anime/search-history` (401 anon, 200 owner list, 200 clear)
 - [ ] 6.4 Implement authed search-history read + clear routes (`private, no-store`)
 

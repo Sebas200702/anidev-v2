@@ -13,9 +13,12 @@ studio/day). Today:
   (`anime_genre`, `anime_theme`, `anime_demographic`, `anime_producer`).
 - No `broadcast_*` columns; `producer` has no studio/licensor split → **studio and
   day filters are not data-backed** and are out of scope here.
-- The sibling change `api-response-schema-in-wrapper` moves routes to
-  `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))`; this
-  change targets that composition.
+- **Prerequisite:** the sibling change `api-response-schema-in-wrapper` moves
+  routes to `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))`;
+  this change **targets that composition and must land after it** (ordered in
+  tasks). Adopting the wrapper **removes** the route's inline
+  `animeListResponseSchema.parse` and manual success-path `jsonResponse` — the
+  wrapper validates and serializes the response.
 
 ## Goals / Non-Goals
 
@@ -40,20 +43,33 @@ studio/day). Today:
 ### 1. Query approach — Stage 1 stock Postgres
 
 - **Free-text:** GIN `pg_trgm` index on `anime.title` (+ `anime_title_synonym`)
-  and/or a `tsvector` expression; rank with `similarity()` / `ts_rank`. No new
-  extension beyond `pg_trgm` (`CREATE EXTENSION IF NOT EXISTS pg_trgm`).
+  and/or a `tsvector` expression. The WHERE **match predicate MUST be
+  index-backed** — `title % :q` (pg_trgm) or `tsvector @@ plainto_tsquery(:q)` —
+  applied **before** ranking with `similarity()` / `ts_rank` (ranking alone does
+  not use the index). No new extension beyond `pg_trgm`
+  (`CREATE EXTENSION IF NOT EXISTS pg_trgm`).
 - **Filters:** `season` = equality on `anime.season`; `scoreMin/scoreMax` = range
   on `anime.score` (nulls excluded when a bound is set). Existing array facets
   (`genre/status/rating/type`) unchanged.
-- **Sort:** `sort ∈ { score, year, title, relevance }`, `order ∈ { asc, desc }`,
-  applied via a **whitelist** (never interpolate raw input into SQL). `relevance`
-  only valid when `query` is present; default sort stays as today when unset.
+- **Sort:** `sort ∈ { score, year, title, relevance }` (default `score`),
+  `order ∈ { asc, desc }` (default `desc`), applied via a **whitelist** (never
+  interpolate raw input into SQL). Every sort **appends `anime.malId` as a unique
+  secondary key** so `LIMIT/OFFSET` pages are deterministic across adjacent
+  pages. `order` without `sort` uses the default sort. `relevance` is valid only
+  when `query` is present and **non-empty after trimming whitespace**.
 
 ### 2. Parental-control floor (D5)
 
-- Compute a coarse `parentalVariant: 'safe' | 'full'`. `safe` = default for
-  anonymous and non-opted-in users; excludes a configured `ADULT_RATINGS` set on
-  `anime.rating`. `full` = authenticated user whose profile preference opts in.
+- Compute a coarse `parentalVariant: 'safe' | 'full'`. **Fail-closed:** `safe` is
+  the default and is used whenever the preference or the `ADULT_RATINGS` config
+  cannot be read; it excludes a configured `ADULT_RATINGS` set on `anime.rating`.
+  `full` requires an authenticated user who explicitly opted in — **never select
+  `full` by default**.
+- **The opt-in preference column does not exist on `profile` yet** (verified
+  against the live schema — no parental/adult field). Until it is added, `full`
+  is unreachable and every caller gets `safe`: this change ships the variant
+  **plumbing** ready, and adding the preference field is a **prerequisite change**
+  to enable `full`.
 - The variant is a **cache-key dimension** (`animeListCache.key` includes it), so
   there are at most two cached variants per filter set — never keyed by user id.
 
@@ -62,9 +78,12 @@ studio/day). Today:
 - New unit `@anime/repositories/search-history` + `@anime/services/search-history`
   (kind files `repository.ts` / `service.ts` + `types.ts`, per unit-folder rule).
 - New table `search_history` (`id`, `user_id` text, `query` text, `filters`
-  jsonb, `created_at`). FK-light: `user_id` matches the auth user id string used
-  elsewhere (see user-domain `profile.id` convention; do not invent a migration
-  beyond this table).
+  jsonb, `created_at`) with an **index on (`user_id`, `created_at` DESC)** to
+  serve recent-listing and clear. FK-light: `user_id` matches the auth user id
+  string used elsewhere (see user-domain `profile.id` convention; do not invent a
+  migration beyond this table).
+- **Bounded growth:** cap at **N most-recent rows per user** (default 50) — on
+  record, prune the user's older rows past the cap (or a scheduled cleanup).
 - **Record** best-effort after a successful authed search (failure to record
   MUST NOT fail the search). **Read** returns the caller's recent searches;
   **clear** deletes the caller's rows. All authed, owner-only, `private, no-store`.
@@ -118,5 +137,9 @@ Route (Zod params + wrapper responseSchema)
 
 ## Open Questions
 
-- Exact `ADULT_RATINGS` set + where the opt-in preference is read on `profile`
-  (confirm against live schema during task 4, mirroring user-domain conventions).
+- `ADULT_RATINGS` candidate set = MAL adult ratings `Rx - Hentai` (and, per a
+  product call, `R+ - Mild Nudity`); finalize the exact strings against live
+  `anime.rating` values in task 4.
+- **Resolved:** `profile` has no parental opt-in column today, so Stage-1 ships
+  **safe-only** (fail-closed). Enabling `full` requires a prerequisite migration
+  that adds the preference field — out of scope for this change.

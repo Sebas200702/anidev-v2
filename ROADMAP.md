@@ -36,7 +36,7 @@ Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
 Cada capacidad se implementa como **slice vertical completo**, no por capas
 horizontales:
 
-```
+```text
 repository → service → mapper → cache → schema (Zod) → API → isla/página → showcase → tests
 ```
 
@@ -70,7 +70,7 @@ Desbloquea todo lo demás. No añade features de producto; estabiliza la base.
 
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
-- [ ] **Búsqueda avanzada** — filtros: género, tipo, estudio/productora, score (rango), estado, año, rating, temporada, día de emisión + `search_query`; orden configurable; paginación. _(Primer slice: seed en `openspec/changes/advanced-anime-search/`.)_
+- [ ] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D (fuera del Stage 1). _(Primer slice: seed en `openspec/changes/advanced-anime-search/`.)_
 - [ ] **Homepage** — héroe + carruseles SSR de contenido relevante.
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (RPCs `get_related_anime` / `get_anime_banner`).
 - [ ] **Taxonomía** — páginas por género y por estudio/productora.
@@ -183,14 +183,14 @@ separa en dos modos:
 - [ ] **Modo A — Backfill + reconciliación** (one-off, entorno **aislado NO-prod**): reconstruye un dataset de catálogo **completo y consistente** hasta el punto de ejecución. Concurrencia alta permitida (no compite con los 8 GB de prod). Al terminar → promoción.
 - [ ] **Modo B — Update incremental** (recurrente, **prod**, ligero): solo añade/actualiza lo **nuevo** (recently-updated de MAL, temporada nueva, entidades faltantes); no barre todo. Baja concurrencia (respeta D8).
 - [ ] **Dashboard de control** (prod): configurar **cadencia** (diaria/semanal) y **alcance** (fuentes/task-types), persistido en DB, disparado por `pg_cron`.
-- [ ] **Promoción A → prod = diff-upsert** (insert nuevos + update cambiados) preservando tablas de usuario/auth/listas y sus FKs, con limpieza dirigida de filas malas. Swap destructivo **descartado**: prod ya tiene datos de usuario que referencian el catálogo por `mal_id`.
+- [ ] **Promoción A → prod = diff-upsert** por clave de identidad (`mal_id`): insert nuevos + update cambiados, en **transacción atómica** con orden FK-safe (padres→hijos), **validación referencial previa** y **rollback** ante fallo. Política explícita de filas obsoletas: solo se eliminan huérfanas **no referenciadas por datos de usuario**. Preserva tablas de usuario/auth/listas y sus FKs. Swap destructivo **descartado**: prod ya tiene datos de usuario que referencian el catálogo por `mal_id`. _(D1 mantiene el mecanismo decidido — diff-upsert; este protocolo es su detalle de implementación en Track D.)_
 
 ### D.1 — Endurecer el scraper (4 capas · aplica a ambos modos)
 
 - [ ] **Fetcher resiliente**: clasificar respuesta (`ok / 429 / blocked / 404 / transient / invalid-body`); retry con backoff+jitter; respetar `Retry-After`; timeouts (`headersTimeout`/`bodyTimeout` + `AbortController`); detectar HTML/challenge antes de `JSON.parse`.
 - [ ] **Proxies**: revivir proxies muertos con re-probe (que el pool no solo encoja); degradar en vez de `throw 'Not enough proxies'`; no penalizar al proxy por un 404 de la fuente.
 - [ ] **Cola crash-safe**: claim con `FOR UPDATE SKIP LOCKED` + lease (`leased_until`) + reaper que re-encola leases expirados; usar `attempts` → `dead_letter` tras N; backoff vía `scheduledAt`; task-type re-encolable para refresh recurrente.
-- [ ] **Rate-limit global**: token bucket por dominio/IP (no por-worker); presupuesto = límite-por-proxy × proxies-sanos. `maxWorkers` **alto en Modo A** (entorno aislado) pero de **unidades en Modo B** (VPS prod 4c/8GB); las 60-80 originales sin entorno propio eran co-causa de los fallos (CPU/RAM además de bloqueos).
+- [ ] **Rate-limit global**: token bucket por dominio/IP (no por-worker). **Ámbito por fuente primero**: usar por defecto el **menor límite efectivo de la fuente** (incl. los de Jikan/MAL que disparan 429); multiplicar por proxies-sanos **solo si la fuente confirma que el límite es por-IP/proxy** (no si es global o por-API-key). `maxWorkers` **alto en Modo A** (entorno aislado) pero de **unidades en Modo B** (VPS prod 4c/8GB); las 60-80 originales sin entorno propio eran co-causa de los fallos (CPU/RAM además de bloqueos).
 
 ### D.2 — Portar a Postgres + integrar
 
@@ -240,7 +240,9 @@ una API por-usuario sin caché._
 
 - **Shell SSR anónimo cacheable** (`public, s-maxage, stale-while-revalidate`).
 - **Control parental = variante de cache-key** (`safe` default / `full` authed
-  opt-in) vía `Vary`/cookie coarse. Nunca cachear por user-id.
+  opt-in) vía `Vary`/cookie coarse. Nunca cachear por user-id. Anónimo siempre
+  `safe`; si la capa de caché **no garantiza aislamiento de variantes**, la
+  variante `full` no se comparte (`private, no-store`).
 - **Islas personalizadas** (watchlist, continuar viendo, color) → fetch a API
   `private, no-store` sobre el shell cacheado.
 - Páginas irreduciblemente personales (perfil, listas) → `private, no-store`.
@@ -255,8 +257,10 @@ una API por-usuario sin caché._
 los 8 GB de prod):
 
 - **Unit** (Vitest, TDD) — base, loop rápido del gate. Ya existe.
-- **Integración** — Vitest + **Postgres/ParadeDB real en service container**;
-  rutas API end-to-end + **queries BM25** (no unit-testeables). De-risk de D3.
+- **Integración** — Vitest + **Postgres/ParadeDB real en service container**
+  (imagen y versión **pinneadas**, bootstrap de extensiones + **healthcheck que
+  falla si `pg_search`/`vector` no están disponibles**); rutas API end-to-end +
+  **queries BM25** (no unit-testeables). De-risk de D3.
 - **E2E** — **Playwright** (skill `webapp-testing`), **smoke acotado** de
   journeys clave (search→ficha, auth, watchlist, player).
 - **a11y** — **axe-core** en Playwright + sobre `/showcase`. No negociable
