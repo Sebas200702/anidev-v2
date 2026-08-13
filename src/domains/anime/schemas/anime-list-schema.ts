@@ -21,7 +21,18 @@ import { z } from 'zod'
  * | `year` | `z.coerce.number().int().min(1900).max(current year).optional()` |
  * | `type` | optional string |
  * | `query` | optional search string |
+ * | `season` | optional string |
+ * | `scoreMin` / `scoreMax` | `z.coerce.number().min(0).max(10).optional()` |
+ * | `sort` | optional enum `score \| year \| title \| relevance` |
+ * | `order` | optional enum `asc \| desc` |
  */
+const scoreBoundSchema = z.coerce.number().min(0).max(10)
+
+/**
+ * Whitelisted sort fields — never interpolate raw input into SQL.
+ */
+export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
+
 export const animeFiltersParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
@@ -36,6 +47,11 @@ export const animeFiltersParamsSchema = z.object({
     .optional(),
   type: z.string().optional(),
   query: z.string().optional(),
+  season: z.string().optional(),
+  scoreMin: scoreBoundSchema.optional(),
+  scoreMax: scoreBoundSchema.optional(),
+  sort: z.enum(animeSortFields).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
 })
 
 /**
@@ -52,11 +68,43 @@ export const animeFiltersSchema = animeFiltersParamsSchema.extend({
 })
 
 /**
+ * Boundary refinements applied to the raw query at the request edge:
+ * - `scoreMin` MUST be ≤ `scoreMax` when both are present.
+ * - `relevance` sort requires a non-empty (post-trim) `query`.
+ *
+ * @remarks
+ * Kept off {@link animeFiltersParamsSchema} so that schema stays a plain
+ * `ZodObject` extendable by {@link animeFiltersSchema}.
+ */
+const refinedFiltersQuerySchema = animeFiltersParamsSchema.superRefine(
+  (value, ctx) => {
+    if (
+      value.scoreMin !== undefined &&
+      value.scoreMax !== undefined &&
+      value.scoreMin > value.scoreMax
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['scoreMin'],
+        message: 'scoreMin must be less than or equal to scoreMax',
+      })
+    }
+    if (value.sort === 'relevance' && !value.query?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['sort'],
+        message: 'relevance sort requires a non-empty query',
+      })
+    }
+  }
+)
+
+/**
  * **Full request schema** for `GET /api/anime` (list).
  */
 export const animeListRequestSchema = z.object({
   params: z.object({}).optional().default({}),
-  query: animeFiltersParamsSchema,
+  query: refinedFiltersQuerySchema,
   body: z.unknown().optional(),
 })
 
