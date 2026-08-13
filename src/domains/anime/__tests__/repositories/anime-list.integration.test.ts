@@ -14,7 +14,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 const enabled = !!process.env.RUN_DB_TESTS
 
 describe.skipIf(!enabled)('animeListRepository (integration)', () => {
-  let getAnimeList: (typeof import('@anime/repositories/anime-list'))['animeListRepository']['getAnimeList']
+  let getAnimeList: typeof import('@anime/repositories/anime-list')['animeListRepository']['getAnimeList']
 
   beforeAll(async () => {
     await import('dotenv/config')

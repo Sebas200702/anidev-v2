@@ -8,15 +8,9 @@
  * pages are deterministic. Never interpolates raw input into SQL.
  */
 import { anime } from '@db/schemas/anime'
+import { RELEVANCE_RANK_ALIAS } from '@anime/constants'
 import type { AnimeSortField } from '@anime/schemas/anime-list-schema'
 import { asc, desc, sql, type SQL } from 'drizzle-orm'
-
-/**
- * Select-list alias for the relevance ranking column. `SELECT DISTINCT` requires
- * ORDER BY expressions to be in the select list, so the repository selects the
- * similarity as this alias and the sort orders by it.
- */
-export const RELEVANCE_RANK_ALIAS = 'sim_rank'
 
 /**
  * Trigram similarity ranking expression for the relevance sort, aliased so it is

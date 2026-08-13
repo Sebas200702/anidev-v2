@@ -5,6 +5,7 @@
  */
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import { animeCardSchema } from '@anime/schemas/anime-card-schema'
+import { animeSortFields } from '@anime/constants'
 import { z } from 'zod'
 
 /**
@@ -27,11 +28,6 @@ import { z } from 'zod'
  * | `order` | optional enum `asc \| desc` |
  */
 const scoreBoundSchema = z.coerce.number().min(0).max(10)
-
-/**
- * Whitelisted sort fields — never interpolate raw input into SQL.
- */
-export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
 
 /** Whitelisted sort field union derived from {@link animeSortFields}. */
 export type AnimeSortField = (typeof animeSortFields)[number]

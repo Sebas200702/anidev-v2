@@ -8,6 +8,7 @@
  */
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
+import { ADULT_RATINGS } from '@anime/constants'
 import {
   eq,
   gte,
@@ -22,15 +23,6 @@ import {
 import type { AnimeListFilterParams } from './filters.types'
 
 export type { AnimeListFilterParams } from './filters.types'
-
-/**
- * MAL age ratings excluded by the `safe` parental variant.
- *
- * @remarks
- * Confirm/extend against live `anime.rating` values (e.g. `R+ - Mild Nudity`)
- * before enabling an opt-in `full` variant. See the advanced-search change.
- */
-export const ADULT_RATINGS = ['Rx - Hentai'] as const
 
 /**
  * Builds SQL filter clauses for anime list queries.

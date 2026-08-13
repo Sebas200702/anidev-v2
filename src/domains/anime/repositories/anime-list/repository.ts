@@ -9,12 +9,9 @@ import { animeGenre } from '@db/schemas/anime-relations'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { dbError } from '@shared/errors/db-errors'
 import type { AnimeDB, AnimeFilters } from '@anime/types'
+import { RELEVANCE_RANK_ALIAS } from '@anime/constants'
 import { buildAnimeListFilters, type AnimeListFilterParams } from './filters'
-import {
-  buildAnimeListSort,
-  RELEVANCE_RANK_ALIAS,
-  relevanceRankExpr,
-} from './sort'
+import { buildAnimeListSort, relevanceRankExpr } from './sort'
 import { and, countDistinct, eq, sql } from 'drizzle-orm'
 
 // buildAnimeListFilters and AnimeListFilterParams are re-exported via the barrel
