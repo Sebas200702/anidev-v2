@@ -21,10 +21,14 @@ and pgvector (Stage 3) can be swapped in later **without an API change**.
   **score range** (`scoreMin`/`scoreMax`).
 - Add **configurable sort** (`sort` field + `order` direction) over a whitelist.
 - Add a **parental-control floor**: adult ratings excluded by default; included
-  only for an authenticated user who opted in. Modeled as a **coarse cache-key
-  variant** (`safe` / `full`), never per user id (`ROADMAP.md` D5).
+  only for an authenticated, opted-in user. Modeled as a **coarse cache-key
+  variant** (`safe` / `full`), never per user id — **catalog `GET /api/anime`
+  responses stay shared-cacheable**, keyed by normalized filters + `parentalVariant`
+  (`ROADMAP.md` D5).
 - Add **search history**: persist an authenticated user's executed searches;
-  expose read + clear. Anonymous searches are not persisted (`private, no-store`).
+  expose read + clear. Anonymous searches are not persisted. **Only the
+  authenticated history responses are `private, no-store`; catalog search
+  responses remain cacheable.**
 - Wire everything through the existing pipeline (request schema → filters mapper →
   repository query → cache key) using the standard wrapper composition
   (`withZodValidation(...)(withErrorHandling(handler, { responseSchema }))`).

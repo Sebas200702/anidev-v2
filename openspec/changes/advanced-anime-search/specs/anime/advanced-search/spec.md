@@ -29,29 +29,41 @@ rejected at the request boundary.
 #### Scenario: Backward compatibility
 
 - **WHEN** a client requests `GET /api/anime` with only the pre-existing params
-- **THEN** the response shape and results are unchanged from before this change
+- **THEN** the response **shape** and the behavior of those filters are unchanged
+  from before this change — with the sole exception that the new parental-control
+  **safe** floor now applies to anonymous and non-opted-in callers (see the
+  parental-control requirement)
 
 ### Requirement: Configurable sort over a whitelist
 
-The system MUST accept `sort` (one of a fixed whitelist, e.g. `score`, `year`,
-`title`, `relevance`) and `order` (`asc` / `desc`). Values outside the whitelist
-MUST be rejected. `relevance` MUST be valid only when a `query` term is present.
-Raw sort input MUST NOT be interpolated into SQL.
+The system MUST accept `sort` from the exact whitelist `{ score, year, title,
+relevance }` (default `score`) and `order` from `{ asc, desc }` (default `desc`).
+`order` supplied without `sort` MUST use the default sort. Values outside either
+whitelist MUST be rejected. `relevance` MUST be valid only when `query` is present
+and **non-empty after trimming whitespace**. Every sort MUST append a unique
+secondary key (`malId`) so paginated results are deterministic across adjacent
+pages. Raw sort input MUST NOT be interpolated into SQL.
 
 #### Scenario: Sort by score descending
 
 - **WHEN** a client requests `GET /api/anime?sort=score&order=desc`
 - **THEN** results are ordered by score, highest first
 
-#### Scenario: Relevance sort without a query
+#### Scenario: Relevance sort without a usable query
 
-- **WHEN** a client requests `sort=relevance` with no `query`
+- **WHEN** a client requests `sort=relevance` with no `query`, or a
+  whitespace-only `query`
 - **THEN** the system responds `400 VALIDATION_ERROR`
 
 #### Scenario: Unknown sort field
 
 - **WHEN** a client requests a `sort` value outside the whitelist
 - **THEN** the system responds `400 VALIDATION_ERROR`
+
+#### Scenario: Deterministic pagination
+
+- **WHEN** a client pages through the same sorted search via `LIMIT`/`OFFSET`
+- **THEN** adjacent pages neither duplicate nor skip rows (ties broken by `malId`)
 
 ### Requirement: Indexed free-text relevance (Stage 1)
 
@@ -70,8 +82,13 @@ scan. The API contract for `query` MUST remain unchanged so later ranking stages
 The system MUST exclude adult-rated anime by default (the `safe` variant) for
 anonymous callers and authenticated users who have not opted in. Adult-rated
 anime MUST be included only for an authenticated user whose preference opts in
-(the `full` variant). The parental variant MUST be a coarse cache-key dimension
-(`safe` / `full`) and MUST NOT be keyed by user id.
+(the `full` variant). Resolution MUST be **fail-closed**: if the opt-in
+preference or the adult-ratings configuration cannot be read, the system MUST use
+`safe` and MUST NOT select `full`. The parental variant MUST be a coarse
+cache-key dimension (`safe` / `full`) and MUST NOT be keyed by user id.
+
+> Note: no parental opt-in field exists on `profile` yet, so this change ships
+> `safe`-only (fail-closed); enabling `full` requires a prerequisite migration.
 
 #### Scenario: Anonymous caller gets the safe catalog
 
@@ -95,6 +112,13 @@ on a best-effort basis, and MUST expose authenticated, owner-only endpoints to
 read recent searches and to clear them. Anonymous searches MUST NOT be persisted.
 A failure to record history MUST NOT fail the search request. History responses
 MUST NOT be cached (`private, no-store`).
+
+**HTTP contract:** history endpoints MUST use the same response envelope/wrapper
+as the anime API route. A read entry MUST expose `{ id, query, filters, createdAt }`,
+ordered **newest-first**, bounded by a `limit` (default 20, max 100); an empty
+history MUST return an empty list (`200`), not an error. Clear MUST return a
+success envelope reporting the number of rows removed. Unauthenticated access MUST
+return the standard `401` authentication-error envelope and touch no data.
 
 #### Scenario: Search is recorded for an authenticated user
 
