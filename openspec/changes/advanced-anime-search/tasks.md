@@ -36,14 +36,21 @@
 - [x] 4.3 Service pins `parentalVariant: 'safe'` and folds it into `animeListCache.key`
 - [ ] 4.4 Explicit cache test proving at most `safe`/`full` variants per filter set (never keyed by user id) _(structurally guaranteed today — variant is a constant folded into `JSON.stringify(filters)`; dedicated test pending)_
 
-## 5. Search history unit (TDD) — pending: needs live Postgres
+## 5. Search history unit (TDD) — **moved to a new `search` domain**
 
-- [ ] 5.1 Migration for `search_history` (`id`, `user_id`, `query`, `filters` jsonb, `created_at`) + index on (`user_id`, `created_at` DESC); per-user row cap (default 50) pruned on record _(prepare SQL for the VPS)_
-- [ ] 5.1a Test: read newest-first, `limit` default 20 / max 100, empty → empty list, cap prunes older rows
-- [ ] 5.2 Failing tests for `searchHistoryRepository` (record / list-by-user / clear-by-user, `dbError`)
-- [ ] 5.3 Implement repository + `searchHistoryService` (owner-only) as anime-domain unit folders
-- [ ] 5.4 Test proving `record` is best-effort: a history write failure does NOT fail the search
-- [ ] 5.5 Add `searchHistoryQuerySchema` + entry/response schemas (moved from 1.2)
+> Redesign: search history is user-scoped **and transversal** (not only anime →
+> music, characters, …), so it lives in `src/domains/search/` (alias `@search`)
+> with a `scope` discriminator column, not in `anime`.
+
+- [x] 5.1 Migration `0002_fixed_jackpot.sql`: `search_history` (`id`, `user_id`, `scope`, `query`, `filters` jsonb, `created_at`) + index (`user_id`, `created_at` DESC). Applied locally. ⚠️ Trimmed unrelated pre-existing drift (`account`/`session` defaults, `profile.user_id` int→text) — see below
+- [x] 5.1a/5.2 Integration test (`RUN_DB_TESTS`) against local DB: record/list newest-first/**cap 50**/clear, with `scope`
+- [x] 5.3 Implement `searchHistoryRepository` + `searchHistoryService` (owner-only) as **`@search` unit folders**
+- [x] 5.4 Unit test proving `record` is best-effort: a history write failure does NOT throw
+- [x] 5.5 Add `searchHistoryQuerySchema` + entry schema under `@search/schemas`
+
+> ⚠️ **Pre-existing schema drift** surfaced by `db:generate` (not this change):
+> `profile.user_id` is `integer` in the DB but `text` in the TS schema. Trimmed
+> from migration 0002; track/resolve separately (see user-profile change).
 
 ## 6. API routes (TDD) — pending: `api-response-schema-in-wrapper` first
 
