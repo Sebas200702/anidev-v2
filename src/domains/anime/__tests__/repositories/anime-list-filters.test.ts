@@ -29,6 +29,7 @@ describe('buildAnimeListFilters — season and score range', () => {
       season: 'spring',
       scoreMin: 7,
       scoreMax: 9,
+      parentalVariant: 'full',
     })
     const { sql, params } = db
       .select()
@@ -44,13 +45,39 @@ describe('buildAnimeListFilters — season and score range', () => {
   })
 
   it('omits score bounds when not provided', () => {
-    const conditions = buildAnimeListFilters({ season: 'winter' })
+    const conditions = buildAnimeListFilters({
+      season: 'winter',
+      parentalVariant: 'full',
+    })
     const { params } = db
       .select()
       .from(anime)
       .where(and(...conditions))
       .toSQL()
     expect(params).toEqual(['winter'])
+  })
+})
+
+describe('buildAnimeListFilters — parental floor', () => {
+  it('safe variant excludes adult ratings while keeping unknown (null) ratings', () => {
+    const conditions = buildAnimeListFilters({ parentalVariant: 'safe' })
+    const { sql } = db
+      .select()
+      .from(anime)
+      .where(and(...conditions))
+      .toSQL()
+
+    expect(sql).toContain('"rating"')
+    expect(sql.toLowerCase()).toContain('not in')
+    expect(sql.toLowerCase()).toContain('is null')
+  })
+
+  it('applies the safe floor when the variant is unset (fail-closed)', () => {
+    expect(buildAnimeListFilters({}).length).toBe(1)
+  })
+
+  it('full variant does not restrict ratings', () => {
+    expect(buildAnimeListFilters({ parentalVariant: 'full' }).length).toBe(0)
   })
 })
 

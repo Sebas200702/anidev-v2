@@ -43,7 +43,13 @@ export const animeListService = {
   async getAnimeList(
     filtersParams: AnimeFiltersParams
   ): Promise<StaleResult<{ list: AnimeCard[]; total: number }>> {
-    const filters: AnimeFilters = mapAnimeFilters(filtersParams)
+    // Parental floor is fail-closed to `safe`: `profile` has no adult opt-in
+    // column yet, so `full` is unreachable until that prerequisite lands. The
+    // variant is folded into the cache key so variants never mix.
+    const filters: AnimeFilters = {
+      ...mapAnimeFilters(filtersParams),
+      parentalVariant: 'safe',
+    }
     return withStaleCache({
       key: animeListCache.key(filters),
       staleKey: `${animeListCache.key(filters)}:stale`,

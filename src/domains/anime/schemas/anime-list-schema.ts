@@ -36,6 +36,13 @@ export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
 /** Whitelisted sort field union derived from {@link animeSortFields}. */
 export type AnimeSortField = (typeof animeSortFields)[number]
 
+/**
+ * Parental-control cache variant: `safe` excludes adult ratings (default,
+ * fail-closed), `full` includes them for an opted-in user. Server-derived —
+ * never a client query param.
+ */
+export type ParentalVariant = 'safe' | 'full'
+
 export const animeFiltersParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
@@ -68,6 +75,9 @@ export const animeFiltersSchema = animeFiltersParamsSchema.extend({
   status: z.array(z.string()).optional(),
   rating: z.array(z.string()).optional(),
   type: z.array(z.string()).optional(),
+  // Server-derived parental variant (not a client query param); folded into the
+  // cache key so `safe` and `full` results never mix.
+  parentalVariant: z.enum(['safe', 'full']).optional(),
 })
 
 /**

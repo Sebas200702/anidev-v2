@@ -9,10 +9,29 @@
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { normalizeString } from '@utils/string/normalize-string-util'
-import { eq, gte, inArray, lte, sql, type SQL } from 'drizzle-orm'
+import {
+  eq,
+  gte,
+  inArray,
+  isNull,
+  lte,
+  notInArray,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm'
 import type { AnimeListFilterParams } from './filters.types'
 
 export type { AnimeListFilterParams } from './filters.types'
+
+/**
+ * MAL age ratings excluded by the `safe` parental variant.
+ *
+ * @remarks
+ * Confirm/extend against live `anime.rating` values (e.g. `R+ - Mild Nudity`)
+ * before enabling an opt-in `full` variant. See the advanced-search change.
+ */
+export const ADULT_RATINGS = ['Rx - Hentai'] as const
 
 /**
  * Builds SQL filter clauses for anime list queries.
@@ -43,8 +62,21 @@ export const buildAnimeListFilters = ({
   season,
   scoreMin,
   scoreMax,
+  parentalVariant,
 }: AnimeListFilterParams): SQL[] => {
   const filters: SQL[] = []
+
+  // Parental floor: exclude adult ratings unless explicitly `full`. Fail-closed —
+  // an unset variant is treated as `safe`. Unknown (null) ratings are kept.
+  if (parentalVariant !== 'full') {
+    const notAdult = or(
+      isNull(anime.rating),
+      notInArray(anime.rating, [...ADULT_RATINGS])
+    )
+    if (notAdult) {
+      filters.push(notAdult)
+    }
+  }
 
   if (year) {
     filters.push(eq(anime.year, year))
