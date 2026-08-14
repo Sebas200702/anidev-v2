@@ -1,14 +1,16 @@
-> **Status (Stage 1):** filters + deterministic sort + safe parental floor are
-> implemented end-to-end and verified offline (unit tests via Drizzle `.toSQL()`,
-> Biome, `astro check`). Free-text is still the existing normalized `LIKE`; the
-> `pg_trgm` swap, relevance ranking, migrations, and `search_history` are prepared
-> for the VPS (need a live Postgres). Routes wait on `api-response-schema-in-wrapper`.
+> **Status (Stage 1 — code complete):** filters + deterministic sort + safe
+> parental floor + index-backed `pg_trgm` free-text (`ILIKE` + `similarity`
+> relevance) + `search_history` unit + API routes (list migrated to the wrapper,
+> `/api/search-history` read/clear, best-effort recording) are implemented and
+> the full gate is green. **Remaining = production sync only:** apply migrations
+> `0001`/`0002` on the VPS (baseline `__drizzle_migrations` first — the DB was
+> seeded externally) and re-confirm the `EXPLAIN` there; then PR/release.
 > **No ParadeDB in this change** — that is Stage 2 (D3), a separate future change.
 
 ## 1. Schemas and types
 
 - [x] 1.1 Extend `animeFiltersParamsSchema` with `season?`, `scoreMin?`, `scoreMax?` (coerced 0–10, `scoreMin ≤ scoreMax` refinement), `sort?` / `order?` enums; extend normalized `animeFiltersSchema` to match
-- [ ] 1.2 Add `searchHistoryQuerySchema` (limit) + search-history entry/response schemas — **reordered into §5** (cohesive with the history unit)
+- [x] 1.2 `searchHistoryQuerySchema` (limit) + entry schema in §5.5; request (`get`/`delete`) + envelope (`list`/`clear`) response schemas added under `@search/schemas` for the §6 routes
 - [x] 1.3 Add `AnimeSortField` + `ParentalVariant` types and the `parentalVariant` normalized-filter field _(search-history types deferred to §5; `AnimeFilters` fields are `z.infer`-derived)_
 
 ## 2. Filters mapper (TDD)
@@ -34,7 +36,7 @@
 - [x] 4.1 Failing tests: `safe`/unset → excludes `ADULT_RATINGS` (keeps null ratings); `full` → no restriction
 - [x] 4.2 `ADULT_RATINGS = ['Rx - Hentai']` (⚠️ confirm/extend against live `anime.rating` values). `profile` has **no opt-in column** → shipped **safe-only**; the `full` plumbing exists but is unreachable (opt-in field = prerequisite change, out of scope)
 - [x] 4.3 Service pins `parentalVariant: 'safe'` and folds it into `animeListCache.key`
-- [ ] 4.4 Explicit cache test proving at most `safe`/`full` variants per filter set (never keyed by user id) _(structurally guaranteed today — variant is a constant folded into `JSON.stringify(filters)`; dedicated test pending)_
+- [x] 4.4 Explicit cache test (`anime-list-cache.test.ts`): `safe`/`full` produce distinct keys, the key is deterministic and fully determined by the normalized filters (`key.endsWith(JSON.stringify(filters))`, no `user` substring) → at most `safe`/`full` variants per filter set, never keyed by user id
 
 ## 5. Search history unit (TDD) — **moved to a new `search` domain**
 
@@ -61,6 +63,6 @@
 
 ## 7. Verification
 
-- [~] 7.1 Per-commit: `bun run check` (Biome), `check:types`, `test` green. **Pending pre-PR:** `format` + `build`
+- [x] 7.1 Full gate green: `format` ✓ · `check` ✓ · `check:types` 0 errors ✓ · `test` 156 passed ✓ · `build` Complete ✓
 - [x] 7.2 `EXPLAIN` on the local dataset (29,705 anime) confirms `Bitmap Index Scan on anime_title_trgm_idx` for `ILIKE`. Re-confirm on the VPS after applying `0001`
 - [~] 7.3 Conventional Commits per task group (done for Stage 1); release only when the user requests a PR/release
