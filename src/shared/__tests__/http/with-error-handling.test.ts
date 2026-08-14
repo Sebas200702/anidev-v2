@@ -16,7 +16,9 @@ vi.mock('@shared/errors/capture-error', () => ({ captureError: vi.fn() }))
 const { withErrorHandling } = await import('@shared/http/with-error-handling')
 
 const context = {} as Parameters<ReturnType<typeof withErrorHandling>>[0]
-const itemSchema = createApiResponseSchema(z.array(z.object({ id: z.number() })))
+const itemSchema = createApiResponseSchema(
+  z.array(z.object({ id: z.number() }))
+)
 
 describe('withErrorHandling — responseSchema', () => {
   it('passes through valid data and returns the success envelope', async () => {
