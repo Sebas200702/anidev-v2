@@ -15,6 +15,7 @@ import {
   AuthError,
   DomainError,
   InfraError,
+  ResponseValidationError,
   ValidationError,
 } from '@shared/errors/app-error'
 import { dbError } from '@shared/errors/db-errors'
@@ -30,6 +31,20 @@ vi.mock('@config/env', () => ({
 vi.mock('@sentry/node', () => ({
   captureException: vi.fn(),
 }))
+
+describe('mapErrorToHttp response validation', () => {
+  it('maps RESPONSE_VALIDATION_ERROR to 500 with a generic message and no leaked details', () => {
+    const { status, body, headers } = mapErrorToHttp(
+      new ResponseValidationError([{ path: ['data'], message: 'bad' }])
+    )
+
+    expect(status).toBe(500)
+    expect(headers?.['Retry-After']).toBeUndefined()
+    expect(body.code).toBe(ErrorCodes.RESPONSE_VALIDATION_ERROR)
+    expect(body.message).toMatch(/internal server error/i)
+    expect(body.meta?.details).toBeUndefined()
+  })
+})
 
 describe('mapErrorToHttp infra errors', () => {
   it('maps DB_ERROR to 503 with Retry-After, generic message and preserved code', () => {

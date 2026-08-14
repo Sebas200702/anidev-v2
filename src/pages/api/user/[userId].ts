@@ -24,7 +24,11 @@ import type { APIContext, APIRoute } from 'astro'
 import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
 import { userService } from '@user/services/user'
-import { getUserProfileSchema, updateUserProfileSchema } from '@user/schemas'
+import {
+  getUserProfileSchema,
+  updateUserProfileSchema,
+  userProfileResponseSchema,
+} from '@user/schemas'
 import { requireAuthSession } from '@auth/utils'
 import { authForbidden } from '@shared/errors/auth-errors'
 import type { User } from '@lib/auth/server'
@@ -70,15 +74,18 @@ import type { User } from '@lib/auth/server'
  * ```
  */
 export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
-  withErrorHandling(async ({ locals, validated }) => {
-    const { userId: targetId } = validated.params
-    const { user } = locals
-    const userProfile = await userService.getUserProfile({
-      userId: user?.id ?? 'anonymous',
-      targetId,
-    })
-    return { data: userProfile, status: 200, meta: {} }
-  })
+  withErrorHandling(
+    async ({ locals, validated }) => {
+      const { userId: targetId } = validated.params
+      const { user } = locals
+      const userProfile = await userService.getUserProfile({
+        userId: user?.id ?? 'anonymous',
+        targetId,
+      })
+      return { data: userProfile, status: 200, meta: {} }
+    },
+    { responseSchema: userProfileResponseSchema }
+  )
 )
 
 /**
@@ -124,19 +131,22 @@ export const GET: APIRoute = withZodValidation(getUserProfileSchema)(
  */
 export const PATCH: (context: APIContext) => Promise<Response> =
   withZodValidation(updateUserProfileSchema)(
-    withErrorHandling(async ({ locals, validated }) => {
-      const user = locals.user as User | null
-      const sessionId = requireAuthSession({ user })
-      const { userId: targetId } = validated.params
-      if (targetId !== sessionId) {
-        throw authForbidden({ targetId, sessionId })
-      }
+    withErrorHandling(
+      async ({ locals, validated }) => {
+        const user = locals.user as User | null
+        const sessionId = requireAuthSession({ user })
+        const { userId: targetId } = validated.params
+        if (targetId !== sessionId) {
+          throw authForbidden({ targetId, sessionId })
+        }
 
-      const profile = await userService.updateUserProfile({
-        userId: sessionId,
-        targetId,
-        input: validated,
-      })
-      return { data: profile, status: 200, meta: {} }
-    })
+        const profile = await userService.updateUserProfile({
+          userId: sessionId,
+          targetId,
+          input: validated,
+        })
+        return { data: profile, status: 200, meta: {} }
+      },
+      { responseSchema: userProfileResponseSchema }
+    )
   )

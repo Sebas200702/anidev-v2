@@ -10,6 +10,19 @@
  */
 
 import type { APIContext } from 'astro'
+import type { ZodType } from 'zod'
+
+/**
+ * Options for {@link withErrorHandling}.
+ */
+export interface WithErrorHandlingOptions {
+  /**
+   * Optional Zod schema validating the **success envelope** (the built
+   * `{ data, status, meta }`) before serialization. On mismatch the wrapper
+   * throws a `ResponseValidationError` → HTTP 500. Omit to skip validation.
+   */
+  responseSchema?: ZodType
+}
 
 /**
  * Value returned by a route handler before envelope serialization.

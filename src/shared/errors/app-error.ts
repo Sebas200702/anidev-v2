@@ -20,7 +20,7 @@
  * @see {@link mapErrorToHttp} — HTTP status and body mapping
  */
 
-import type { ErrorCode } from '@shared/errors/codes'
+import { type ErrorCode, ErrorCodes } from '@shared/errors/codes'
 import { BaseError } from '@shared/errors/base-error'
 
 // BaseError and ErrorSeverity are re-exported via the barrel at `@shared/errors`.
@@ -99,6 +99,33 @@ export class ValidationError extends BaseError {
     cause?: unknown
   ) {
     super('ValidationError', code, message, 'warn', details, cause)
+  }
+}
+
+/**
+ * Server-side contract violation: a route handler's output failed its declared
+ * response schema.
+ *
+ * @remarks
+ * Mapped to **500** with a generic client message (the schema issues stay in
+ * logs/Sentry, never leaked to clients). Not a client fault and not retryable,
+ * so it is distinct from {@link InfraError} (503 + `Retry-After`). Thrown by
+ * {@link withErrorHandling} when `options.responseSchema` rejects the payload.
+ */
+export class ResponseValidationError extends BaseError {
+  /**
+   * @param details - Structured schema issues (e.g. Zod `issues`) for logs
+   * @param cause - Optional underlying error
+   */
+  constructor(details?: unknown, cause?: unknown) {
+    super(
+      'ResponseValidationError',
+      ErrorCodes.RESPONSE_VALIDATION_ERROR,
+      'Response validation failed',
+      'error',
+      details,
+      cause
+    )
   }
 }
 

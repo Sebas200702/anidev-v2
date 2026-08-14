@@ -15,11 +15,10 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
-import type { APIRoute } from 'astro'
+import type { APIContext, APIRoute } from 'astro'
+import { withErrorHandling } from '@http/with-error-handling'
 import { withZodValidation } from '@http/with-validation'
 import { animeService } from '@anime/services/anime'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {
   animeDetailsResponseSchema,
   getAnimeDetailsSchema,
@@ -73,6 +72,7 @@ import {
  * | 500 | `DB_ERROR` | Database query failed |
  * | 500 | `CACHE_ERROR` | Cache read/write failure |
  * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
+ * | 500 | `RESPONSE_VALIDATION_ERROR` | Response envelope fails its Zod schema (wrapper-level) |
  *
  * @example
  * ```bash
@@ -87,36 +87,20 @@ import {
  * ```
  */
 export const GET: APIRoute = withZodValidation(getAnimeDetailsSchema)(
-  async ({ validated }) => {
-    try {
+  withErrorHandling(
+    async ({
+      validated,
+    }: APIContext & { validated: { params: { malId: number } } }) => {
       const { malId } = validated.params
-
       const { value: anime, isStale } =
         await animeService.getAnimeDetails(malId)
 
-      const payload = {
+      return {
         data: anime,
         status: 200,
         meta: { stale: isStale },
       }
-
-      const responseBody = animeDetailsResponseSchema.parse(payload)
-
-      return jsonResponse(responseBody, undefined, 200)
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+    },
+    { responseSchema: animeDetailsResponseSchema }
+  )
 )

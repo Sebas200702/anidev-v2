@@ -12,7 +12,7 @@
  * | Field | Type | Required | Description |
  * | ----- | ---- | -------- | ----------- |
  * | `id` | `string` | yes | Unique profile identifier |
- * | `avatar` | URL `string` | no | Profile image URL |
+ * | `avatar` | `string` | no | Absolute URL or origin-relative path (`/...`) |
  * | `name` | `string` (min 1) | yes | Given name |
  * | `lastName` | `string` (min 1) | yes | Family name |
  * | `birthday` | `string` | no | ISO or display date string |
@@ -60,7 +60,11 @@ import {
  */
 export const userProfileSchema = z.object({
   id: z.string(),
-  avatar: z.url().optional(),
+  // Either an absolute URL (OAuth/CDN) or an origin-relative media/proxy path
+  // beginning with a single '/' (e.g. '/placeholder.webp'). Rejects empty,
+  // arbitrary, and protocol-relative ('//host') strings. Not a plain z.string()
+  // (too loose) nor z.url() (would 500 valid relative-path avatars).
+  avatar: z.union([z.url(), z.string().regex(/^\/(?!\/)/)]).optional(),
   name: z.string().min(1),
   lastName: z.string().min(1),
   birthday: z.string().optional(),

@@ -15,15 +15,14 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
-import type { APIRoute } from 'astro'
+import type { APIContext, APIRoute } from 'astro'
 import { animeStaffService } from '@anime/services/anime-staff'
 import {
   getAnimeStaffSchema,
   animeStaffResponseSchema,
 } from '@anime/schemas/anime-staff-schema'
+import { withErrorHandling } from '@http/with-error-handling'
 import { withZodValidation } from '@http/with-validation'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import { jsonResponse } from '@shared/http/api-response-serialize-util'
 
 /**
  * Returns the staff list for a MyAnimeList anime ID.
@@ -58,6 +57,7 @@ import { jsonResponse } from '@shared/http/api-response-serialize-util'
  * | 500 | `DB_ERROR` | Database query failed |
  * | 500 | `CACHE_ERROR` | Cache read/write failure |
  * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
+ * | 500 | `RESPONSE_VALIDATION_ERROR` | Response envelope fails its Zod schema (wrapper-level) |
  *
  * @example
  * ```bash
@@ -72,14 +72,15 @@ import { jsonResponse } from '@shared/http/api-response-serialize-util'
  * ```
  */
 export const GET: APIRoute = withZodValidation(getAnimeStaffSchema)(
-  async ({ validated }) => {
-    try {
+  withErrorHandling(
+    async ({
+      validated,
+    }: APIContext & { validated: { params: { malId: number } } }) => {
       const { malId } = validated.params
-
       const { value: staff, isStale } =
         await animeStaffService.getAnimeStaff(malId)
 
-      const payload = {
+      return {
         data: staff,
         status: 200,
         meta: {
@@ -87,22 +88,7 @@ export const GET: APIRoute = withZodValidation(getAnimeStaffSchema)(
           count: staff.length,
         },
       }
-      const responseBody = animeStaffResponseSchema.parse(payload)
-
-      return jsonResponse(responseBody, undefined, 200)
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+    },
+    { responseSchema: animeStaffResponseSchema }
+  )
 )

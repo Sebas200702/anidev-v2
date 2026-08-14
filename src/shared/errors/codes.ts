@@ -48,6 +48,9 @@ export const ErrorCodes = {
   /** Upstream external API failure — HTTP 500, Sentry. */
   EXTERNAL_API_ERROR: 'EXTERNAL_API_ERROR',
 
+  /** Handler output failed its response schema — HTTP 500, Sentry. */
+  RESPONSE_VALIDATION_ERROR: 'RESPONSE_VALIDATION_ERROR',
+
   /** User profile/account not found — HTTP 404. */
   USER_NOT_FOUND: 'USER_NOT_FOUND',
   /** User id failed validation — HTTP 400. */

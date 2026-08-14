@@ -15,15 +15,15 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import { jsonResponse } from '@shared/http/api-response-serialize-util'
+import { withErrorHandling } from '@http/with-error-handling'
 import { withZodValidation } from '@http/with-validation'
 import {
   musicListRequestSchema,
   musicListResponseSchema,
 } from '@music/schemas/music-list-schema'
 import { musicListService } from '@music/services/music-list'
-import type { APIRoute } from 'astro'
+import type { MusicListFiltersParams } from '@music/types'
+import type { APIContext, APIRoute } from 'astro'
 
 /**
  * Returns a paginated, filterable music card list.
@@ -80,13 +80,16 @@ import type { APIRoute } from 'astro'
  * ```
  */
 export const GET: APIRoute = withZodValidation(musicListRequestSchema)(
-  async ({ validated }) => {
-    try {
+  withErrorHandling(
+    async ({
+      validated,
+    }: APIContext & { validated: { query: MusicListFiltersParams } }) => {
       const {
         value: { list: musicCards, total },
         isStale,
       } = await musicListService.getMusicList(validated.query)
-      const payload = {
+
+      return {
         data: musicCards,
         status: 200,
         meta: {
@@ -96,22 +99,7 @@ export const GET: APIRoute = withZodValidation(musicListRequestSchema)(
           hasNext: validated.query.page * validated.query.limit < total,
         },
       }
-      const responseBody = musicListResponseSchema.parse(payload)
-
-      return jsonResponse(responseBody)
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+    },
+    { responseSchema: musicListResponseSchema }
+  )
 )
