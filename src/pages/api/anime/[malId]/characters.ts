@@ -64,6 +64,7 @@ import { withZodValidation } from '@http/with-validation'
  * | 500 | `DB_ERROR` | Database query failed |
  * | 500 | `CACHE_ERROR` | Cache read/write failure |
  * | 500 | `UNKNOWN_ERROR` | Unhandled throwable |
+ * | 500 | `RESPONSE_VALIDATION_ERROR` | Response envelope fails its Zod schema (wrapper-level) |
  *
  * @example
  * ```bash
