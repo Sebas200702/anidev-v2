@@ -40,5 +40,5 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Run `bun run format`, `bun run check`, `bun run check:types`, `bun run test`, `bun run build`
-- [ ] 6.2 Mark tasks complete; Conventional Commits per task group; release only when user requests PR/release per AGENTS.md
+- [x] 6.1 Gate green: `format` ✓ · `check` ✓ · `check:types` 0 errors ✓ · `test` 115 passed ✓ · `build` Complete ✓
+- [x] 6.2 Conventional Commits per task group; PR/release only when the user requests it
