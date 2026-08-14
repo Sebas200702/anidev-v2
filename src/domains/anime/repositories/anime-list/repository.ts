@@ -9,8 +9,10 @@ import { animeGenre } from '@db/schemas/anime-relations'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { dbError } from '@shared/errors/db-errors'
 import type { AnimeDB, AnimeFilters } from '@anime/types'
+import { RELEVANCE_RANK_ALIAS } from '@anime/constants'
 import { buildAnimeListFilters, type AnimeListFilterParams } from './filters'
-import { and, countDistinct, eq } from 'drizzle-orm'
+import { buildAnimeListSort, relevanceRankExpr } from './sort'
+import { and, countDistinct, eq, sql } from 'drizzle-orm'
 
 // buildAnimeListFilters and AnimeListFilterParams are re-exported via the barrel
 // at `@anime/repositories`. Import them from there or from
@@ -54,12 +56,26 @@ export const animeListRepository = {
     try {
       const whereConditions = buildAnimeListFilters(filterParams)
 
+      // Relevance sort ranks by trigram similarity; SELECT DISTINCT requires that
+      // ORDER BY expression in the select list, so it is selected as an alias.
+      // Keep a stable select shape (null alias when not ranking) for typing.
+      const query = filterParams.query?.trim()
+      const useRelevance = filterParams.sort === 'relevance' && !!query
+      const selection = {
+        anime,
+        [RELEVANCE_RANK_ALIAS]:
+          useRelevance && query
+            ? relevanceRankExpr(query)
+            : sql`null`.as(RELEVANCE_RANK_ALIAS),
+      }
+
       const result = await db
-        .selectDistinct({ anime })
+        .selectDistinct(selection)
         .from(anime)
         .leftJoin(animeGenre, eq(animeGenre.animeId, anime.malId))
         .leftJoin(genreTable, eq(genreTable.malId, animeGenre.genreId))
         .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+        .orderBy(...buildAnimeListSort(filterParams))
         .limit(limit)
         .offset((page - 1) * limit)
 

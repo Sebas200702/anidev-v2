@@ -8,8 +8,18 @@
  */
 import { anime } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
-import { normalizeString } from '@utils/string/normalize-string-util'
-import { eq, inArray, sql, type SQL } from 'drizzle-orm'
+import { ADULT_RATINGS } from '@anime/constants'
+import {
+  eq,
+  gte,
+  inArray,
+  isNull,
+  lte,
+  notInArray,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm'
 import type { AnimeListFilterParams } from './filters.types'
 
 export type { AnimeListFilterParams } from './filters.types'
@@ -40,11 +50,39 @@ export const buildAnimeListFilters = ({
   type,
   year,
   query,
+  season,
+  scoreMin,
+  scoreMax,
+  parentalVariant,
 }: AnimeListFilterParams): SQL[] => {
   const filters: SQL[] = []
 
+  // Parental floor: exclude adult ratings unless explicitly `full`. Fail-closed —
+  // an unset variant is treated as `safe`. Unknown (null) ratings are kept.
+  if (parentalVariant !== 'full') {
+    const notAdult = or(
+      isNull(anime.rating),
+      notInArray(anime.rating, [...ADULT_RATINGS])
+    )
+    if (notAdult) {
+      filters.push(notAdult)
+    }
+  }
+
   if (year) {
     filters.push(eq(anime.year, year))
+  }
+
+  if (season) {
+    filters.push(eq(anime.season, season))
+  }
+
+  if (scoreMin !== undefined) {
+    filters.push(gte(anime.score, scoreMin))
+  }
+
+  if (scoreMax !== undefined) {
+    filters.push(lte(anime.score, scoreMax))
   }
 
   if (status?.length) {
@@ -64,24 +102,16 @@ export const buildAnimeListFilters = ({
   }
 
   if (query?.trim()) {
-    const normalizedQuery = normalizeString({
-      string: query,
-      removeSpaces: true,
-      separator: '',
-      toLowerCase: true,
-    })
-
-    const queryPattern = `%${normalizedQuery}%`
-
-    const normalizedTitle = sql`REPLACE(LOWER(${anime.title}), ' ', '')`
-    const normalizedTitleEng = sql`REPLACE(LOWER(COALESCE(${anime.titleEnglish}, '')), ' ', '')`
-    const normalizedTitleJpn = sql`REPLACE(LOWER(COALESCE(${anime.titleJapanese}, '')), ' ', '')`
+    // Index-backed substring match: the GIN pg_trgm indexes on these columns
+    // accelerate `ILIKE '%q%'`, so this is not a sequential scan. Ranking by
+    // similarity happens in the sort builder (relevance sort).
+    const pattern = `%${query.trim()}%`
 
     filters.push(
       sql`(
-        ${normalizedTitle} LIKE ${queryPattern}
-        OR ${normalizedTitleEng} LIKE ${queryPattern}
-        OR ${normalizedTitleJpn} LIKE ${queryPattern}
+        ${anime.title} ILIKE ${pattern}
+        OR ${anime.titleEnglish} ILIKE ${pattern}
+        OR ${anime.titleJapanese} ILIKE ${pattern}
       )`
     )
   }

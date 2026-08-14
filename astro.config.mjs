@@ -72,6 +72,9 @@ export default defineConfig({
           new URL('./src/domains/music', import.meta.url)
         ),
         '@user': fileURLToPath(new URL('./src/domains/user', import.meta.url)),
+        '@search': fileURLToPath(
+          new URL('./src/domains/search', import.meta.url)
+        ),
         '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
         '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
         '@config': fileURLToPath(new URL('./src/config', import.meta.url)),

@@ -5,6 +5,7 @@
  */
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import { animeCardSchema } from '@anime/schemas/anime-card-schema'
+import { animeSortFields } from '@anime/constants'
 import { z } from 'zod'
 
 /**
@@ -21,7 +22,23 @@ import { z } from 'zod'
  * | `year` | `z.coerce.number().int().min(1900).max(current year).optional()` |
  * | `type` | optional string |
  * | `query` | optional search string |
+ * | `season` | optional string |
+ * | `scoreMin` / `scoreMax` | `z.coerce.number().min(0).max(10).optional()` |
+ * | `sort` | optional enum `score \| year \| title \| relevance` |
+ * | `order` | optional enum `asc \| desc` |
  */
+const scoreBoundSchema = z.coerce.number().min(0).max(10)
+
+/** Whitelisted sort field union derived from {@link animeSortFields}. */
+export type AnimeSortField = (typeof animeSortFields)[number]
+
+/**
+ * Parental-control cache variant: `safe` excludes adult ratings (default,
+ * fail-closed), `full` includes them for an opted-in user. Server-derived —
+ * never a client query param.
+ */
+export type ParentalVariant = 'safe' | 'full'
+
 export const animeFiltersParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
@@ -36,6 +53,11 @@ export const animeFiltersParamsSchema = z.object({
     .optional(),
   type: z.string().optional(),
   query: z.string().optional(),
+  season: z.string().optional(),
+  scoreMin: scoreBoundSchema.optional(),
+  scoreMax: scoreBoundSchema.optional(),
+  sort: z.enum(animeSortFields).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
 })
 
 /**
@@ -49,14 +71,49 @@ export const animeFiltersSchema = animeFiltersParamsSchema.extend({
   status: z.array(z.string()).optional(),
   rating: z.array(z.string()).optional(),
   type: z.array(z.string()).optional(),
+  // Server-derived parental variant (not a client query param); folded into the
+  // cache key so `safe` and `full` results never mix.
+  parentalVariant: z.enum(['safe', 'full']).optional(),
 })
+
+/**
+ * Boundary refinements applied to the raw query at the request edge:
+ * - `scoreMin` MUST be ≤ `scoreMax` when both are present.
+ * - `relevance` sort requires a non-empty (post-trim) `query`.
+ *
+ * @remarks
+ * Kept off {@link animeFiltersParamsSchema} so that schema stays a plain
+ * `ZodObject` extendable by {@link animeFiltersSchema}.
+ */
+const refinedFiltersQuerySchema = animeFiltersParamsSchema.superRefine(
+  (value, ctx) => {
+    if (
+      value.scoreMin !== undefined &&
+      value.scoreMax !== undefined &&
+      value.scoreMin > value.scoreMax
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['scoreMin'],
+        message: 'scoreMin must be less than or equal to scoreMax',
+      })
+    }
+    if (value.sort === 'relevance' && !value.query?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['sort'],
+        message: 'relevance sort requires a non-empty query',
+      })
+    }
+  }
+)
 
 /**
  * **Full request schema** for `GET /api/anime` (list).
  */
 export const animeListRequestSchema = z.object({
   params: z.object({}).optional().default({}),
-  query: animeFiltersParamsSchema,
+  query: refinedFiltersQuerySchema,
   body: z.unknown().optional(),
 })
 

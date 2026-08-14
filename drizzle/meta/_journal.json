@@ -8,6 +8,20 @@
       "when": 1786078111530,
       "tag": "0000_clammy_marvel_zombies",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786653342824,
+      "tag": "0001_search_text_trgm_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786655237153,
+      "tag": "0002_fixed_jackpot",
+      "breakpoints": true
     }
   ]
 }

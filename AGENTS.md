@@ -324,6 +324,12 @@ Formatting is enforced by **Biome** (`bun run format`) and lint by **Biome** (`b
 ### Constants
 - Real global constants → `UPPER_SNAKE_CASE`: `DEFAULT_PAGE_SIZE`, `MAX_RETRIES`
 - Everything else → `camelCase`
+- **Define constants in a dedicated module, then import them** — a domain/unit
+  `constants.ts` (or `config.ts` for config objects). Never inline constant
+  definitions in logic files (repositories, services, mappers, routes). Examples:
+  `@anime/constants` (`ADULT_RATINGS`, `RELEVANCE_RANK_ALIAS`, `animeSortFields`),
+  `@search/constants` (`SEARCH_HISTORY_PER_USER_CAP`), `@lib/cache/config`,
+  `@shared/errors/codes`.
 
 ### Naming by element
 | Element | Style |

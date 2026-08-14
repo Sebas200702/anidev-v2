@@ -13,6 +13,7 @@
       "@media/*": ["./src/domains/media/*"],
       "@music/*": ["./src/domains/music/*"],
       "@user/*": ["./src/domains/user/*"],
+      "@search/*": ["./src/domains/search/*"],
       "@shared/*": ["./src/shared/*"],
       "@lib/*": ["./src/lib/*"],
       "@config/*": ["./src/config/*"],

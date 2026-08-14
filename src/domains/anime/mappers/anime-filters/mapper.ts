@@ -43,6 +43,11 @@ export const mapAnimeFilters = (params: AnimeFiltersParams): AnimeFilters => {
     type: toArray(params.type),
     year: params.year,
     query: params.query,
+    season: params.season,
+    scoreMin: params.scoreMin,
+    scoreMax: params.scoreMax,
+    sort: params.sort ?? 'score',
+    order: params.order ?? 'desc',
     page: params.page,
     limit: params.limit,
   }
