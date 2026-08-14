@@ -6,4 +6,8 @@
 export {
   searchHistoryQuerySchema,
   searchHistoryEntrySchema,
+  getSearchHistorySchema,
+  deleteSearchHistorySchema,
+  searchHistoryListResponseSchema,
+  searchHistoryClearResponseSchema,
 } from './search-history-schema'

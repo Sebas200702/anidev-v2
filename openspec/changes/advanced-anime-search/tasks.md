@@ -52,12 +52,12 @@
 > `profile.user_id` is `integer` in the DB but `text` in the TS schema. Trimmed
 > from migration 0002; track/resolve separately (see user-profile change).
 
-## 6. API routes (TDD) — pending: `api-response-schema-in-wrapper` first
+## 6. API routes (TDD) — wrapper (`api-response-schema-in-wrapper`) merged to master
 
-- [ ] 6.1 Failing route tests for extended `GET /api/anime` (new params validate; existing behavior unchanged; parental variant applied; history recorded when session present)
-- [ ] 6.2 Migrate `GET /api/anime` to `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))` (**after** the wrapper change lands; remove inline `animeListResponseSchema.parse` + success-path `jsonResponse`); wire best-effort history record
-- [ ] 6.3 Failing tests for `GET`/`DELETE /api/anime/search-history` (401 anon, 200 owner list, 200 clear)
-- [ ] 6.4 Implement authed search-history read + clear routes (`private, no-store`)
+- [x] 6.1 Route tests for `GET /api/anime` (`anime-list-route.test.ts`): 200 envelope + pagination meta; malformed card → 500 `RESPONSE_VALIDATION_ERROR`; history recorded when authed **and** search intent present; **not** recorded for anonymous callers or plain pagination
+- [x] 6.2 `GET /api/anime` already runs on `withZodValidation(...)(withErrorHandling(handler, { responseSchema }))` after the wrapper merge (rebased in); wired **best-effort history record** — authed + `hasSearchIntent(query)` → `searchHistoryService.record({ scope: 'anime', query, filters })` (pagination stripped from the persisted `filters` snapshot)
+- [x] 6.3 Route tests for `GET`/`DELETE /api/search-history` (`search-history-route.test.ts`): 401 `AUTH_REQUIRED` anon (both verbs), 200 owner list (newest-first, `userId` not leaked, `limit` validated), 400 out-of-range `limit`, 200 clear (`{ removed }`)
+- [x] 6.4 Implemented authed read + clear routes at **`/api/search-history`** (transversal path — history is cross-domain, not nested under `anime`), `Cache-Control: private, no-store`, owner-scoped via `requireAuthSession`
 
 ## 7. Verification
 

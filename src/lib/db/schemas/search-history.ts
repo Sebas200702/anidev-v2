@@ -47,9 +47,6 @@ export const searchHistory = pgTable(
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (t) => [
-    index('search_history_user_created_idx').on(
-      t.userId,
-      t.createdAt.desc()
-    ),
+    index('search_history_user_created_idx').on(t.userId, t.createdAt.desc()),
   ]
 )
