@@ -1,8 +1,12 @@
 ## 1. Wrapper option and error code (TDD)
 
-- [ ] 1.1 Add failing tests for `withErrorHandling(handler, { responseSchema })`: valid data passes, invalid data yields 500, no schema skips validation
-- [ ] 1.2 Add `ErrorCodes.RESPONSE_VALIDATION_ERROR` and map it to HTTP 500 with `error` severity in `mapErrorToHttp` (add failing tests first)
-- [ ] 1.3 Implement the `responseSchema` option in `withErrorHandling` (safeParse on success, throw on invalid)
+- [x] 1.1 Failing tests for `withErrorHandling(handler, { responseSchema })`: valid passes, invalid → 500, no schema skips
+- [x] 1.2 `ErrorCodes.RESPONSE_VALIDATION_ERROR` + `ResponseValidationError` class (BaseError, severity `error`) mapped to **500** (generic message, no leaked details) in `mapErrorToHttp`
+- [x] 1.3 `responseSchema` option in `withErrorHandling` — validates the built **envelope** payload (matches the `*ResponseSchema` = `createApiResponseSchema` shape); throws `ResponseValidationError` on mismatch
+
+> Note: the schema validates the full success envelope (`{ data, status, meta }`),
+> not just `data` — the existing `*ResponseSchema` are envelope schemas, matching
+> what routes previously did with `*.parse(payload)`.
 
 ## 2. Refactor anime routes
 

@@ -34,7 +34,11 @@ import {
   jsonResponse,
   mergeResponseHeaders,
 } from '@shared/http/api-response-serialize-util'
-import type { RouteHandler } from './with-error-handling-types'
+import type {
+  RouteHandler,
+  WithErrorHandlingOptions,
+} from './with-error-handling-types'
+import { ResponseValidationError } from '@shared/errors/app-error'
 import { logger } from '@utils/logger-util'
 
 /**
@@ -59,7 +63,8 @@ import { logger } from '@utils/logger-util'
  * @see {@link HandlerResult}
  */
 export const withErrorHandling = <TContext extends APIContext>(
-  handler: RouteHandler<TContext>
+  handler: RouteHandler<TContext>,
+  options?: WithErrorHandlingOptions
 ): ((context: TContext) => Promise<Response>) => {
   return async (context: TContext) => {
     try {
@@ -69,6 +74,14 @@ export const withErrorHandling = <TContext extends APIContext>(
         result.status ?? 200,
         result.meta ?? {}
       )
+
+      if (options?.responseSchema) {
+        const validation = options.responseSchema.safeParse(payload)
+        if (!validation.success) {
+          throw new ResponseValidationError(validation.error.issues)
+        }
+      }
+
       const response = jsonResponse(payload, undefined, payload.status)
 
       if (result.headers) {

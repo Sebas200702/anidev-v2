@@ -46,6 +46,7 @@ import {
   AuthError,
   DomainError,
   InfraError,
+  ResponseValidationError,
   ValidationError,
 } from '@shared/errors/app-error'
 import { captureError } from '@shared/errors/capture-error'
@@ -113,6 +114,19 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof DomainError) {
     captureError(error, 'warning')
     return mapDomainErrorToHttp(error)
+  }
+
+  if (error instanceof ResponseValidationError) {
+    logger.error({ err: error }, 'Response validation error')
+    captureError(error)
+
+    return {
+      status: 500,
+      body: {
+        code: error.code,
+        message: 'Internal server error',
+      },
+    }
   }
 
   if (error instanceof InfraError) {
