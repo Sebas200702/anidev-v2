@@ -60,7 +60,9 @@ import {
  */
 export const userProfileSchema = z.object({
   id: z.string(),
-  avatar: z.url().optional(),
+  // Stored as text; may be a relative media/proxy path (e.g. '/placeholder.webp')
+  // or an absolute URL — not necessarily a full URL, so do not use z.url().
+  avatar: z.string().optional(),
   name: z.string().min(1),
   lastName: z.string().min(1),
   birthday: z.string().optional(),

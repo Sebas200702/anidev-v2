@@ -15,11 +15,10 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
-import type { APIRoute } from 'astro'
+import type { APIContext, APIRoute } from 'astro'
+import { withErrorHandling } from '@http/with-error-handling'
 import { withZodValidation } from '@http/with-validation'
 import { musicService } from '@music/services/music'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import {
   getMusicSchema,
   musicDetailsResponseSchema,
@@ -85,33 +84,20 @@ import {
  * ```
  */
 export const GET: APIRoute = withZodValidation(getMusicSchema)(
-  async ({ validated }) => {
-    try {
+  withErrorHandling(
+    async ({
+      validated,
+    }: APIContext & { validated: { params: { id: string } } }) => {
       const { id } = validated.params
       const { value: musicDetails, isStale } =
         await musicService.getMusicDetailsById(Number(id))
 
-      const payload = {
+      return {
         data: musicDetails,
         status: 200,
         meta: { stale: isStale },
       }
-      const responseBody = musicDetailsResponseSchema.parse(payload)
-
-      return jsonResponse(responseBody, undefined, 200)
-    } catch (error) {
-      const { body, status } = mapErrorToHttp(error)
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status: status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+    },
+    { responseSchema: musicDetailsResponseSchema }
+  )
 )

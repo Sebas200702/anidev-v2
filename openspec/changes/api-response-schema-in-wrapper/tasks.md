@@ -10,27 +10,33 @@
 
 ## 2. Refactor anime routes
 
-- [ ] 2.1 Refactor `GET /api/anime` (`anime/index.ts`) to `withErrorHandling(handler, { responseSchema: animeListResponseSchema })`, preserving `meta` (stale/page/total/hasNext) and `x-stale` header
-- [ ] 2.2 Refactor `GET /api/anime/:malId` (`anime/[malId]/index.ts`) with `animeDetailsResponseSchema`
-- [ ] 2.3 Refactor `GET /api/anime/:malId/characters` with `animeCharacterResponseSchema`
-- [ ] 2.4 Refactor `GET /api/anime/:malId/full` with `animeFullDetailsResponseSchema`
-- [ ] 2.5 Refactor `GET /api/anime/:malId/staff` with `animeStaffResponseSchema`
+- [x] 2.1 `GET /api/anime` → `withErrorHandling(handler, { responseSchema: animeListResponseSchema })`, preserving `meta` (stale/page/total/hasNext) and `x-stale`
+- [x] 2.2 `GET /api/anime/:malId` with `animeDetailsResponseSchema`
+- [x] 2.3 `GET /api/anime/:malId/characters` with `animeCharacterResponseSchema`
+- [x] 2.4 `GET /api/anime/:malId/full` with `animeFullDetailsResponseSchema`
+- [x] 2.5 `GET /api/anime/:malId/staff` with `animeStaffResponseSchema`
 
 ## 3. Refactor music routes
 
-- [ ] 3.1 Refactor `GET /api/music` (`music/index.ts`) with `musicListResponseSchema`, preserving pagination meta and `x-stale`
-- [ ] 3.2 Refactor `GET /api/music/:id` (`music/[id].ts`) with `musicDetailsResponseSchema`
+- [x] 3.1 `GET /api/music` with `musicListResponseSchema`, preserving pagination meta and `x-stale`
+- [x] 3.2 `GET /api/music/:id` with `musicDetailsResponseSchema`
 
 ## 4. Refactor user routes
 
-- [ ] 4.1 Refactor `GET /api/user/:userId` to pass `{ responseSchema: userProfileResponseSchema }`
-- [ ] 4.2 Refactor `POST /api/user` to pass `{ responseSchema: userProfileResponseSchema }`
-- [ ] 4.3 Refactor `PATCH /api/user/:userId` to pass `{ responseSchema: userProfileResponseSchema }`
+- [x] 4.1 `GET /api/user/:userId` passes `{ responseSchema: userProfileResponseSchema }`
+- [x] 4.2 `POST /api/user` passes `{ responseSchema: userProfileResponseSchema }`
+- [x] 4.3 `PATCH /api/user/:userId` passes `{ responseSchema: userProfileResponseSchema }`
+
+> ⚠️ **Bug surfaced by the wrapper:** `userProfileSchema.avatar` used `z.url()`
+> (absolute URL), but real avatars are relative media/proxy paths
+> (`/placeholder.webp`). Enabling response validation would 500 valid profiles,
+> so `avatar` was loosened to `z.string()` (text; relative or absolute). Anime
+> card `imageUrl`/`smallImageUrl` stay `z.url()` (mapper emits absolute proxy URLs).
 
 ## 5. Route tests for migrated routes
 
-- [ ] 5.1 Add/extend route tests verifying migrated routes still return 200 success envelopes and 4xx/5xx errors
-- [ ] 5.2 Add a wrapper-level test that a route with a response schema returns 500 `RESPONSE_VALIDATION_ERROR` on invalid `data`
+- [x] 5.1 Migrated-route coverage: user route tests (create/update/get) exercise the composition + response schema (and caught the avatar bug); new `anime-list-route.test.ts` covers `GET /api/anime` (200 envelope + malformed → 500). Music GET routes share the identical composition
+- [x] 5.2 Wrapper-level test (`with-error-handling.test.ts`): response schema → 500 `RESPONSE_VALIDATION_ERROR` on invalid data
 
 ## 6. Verification
 

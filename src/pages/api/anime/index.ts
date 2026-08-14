@@ -15,15 +15,15 @@
  * @see {@link mapErrorToHttp} — error-to-HTTP mapping
  */
 
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
-import { jsonResponse } from '@shared/http/api-response-serialize-util'
+import { withErrorHandling } from '@http/with-error-handling'
 import { withZodValidation } from '@http/with-validation'
 import {
   animeListRequestSchema,
   animeListResponseSchema,
 } from '@anime/schemas/anime-list-schema'
 import { animeListService } from '@anime/services/anime-list'
-import type { APIRoute } from 'astro'
+import type { AnimeFiltersParams } from '@anime/types'
+import type { APIContext, APIRoute } from 'astro'
 
 /**
  * Returns a paginated, filterable anime card list.
@@ -88,13 +88,16 @@ import type { APIRoute } from 'astro'
  * ```
  */
 export const GET: APIRoute = withZodValidation(animeListRequestSchema)(
-  async ({ validated }) => {
-    try {
+  withErrorHandling(
+    async ({
+      validated,
+    }: APIContext & { validated: { query: AnimeFiltersParams } }) => {
       const {
         value: { list: animeCards, total },
         isStale,
       } = await animeListService.getAnimeList(validated.query)
-      const payload = {
+
+      return {
         data: animeCards,
         status: 200,
         meta: {
@@ -104,22 +107,7 @@ export const GET: APIRoute = withZodValidation(animeListRequestSchema)(
           hasNext: validated.query.page * validated.query.limit < total,
         },
       }
-      const responseBody = animeListResponseSchema.parse(payload)
-
-      return jsonResponse(responseBody)
-    } catch (error) {
-      const { status, body } = mapErrorToHttp(error)
-      const payload = {
-        data: null,
-        status,
-        error: body.message ?? 'Unexpected error',
-        meta: body.meta ?? {},
-      }
-
-      return new Response(JSON.stringify(payload), {
-        status,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-  }
+    },
+    { responseSchema: animeListResponseSchema }
+  )
 )
