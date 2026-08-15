@@ -110,6 +110,34 @@ jobs:
       - name: Install Playwright browser (chromium)
         run: bun run test:e2e:install
 
+      - name: Wait for Postgres
+        # Service-container health can flip green during the postgres image's
+        # socket-only init phase, before TCP 5432 accepts host connections — and
+        # drizzle-kit swallows the underlying pg error. Poll a real TCP query and
+        # surface the exact failure so migrate runs only once the DB is truly up.
+        run: |
+          node -e '
+          const { Client } = require("pg");
+          (async () => {
+            for (let i = 1; i <= 30; i++) {
+              const c = new Client({ connectionString: process.env.DATABASE_URL });
+              try {
+                await c.connect();
+                await c.query("select 1");
+                await c.end();
+                console.log(`postgres reachable after ${i} attempt(s)`);
+                process.exit(0);
+              } catch (e) {
+                console.log(`attempt ${i}: ${e.message}`);
+                await c.end().catch(() => {});
+                await new Promise((r) => setTimeout(r, 2000));
+              }
+            }
+            console.error("postgres never became reachable");
+            process.exit(1);
+          })();
+          '
+
       - name: Apply migrations
         run: bun run db:migrate
 
