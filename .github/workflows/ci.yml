@@ -118,6 +118,12 @@ jobs:
       - name: Seed E2E fixtures
         run: bun run db:seed:e2e
 
+      - name: Integration tests (real Postgres)
+        # Opt-in DB tests (RUN_DB_TESTS, set by the script) — the repository layer
+        # against the real Postgres + pg_trgm, skipped in the unit `gate`. Runs
+        # here where the DB is already migrated + seeded, before the browser layer.
+        run: bun run test:integration
+
       - name: Run E2E (Playwright)
         run: bun run test:e2e
 
