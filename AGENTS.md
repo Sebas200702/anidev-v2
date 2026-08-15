@@ -65,8 +65,7 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
 | `bun run auth:migrate` | Run Better Auth migrations |
 | `bun run db:generate` | Generate Drizzle migration (requirements) |
-| `bun run db:migrate` | Apply Drizzle migrations to **local** (reads `.env`) |
-| `bun run db:migrate:prod` | Apply Drizzle migrations to **production** (reads `.env.production`) — no env editing; create that git-ignored file once with the prod `DATABASE_URL` |
+| `bun run db:migrate` | Apply Drizzle migrations |
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` (needed after schema changes) |
 | `bun run release:*` | `standard-version` (patch/minor/major/prerelease) |
 
@@ -391,7 +390,7 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 - Better Auth CLI commands are preconfigured with correct path: `--config src/lib/auth/server.ts` — do not change it
 - Cache TTL values in **seconds** (`CacheTtl` enum in `src/lib/cache/config.ts`)
 - No `.tsx` React components exist yet (React is configured but unused) — keep it that way unless a change requires it
-- **No `drizzle.config` exists yet** — `db:generate`/`db:migrate` will need one; creating it is part of the migration change, not an ad-hoc fix
+- **Migrations are local-only for agents** — `bun run db:migrate` / `db:generate` target the local dev database (`drizzle.config.ts` reads `.env`). Never run migrations against, connect to, or point DB tooling at a production/remote database. Production schema changes are performed manually by the maintainer, outside this repo — there is no production migration command here, and agents must not create one.
 - Auth middleware uses cookie markers (`session_token=`, `session_data=`) — do not rename without updating middleware
 - Sentry no-ops when `SENTRY_DSN` is absent — safe to call `init*` unconditionally
 - Don't add scripts to `package.json` that don't exist
