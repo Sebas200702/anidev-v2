@@ -48,6 +48,33 @@ export const SEED_ANIME: SeedAnime[] = [
     season: null,
     rating: null,
   },
+  // Backs `anime-list.integration.test.ts`: a `pg_trgm` search for "cowboy"
+  // must return a title containing "cowboy bebop", ranked first by relevance.
+  // A fresh CI database has no real MAL data, so this row makes that assertion
+  // deterministic; locally it simply co-exists with the real Cowboy Bebop.
+  {
+    malId: 999_000_003,
+    title: 'Cowboy Bebop',
+    type: 'TV',
+    status: 'Finished Airing',
+    score: 8.75,
+    year: 1998,
+    season: 'spring',
+    rating: 'R - 17+ (violence & profanity)',
+  },
+  // Backs the same file's "safe parental variant excludes adult" assertion:
+  // the `safe` variant must filter this `Rx - Hentai` row out entirely, so its
+  // presence makes the exclusion test meaningful even on an otherwise-empty DB.
+  {
+    malId: 999_000_004,
+    title: 'E2E Seed Adult Title',
+    type: 'OVA',
+    status: 'Finished Airing',
+    score: 6.0,
+    year: 2019,
+    season: null,
+    rating: 'Rx - Hentai',
+  },
 ]
 
 /** A minimal music row (schema requires `id` + `type`). */
