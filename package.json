@@ -14,6 +14,7 @@
     "auth:migrate": "bunx @better-auth/cli@latest migrate --config src/lib/auth/server.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:prod": "ENV_FILE=.env.production drizzle-kit migrate",
     "release": "standard-version",
     "release:patch": "standard-version --release-as patch",
     "release:minor": "standard-version --release-as minor",

@@ -65,7 +65,8 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
 | `bun run auth:migrate` | Run Better Auth migrations |
 | `bun run db:generate` | Generate Drizzle migration (requirements) |
-| `bun run db:migrate` | Apply Drizzle migrations |
+| `bun run db:migrate` | Apply Drizzle migrations to **local** (reads `.env`) |
+| `bun run db:migrate:prod` | Apply Drizzle migrations to **production** (reads `.env.production`) — no env editing; create that git-ignored file once with the prod `DATABASE_URL` |
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` (needed after schema changes) |
 | `bun run release:*` | `standard-version` (patch/minor/major/prerelease) |
 
