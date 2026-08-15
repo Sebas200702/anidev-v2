@@ -60,10 +60,11 @@ jobs:
     env:
       NODE_ENV: test
       # Names src/config/env.ts actually requires (not the stale TURSO_/UPSTASH_
-      # placeholders used by the code-quality gate above). Point at the service
-      # containers via their published localhost ports.
-      DATABASE_URL: postgres://anidev:anidev@localhost:5432/anidev
-      REDIS_URL: redis://localhost:6379
+      # placeholders used by the code-quality gate above). Reach the service
+      # containers via 127.0.0.1 (IPv4) — `localhost` can resolve to IPv6 `::1`
+      # on the runner, which the containers' IPv4-only port maps refuse.
+      DATABASE_URL: postgres://anidev:anidev@127.0.0.1:5432/anidev
+      REDIS_URL: redis://127.0.0.1:6379
       APP_BASE_URL: http://127.0.0.1:4331
       BETTER_AUTH_SECRET: e2e-secret-e2e-secret-e2e-secret-e2e!!
       # The self-host artifact under test (Bun standalone), for the build step.

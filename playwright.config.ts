@@ -10,7 +10,7 @@
  * locally, service containers in CI). The harness pins **host-reachable**
  * connection URLs: `DATABASE_URL` is inherited from the environment (the local
  * `.env` already uses `localhost:5432`, CI sets its own), while `REDIS_URL` is
- * pinned to the published `localhost:6379` port — the ambient `.env` value
+ * pinned to the published `127.0.0.1:6379` port — the ambient `.env` value
  * (`redis://dragonfly:6379`) is a Docker-network hostname that does not resolve
  * for a server running on the host. Override either with `E2E_DATABASE_URL` /
  * `E2E_REDIS_URL`. The harness also pins the adapter, host/port, base URL, auth
@@ -33,9 +33,11 @@ const isCI = !!process.env.CI
 // Host-reachable connection URLs for the spawned server. DATABASE_URL is inherited
 // (local `.env` uses localhost; CI sets its own). REDIS_URL must NOT inherit the
 // `.env` value `redis://dragonfly:6379` — that Docker-network hostname is
-// unresolvable on the host; the published port is localhost:6379.
+// unresolvable on the host; the published port is 127.0.0.1:6379. IPv4 is explicit
+// (not `localhost`) because on CI runners `localhost` can resolve to IPv6 `::1`,
+// which the service container's IPv4-only port map refuses.
 const DATABASE_URL = process.env.E2E_DATABASE_URL ?? process.env.DATABASE_URL
-const REDIS_URL = process.env.E2E_REDIS_URL ?? 'redis://localhost:6379'
+const REDIS_URL = process.env.E2E_REDIS_URL ?? 'redis://127.0.0.1:6379'
 
 export default defineConfig({
   testDir: 'e2e',
