@@ -6,11 +6,15 @@
  * and `db:migrate` operate against PostgreSQL.
  *
  * @remarks
- * Reads `DATABASE_URL` from the environment (loaded from `.env` via `dotenv`)
- * and points at the Drizzle schema modules under `src/lib/db/schemas`.
+ * Loads the environment file named by `ENV_FILE` (defaults to `.env`) with
+ * `override: true`, so the selected file wins over any values Bun auto-loaded,
+ * then reads `DATABASE_URL` from it. Schema modules live under
+ * `src/lib/db/schemas`.
  */
+import { config } from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
-import 'dotenv/config'
+
+config({ path: process.env.ENV_FILE ?? '.env', override: true })
 
 export default defineConfig({
   schema: './src/lib/db/schemas/index.ts',

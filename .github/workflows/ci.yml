@@ -51,3 +51,115 @@ jobs:
 
       - name: Build
         run: bun run build
+
+  e2e:
+    # Blocking end-to-end gate: boots the real Bun self-host artifact against a
+    # real Postgres + Dragonfly stack and asserts over HTTP + a browser. Runs in
+    # parallel with `gate`; both must pass to merge.
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      # Names src/config/env.ts actually requires (not the stale TURSO_/UPSTASH_
+      # placeholders used by the code-quality gate above). Reach the service
+      # containers via 127.0.0.1 (IPv4) — `localhost` can resolve to IPv6 `::1`
+      # on the runner, which the containers' IPv4-only port maps refuse.
+      DATABASE_URL: postgres://anidev:anidev@127.0.0.1:5432/anidev
+      REDIS_URL: redis://127.0.0.1:6379
+      APP_BASE_URL: http://127.0.0.1:4331
+      BETTER_AUTH_SECRET: e2e-secret-e2e-secret-e2e-secret-e2e!!
+      # The self-host artifact under test (Bun standalone), for the build step.
+      ASTRO_ADAPTER: bun
+      LOG_LEVEL: warn
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: anidev
+          POSTGRES_PASSWORD: anidev
+          POSTGRES_DB: anidev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U anidev -d anidev"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      dragonfly:
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.40.1
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.3.11
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Install Playwright browser (chromium)
+        run: bun run test:e2e:install
+
+      - name: Wait for Postgres
+        # Service-container health can flip green during the postgres image's
+        # socket-only init phase, before TCP 5432 accepts host connections — and
+        # drizzle-kit swallows the underlying pg error. Poll a real TCP query and
+        # surface the exact failure so migrate runs only once the DB is truly up.
+        run: |
+          node -e '
+          const { Client } = require("pg");
+          (async () => {
+            for (let i = 1; i <= 30; i++) {
+              const c = new Client({ connectionString: process.env.DATABASE_URL });
+              try {
+                await c.connect();
+                await c.query("select 1");
+                await c.end();
+                console.log(`postgres reachable after ${i} attempt(s)`);
+                process.exit(0);
+              } catch (e) {
+                console.log(`attempt ${i}: ${e.message}`);
+                await c.end().catch(() => {});
+                await new Promise((r) => setTimeout(r, 2000));
+              }
+            }
+            console.error("postgres never became reachable");
+            process.exit(1);
+          })();
+          '
+
+      - name: Apply migrations
+        run: bun run db:migrate
+
+      - name: Build (Bun self-host artifact)
+        run: bun run build
+
+      - name: Seed E2E fixtures
+        run: bun run db:seed:e2e
+
+      - name: Integration tests (real Postgres)
+        # Opt-in DB tests (RUN_DB_TESTS, set by the script) — the repository layer
+        # against the real Postgres + pg_trgm, skipped in the unit `gate`. Runs
+        # here where the DB is already migrated + seeded, before the browser layer.
+        run: bun run test:integration
+
+      - name: Run E2E (Playwright)
+        run: bun run test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

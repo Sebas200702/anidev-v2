@@ -2,9 +2,8 @@
 > parental floor + index-backed `pg_trgm` free-text (`ILIKE` + `similarity`
 > relevance) + `search_history` unit + API routes (list migrated to the wrapper,
 > `/api/search-history` read/clear, best-effort recording) are implemented and
-> the full gate is green. **Remaining = production sync only:** apply migrations
-> `0001`/`0002` on the VPS (baseline `__drizzle_migrations` first — the DB was
-> seeded externally) and re-confirm the `EXPLAIN` there; then PR/release.
+> the full gate is green. **Remaining = production rollout,** handled manually by
+> the maintainer (outside agent tooling); then PR/release.
 > **No ParadeDB in this change** — that is Stage 2 (D3), a separate future change.
 
 ## 1. Schemas and types
@@ -27,7 +26,7 @@
 
 ### 3b — pg_trgm free-text + relevance (done locally; prod sync pending)
 
-- [x] 3b.1 Migration `0001_search_text_trgm_indexes.sql`: `CREATE EXTENSION pg_trgm` + GIN trgm indexes on `anime.title` / `title_english` / `title_japanese`. Applied locally via `drizzle-kit migrate`. ⚠️ **Prod:** `drizzle.__drizzle_migrations` was empty (externally-seeded DB) — baseline 0000 before `db:migrate` (see PR notes)
+- [x] 3b.1 Migration `0001_search_text_trgm_indexes.sql`: `CREATE EXTENSION pg_trgm` + GIN trgm indexes on `anime.title` / `title_english` / `title_japanese`. Applied locally via `drizzle-kit migrate`.
 - [x] 3b.2 Replaced normalized `LIKE` with **index-backed `ILIKE '%q%'`** (GIN trgm — EXPLAIN shows `Bitmap Index Scan on anime_title_trgm_idx`); `relevance` sort ranks by `similarity(title, q)` selected as `sim_rank` alias (SELECT DISTINCT constraint)
 - [x] 3b.3 Opt-in integration test (`anime-list.integration.test.ts`, `RUN_DB_TESTS=1`) against the local DB: free-text returns Cowboy Bebop ranked first; safe floor excludes `Rx - Hentai`. Caught a real `SELECT DISTINCT` + ORDER BY bug (`42P10`/`42703`), now fixed. _(CI service container: follow-up)_
 

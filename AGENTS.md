@@ -54,8 +54,13 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run check` | Biome lint + format check (exit non-zero on errors) |
 | `bun run check:write` | Biome lint, applying safe fixes |
 | `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
-| `bun run test` | Vitest (`vitest run`; TDD — see Testing below) |
+| `bun run test` | Vitest unit suite (`vitest run`; TDD — see Testing below). DB-integration specs auto-skip (no `RUN_DB_TESTS`) |
 | `bun run test:watch` | Vitest watch mode |
+| `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`) |
+| `bun run test:e2e` | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below) |
+| `bun run test:e2e:ui` | Playwright interactive UI mode |
+| `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
+| `bun run db:seed:e2e` | Seed the deterministic rows the E2E specs assert against |
 | `bun run check:types` | Astro typecheck (`astro check`; requires `@astrojs/check`) |
 | `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
 | `bun run auth:migrate` | Run Better Auth migrations |
@@ -119,9 +124,25 @@ Rationale:
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
 - `bun run build` — catches type, config resolution, and prerender/SSR failures (env is validated at module import).
 
-**Testing (Vitest + TDD):** logic is test-first. `vitest.config.ts` maps the `@`-aliases and includes `src/**/__tests__/**/*.test.{ts,tsx}` (no `passWithNoTests`, so Vitest fails when no tests are discovered). Put new tests under `__tests__/` mirroring the layer under test (e.g. `src/domains/<domain>/__tests__/services/`, `src/shared/__tests__/http/`). Follow the `test-driven-development` skill; a failing test precedes the fix. Modules that import `src/config/env.ts` (eager Zod validation) must mock it in tests with `vi.mock('@config/env')` — the runner does not load `.env`.
+The gate above is the code-quality contract. **E2E (`bun run test:e2e`) is the blocking end-to-end layer in CI** (see Testing below); run it locally when changing runtime wiring — routes, middleware, auth, the response wrapper, or DB/cache paths — since those failures only surface against the running server. It needs the docker stack up (`docker compose up -d`) plus a migrate + seed.
 
-**CI/CD:** Two workflows. `.github/workflows/ci.yml` runs the quality gate on PRs and pushes to `master` — `check`, `check:types`, `test`, `test:coverage`, `build` (see AGENTS.md Verification gate for the local sequence). It does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
+**Test pyramid — three layers, each with a home in the flow:**
+
+| Layer | Command | What it proves | Where it runs |
+|-------|---------|----------------|---------------|
+| **Unit** | `bun run test` | Logic in isolation (deps mocked via `vi.mock`) | `gate` job — every push/PR |
+| **Integration** | `bun run test:integration` | Repositories against a **real Postgres** (`pg_trgm`, cascades, row caps) | `e2e` job — real stack |
+| **E2E** | `bun run test:e2e` | The built server *actually runs* over HTTP + browser | `e2e` job — real stack |
+
+Pick the lowest layer that proves the behavior: default to unit; reach for integration only for SQL/index/persistence semantics a mock can't express; reserve E2E for cross-layer wiring (middleware, auth cookies, the response wrapper, CSRF). Full local run: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test` → `bun run test:integration` → `bun run test:e2e`.
+
+**Unit (Vitest + TDD):** logic is test-first. `vitest.config.ts` maps the `@`-aliases and includes `src/**/__tests__/**/*.test.{ts,tsx}` (no `passWithNoTests`, so Vitest fails when no tests are discovered). Put new tests under `__tests__/` mirroring the layer under test (e.g. `src/domains/<domain>/__tests__/services/`, `src/shared/__tests__/http/`). Follow the `test-driven-development` skill; a failing test precedes the fix. Modules that import `src/config/env.ts` (eager Zod validation) must mock it in tests with `vi.mock('@config/env')` — the runner does not load `.env`.
+
+**Integration (Vitest + real Postgres):** repository specs named `*.integration.test.ts` live beside their unit siblings but are gated by `describe.skipIf(!process.env.RUN_DB_TESTS)`, so the unit `gate` (no DB) auto-skips them and they never need a mock. `bun run test:integration` sets `RUN_DB_TESTS=1` and runs only those files (`vitest run integration`) against the live `DATABASE_URL` — so the docker stack must be up and `db:migrate` + `db:seed:e2e` applied first (the anime-search spec asserts against seeded rows like "Cowboy Bebop" / an `Rx - Hentai` row; the search-history spec manages its own throwaway user). Add one only when the value is genuinely in the SQL/index/persistence behavior; otherwise prefer a unit test.
+
+**E2E (Playwright):** a separate layer that proves the app *actually runs*, not just that the logic is correct. Playwright boots the real self-host artifact (Bun standalone, `ASTRO_ADAPTER=bun` → `dist/server/entry.mjs`) against a real Postgres + Dragonfly stack and asserts over HTTP (`api` project) and a browser (`ui` project) — the wiring Vitest skips: middleware, auth cookies, the response wrapper, Astro's CSRF `checkOrigin`, real DB/cache effects. Layout: `e2e/{api,ui,fixtures}`, config in `playwright.config.ts` (dedicated port `4331`; `webServer` builds+serves locally and readiness-gates on `/api/health/readiness`; `e2e/global-setup.ts` serially warms the server to avoid cold-start races). `REDIS_URL` is pinned to `localhost:6379` (the `.env` `dragonfly` hostname is Docker-network only). Run locally: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test:e2e:install` (once) → `bun run test:e2e`. **Scope guard:** E2E covers critical paths and cross-layer wiring, not exhaustive inputs — prefer a Vitest unit test unless the value is specifically the *integration of running parts*. Keep this layer lean. See `e2e/README.md`.
+
+**CI/CD:** Two workflows. `.github/workflows/ci.yml` runs two blocking jobs on PRs and pushes to `master`: `gate` (code quality — `check`, `check:types`, `test`, `test:coverage`, `build`; see Verification gate for the local sequence) and `e2e` (real-stack layers against Postgres + Dragonfly service containers — migrates, builds the Bun artifact, seeds, then runs `test:integration` followed by `test:e2e`, uploading the HTML report). Both must pass to merge. CI does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
 
 **Skills:** Prefer the installed skills for domain tasks — `development-lifecycle` (the universal workflow), `better-auth-best-practices` (auth), `context7`/`find-docs` (library docs), `code-review` (two-axis diff review), `astro` (Astro framework), `impeccable` (UI craft), `frontend` / `presentational-container` (UI architecture), `tailwind-css-patterns` (Tailwind styling), `web-quality-audit` / `webapp-testing` (UI verification), `jsdoc-typescript-docs` (code documentation), `test-driven-development`, `doubt-driven-development`. Load them via the `skill` tool.
 
@@ -369,7 +390,7 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 - Better Auth CLI commands are preconfigured with correct path: `--config src/lib/auth/server.ts` — do not change it
 - Cache TTL values in **seconds** (`CacheTtl` enum in `src/lib/cache/config.ts`)
 - No `.tsx` React components exist yet (React is configured but unused) — keep it that way unless a change requires it
-- **No `drizzle.config` exists yet** — `db:generate`/`db:migrate` will need one; creating it is part of the migration change, not an ad-hoc fix
+- **Migrations are local-only for agents** — `bun run db:migrate` / `db:generate` target the local dev database (`drizzle.config.ts` reads `.env`). Never run migrations against, connect to, or point DB tooling at a production/remote database. Production schema changes are performed manually by the maintainer, outside this repo — there is no production migration command here, and agents must not create one.
 - Auth middleware uses cookie markers (`session_token=`, `session_data=`) — do not rename without updating middleware
 - Sentry no-ops when `SENTRY_DSN` is absent — safe to call `init*` unconditionally
 - Don't add scripts to `package.json` that don't exist
