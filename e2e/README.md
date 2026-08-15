@@ -20,9 +20,14 @@ e2e/
 docker compose up -d          # Postgres :5432 + Dragonfly :6379
 bun run db:migrate            # schema + pg_trgm indexes + search_history
 bun run db:seed:e2e           # known rows the specs assert against
+bun run test:integration      # repository specs vs real Postgres (RUN_DB_TESTS)
 bun run test:e2e:install      # one-time: chromium for the ui project
 bun run test:e2e              # builds the bun artifact, boots it, runs specs
 ```
+
+`test:integration` runs the Vitest `*.integration.test.ts` files (repository
+layer against the real Postgres) — the same seed data feeds them and the E2E
+specs. In CI the `e2e` job runs both, back to back, against service containers.
 
 Playwright's `webServer` builds + serves automatically on the dedicated port
 `127.0.0.1:4331` (never Astro's `4321`, so it can't collide with — or reuse — a

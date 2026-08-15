@@ -56,6 +56,13 @@
 - [x] 5.2 Upload `playwright-report/` as an artifact (`if: !cancelled()`).
       **Deferred:** browser-binary caching (no `actions/cache` pin added yet) — a
       follow-up optimization, not correctness
+- [x] 5.4 Wire the pre-existing opt-in integration specs (`*.integration.test.ts`,
+      `RUN_DB_TESTS`) into the `e2e` job — `bun run test:integration` runs after
+      seed, before `test:e2e`, reusing the migrated + seeded Postgres. Extended the
+      seed with a "Cowboy Bebop" row + an `Rx - Hentai` row so the anime-search
+      integration assertions are deterministic on a fresh CI database. Added the
+      `test:integration` script and documented the unit → integration → E2E flow
+      (AGENTS.md pyramid table + e2e/README)
 - [ ] 5.3 Make `e2e` a **required** check — branch-protection change is out of repo
       (manual in GitHub settings); the workflow is in-repo and ready
 
