@@ -56,6 +56,10 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
 | `bun run test` | Vitest (`vitest run`; TDD — see Testing below) |
 | `bun run test:watch` | Vitest watch mode |
+| `bun run test:e2e` | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below) |
+| `bun run test:e2e:ui` | Playwright interactive UI mode |
+| `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
+| `bun run db:seed:e2e` | Seed the deterministic rows the E2E specs assert against |
 | `bun run check:types` | Astro typecheck (`astro check`; requires `@astrojs/check`) |
 | `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
 | `bun run auth:migrate` | Run Better Auth migrations |
@@ -119,9 +123,13 @@ Rationale:
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
 - `bun run build` — catches type, config resolution, and prerender/SSR failures (env is validated at module import).
 
+The gate above is the code-quality contract. **E2E (`bun run test:e2e`) is the blocking end-to-end layer in CI** (see Testing below); run it locally when changing runtime wiring — routes, middleware, auth, the response wrapper, or DB/cache paths — since those failures only surface against the running server. It needs the docker stack up (`docker compose up -d`) plus a migrate + seed.
+
 **Testing (Vitest + TDD):** logic is test-first. `vitest.config.ts` maps the `@`-aliases and includes `src/**/__tests__/**/*.test.{ts,tsx}` (no `passWithNoTests`, so Vitest fails when no tests are discovered). Put new tests under `__tests__/` mirroring the layer under test (e.g. `src/domains/<domain>/__tests__/services/`, `src/shared/__tests__/http/`). Follow the `test-driven-development` skill; a failing test precedes the fix. Modules that import `src/config/env.ts` (eager Zod validation) must mock it in tests with `vi.mock('@config/env')` — the runner does not load `.env`.
 
-**CI/CD:** Two workflows. `.github/workflows/ci.yml` runs the quality gate on PRs and pushes to `master` — `check`, `check:types`, `test`, `test:coverage`, `build` (see AGENTS.md Verification gate for the local sequence). It does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
+**E2E (Playwright):** a separate layer that proves the app *actually runs*, not just that the logic is correct. Playwright boots the real self-host artifact (Bun standalone, `ASTRO_ADAPTER=bun` → `dist/server/entry.mjs`) against a real Postgres + Dragonfly stack and asserts over HTTP (`api` project) and a browser (`ui` project) — the wiring Vitest skips: middleware, auth cookies, the response wrapper, Astro's CSRF `checkOrigin`, real DB/cache effects. Layout: `e2e/{api,ui,fixtures}`, config in `playwright.config.ts` (dedicated port `4331`; `webServer` builds+serves locally and readiness-gates on `/api/health/readiness`; `e2e/global-setup.ts` serially warms the server to avoid cold-start races). `REDIS_URL` is pinned to `localhost:6379` (the `.env` `dragonfly` hostname is Docker-network only). Run locally: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test:e2e:install` (once) → `bun run test:e2e`. **Scope guard:** E2E covers critical paths and cross-layer wiring, not exhaustive inputs — prefer a Vitest unit test unless the value is specifically the *integration of running parts*. Keep this layer lean. See `e2e/README.md`.
+
+**CI/CD:** Two workflows. `.github/workflows/ci.yml` runs two blocking jobs on PRs and pushes to `master`: `gate` (code quality — `check`, `check:types`, `test`, `test:coverage`, `build`; see Verification gate for the local sequence) and `e2e` (Playwright against Postgres + Dragonfly service containers — builds the Bun artifact, migrates, seeds, runs `test:e2e`, uploads the HTML report). Both must pass to merge. CI does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
 
 **Skills:** Prefer the installed skills for domain tasks — `development-lifecycle` (the universal workflow), `better-auth-best-practices` (auth), `context7`/`find-docs` (library docs), `code-review` (two-axis diff review), `astro` (Astro framework), `impeccable` (UI craft), `frontend` / `presentational-container` (UI architecture), `tailwind-css-patterns` (Tailwind styling), `web-quality-audit` / `webapp-testing` (UI verification), `jsdoc-typescript-docs` (code documentation), `test-driven-development`, `doubt-driven-development`. Load them via the `skill` tool.
 
