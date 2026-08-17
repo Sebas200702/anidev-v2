@@ -63,7 +63,7 @@
       integration assertions are deterministic on a fresh CI database. Added the
       `test:integration` script and documented the unit → integration → E2E flow
       (AGENTS.md pyramid table + e2e/README)
-- [ ] 5.3 Make `e2e` a **required** check — branch-protection change is out of repo
+- [x] 5.3 Make `e2e` a **required** check — branch-protection change is out of repo
       (manual in GitHub settings); the workflow is in-repo and ready
 
 ## 6. Methodology docs
@@ -81,5 +81,5 @@
       (11 API + 1 smoke = 12 passed; validated 6× consecutively after the warmup fix)
 - [x] 7.2 Existing gate stays green: `format` · `check` · `check:types` clean (E2E
       adds no runtime `src/` code; Vitest scope unchanged)
-- [ ] 7.3 CI: the new `e2e` job passes on the PR (verified once pushed); Conventional
+- [x] 7.3 CI: the new `e2e` job passes on the PR (verified once pushed); Conventional
       Commits per task group; PR when requested
