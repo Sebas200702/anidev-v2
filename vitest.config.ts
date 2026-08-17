@@ -34,7 +34,24 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/__tests__/**', 'src/**/*.d.ts', 'src/**/*.astro'],
+      exclude: [
+        'src/**/__tests__/**',
+        'src/**/*.d.ts',
+        'src/**/*.astro',
+        // Type-only modules — no runtime logic to cover.
+        'src/**/*-types.ts',
+        'src/**/*.d-types.ts',
+        'src/**/types/**',
+        // Declarative Drizzle table/relation definitions (DDL) — exercised by
+        // integration tests against a real database, not unit tests.
+        'src/lib/db/schemas/**',
+        // Infrastructure wiring: env parsing, DB pool, Better Auth client/server.
+        // These bind third-party SDKs at import and are covered by e2e/integration.
+        'src/lib/auth/**',
+        'src/lib/db/client.ts',
+        'src/lib/db/config.ts',
+        'src/config/env.ts',
+      ],
     },
   },
 })
