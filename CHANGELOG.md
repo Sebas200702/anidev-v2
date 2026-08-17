@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/Sebas200702/anidev-v2/compare/v0.4.0...v0.5.0) (2026-08-17)
+
+
+### Features
+
+* **anime:** add fail-closed safe parental floor to catalog search ([4459cf0](https://github.com/Sebas200702/anidev-v2/commit/4459cf0c130a156506a320a516c8b2626b790aea))
+* **anime:** add season/score filters and deterministic sort to list query ([4d508fb](https://github.com/Sebas200702/anidev-v2/commit/4d508fbafdbbb1942f386fdc45acae9172bd5869))
+* **anime:** extend search filters schema with season, score range, sort ([4db3507](https://github.com/Sebas200702/anidev-v2/commit/4db3507a6a821a76cf80bb1896d6703addf5c2a7))
+* **anime:** index-backed pg_trgm free-text search and relevance sort ([357b608](https://github.com/Sebas200702/anidev-v2/commit/357b608b0cf0a38c8ffafb15131b13f78de79d6c))
+* **anime:** map advanced filters and default sort in anime-filters mapper ([8efb329](https://github.com/Sebas200702/anidev-v2/commit/8efb329b4d623d3b3409cec2416b344a1f0f7137))
+* **db:** add db:migrate:prod to target environments via env files ([2ea7419](https://github.com/Sebas200702/anidev-v2/commit/2ea7419e6b1c29cf16ae8b838f7c905605a3b32a))
+* **http:** add responseSchema validation to withErrorHandling ([ea631a5](https://github.com/Sebas200702/anidev-v2/commit/ea631a59a22ed28d00c12d777c06be400db04c5a))
+* **search:** add search-history routes and wire recording on anime list ([c93daec](https://github.com/Sebas200702/anidev-v2/commit/c93daecfca2cbd49147782858b3385f34f5982ee))
+* **search:** cross-domain per-user search history unit ([bcc72cd](https://github.com/Sebas200702/anidev-v2/commit/bcc72cd29bb48a5e761bf0716839e749a70703fc))
+
+
+### Bug Fixes
+
+* **anime:** guard mapExternalIds against a missing external-ids row ([5eef34c](https://github.com/Sebas200702/anidev-v2/commit/5eef34c30153d565ccba292adb8d9fce71588595))
+* apply CodeRabbit auto-fixes ([fd8a094](https://github.com/Sebas200702/anidev-v2/commit/fd8a094f4332798ac6dd5c77759c50db735239a6))
+* **ci:** reference Postgres password from CI secret instead of hardcoding ([a7ce6ed](https://github.com/Sebas200702/anidev-v2/commit/a7ce6ed870ec5bfe54d70c291ec4fdb0fe26bc7a))
+* **db:** rebaseline migrations so a fresh database migrates cleanly ([8a76193](https://github.com/Sebas200702/anidev-v2/commit/8a7619313cf9d34b86aed707240f6b70556d5b96))
+* **music:** validate id param in getMusicSchema ([01c9843](https://github.com/Sebas200702/anidev-v2/commit/01c98437f155ec6b72be30b79ed6197604efe533))
+* **user:** apply valid write-endpoint review findings ([de3ae9e](https://github.com/Sebas200702/anidev-v2/commit/de3ae9e1a29a3e9c6f863e8338465fce4e3f04b8))
+* **user:** tighten avatar response schema and document wrapper 500 ([495b469](https://github.com/Sebas200702/anidev-v2/commit/495b469c5bd58d79cee86fffe30bdff7b14e5f55))
+
 ## [0.5.0](https://github.com/Sebas200702/anidev-v2/compare/v0.4.0...v0.5.0) (2026-08-16)
 
 
