@@ -21,7 +21,9 @@ import { musicDetailsSchema } from '@music/schemas/music-details-schema'
  */
 export const getMusicSchema = z.object({
   params: z.object({
-    id: z.string(),
+    // Keep the raw string (the route calls `Number(id)`), but reject non-numeric ids
+    // so they fail as a 400 instead of reaching the repository as `NaN` (a 500 from Postgres).
+    id: z.string().regex(/^\d+$/, 'id must be a positive integer'),
   }),
 })
 
