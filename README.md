@@ -10,8 +10,8 @@ Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · 
 ```
 
 > **Intro**: AniDev v2 re-does the original AniDev from zero on a new stack
-> (Astro SSR + Supabase + Redis). The feature set below is the **target** —
-> v2 ships it incrementally through OpenSpec-driven changes. See
+> (Astro SSR + Postgres + Dragonfly + Rustrak). The feature set below is the
+> **target** — v2 ships it incrementally through OpenSpec-driven changes. See
 > [Current Status](#current-status) for what exists today.
 
 ## Product vision
@@ -34,27 +34,26 @@ Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · 
 Today v2 ships the **backend foundation + API + minimal shell**; product features
 arrive incrementally, each tracked as an OpenSpec change (`openspec/changes/`):
 
-- ✅ API routes — `auth`, `anime`, `music`, `user` (Zod-validated, enveloped responses)
+- ✅ API routes — `auth`, `anime`, `music`, `user`, `search-history` (Zod-validated, enveloped responses, response-schema validation in the wrapper)
 - ✅ Auth (session middleware) — Better Auth email/password
-- ✅ Cache layer (Redis-compatible), image proxy foundation (`media` domain)
-- ✅ Tests (Vitest/TDD), quality gate, CI, SemVer releases
+- ✅ Cache layer (Dragonfly/Redis-compatible), image proxy (`media` domain)
+- ✅ Advanced catalog search — `season`/score filters, whitelist sort, indexed free-text (`pg_trgm`), fail-closed parental floor, per-user search history
+- ✅ Self-hosted infra — PostgreSQL, Dragonfly, Rustrak (docker compose local stack)
+- ✅ Testing — Vitest unit + real-Postgres integration + Playwright E2E, CI gate, SemVer releases
 - ✅ Pages: `/` (home), `/anime/[id]`, `/anime/[id]/[slug]`
-- 🚧 Streaming, search/filtering, collections, progress, schedule, profile UI — **to build** (OpenSpec changes drive them)
+- 🚧 Streaming, homepage/hero + carousels, taxonomies, collections, progress, schedule, profile UI — **to build** (OpenSpec changes drive them)
 
 ## Stack
 
 - **Runtime**: Bun (primary), Node.js ≥ 22.12.0
 - **Framework**: Astro 6 SSR with the `@astrojs/vercel` adapter (`output: 'server'`)
-- **Database**: Supabase (PostgreSQL) via Drizzle ORM (`pg` dialect)
+- **Database**: PostgreSQL via Drizzle ORM (`pg` dialect)
 - **Cache**: Dragonfly (Redis-compatible)
 - **Auth**: Better Auth 1.5.5 (email/password, Drizzle Postgres adapter)
+- **Monitoring**: Rustrak (self-hosted, Sentry-SDK compatible; no-ops when DSN unset)
 - **Styling**: Tailwind CSS v4 (`@tailwindcss/vite` plugin)
 - **Validation / Logging**: Zod 4, Pino (`LOG_LEVEL`)
 - **Quality**: Biome format+lint, Prettier (`*.astro`), Vitest (`@vitest/coverage-v8`)
-
-> **Provider swap pending**: the target is the self-hosted stack above. The
-> running code still talks to the legacy providers (Turso/LibSQL, Upstash REST,
-> Sentry DSN — see Environment); switching is a tracked OpenSpec change.
 
 ## Quick start
 
@@ -72,15 +71,20 @@ required value fails fast.
 
 | Variable | Req | Notes |
 | --- | --- | --- |
-| `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | yes | DB (legacy provider) |
+| `DATABASE_URL` | yes | PostgreSQL connection URL (`postgres://` / `postgresql://`) |
+| `REDIS_URL` | yes | Dragonfly/Redis connection URL (`redis://` / `rediss://`) |
 | `APP_BASE_URL` | yes | Base URL (also Better Auth API_BASE) |
 | `BETTER_AUTH_SECRET` | yes | ≥ 32 chars |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | yes | Cache (legacy provider) |
 | `SENTRY_DSN` | no | Monitoring no-ops when absent |
+| `PUBLIC_SENTRY_DSN` | no | Client-exposed mirror of `SENTRY_DSN` for browser capture |
 | `LOG_LEVEL` | no | `trace`\|`debug`\|`info`\|`warn`\|`error`\|`fatal` |
 | `NODE_ENV` | no | Defaults to `development` |
 
 There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
+
+For local development against the full self-hosted stack (PostgreSQL +
+Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
+→ `.env.local` (local credentials, separate from production).
 
 ## Commands
 
@@ -96,8 +100,11 @@ There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
 | `bun run check:types` | Astro/TS typecheck (`astro check`) |
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` |
 | `bun run test` / `test:watch` / `test:coverage` | Vitest |
+| `bun run test:integration` | Integration specs against a real Postgres (`RUN_DB_TESTS=1`; needs the docker stack + migrate + seed) |
+| `bun run test:e2e` / `test:e2e:ui` / `test:e2e:install` | Playwright E2E (API + browser) |
+| `bun run db:seed:e2e` | Seed the deterministic rows E2E asserts against |
 | `bun run auth:generate` / `auth:migrate` | Better Auth schema/migrations |
-| `bun run db:generate` / `db:migrate` | Drizzle migrations (needs `drizzle.config.ts` — pending) |
+| `bun run db:generate` / `db:migrate` | Drizzle migrations (PostgreSQL) |
 | `bun run release:*` | `standard-version` release — see Versioning |
 
 ## Development methodology — OpenSpec (SDD)
@@ -105,7 +112,9 @@ There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
 Spec-Driven Development. Every feature passes `SPECIFY → PLAN → TASKS →
 IMPLEMENT`, managed via OpenSpec (`openspec/`); the source of truth is
 `openspec/specs/` and active work lives in `openspec/changes/<change>/`
-(`proposal.md`, `design.md`, `specs/delta`, `.tasks.md`).
+(`proposal.md`, `design.md`, `specs/delta`, `tasks.md`). Completed changes are
+archived to `openspec/changes/archive/` with their deltas synced into
+`openspec/specs/`.
 
 A universal lifecycle (`.opencode/skills/development-lifecycle`) applies to **all
 agents**: `READ → SPECIFY → PLAN → IMPLEMENT → DOUBT → VERIFY → RELEASE`, with
@@ -154,16 +163,21 @@ in `tsconfig.json`.
 | `POST /api/auth/register` | Register (public) |
 | `POST /api/auth/logout` | Logout (session) |
 | `GET /api/auth/session` | Current session |
-| `GET /api/anime` | Anime search/list (public) |
+| `GET /api/anime` | Anime search/list (public; filters, sort, parental-safe floor) |
 | `GET /api/anime/:malId` | Anime detail |
 | `GET /api/anime/:malId/full` · `characters` · `staff` | Extra detail |
 | `GET /api/music` / `GET /api/music/:id` | Music (public) |
-| `GET /api/user/:userId` | User (session) |
+| `GET /api/user/:userId` | User profile read (session) |
+| `POST /api/user` | Create own profile (session) |
+| `PATCH /api/user/:userId` | Update own profile identity fields (session) |
+| `GET /api/search-history` / `DELETE /api/search-history` | Read / clear own search history (session) |
 | `GET /api/health/readiness` | Dependency probes (db/cache) (public) |
 | `GET /api/health` | Liveness (public, no dependencies) |
 
-Routes validate via `withZodValidation(schema)(handler)` and respond enveloped as
-`{ data, status, error?, code?, meta? }`. `InfraError` responses map to `503`
+Routes validate via `withZodValidation(schema)(withErrorHandling(handler, { responseSchema }))`
+and respond enveloped as `{ data, status, error?, code?, meta? }`; the wrapper
+optionally validates successful response data against a domain Zod schema
+(`RESPONSE_VALIDATION_ERROR` → 500). `InfraError` responses map to `503`
 with a `Retry-After` header and the error's `code` preserved; stale-serve
 responses carry `meta.stale` surfaced as an `x-stale: true` header. Public
 routes: `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`,
@@ -187,13 +201,10 @@ Both DSNs are optional; monitoring is a no-op without them.
   `BREAKING CHANGE:`/`!` → **major** · pre-release → `X.Y.Z-<tag>`.
 
 **Release flow (RELEASE phase):**
-1. Land the change on `master` via PR.
-2. `bun run release` (preview with `release:dry`), or force
-   `release:patch|minor|major|prerelease`.
-3. It bumps `package.json`, rewrites `CHANGELOG.md`, commits, tags `vX.Y.Z`.
-4. `git push origin master && git push origin vX.Y.Z`.
-5. CI `release.yml` (tag `v*`) builds and pushes the Docker image `:<version>` +
-   `:latest` + `:<sha>`.
+1. On the **feature branch** (base `master`), after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch|minor|major|prerelease`. Preview first with `release:dry`.
+2. It bumps `package.json`, rewrites `CHANGELOG.md`, commits `chore(release): X.Y.Z`, tags `vX.Y.Z` — riding in the same feature PR (master is protected).
+3. Merge the PR, then `git push origin vX.Y.Z`.
+4. CI `release.yml` (tag `v*`) builds and pushes the Docker image `:<version>` + `:latest` + `:<sha>`.
 
 ## Branching & commits
 
@@ -202,14 +213,12 @@ Both DSNs are optional; monitoring is a no-op without them.
 
 ---
 
-## Roadmap (v2 rebuild)
+## Roadmap
 
-1. API + shell ✅ — auth, anime, user, music, cache, image foundation
-2. Streaming & watch player
-3. Search & advanced filtering
-4. Collections, progress & schedule
-5. Profiles & preferences UI
-6. Studio/trailer/episode surfaces & SEO
+The product roadmap lives in [`ROADMAP.md`](./ROADMAP.md) — phases 0–7 plus the
+data-platform track (Track D). Each item is delivered as an OpenSpec change:
+write the proposal/design/spec/tasks first, then implement, verify, and release
+per the gate above.
 
 Each item is an OpenSpec change: write the proposal/design/spec/tasks first, then
 implement, verify, and release per the gate above.
