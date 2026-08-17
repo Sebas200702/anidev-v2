@@ -10,7 +10,9 @@
 - **Monitoring**: Rustrak (self-hosted, Sentry-SDK compatible; no-ops when DSN unset)
 - **Validation/Logging**: Zod 4, Pino (`LOG_LEVEL`)
 
-> **Provider swap pending**: the Stack above is the **self-hosted target**. The application code still runs on the legacy providers (Turso/LibSQL, Upstash REST, Sentry DSN — see `Environment`), and switching the code is a separate tracked change (`openspec/changes/`). Rustrak operations live in `.opencode/skills/rustrak/`.
+The self-hosted stack above is the live configuration — the application runs on
+PostgreSQL (`DATABASE_URL`), Dragonfly (`REDIS_URL`), and Rustrak (`SENTRY_DSN`).
+Rustrak operations live in `.opencode/skills/rustrak/`.
 
 ## Setup
 
@@ -23,7 +25,7 @@ Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invali
 ### Local stack (PostgreSQL + Dragonfly + Rustrak)
 
 For development you can stand up the self-hosted target stack entirely on your
-machine (no external Turso/Upstash/Sentry accounts needed):
+machine (no external accounts needed):
 
 ```bash
 docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :8080
@@ -272,7 +274,7 @@ renderizará cada componente **con datos vivos**:
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
 
 ## Path Aliases (tsconfig + Vite)
-`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
+`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@search`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@search`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
 
 ## API Route Patterns
 Two composition styles:
@@ -297,7 +299,7 @@ Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src
 
 ## Environment (matches `src/config/env.ts`)
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
-- **Required**: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars), `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
+- **Required**: `DATABASE_URL`, `REDIS_URL`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars)
 - **Optional**: `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 

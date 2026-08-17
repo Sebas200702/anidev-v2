@@ -16,20 +16,23 @@ igualarla por _slices verticales_ y luego expandir el universo.
 
 ## Estado de partida (agosto 2026)
 
-Cimientos sólidos; ~20 % de la superficie de v1.
+Cimientos sólidos; ~25 % de la superficie de v1.
 
 | Dominio | Estado |
 |---|---|
-| **infra** | Health, error-handling, monitoring (Rustrak), resilience/degradación, cache multicapa (Dragonfly). |
-| **anime** | Read: lista/detalle/`full`/characters/staff. Páginas `/anime/[malId]/[slug]`. |
+| **infra** | Health, error-handling, monitoring (Rustrak), resilience/degradación, cache multicapa (Dragonfly), response-schema validation en el wrapper. |
+| **anime** | Read: lista/detalle/`full`/characters/staff. **Búsqueda avanzada**: filtros (season/score), sort whitelist, free-text indexado (`pg_trgm`), floor parental safe-only. Páginas `/anime/[malId]/[slug]`. |
+| **search** | Historial por usuario (record best-effort + read/clear authed). |
 | **music** | Read: lista + detalle. Sin player. |
 | **media** | Optimización de imágenes (Sharp), proxy, resolución de assets. Maduro. |
 | **auth** | Login/register/logout/session (Better Auth). |
-| **user** | Read de perfil + writes de identidad (en curso). |
+| **user** | Read de perfil + writes de identidad (create/patch). |
 
-**En vuelo (OpenSpec):** migración provider stack (Turso→Postgres, Upstash→
+**Archivados (OpenSpec):** migración provider stack (Turso→Postgres, Upstash→
 Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
-`standardize-frontend-flow`, user writes.
+`standardize-frontend-flow`, user writes, `advanced-anime-search`,
+`e2e-testing-methodology` + `expand-test-coverage-and-fix-e2e-bugs`. Sus deltas
+están sincronizados en `openspec/specs/`.
 
 ## Cómo se entrega cada feature
 
@@ -53,11 +56,11 @@ Reglas transversales en **todas** las fases:
 
 ## Fases
 
-### Fase 0 — Cerrar cimientos · _en curso_
+### Fase 0 — Cerrar cimientos · _completada_
 
 Desbloquea todo lo demás. No añade features de producto; estabiliza la base.
 
-- [ ] Terminar changes abiertos: provider stack, response-schema wrapper, unit folders, frontend-flow, user writes.
+- [x] Terminar changes abiertos: provider stack, response-schema wrapper, unit folders, frontend-flow, user writes (todos archivados).
 - [ ] SEO base: sitemaps segmentados (anime, música, géneros, estáticos) + `robots.txt`.
 - [ ] Middleware transversal: rate-limiting, sesión, CSP + headers de seguridad.
 - [ ] Patrón de UI documentado y `/showcase` operativo (living docs).
@@ -70,12 +73,12 @@ Desbloquea todo lo demás. No añade features de producto; estabiliza la base.
 
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
-- [ ] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D (fuera del Stage 1). _(Primer slice: seed en `openspec/changes/advanced-anime-search/`.)_
+- [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`.)_
 - [ ] **Homepage** — héroe + carruseles SSR de contenido relevante.
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (RPCs `get_related_anime` / `get_anime_banner`).
 - [ ] **Taxonomía** — páginas por género y por estudio/productora.
-- [ ] **Control parental** — exclusión de ratings adultos embebida en las queries del catálogo (default seguro).
-- [ ] **Historial de búsqueda** — persistido por usuario autenticado.
+- [x] **Control parental** — exclusión de ratings adultos embebida en las queries del catálogo (default seguro, fail-closed; variante `full` requiere opt-in, change pendiente).
+- [x] **Historial de búsqueda** — persistido por usuario autenticado (read/clear en `/api/search-history`).
 
 **Salida:** descubrimiento end-to-end; prerequisito de las recomendaciones IA.
 
@@ -219,7 +222,7 @@ D.1 para que los filtros de estudio/día tengan datos.
 ## Frontend (islas · estado · caché)
 
 Base: Astro 6 SSR (`output: 'server'`), `<ClientRouter/>` activo, **cero islas
-aún** (greenfield). El change `standardize-frontend-flow` ya fija zero-JS +
+aún** (greenfield). El change archivado `standardize-frontend-flow` fija zero-JS +
 islas on-demand, one-way y presentational/container. D4+D5 añaden el resto.
 
 **Árbol de estado (usa el nivel más bajo que resuelva):**
