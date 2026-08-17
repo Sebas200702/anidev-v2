@@ -62,13 +62,12 @@ export async function seedE2eDatabase(): Promise<void> {
   }
 }
 
-seedE2eDatabase()
-  .then(() => {
-    console.log(
-      `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_MUSIC.length} music`
-    )
-  })
-  .catch((error) => {
-    console.error('E2E seed failed:', error)
-    process.exit(1)
-  })
+try {
+  await seedE2eDatabase()
+  console.log(
+    `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_MUSIC.length} music`
+  )
+} catch (error) {
+  console.error('E2E seed failed:', error)
+  process.exit(1)
+}

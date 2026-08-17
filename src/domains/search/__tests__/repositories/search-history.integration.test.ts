@@ -51,7 +51,7 @@ describe.skipIf(!enabled)('searchHistoryRepository (integration)', () => {
     }
 
     const rows = await repo.listByUser(TEST_USER, 100)
-    expect(rows.length).toBe(50)
+    expect(rows).toHaveLength(50)
     expect(rows[0].query).toBe('q54')
     expect(rows[0].scope).toBe('anime')
   })
@@ -59,6 +59,6 @@ describe.skipIf(!enabled)('searchHistoryRepository (integration)', () => {
   it('clears all rows for the user', async () => {
     const removed = await repo.clearByUser(TEST_USER)
     expect(removed).toBeGreaterThan(0)
-    expect((await repo.listByUser(TEST_USER, 10)).length).toBe(0)
+    expect(await repo.listByUser(TEST_USER, 10)).toHaveLength(0)
   })
 })
