@@ -22,8 +22,16 @@ import type { AnimeExternalDB, AnimeExternalIds } from '@anime/types'
  * @see {@link mapAnimeToFullDetails}
  * @see {@link animeExternalIdsSchema}
  */
-export const mapExternalIds = (db: AnimeExternalDB): AnimeExternalIds[] => {
+export const mapExternalIds = (
+  db: AnimeExternalDB | undefined
+): AnimeExternalIds[] => {
   const result: AnimeExternalIds[] = []
+
+  // Repository returns `undefined` when an anime has no external-ids row; treat
+  // that as "no external identifiers" rather than crashing the full-detail endpoint.
+  if (!db) {
+    return result
+  }
 
   if (db.animeThemesSlug) {
     result.push({
