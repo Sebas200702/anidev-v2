@@ -32,7 +32,10 @@ test.describe('user profile lifecycle', () => {
   test('create, read, and update the caller profile', async ({
     authedRequest,
   }) => {
+    // Skip is runtime-conditional (drifted local DB), never unconditional: CI
+    // always migrates fresh, so the suite still runs there.
     test.skip(
+      // NOSONAR:S1607
       profileDrift,
       'profile.user_id has drifted from text — run against a freshly migrated DB'
     )
@@ -71,7 +74,9 @@ test.describe('user profile lifecycle', () => {
   })
 
   test('reading a non-existent profile is 404', async ({ request }) => {
+    // See the create/read/update test: conditional on DB drift, not ignored.
     test.skip(
+      // NOSONAR:S1607
       profileDrift,
       'profile.user_id has drifted from text — run against a freshly migrated DB'
     )

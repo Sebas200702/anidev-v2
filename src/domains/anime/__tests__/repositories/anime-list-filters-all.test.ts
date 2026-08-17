@@ -11,11 +11,11 @@ import { buildAnimeListFilters } from '@anime/repositories/anime-list/filters'
 
 describe('buildAnimeListFilters', () => {
   it('adds the not-adult floor for the safe (default) variant', () => {
-    expect(buildAnimeListFilters({}).length).toBe(1)
+    expect(buildAnimeListFilters({})).toHaveLength(1)
   })
 
   it('omits the not-adult floor for the full variant', () => {
-    expect(buildAnimeListFilters({ parentalVariant: 'full' }).length).toBe(0)
+    expect(buildAnimeListFilters({ parentalVariant: 'full' })).toHaveLength(0)
   })
 
   it('adds a condition per provided filter', () => {
@@ -32,7 +32,7 @@ describe('buildAnimeListFilters', () => {
       query: '  naruto  ',
     })
     // year, season, scoreMin, scoreMax, status, rating, type, genre, query = 9
-    expect(filters.length).toBe(9)
+    expect(filters).toHaveLength(9)
   })
 
   it('ignores blank query and empty arrays', () => {
@@ -42,6 +42,6 @@ describe('buildAnimeListFilters', () => {
       status: [],
       genre: [],
     })
-    expect(filters.length).toBe(0)
+    expect(filters).toHaveLength(0)
   })
 })

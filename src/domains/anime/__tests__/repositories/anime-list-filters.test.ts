@@ -88,11 +88,11 @@ describe('buildAnimeListFilters — parental floor', () => {
   })
 
   it('applies the safe floor when the variant is unset (fail-closed)', () => {
-    expect(buildAnimeListFilters({}).length).toBe(1)
+    expect(buildAnimeListFilters({})).toHaveLength(1)
   })
 
   it('full variant does not restrict ratings', () => {
-    expect(buildAnimeListFilters({ parentalVariant: 'full' }).length).toBe(0)
+    expect(buildAnimeListFilters({ parentalVariant: 'full' })).toHaveLength(0)
   })
 })
 
