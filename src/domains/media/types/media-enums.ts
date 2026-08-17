@@ -4,6 +4,8 @@
  * size variants. Parsed from `/media/{entity}/...` route segments.
  */
 
+import type { SemanticMediaPath } from './media-asset-types'
+
 /**
  * Supported entity types for semantic media paths.
  *
