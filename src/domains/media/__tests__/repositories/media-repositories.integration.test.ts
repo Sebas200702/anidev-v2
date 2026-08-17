@@ -71,8 +71,8 @@ describe.skipIf(!enabled)('media repositories (integration)', () => {
     )
     await pool.query(
       `INSERT INTO music_resolution (music_version_id, song_id, resolution, audio_url, video_url)
-       VALUES ($1,1,'1080p','http://cdn/a.mp3','http://cdn/v.mp4') ON CONFLICT DO NOTHING`,
-      [VERSION_ID]
+       VALUES ($1,$2,'1080p','http://cdn/a.mp3','http://cdn/v.mp4') ON CONFLICT DO NOTHING`,
+      [VERSION_ID, MUSIC]
     )
     await pool.query(
       `INSERT INTO episode (id, anime_id, title, number) VALUES ($1,$2,'E2E Episode',1) ON CONFLICT (id) DO NOTHING`,
