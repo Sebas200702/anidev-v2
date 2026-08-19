@@ -1,7 +1,35 @@
 @import "tailwindcss";
 @import "tailwind-animations";
 
-@theme {
+/* ─────────────────────────────────────────────────────────────────────────
+   Brand palette — single source of truth
+   These 11 stops are the DEFAULT scale for the personal accent. To re-theme at
+   runtime, override these vars on :root; every semantic token below resolves
+   through them, so the whole UI follows the chosen accent.
+   Note: the base anchors by luminance, so #1d6cff lands on stop 600.
+   ──────────────────────────────────────────────────────────────────────── */
+:root {
+  --brand-50: #f2f6ff;
+  --brand-100: #e2ecff;
+  --brand-200: #c6daff;
+  --brand-300: #a1c2ff;
+  --brand-400: #7ba9ff;
+  --brand-500: #4a89ff;
+  --brand-600: #1d6cff;
+  --brand-700: #1858cf;
+  --brand-800: #103c8d;
+  --brand-900: #0b2960;
+  --brand-950: #05132d;
+
+  /* Text/icons drawn on top of a solid brand fill. */
+  --on-brand: #ffffff;
+}
+
+/* `static` forces every token to be emitted to :root (not just the ones a
+   utility class references), so tokens stay available for inline styles,
+   dynamic class names and the swappable brand. */
+@theme static {
+  /* Neutral scale (dark-first) */
   --color-neutral-950: #121212;
   --color-neutral-900: #3d3d3d;
   --color-neutral-800: #454545;
@@ -15,6 +43,7 @@
   --color-neutral-50: #f6f6f6;
   --color-complementary: #1c1c1c;
 
+  /* Brand scale → resolves to the swappable --brand-* vars above */
   --color-brand-950: var(--brand-950);
   --color-brand-900: var(--brand-900);
   --color-brand-800: var(--brand-800);
@@ -26,14 +55,42 @@
   --color-brand-200: var(--brand-200);
   --color-brand-100: var(--brand-100);
   --color-brand-50: var(--brand-50);
+  --color-on-brand: var(--on-brand);
+
+  /* Semantic surface tokens — use these instead of raw neutrals in UI */
+  --color-surface: var(--color-neutral-950);
+  --color-surface-raised: var(--color-complementary);
+  --color-surface-overlay: #242424;
+  --color-on-surface: var(--color-neutral-50);
+  --color-on-surface-muted: var(--color-neutral-300);
+  --color-on-surface-subtle: var(--color-neutral-400);
+  --color-border: var(--color-neutral-800);
+  --color-border-strong: var(--color-neutral-700);
+  --color-focus: var(--brand-400);
+
+  /* Feedback accents — readable as text/border/soft-fill on dark surfaces */
+  --color-success: #7fb069;
+  --color-warning: #f4d35e;
+  --color-danger: #cd4631;
+
+  /* Editorial roles — intent aliases (NOT new colors). They map to brand/neutral
+     so the system "knows" when it speaks editorially vs operationally. */
+  --color-editorial-accent: var(--color-brand-700);
+  --color-editorial-muted: var(--color-brand-600);
+  --color-editorial-surface: var(--color-surface-raised);
+  --color-editorial-border: var(--color-border);
+
+  /* Fonts */
+  --font-body: "Inter", sans-serif;
+  --font-heading: "Nunito", sans-serif;
 }
 
-.button-primary {
-  @apply border-brand-500 bg-brand-500 md:hover:border-brand-500/80 md:hover:text-brand-500 cursor-pointer items-center justify-center rounded-md border-2 p-1 text-white transition-all duration-300 ease-in-out md:hover:bg-transparent md:hover:shadow-md xl:p-2;
+:root {
+  color-scheme: dark;
 }
-.button-secondary {
-  @apply cursor-pointer items-center justify-center rounded-md border-2 bg-transparent p-1 text-white transition-all duration-300 ease-in-out md:hover:opacity-50 md:hover:shadow-md xl:p-2;
-}
+
+/* Scroll containers — declared before `.light` so its themed override wins
+   without a specificity conflict. */
 .custom-scrollbar {
   @apply overflow-x-hidden overflow-y-auto scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent;
 }
@@ -42,6 +99,59 @@
   display: none;
 }
 
+.light {
+  color-scheme: light;
+
+  /* Semantic surface tokens — light theme overrides */
+  --color-surface: var(--color-neutral-100);
+  --color-surface-raised: var(--color-complementary);
+  --color-surface-overlay: var(--color-neutral-200);
+  --color-on-surface: var(--color-neutral-950);
+  --color-on-surface-muted: var(--color-neutral-600);
+  --color-on-surface-subtle: var(--color-neutral-500);
+  --color-border: var(--color-neutral-300);
+  --color-border-strong: var(--color-neutral-300);
+  --color-focus: var(--brand-700);
+  --color-complementary: #ffffff;
+
+  /* Feedback accents — readable on light surfaces */
+  --color-success: #2e7d32;
+  --color-warning: #f57f17;
+  --color-danger: #c62828;
+
+  /* Editorial roles */
+  --color-editorial-accent: var(--color-brand-400);
+  --color-editorial-muted: var(--color-brand-500);
+  --color-editorial-surface: var(--color-surface-raised);
+  --color-editorial-border: var(--color-border);
+
+  & .custom-scrollbar {
+    @apply [&::-webkit-scrollbar-thumb]:bg-neutral-300;
+  }
+}
+
+.tabler-icon {
+  stroke-width: 1.5;
+}
+
+/* ── Component utility classes ──────────────────────────────────────────── */
+.button-primary {
+  @apply bg-editorial-accent border-editorial-accent md:hover:border-editorial-muted border active:scale-95 text-on-surface flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out md:hover:bg-editorial-muted disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-secondary {
+  @apply bg-transparent border border-on-surface-muted hover:border-on-surface active:scale-95 text-on-surface md:hover:text-on-surface md:hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out font-medium disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-tertiary {
+  @apply bg-on-surface border-on-surface text-surface active:scale-95 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out border hover:border-surface-overlay font-semibold disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-ghost {
+  @apply bg-transparent hover:bg-transparent border-transparent text-on-surface hover:text-focus active:scale-95 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out border font-semibold disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-destructive {
+  @apply bg-danger border-danger hover:bg-danger/90 text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* ── Type scale ─────────────────────────────────────────────────────────── */
 .title {
   @apply text-[32px] font-bold md:text-start xl:text-[50px];
 }
@@ -70,32 +180,28 @@
   @apply text-[10px] font-light;
 }
 
-* {
-  color-scheme: dark;
+/* Respect users who prefer reduced motion (WCAG 2.3.3 / a11y) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
+/* ── App shell grid ─────────────────────────────────────────────────────── */
 #app {
   display: grid;
-  grid-template-columns: 80px 1fr;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "aside header"
-    "aside main"
-    "aside footer";
+    "header"
+    "main"
+    "footer";
   height: 100dvh;
   max-width: 100dvw;
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-body);
   scroll-timeline: --scrollApp;
-}
-
-@media (max-width: 768px) {
-  #app {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto auto;
-    grid-template-areas:
-      "header"
-      "main"
-      "footer"
-      "aside";
-  }
 }

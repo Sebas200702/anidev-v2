@@ -1,0 +1,42 @@
+---
+/**
+ * Overlay — token-driven gradient scrim laid over media.
+ *
+ * @module shared/components/overlay
+ * @remarks
+ * Absolutely positioned and `pointer-events-none`, so it never intercepts
+ * clicks. Stack several to fade a banner on more than one edge. Colors come
+ * from `@theme` tokens, never raw hex.
+ *
+ * @example
+ * ```astro
+ * <Overlay direction="up" fromColor="surface" viaColor="surface/60"
+ *   viaInterval="30%" toColor="transparent" />
+ * ```
+ *
+ * @see {@link OverlayProps}
+ * @see {@link resolveOverlayGradient}
+ */
+import { resolveOverlayGradient } from './gradient'
+import type { OverlayProps as Props } from './types'
+
+const { direction, fromColor, toColor, viaColor, viaInterval, className } =
+  Astro.props as Props
+
+const backgroundImage = resolveOverlayGradient({
+  direction,
+  fromColor,
+  toColor,
+  viaColor,
+  viaInterval,
+})
+---
+
+<div
+  style={{ backgroundImage }}
+  class:list={[
+    'pointer-events-none absolute inset-0 z-10 h-full w-full',
+    className,
+  ]}
+>
+</div>

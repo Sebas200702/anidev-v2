@@ -10,6 +10,7 @@
  * @see {@link animeService} — orchestrates repositories + mappers + cache
  */
 
+export { animeCarouselRepository } from './anime-carousel'
 export { animeCharacterRepository } from './anime-characters'
 export { animeExternalRepository } from './anime-external'
 export { buildAnimeListFilters, type AnimeListFilterParams } from './anime-list'

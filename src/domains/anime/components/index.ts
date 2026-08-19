@@ -9,4 +9,6 @@
  * @see {@link animeService}
  */
 
+export { default as AnimeCard } from './anime-card/anime-card.astro'
+export { default as AnimeCarousel } from './anime-carousel/anime-carousel.astro'
 export { default as AnimeDetails } from './anime-details/anime-details.astro'

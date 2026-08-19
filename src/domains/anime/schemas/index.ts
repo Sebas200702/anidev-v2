@@ -42,3 +42,9 @@ export {
   getAnimeStaffSchema,
   animeStaffResponseSchema,
 } from './anime-staff-schema'
+export {
+  carouselGenreSchema,
+  carouselItemSchema,
+  getAnimeCarouselSchema,
+  animeCarouselResponseSchema,
+} from './anime-carousel-schema'

@@ -70,6 +70,14 @@ services:
   dragonfly:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.40.1
     restart: unless-stopped
+    # Dragonfly reserves 256 MiB per io thread and refuses to boot when the host
+    # cannot back that (one thread per core: 12 cores => 3 GiB). Pin a small
+    # thread count and an explicit cache budget so the dev cache starts on a
+    # loaded laptop; production sizing is not driven by this file.
+    command:
+      - '--proactor_threads=2'
+      - '--maxmemory=512mb'
+      - '--cache_mode=true'
     ports:
       - '6379:6379'
     volumes:

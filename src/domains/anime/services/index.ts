@@ -7,6 +7,7 @@
  * and mappers. HTTP routes validate input with Zod schemas then call these APIs.
  */
 
+export { animeCarouselService } from './anime-carousel'
 export { animeCharacterService } from './anime-characters'
 export { animeFullService } from './anime-full'
 export { animeListService } from './anime-list'

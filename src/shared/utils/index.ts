@@ -15,3 +15,5 @@ export { logger } from './logger-util'
 // Image and string utilities are available via their respective sub-path barrels:
 //   import { normalizeImageUrl } from '@shared/utils/image'
 //   import { normalizeString } from '@shared/utils/string'
+
+export { getStatusColor, getStatusDotClass } from './get-status-color'

@@ -1,0 +1,113 @@
+---
+/**
+ * Footer — brand line, section links and social actions.
+ *
+ * @module shared/components/footer
+ * @remarks
+ * Zero JS. The corner bracket on each link (a hairline that fades in on
+ * hover) is the editorial cue reused across cards and meta strips.
+ *
+ * @see {@link Isotipo}
+ */
+import { Isotipo } from '@components/logos'
+import {
+  IconBrandDiscord,
+  IconBrandGithub,
+  IconBrandX,
+  IconBrandYoutube,
+  IconMail,
+} from '@tabler/icons-react'
+
+const socialLinks = [
+  {
+    name: 'GitHub',
+    href: 'https://github.com/Sebas200702/anidev-v2',
+    icon: IconBrandGithub,
+  },
+  { name: 'X', href: 'https://x.com/anidev', icon: IconBrandX },
+  { name: 'Discord', href: 'https://discord.gg/anidev', icon: IconBrandDiscord },
+  {
+    name: 'YouTube',
+    href: 'https://youtube.com/@anidev',
+    icon: IconBrandYoutube,
+  },
+  { name: 'Email', href: 'mailto:contact@anidev.app', icon: IconMail },
+]
+
+const footerLinks = [
+  { label: 'About', href: '/about' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
+]
+---
+
+<footer class="flex w-full flex-col [grid-area:footer]">
+  <div
+    class="relative flex w-full flex-wrap items-center justify-between gap-x-8 gap-y-4 px-4 py-6 md:px-40"
+  >
+    <a
+      href="/"
+      class="text-on-surface hover:text-on-surface-muted flex shrink-0 items-center gap-3"
+    >
+      <Isotipo className="w-10" />
+      <div class="flex flex-col">
+        <span class="font-heading text-xl font-bold tracking-tight">AniDev</span>
+        <span
+          class="text-on-surface-muted text-[11px] font-light tracking-[0.18em]"
+        >
+          Animanga Web Streaming
+        </span>
+      </div>
+    </a>
+
+    <nav aria-label="Footer" class="absolute left-1/2 -translate-x-1/2 transform">
+      <ul class="flex flex-wrap items-center gap-4 text-sm">
+        {
+          footerLinks.map((link) => (
+            <li class="group relative">
+              <a
+                href={link.href}
+                class="text-on-surface hover:text-focus px-2 py-1 font-medium transition-colors duration-200"
+              >
+                {link.label}
+              </a>
+              <span
+                class="border-editorial-accent absolute right-0 bottom-0 size-1.5 border-r border-b opacity-0 transition-all duration-200 group-hover:opacity-100"
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <ul class="flex items-center gap-4">
+      {
+        socialLinks.map((action) => (
+          <li>
+            <a
+              href={action.href}
+              title={action.name}
+              class="text-on-surface-muted hover:text-focus inline-flex items-center transition-colors duration-200"
+            >
+              <action.icon className="size-5" strokeWidth={1.5} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div
+    class="border-border text-on-surface-subtle flex w-full flex-wrap items-center justify-between gap-x-2 border-t px-30 py-3 text-[10px]"
+  >
+    <span class="text-on-surface-muted">Made By Santy and Sebas</span>
+    <span class="text-border-strong">&middot;</span>
+    <span>
+      This website does not retain any files on its server. Rather, it solely
+      provides links to media content hosted by third-party services.
+    </span>
+  </div>
+</footer>

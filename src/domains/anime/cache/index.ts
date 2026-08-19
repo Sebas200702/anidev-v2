@@ -16,6 +16,7 @@
  */
 
 export { animeDetailsCache } from './anime'
+export { animeCarouselCache } from './anime-carousel'
 export { animeCharacterCache } from './anime-character'
 export { animeFullCache } from './anime-full'
 export { animeListCache } from './anime-list'
