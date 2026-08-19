@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/Sebas200702/anidev-v2/compare/v0.5.0...v0.6.0) (2026-08-19)
+
+
+### Features
+
+* **anime:** add carousel, anime card and the home page container ([9400ff6](https://github.com/Sebas200702/anidev-v2/commit/9400ff6a9e1eb7fbea47be78d06a72029c3e1a12))
+* **anime:** add featured carousel data slice ([e930adb](https://github.com/Sebas200702/anidev-v2/commit/e930adb47e8f3bec2848f27b99605170cffa78df))
+* **shared:** add app shell with header, footer and toolbar island ([e1c98c9](https://github.com/Sebas200702/anidev-v2/commit/e1c98c992461c9cf419c6bb93dabb46603e1fcde))
+* **styles:** add editorial token layer and five button variants ([f85cc55](https://github.com/Sebas200702/anidev-v2/commit/f85cc55ebda312fa266dbe7c45d811fe97caf96a))
+
+
+### Bug Fixes
+
+* **docker:** pin dragonfly threads and memory for local dev ([3d3b976](https://github.com/Sebas200702/anidev-v2/commit/3d3b976fa25c40f7e100e0ca0fd0d9a1cc9202ca))
+
 ## [0.5.0](https://github.com/Sebas200702/anidev-v2/compare/v0.4.0...v0.5.0) (2026-08-17)
 
 
