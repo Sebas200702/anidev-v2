@@ -1,0 +1,134 @@
+---
+/**
+ * ShowcaseControls — the form that drives a component's props.
+ *
+ * @module shared/components/showcase/showcase-controls
+ * @remarks
+ * The fields **are** the query parameters: submitting produces exactly the URL
+ * the route reads, so the playground works with JavaScript disabled. The client
+ * script only removes the click.
+ *
+ * A boolean ships a hidden `false` ahead of its checkbox so an unchecked box is
+ * an explicit value; the decoder takes the last one.
+ *
+ * @see {@link parseControlValues}
+ */
+import { SHOWCASE_FORM_ID, SHOWCASE_PATH } from './constants'
+import type { ShowcaseControl } from './types'
+
+interface Props {
+  slug: string
+  controls: readonly ShowcaseControl[]
+  params: URLSearchParams
+}
+
+const { slug, controls, params } = Astro.props as Props
+
+const valueOf = (name: string) => params.getAll(name).at(-1) ?? ''
+const recordId = valueOf('id')
+---
+
+<form
+  id={SHOWCASE_FORM_ID}
+  method="get"
+  action={SHOWCASE_PATH}
+  class="border-border bg-surface-raised flex flex-col gap-5 rounded-lg border p-5"
+>
+  <input type="hidden" name="component" value={slug} />
+
+  <div class="flex items-center gap-2">
+    <span aria-hidden="true" class="bg-editorial-accent block h-px w-4"></span>
+    <h2
+      class="font-heading text-focus text-xs font-bold tracking-[0.2em] uppercase"
+    >
+      Props
+    </h2>
+  </div>
+
+  <label class="flex flex-col gap-1.5">
+    <span class="font-heading text-on-surface-muted text-[11px] tracking-widest uppercase">
+      Record id
+    </span>
+    <input
+      type="text"
+      name="id"
+      value={recordId}
+      inputmode="numeric"
+      placeholder="live record — leave empty for the default"
+      class="border-border bg-surface text-on-surface focus-visible:outline-focus rounded-md border px-3 py-2 text-sm focus-visible:outline-2"
+    />
+  </label>
+
+  {
+    controls.map((control) => (
+      <label class="flex flex-col gap-1.5">
+        <span class="font-heading text-on-surface-muted text-[11px] tracking-widest uppercase">
+          {control.label}
+        </span>
+
+        {control.kind === 'select' ? (
+          <select
+            name={control.name}
+            class="border-border bg-surface text-on-surface focus-visible:outline-focus rounded-md border px-3 py-2 text-sm focus-visible:outline-2"
+          >
+            <option value="">— unset —</option>
+            {control.options.map((option) => (
+              <option value={option} selected={valueOf(control.name) === option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : control.kind === 'boolean' ? (
+          <span class="flex items-center gap-2">
+            <input type="hidden" name={control.name} value="false" />
+            <input
+              type="checkbox"
+              name={control.name}
+              value="true"
+              checked={valueOf(control.name) === 'true'}
+              class="accent-editorial-accent focus-visible:outline-focus size-4 focus-visible:outline-2"
+            />
+            <span class="text-on-surface-subtle text-xs">enabled</span>
+          </span>
+        ) : control.kind === 'json' ? (
+          <textarea
+            name={control.name}
+            rows="3"
+            placeholder={control.placeholder}
+            class="border-border bg-surface text-on-surface focus-visible:outline-focus rounded-md border px-3 py-2 font-mono text-xs focus-visible:outline-2"
+            set:text={valueOf(control.name)}
+          />
+        ) : (
+          <input
+            type={control.kind === 'color' ? 'color' : 'text'}
+            name={control.name}
+            value={valueOf(control.name)}
+            inputmode={control.kind === 'number' ? 'decimal' : undefined}
+            placeholder={control.placeholder}
+            class="border-border bg-surface text-on-surface focus-visible:outline-focus rounded-md border px-3 py-2 text-sm focus-visible:outline-2"
+          />
+        )}
+      </label>
+    ))
+  }
+
+  <div class="flex items-center gap-3 pt-1">
+    <button type="submit" class="button-primary text-sm">Apply</button>
+    <a
+      href={`${SHOWCASE_PATH}?component=${slug}`}
+      class="text-on-surface-muted hover:text-focus font-heading text-[11px] tracking-widest uppercase transition-colors"
+    >
+      Reset
+    </a>
+  </div>
+</form>
+
+<script>
+  import { initShowcaseControls } from './script'
+
+  let handle = initShowcaseControls()
+  document.addEventListener('astro:page-load', () => {
+    handle?.destroy()
+    handle = initShowcaseControls()
+  })
+</script>
