@@ -12,6 +12,10 @@
 
 export type { AnimeCard } from './anime-card.d-types'
 export type {
+  CarouselItem,
+  CarouselGenre,
+} from './anime-carousel.d-types'
+export type {
   VoiceActor,
   AnimeCharacter,
   GetAnimeCharacter,

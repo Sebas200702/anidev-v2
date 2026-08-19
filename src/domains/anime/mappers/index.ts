@@ -8,6 +8,7 @@
  */
 
 export { mapAnimeCard, mapAnimeListToCards } from './anime-card'
+export { mapCarouselItem, pickBestAsset } from './anime-carousel'
 export { mapAnimeCharacters } from './anime-character'
 export { mapExternalIds } from './anime-external'
 export { mapAnimeFilters } from './anime-filters'

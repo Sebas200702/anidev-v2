@@ -45,3 +45,23 @@ export const ANIME_SEARCH_INTENT_KEYS = [
   'scoreMin',
   'scoreMax',
 ] as const
+
+/**
+ * Media assets a home-carousel slide cannot render without.
+ *
+ * @remarks
+ * The slide is built from a banner plus the title's clear logo, so an anime
+ * missing either one is not eligible.
+ *
+ * @see {@link animeCarouselRepository.getTopPopularWithMedia}
+ */
+export const CAROUSEL_REQUIRED_MEDIA_TYPES = ['banner', 'clearlogo'] as const
+
+/** How many slides the home carousel shows. */
+export const CAROUSEL_SLIDE_LIMIT = 6
+
+/**
+ * Media source preference when an anime has the same asset from several
+ * providers (first match wins).
+ */
+export const CAROUSEL_SOURCE_PRIORITY = ['anilist', 'kitsu', 'thetvdb'] as const
