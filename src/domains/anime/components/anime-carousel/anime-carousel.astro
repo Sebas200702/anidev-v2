@@ -1,0 +1,110 @@
+---
+/**
+ * AnimeCarousel — featured-anime hero.
+ *
+ * @module domains/anime/components/anime-carousel
+ * @remarks
+ * Presentational: slides arrive as props from the page route
+ * ({@link animeCarouselService}), never fetched here. Every slide is rendered
+ * server-side; {@link initCarousel} only toggles visibility, so the first slide
+ * is painted with zero JS.
+ *
+ * @example
+ * ```astro
+ * const items = await animeCarouselService.getCarouselItems()
+ * <AnimeCarousel items={items} />
+ * ```
+ *
+ * @see {@link CarouselItem}
+ * @see {@link initCarousel}
+ */
+import { Button } from '@components/button'
+import type { CarouselItem as CarouselItemData } from '@anime/types'
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import CarouselItem from './carousel-item/carousel-item.astro'
+import { CAROUSEL_ID, NEXT_ID, PREV_ID } from './consts'
+
+interface Props {
+  items: CarouselItemData[]
+}
+
+const { items } = Astro.props as Props
+---
+
+<script>
+  import { initCarousel } from './script'
+
+  let controls = initCarousel()
+  document.addEventListener('astro:page-load', () => {
+    controls?.destroy()
+    controls = initCarousel()
+  })
+</script>
+
+<section
+  class="relative z-0 h-[60vh] w-full overflow-hidden"
+  id={CAROUSEL_ID}
+  data-total={items.length}
+  aria-roledescription="carousel"
+  aria-label="Featured anime"
+>
+  <div class="relative h-full w-full">
+    {
+      items.map((item, index) => (
+        <div
+          class="absolute inset-0 transition-opacity duration-700"
+          class:list={{
+            'opacity-100 z-10': index === 0,
+            'opacity-0 z-0 pointer-events-none': index !== 0,
+          }}
+          aria-hidden={index !== 0}
+          data-carousel-slide
+          data-index={index}
+        >
+          <CarouselItem item={item} />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="absolute top-8 right-40 z-20 flex gap-2">
+    <Button
+      id={PREV_ID}
+      variant="button-tertiary"
+      ariaLabel="Previous slide"
+      Icon={IconChevronLeft}
+      className="p-2!"
+    />
+    <Button
+      id={NEXT_ID}
+      variant="button-tertiary"
+      ariaLabel="Next slide"
+      Icon={IconChevronRight}
+      className="p-2!"
+    />
+  </div>
+
+  <div
+    class="absolute bottom-6 left-1/2 z-20 flex h-20 -translate-x-1/2 items-center gap-2.5"
+    role="tablist"
+    aria-label="Slide navigation"
+  >
+    {
+      items.map((_, index) => (
+        <button
+          class="size-2 cursor-pointer rounded-full transition-all duration-200"
+          class:list={{
+            'bg-editorial-accent w-6': index === 0,
+            'bg-white/50 hover:bg-white/70': index !== 0,
+          }}
+          data-carousel-dot
+          data-index={index}
+          role="tab"
+          aria-label={`Go to slide ${index + 1}`}
+          aria-selected={index === 0}
+          type="button"
+        />
+      ))
+    }
+  </div>
+</section>

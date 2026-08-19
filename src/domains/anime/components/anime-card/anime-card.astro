@@ -1,0 +1,131 @@
+---
+/**
+ * AnimeCard — editorial poster card for AniDev grid views.
+ *
+ * @module domains/anime/components/anime-card
+ * @remarks
+ * Pure presentational Astro component. Receives an {@link AnimeCard}
+ * payload from the container page (no data fetching inside).
+ *
+ * Visual language: AniDev Swiss/editorial system — filed-under strip
+ * with a brand-accent hairline rule that grows on focus, corner
+ * brackets on the meta strip (fade in on hover), and a status dot that
+ * pulses only while a series is airing. Tabler icons at
+ * `stroke-width: 1.5`.
+ *
+ * @example
+ * ```astro
+ * <AnimeCard anime={card} />
+ * ```
+ *
+ * @see {@link AnimeCard}
+ * @see {@link mapAnimeCard}
+ */
+import { Overlay } from '@components/overlay'
+import Picture from '@components/picture/picture.astro'
+import type { AnimeCard } from '@anime/types'
+import { IconStar } from '@tabler/icons-react'
+import { getStatusDotClass } from '@utils/get-status-color'
+
+interface Props {
+  anime: AnimeCard
+}
+
+const { anime } = Astro.props as Props
+
+const status = anime.status ?? ''
+const isAiring = status === 'Currently Airing'
+const dotClass = getStatusDotClass(status)
+---
+
+<article class="anime-card group relative flex w-full max-w-60 flex-col gap-2">
+  <a
+    href={`/anime/${anime.malId}`}
+    aria-label={anime.title}
+    class="focus-visible:outline-focus flex flex-col gap-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4"
+  >
+    <div class="flex items-center gap-2 px-1">
+      <span
+        aria-hidden="true"
+        class="bg-editorial-accent block h-px w-4 transition-all duration-300 ease-out group-focus-visible:w-8"
+      ></span>
+      <span
+        class="font-heading text-editorial-accent text-xs font-semibold tracking-wider"
+      >
+        {anime.type || 'Anime'}
+      </span>
+      <span class="text-on-surface-subtle" aria-hidden="true">·</span>
+      <span
+        class="font-body text-on-surface inline-flex items-center gap-1 text-[10px] font-light"
+      >
+        <IconStar
+          className="size-3 text-warning"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
+        {anime.score}
+      </span>
+
+      <span
+        role="status"
+        class="font-heading text-on-surface-muted ml-auto inline-flex items-center gap-1.5 text-[11px] font-light"
+        aria-label={`${anime.title} status: ${status}`}
+      >
+        <span class="relative flex size-2" aria-hidden="true">
+          <span
+            class:list={[
+              'absolute inline-flex size-full rounded-full opacity-75',
+              dotClass,
+              { 'animate-ping': isAiring },
+            ]}
+          ></span>
+          <span class:list={['relative inline-flex size-1.5 rounded-full', dotClass]}
+          ></span>
+        </span>{status}
+      </span>
+    </div>
+    <div
+      class="border-border group-hover:border-focus group-focus-visible:border-editorial-accent relative aspect-427/600 overflow-hidden rounded-lg border transition-colors duration-300"
+    >
+      <Picture
+        imageUrl={anime.imageUrl}
+        smallImageUrl={anime.smallImageUrl}
+        alt={anime.altImageText}
+        imageStyles="w-full h-full"
+      />
+      <Overlay
+        fromColor="surface"
+        toColor="transparent"
+        direction="up"
+        viaColor="surface/60"
+        viaInterval="30%"
+      />
+    </div>
+    <div class="relative flex flex-col gap-1 px-1">
+      <h3
+        class="font-heading text-on-surface group-hover:text-focus group-focus-visible:text-focus line-clamp-1 text-base font-semibold transition-colors duration-200"
+      >
+        {anime.title}
+      </h3>
+      <div
+        class="font-heading text-on-surface-muted relative flex items-center justify-between p-2 text-[9px] font-medium tracking-widest"
+      >
+        <span>ID - {anime.malId}</span>
+        <span
+          class="font-heading text-on-surface-muted text-[9px] font-medium tracking-[0.18em]"
+        >
+          {anime.year || '—'}
+        </span>
+
+        <span
+          aria-hidden="true"
+          class="border-editorial-accent pointer-events-none absolute -right-px -bottom-px size-3 border-r border-b opacity-60 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+        ></span>
+        <span
+          aria-hidden="true"
+          class="border-editorial-accent pointer-events-none absolute -bottom-px -left-px size-3 border-b border-l opacity-60 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+        ></span>
+      </div>
+    </div>
+  </a>
+</article>
