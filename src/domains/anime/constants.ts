@@ -65,3 +65,21 @@ export const CAROUSEL_SLIDE_LIMIT = 6
  * providers (first match wins).
  */
 export const CAROUSEL_SOURCE_PRIORITY = ['anilist', 'kitsu', 'thetvdb'] as const
+
+/**
+ * MAL airing statuses, in lifecycle order.
+ *
+ * @remarks
+ * Used by the showcase to offer every status a card can render, including the
+ * ones no seeded row happens to have.
+ *
+ * @see {@link getStatusColor}
+ */
+export const ANIME_STATUSES = [
+  'Currently Airing',
+  'Finished Airing',
+  'Not yet aired',
+] as const
+
+/** How many cards the showcase scans when resolving `?id=` for a card demo. */
+export const SHOWCASE_CARD_SEARCH_LIMIT = 24
