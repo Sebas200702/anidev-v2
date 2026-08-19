@@ -10,8 +10,10 @@ interface Props {
   imageUrl: string
   description: string
   url: string
+  /** Keep the page out of search results (documentation surfaces). */
+  noIndex?: boolean
 }
-const { title, imageUrl, description, url } = Astro.props
+const { title, imageUrl, description, url, noIndex = false } = Astro.props
 ---
 
 <html lang="en">
@@ -28,6 +30,7 @@ const { title, imageUrl, description, url } = Astro.props
       content="MMmywKMxZRfBscGxXQPHrZB_8q2Gre3c8Lb4VglQ3Lw"
     />
 
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="description" content={description} />
     <meta property="og:image" name="og:image" content={imageUrl} />
     <meta property="og:title" content={title} />

@@ -1,0 +1,114 @@
+---
+/**
+ * Component showcase — the props playground.
+ *
+ * @module pages/showcase
+ * @remarks
+ * Container route, and the reference implementation of one: it composes the
+ * owner registries, decodes the URL into props, runs each entry's loader, and
+ * passes everything down. No component here fetches anything.
+ *
+ * **Prop state is the query string.** `?component=<slug>` picks the playground,
+ * `?id=` picks the record, and every other parameter is a declared control — so
+ * any state is a shareable link and the back button is undo.
+ *
+ * Excluded from search engines: it is UI documentation, not content.
+ *
+ * @see {@link parseControlValues}
+ * @see {@link resolveShowcaseProps}
+ */
+import { animeShowcaseEntries } from '@anime/showcase'
+import {
+  parseControlValues,
+  resolveShowcaseProps,
+  sharedShowcaseEntries,
+  ShowcaseControls,
+  ShowcaseHeader,
+  ShowcaseIndex,
+  ShowcasePresets,
+  ShowcasePropsPanel,
+  ShowcaseStage,
+} from '@components/showcase'
+import type { ShowcaseProps } from '@components/showcase'
+import Base from '@layouts/base-layout.astro'
+
+const entries = [...sharedShowcaseEntries, ...animeShowcaseEntries]
+
+const params = Astro.url.searchParams
+const slug = params.get('component')
+const entry = slug ? entries.find((item) => item.slug === slug) : undefined
+
+if (slug && !entry) {
+  return Astro.redirect('/404')
+}
+
+const recordIdParam = Number(params.getAll('id').at(-1))
+const recordId = Number.isInteger(recordIdParam) ? recordIdParam : undefined
+
+let record: ShowcaseProps | undefined
+if (entry?.load) {
+  try {
+    record = await entry.load({ recordId })
+  } catch {
+    // A dependency being down degrades this one playground, not the page:
+    // the entry's fixture takes over and the panel says so.
+    record = undefined
+  }
+}
+
+const resolved = entry
+  ? resolveShowcaseProps({
+      fixture: entry.fixture,
+      record,
+      controlValues: parseControlValues(entry.controls, params),
+    })
+  : undefined
+
+const title = entry ? `${entry.title} · Showcase` : 'Component showcase'
+---
+
+<Base
+  title={`${title} - AniDev`}
+  description="Living documentation: every AniDev component, driven prop by prop."
+  imageUrl=""
+  url={Astro.url.pathname}
+  noIndex
+>
+  <div class="flex flex-col gap-10 px-4 py-12 md:px-40 md:py-16">
+    <ShowcaseHeader entry={entry} total={entries.length} />
+
+    {
+      entry && resolved ? (
+        <div class="flex flex-col gap-8">
+          {entry.presets && entry.presets.length > 0 && (
+            <ShowcasePresets
+              slug={entry.slug}
+              presets={entry.presets}
+              params={params}
+            />
+          )}
+
+          <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_360px]">
+            <ShowcaseStage entry={entry} props={resolved.props} />
+
+            <div class="flex flex-col gap-6">
+              {entry.controls.length > 0 && (
+                <ShowcaseControls
+                  slug={entry.slug}
+                  controls={entry.controls}
+                  params={params}
+                />
+              )}
+              <ShowcasePropsPanel
+                props={resolved.props}
+                source={resolved.source}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <ShowcaseIndex entries={entries} />
+      )
+    }
+  </div>
+</Base>
