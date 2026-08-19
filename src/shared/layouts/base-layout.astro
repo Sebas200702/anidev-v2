@@ -2,6 +2,8 @@
 import { AstroFont } from 'astro-font'
 import '@styles/global.css'
 import { ClientRouter } from 'astro:transitions'
+import { Footer, Header } from '@components/index'
+import { Toolbar } from '@components/toolbar'
 
 interface Props {
   title: string
@@ -60,6 +62,7 @@ const { title, imageUrl, description, url } = Astro.props
       https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev
       https://lh3.googleusercontent.com/
       https://anidev.app
+      https://www.anidev.app
       https://www.youtube.com/;
     worker-src 'self' blob:;
   "
@@ -77,6 +80,16 @@ const { title, imageUrl, description, url } = Astro.props
           selector: 'body',
           fallback: 'sans-serif',
         },
+        {
+          src: [],
+          name: 'Inter',
+          googleFontsURL:
+            'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap&',
+          preload: true,
+          display: 'swap',
+          selector: 'body',
+          fallback: 'sans-serif',
+        },
       ]}
     />
     <link rel="canonical" href={url} />
@@ -87,17 +100,17 @@ const { title, imageUrl, description, url } = Astro.props
     <div id="modal-root"></div>
     <div
       id="app"
-      class="bg-Primary-950 text-Primary-50 no-scrollbar max-w-dvw overflow-x-hidden overflow-y-scroll"
+      class="bg-surface text-on-surface no-scrollbar max-w-dvw overflow-x-hidden overflow-y-scroll"
     >
-      <aside class="h-16 [grid-area:aside] md:h-full"></aside>
-      <header class="h-full max-w-dvw [grid-area:header]"></header>
-
+      <Header />
+      <Toolbar client:load />
       <main
         id="layout-player-container"
         class="relative flex max-w-dvw flex-col [grid-area:main]"
       >
         <slot />
       </main>
+      <Footer />
     </div>
   </body>
 </html>

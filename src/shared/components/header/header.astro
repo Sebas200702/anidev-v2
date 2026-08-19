@@ -1,0 +1,144 @@
+---
+/**
+ * Header — editorial masthead, themed with AniDev tokens.
+ *
+ * @module shared/components/header
+ * @remarks
+ * Two rows: a thin utility strip (issue line · tagline · status + langs) and
+ * the main bar (logo + studio line · nav with counters · actions). Zero JS —
+ * colors come from semantic tokens, so it re-themes with the accent.
+ *
+ * @see {@link Button}
+ * @see {@link Isotipo}
+ */
+import { Button } from '@components/button'
+import { Isotipo } from '@components/logos'
+import { format } from '@formkit/tempo'
+import { IconLogin, IconSearch, IconUser } from '@tabler/icons-react'
+
+const issueDate = format(new Date(), 'MM/YYYY', 'es')
+
+const nav = [
+  { label: 'Discover', href: '/discover', count: '1.2K' },
+  { label: 'Music', href: '/music', count: '840' },
+  { label: 'Collections', href: '/collections', count: '12' },
+  { label: 'Season', href: '/season', count: '05' },
+  { label: 'News', href: '/news' },
+]
+
+const langs = ['ES', 'EN', '日本語']
+const version = 'V2.3.0'
+---
+
+<header
+  class="bg-surface font-heading sticky top-0 z-20 flex w-full flex-col [grid-area:header]"
+>
+  <div
+    class="border-border flex items-center justify-between gap-4 border-b px-4 py-2 text-xs font-medium tracking-[0.14em] md:px-40"
+  >
+    <p class="text-on-surface whitespace-nowrap">
+      {issueDate}
+      · <span class="text-on-surface-subtle">Summer</span>
+    </p>
+
+    <p class="text-on-surface hidden w-full flex-1 justify-center gap-8 lg:flex">
+      <span>
+        The new way to enjoy
+        <span class="text-brand-500">Anime</span>
+      </span>
+    </p>
+
+    <div class="text-on-surface-muted flex items-center gap-4">
+      <span class="flex items-center gap-1.5">
+        <span class="bg-success relative flex size-1.5 rounded-full">
+          <span
+            class="bg-success absolute inline-flex size-full animate-ping rounded-full opacity-75"
+          ></span>
+        </span>
+        Active · {version}
+      </span>
+      <span class="text-border-strong hidden sm:inline">|</span>
+      <ul class="hidden items-center gap-2 sm:flex">
+        {
+          langs.map((lang, index) => (
+            <li>
+              <button
+                type="button"
+                class:list={[
+                  'transition-colors',
+                  index === 0
+                    ? 'text-on-surface'
+                    : 'text-on-surface-subtle hover:text-on-surface',
+                ]}
+              >
+                {lang}
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Main bar ──────────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between gap-6 px-4 py-4 md:px-40">
+    <a href="/" class="group flex items-center gap-3" aria-label="AniDev — home">
+      <Isotipo className="w-12" />
+      <span class="flex items-center gap-4 leading-none">
+        <h1 class="text-2xl font-bold tracking-tight">AniDev</h1>
+        <div class="bg-border h-8 w-px"></div>
+
+        <span
+          class="text-on-surface-muted mt-0.5 text-sm font-light tracking-[0.18em]"
+        >
+          Animanga Web Streaming
+        </span>
+      </span>
+    </a>
+
+    <nav class="hidden md:block" aria-label="Main">
+      <ul class="flex items-center gap-7 text-[15px] font-semibold">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="text-on-surface hover:text-focus inline-flex items-start gap-0.5 transition-colors"
+              >
+                {item.label}
+                {item.count && (
+                  <sup class="text-on-surface-subtle text-[10px] font-medium">
+                    {item.count}
+                  </sup>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <Button
+        variant="button-tertiary"
+        ariaLabel="Search"
+        Icon={IconSearch}
+        className="p-2!"
+      />
+      <div class="bg-border h-6 w-px"></div>
+
+      <Button
+        title="Login"
+        ariaLabel="Login"
+        variant="button-secondary"
+        Icon={IconLogin}
+      />
+      <Button
+        title="Sign Up"
+        ariaLabel="Sign Up"
+        variant="button-primary"
+        Icon={IconUser}
+      />
+    </div>
+  </div>
+</header>

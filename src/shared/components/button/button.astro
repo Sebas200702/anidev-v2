@@ -1,0 +1,51 @@
+---
+/**
+ * Button — the app's single button surface, in five variants.
+ *
+ * @module shared/components/button
+ * @remarks
+ * Zero-JS: renders static markup and takes its look from the global
+ * `.button-*` utility classes. Interaction is wired by the consumer — an
+ * `id` plus a page script (see the carousel controls) or a `<form>`.
+ * React islands render their own buttons with the same classes.
+ *
+ * @example
+ * ```astro
+ * <Button title="Watch Now" variant="button-primary" Icon={IconPlayerPlay} />
+ * <Button id="carousel-next" variant="button-tertiary" ariaLabel="Next slide"
+ *   Icon={IconChevronRight} className="p-2!" />
+ * ```
+ *
+ * @see {@link ButtonProps}
+ */
+import type { ButtonProps as Props } from './types'
+
+const {
+  id,
+  type = 'button',
+  disabled,
+  isLoading,
+  Icon,
+  title,
+  ariaLabel,
+  fullWidth = false,
+  className,
+  variant = 'button-primary',
+} = Astro.props as Props
+---
+
+<button
+  id={id}
+  type={type}
+  disabled={disabled}
+  title={ariaLabel}
+  aria-label={ariaLabel}
+  class:list={[
+    className,
+    variant,
+    { 'w-full': fullWidth, 'opacity-50 cursor-not-allowed': isLoading },
+  ]}
+>
+  {Icon && <Icon className="size-5" strokeWidth={2} />}
+  {title && <span class="text-sm font-medium">{title}</span>}
+</button>

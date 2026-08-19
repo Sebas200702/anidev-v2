@@ -1,32 +1,70 @@
 ---
-interface Props {
-  imageStyles: string
-  smallImageUrl: string
-  imageUrl: string
-  alt?: string
-  isBanner?: boolean
-}
-const { imageStyles, alt, isBanner, imageUrl, smallImageUrl } = Astro.props
+/**
+ * Picture — LQIP blur-up image with explicit intrinsics.
+ *
+ * @module shared/components/picture
+ * @remarks
+ * Renders the small variant blurred underneath and fades it out once the full
+ * image loads (inline `onload`, no island). Pass `aspectRatio` or explicit
+ * `width`/`height` so the layout never shifts.
+ *
+ * @example
+ * ```astro
+ * <Picture imageUrl={anime.imageUrl} smallImageUrl={anime.smallImageUrl}
+ *   alt={anime.altImageText} imageStyles="w-full h-full" />
+ * ```
+ *
+ * @see {@link PictureProps}
+ */
+import type { PictureProps as Props } from './types'
+
+const {
+  imageStyles,
+  alt,
+  isBanner,
+  imageUrl,
+  smallImageUrl,
+  width,
+  height,
+  aspectRatio,
+  sizing = 'fill',
+} = Astro.props as Props
+
+const hasPlaceholder = smallImageUrl && smallImageUrl !== imageUrl
+
+const imageWidth = width ?? (isBanner ? 1920 : undefined)
+const imageHeight = height ?? (isBanner ? 1080 : undefined)
 ---
 
-<figure class={`${imageStyles} overflow-hidden relative`}>
+<figure
+  class={`${imageStyles ?? ''} overflow-hidden relative`}
+  style={aspectRatio ? `aspect-ratio: ${aspectRatio}` : undefined}
+>
+  {
+    hasPlaceholder && (
+      <img
+        class="js-placeholder pointer-events-none absolute inset-0 h-full w-full object-cover object-center blur-lg filter transition-opacity duration-300"
+        src={smallImageUrl}
+        alt={alt}
+        aria-hidden="true"
+        decoding="async"
+        fetch-priority="low"
+        loading="eager"
+      />
+    )
+  }
   <img
-    class="absolute inset-0 h-full w-full object-cover object-center blur-lg filter"
-    src={smallImageUrl}
-    alt={alt}
-    aria-hidden="true"
-    decoding="async"
-    fetch-priority="low"
-    loading="eager"
-  />
-  <img
-    class="relative h-full w-full object-cover object-center"
+    class:list={{
+      'relative h-full w-full object-cover object-center': sizing === 'fill',
+      'block w-full h-auto': sizing === 'intrinsic',
+    }}
     src={imageUrl}
     alt={alt}
-    width={isBanner ? 1920 : undefined}
-    height={isBanner ? 1080 : undefined}
+    width={imageWidth}
+    height={imageHeight}
     loading={isBanner ? 'eager' : 'lazy'}
     fetch-priority={isBanner ? 'high' : 'low'}
     decoding="async"
+    onload="var p = this.previousElementSibling; if (p && p.classList.contains('js-placeholder')) p.classList.add('opacity-0');"
   />
 </figure>
