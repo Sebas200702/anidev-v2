@@ -39,10 +39,12 @@
   "dependencies": {
     "@astrojs/react": "5.0.2",
     "@astrojs/vercel": "^10.0.8",
+    "@formkit/tempo": "^1.1.0",
     "@nurodev/astro-bun": "2.1.2",
     "@sentry/astro": "10.43.0",
     "@sentry/node": "10.43.0",
     "@sentry/react": "10.43.0",
+    "@tabler/icons-react": "^3.46.0",
     "@tailwindcss/vite": "4.2.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
