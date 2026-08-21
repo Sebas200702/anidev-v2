@@ -1,0 +1,48 @@
+---
+/**
+ * ShowcaseHeader — kicker, title and blurb for the index or one playground.
+ *
+ * @module shared/components/showcase/showcase-header
+ */
+import { SHOWCASE_PATH } from './constants'
+import type { ShowcaseEntry } from './types'
+
+interface Props {
+  entry?: ShowcaseEntry
+  total: number
+}
+
+const { entry, total } = Astro.props as Props
+
+const blurb = entry
+  ? entry.summary
+  : `${total} components, each rendered by the server against real data and drivable prop by prop. Every state is a URL.`
+---
+
+<header class="flex flex-col gap-3">
+  <div class="flex items-center gap-3">
+    <span aria-hidden="true" class="bg-editorial-accent block h-px w-6"></span>
+    <p
+      class="font-heading text-focus text-xs font-bold tracking-[0.2em] uppercase"
+    >
+      {entry ? entry.owner : 'Living documentation'}
+    </p>
+  </div>
+
+  <h1 class="font-heading text-3xl font-bold tracking-tight">
+    {entry ? entry.title : 'Component showcase'}
+  </h1>
+
+  <p class="text-on-surface-muted max-w-prose text-sm font-light">{blurb}</p>
+
+  {
+    entry && (
+      <a
+        href={SHOWCASE_PATH}
+        class="text-on-surface-muted hover:text-focus font-heading w-fit text-[11px] tracking-widest uppercase transition-colors"
+      >
+        &larr; All components
+      </a>
+    )
+  }
+</header>

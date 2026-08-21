@@ -1,0 +1,75 @@
+---
+/**
+ * ShowcaseIndex — the component catalog, grouped by owner.
+ *
+ * @module shared/components/showcase/showcase-index
+ * @remarks
+ * Renders whatever the registry holds: adding a component is one entry, never an
+ * edit here.
+ *
+ * @see {@link SHOWCASE_OWNERS}
+ */
+import { SHOWCASE_OWNERS, SHOWCASE_PATH } from './constants'
+import type { ShowcaseEntry } from './types'
+
+interface Props {
+  entries: readonly ShowcaseEntry[]
+}
+
+const { entries } = Astro.props as Props
+
+const groups = SHOWCASE_OWNERS.map((owner) => ({
+  ...owner,
+  items: entries.filter((entry) => entry.owner === owner.id),
+})).filter((group) => group.items.length > 0)
+---
+
+<div class="flex flex-col gap-12">
+  {
+    groups.map((group) => (
+      <section class="flex flex-col gap-5" aria-labelledby={`group-${group.id}`}>
+        <div class="border-border flex items-center gap-2 border-b pb-3">
+          <span aria-hidden="true" class="bg-editorial-accent block h-px w-6" />
+          <h2
+            id={`group-${group.id}`}
+            class="font-heading text-focus text-sm font-bold tracking-[0.2em] uppercase"
+          >
+            {group.label}
+          </h2>
+          <span class="text-on-surface-subtle ml-auto text-[11px] tracking-widest">
+            {group.items.length}
+          </span>
+        </div>
+
+        <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {group.items.map((entry) => (
+            <li class="group relative">
+              <a
+                href={`${SHOWCASE_PATH}?component=${entry.slug}`}
+                class="border-border bg-surface-raised hover:border-focus focus-visible:outline-focus flex h-full flex-col gap-2 rounded-lg border p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                <span class="flex items-center gap-2">
+                  <h3 class="font-heading text-on-surface group-hover:text-focus text-base font-semibold transition-colors">
+                    {entry.title}
+                  </h3>
+                  {entry.renderedByShell && (
+                    <span class="font-heading text-on-surface-subtle text-[10px] tracking-widest uppercase">
+                      in shell
+                    </span>
+                  )}
+                </span>
+                <span class="text-on-surface-muted text-sm font-light">
+                  {entry.summary}
+                </span>
+                <span class="font-heading text-on-surface-subtle mt-auto text-[10px] tracking-[0.18em] uppercase">
+                  {entry.controls.length} props ·{' '}
+                  {entry.presets?.length ?? 0} presets
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>

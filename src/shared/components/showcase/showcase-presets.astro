@@ -1,0 +1,67 @@
+---
+/**
+ * ShowcasePresets — named prop combinations as links.
+ *
+ * @module shared/components/showcase/showcase-presets
+ * @remarks
+ * A preset is nothing but the URL it represents, so it needs no state and no
+ * client JS, and landing on it leaves every control editable.
+ */
+import { SHOWCASE_PATH } from './constants'
+import type { ShowcasePreset } from './types'
+
+interface Props {
+  slug: string
+  presets: readonly ShowcasePreset[]
+  params: URLSearchParams
+}
+
+const { slug, presets, params } = Astro.props as Props
+
+const hrefFor = (preset: ShowcasePreset) => {
+  const next = new URLSearchParams({ component: slug })
+  const recordId = params.getAll('id').at(-1)
+  if (recordId) next.set('id', recordId)
+  for (const [name, value] of Object.entries(preset.values)) {
+    next.set(name, value)
+  }
+  return `${SHOWCASE_PATH}?${next.toString()}`
+}
+
+const isActive = (preset: ShowcasePreset) =>
+  Object.entries(preset.values).every(
+    ([name, value]) => params.getAll(name).at(-1) === value
+  )
+---
+
+<nav aria-label="Presets" class="flex flex-col gap-3">
+  <div class="flex items-center gap-2">
+    <span aria-hidden="true" class="bg-editorial-accent block h-px w-4"></span>
+    <h2
+      class="font-heading text-focus text-xs font-bold tracking-[0.2em] uppercase"
+    >
+      Presets
+    </h2>
+  </div>
+
+  <ul class="flex flex-wrap gap-2">
+    {
+      presets.map((preset) => (
+        <li>
+          <a
+            href={hrefFor(preset)}
+            aria-current={isActive(preset) ? 'true' : undefined}
+            class:list={[
+              'font-heading inline-flex rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+              isActive(preset)
+                ? 'border-editorial-accent bg-editorial-accent text-on-surface'
+                : 'border-border text-on-surface-muted hover:border-focus hover:text-focus',
+            ]}
+          >
+            {preset.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

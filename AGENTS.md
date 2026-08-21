@@ -251,24 +251,42 @@ flujo completo está en la skill `frontend`; aquí están las reglas vinculantes
   diseño, layout, tipografía y motion. Design tokens en `global.css` son la
   única fuente de color/tipografía.
 
-### Living documentation — componente showcase
+### Living documentation — component showcase (`/showcase`)
 
-Cuando `src/pages/showcase.astro` esté disponible, cada componente será
-**visible**, no solo documentado con JSDoc. El repo mantendrá un *component
-showcase* (route `src/pages/showcase.astro` + `fixtures/` por dominio) que
-renderizará cada componente **con datos vivos**:
+Cada componente presentacional es **visible y manipulable**, no solo documentado
+con JSDoc. `/showcase` es un *props playground*: `?component=<slug>` renderiza un
+componente aislado junto a un control por cada prop declarada, y **el estado de
+los props vive en la URL** — cada combinación es un link compartible y el botón
+"atrás" es undo.
 
-- El showcase es **dinámico**: consume la API/dominio real del registro (su
-  service + API route), igual que las páginas de producción. Según el parámetro,
-  (p. ej. `?id=` / ruta con id), muestra el registro actual de la API — refleja
-  cambios de datos, no fixtures hardcodeadas.
-- Los `fixtures/` por dominio sirven como **fallback de arranque** (cuando la
-  API aún no tiene datos o el índice va sin selección). El fetch lo hace el
-  contenedor (la page route), nunca el componente.
-- Cada componente presentacional recibe su demo en el mismo task que lo crea.
+- **Registrar es el único paso.** Cada dueño declara sus entradas
+  (`src/shared/components/showcase/entries*.ts`,
+  `src/domains/<d>/showcase/entries.ts`) y la page route las compone. No se edita
+  la ruta para agregar un componente. `src/shared/` no puede importar de
+  `src/domains/`: por eso el registro está partido por dueño.
+- **Controles declarados, no inferidos** (un `interface Props` no existe en
+  runtime): `text` / `number` / `color` / `boolean` / `select` / `json`. El
+  nombre puede ser un dot path (`anime.status`) porque los componentes reciben un
+  solo prop objeto.
+- **Datos reales primero.** Los props base salen del mismo service que usaría una
+  página de producción (`?id=` elige el registro); los `fixtures/` por dominio
+  son el **fallback** cuando el service no devuelve nada o una dependencia está
+  caída. Los valores de los controles se aplican **encima**, así se puede forzar
+  un estado que ningún registro tiene. El panel dice si la base es `live` o
+  `fixture`.
+- **El fetch lo hace la page route, nunca el componente** — el showcase es la
+  implementación de referencia de un contenedor.
+- **Sin framework en el cliente**: los controles son un `<form method="get">` que
+  funciona con JS deshabilitado; un script plano (patrón de
+  `anime-carousel/script.ts`) hace debounce y navega vía
+  `astro:transitions/client`.
+- Cada componente presentacional recibe su entrada (controles + presets) en el
+  mismo task que lo crea. Los componentes que el shell ya renderiza
+  (header/footer/toolbar) se declaran `renderedByShell` — una segunda instancia
+  duplicaría un landmark del documento.
+- La ruta es pública (revisable desde un deploy preview) y `noindex`.
 - JSDoc: `@module` por archivo, `@remarks`/`@see`/`@example` en miembros
   públicos, e `interface Props` tipada que auto-documenta la API.
-  Nuevos componentes listan su showcase en sus `index.ts` barrels.
 
 ### Max file size
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
@@ -324,7 +342,7 @@ Validated eagerly at import via Zod in `src/config/env.ts` — missing required 
 | **Frontend flow** | Load the repo skill `frontend` (rendering, composition, styling, living docs) and `presentational-container` (separation of concerns) before any UI task; see "Frontend & UI" above |
 | **UI/UX craft (impeccable)** | Load `impeccable` for design/layout/motion decisions; global tokens in `global.css` are the only source of color/typography |
 | **Web quality (audit/testing)** | `web-quality-audit` for perf/a11y/SEO on new pages; `webapp-testing` (Playwright) to verify UI against a browser |
-| **Component showcase** | When `src/pages/showcase.astro` is available, every presentational component needs a **dynamic** live demo on `/showcase` fed by the domain API/service (`fixtures/` only as fallback) + JSDoc — see "Living documentation" above |
+| **Component showcase** | Every presentational component needs an entry on `/showcase` — controls per prop, presets, `load` from the real domain service, `fixtures/` as fallback — plus JSDoc; see "Living documentation" above |
 
 When a task references a library/framework, fetch its current docs first via `context7` or `find-docs` — do not rely on memory for API details.
 

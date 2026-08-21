@@ -1,0 +1,51 @@
+---
+/**
+ * ShowcaseStage — the isolated render surface for one component.
+ *
+ * @module shared/components/showcase/showcase-stage
+ * @remarks
+ * Renders the entry's component with the resolved props. For a component the
+ * shell already renders (header, footer) it renders nothing: a second instance
+ * would put two `banner` or two `contentinfo` landmarks in one document, which
+ * is the kind of defect this page exists to catch.
+ *
+ * @see {@link ShowcaseEntry}
+ */
+import type { ShowcaseEntry, ShowcaseProps } from './types'
+
+interface Props {
+  entry: ShowcaseEntry
+  props: ShowcaseProps
+}
+
+const { entry, props } = Astro.props as Props
+const Component = entry.component
+---
+
+<section
+  class="border-border bg-surface-raised relative flex min-h-80 flex-col rounded-lg border p-6"
+  aria-label={`${entry.title} preview`}
+>
+  {
+    entry.renderedByShell || !Component ? (
+      <p class="text-on-surface-muted m-auto max-w-prose text-center text-sm">
+        This component is part of the app shell, so the live instance is this
+        page's own chrome — scroll up or down to see it. Rendering a second one
+        here would duplicate a document landmark.
+      </p>
+    ) : (
+      <div class:list={['m-auto w-full', entry.stageClass]}>
+        <Component {...props} />
+      </div>
+    )
+  }
+
+  <span
+    aria-hidden="true"
+    class="border-editorial-accent pointer-events-none absolute -right-px -bottom-px size-4 border-r border-b"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="border-editorial-accent pointer-events-none absolute -bottom-px -left-px size-4 border-b border-l"
+  ></span>
+</section>
