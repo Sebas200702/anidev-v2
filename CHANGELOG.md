@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/Sebas200702/anidev-v2/compare/v0.6.0...v0.7.0) (2026-08-19)
+
+
+### Features
+
+* **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
+* **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
+* **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
+* **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
+
 ## [0.6.0](https://github.com/Sebas200702/anidev-v2/compare/v0.5.0...v0.6.0) (2026-08-19)
 
 

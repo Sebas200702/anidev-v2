@@ -70,33 +70,35 @@ responses. Page route pattern (see `src/pages/anime/[malId]/[slug].astro`):
   image; use `Picture` (LQIP blur-up) with `aspect-*` and explicit sizes on
   banners.
 
-## 5. Living documentation — planned when the showcase is available
+## 5. Living documentation — `/showcase`
 
-When `src/pages/showcase.astro` is available, components are not only
-JSDoc-commented — they are *seen in action* with **live data**. The repo then
-keeps a **component showcase** (route `src/pages/showcase.astro` + `fixtures/`
-per domain) rendering every presentational component:
+Components are not only JSDoc-commented — they are *driven*. `/showcase` is a
+props playground: `?component=<slug>` renders one component isolated, next to a
+control for every prop its entry declares, and the prop state lives in the URL
+(shareable link, back button as undo).
 
-- **Dynamic, not static**: the showcase consumes the domain's real API/service,
-  same as production pages. Its container (the page route) fetches the current
-  record — driven by the API (e.g. `?id=` / id route), reflecting data changes
-  instead of hardcoded fixtures.
-- `fixtures/` per domain are the **bootstrap fallback** (when the API has no
-  data yet / no record selected). Fixtures are never rendered by the component
-  itself — the showcase route fetches, the component renders props.
-- Every presentational component gets a demo entry + its own `fixtures/` data,
-  added in the same task that creates it.
-- JSDoc on the code: `@module` per file, `@remarks`/`@see`/`@example` on public
-  members, and a typed `interface Props` that self-documents the API. Load
-  `jsdoc-typescript-docs` for the style.
+- **Register, don't edit the route**: add an entry to your owner's list
+  (`src/shared/components/showcase/entries*.ts` or
+  `src/domains/<d>/showcase/entries.ts`). The page route composes the owners.
+- **Controls are declared** (`text`/`number`/`color`/`boolean`/`select`/`json`);
+  a name may be a dot path (`anime.status`) since components take one object prop.
+- **Real data first**: `load` pulls from the same service a production page uses
+  (`?id=` selects the record); `fixtures/` per domain are the fallback when the
+  service yields nothing or a dependency is down. Control values apply on top, so
+  any state can be forced. The panel labels the base `live` or `fixture`.
+- **The route fetches, never the component.**
+- **No client framework**: controls are a `<form method="get">` that works with JS
+  disabled; a plain script debounces and navigates via `astro:transitions/client`.
+- A component ships its entry (controls + presets) in the same task that creates
+  it. Components the shell renders are declared `renderedByShell`.
 
 ## 6. Done checklist — UI
 
 - [ ] Components never fetch; pages do.
 - [ ] No `client:*` unless the interaction requires JS.
 - [ ] Own directory + barrel export per component.
-- [ ] When `src/pages/showcase.astro` is available, add a showcase demo fed by
-      the domain API + `fixtures/` fallback.
+- [ ] Showcase entry added: controls per prop, presets, `load` from the domain
+      service, `fixtures/` fallback.
 - [ ] Tokens only for color; no `<style>` blocks.
 - [ ] Contrast, focus-visible, reduced-motion covered.
 - [ ] Gate: `bun run format → bun run check → bun run check:types → bun run test → bun run build`; `web-quality-audit` on new pages.

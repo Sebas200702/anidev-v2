@@ -1,0 +1,54 @@
+---
+/**
+ * ShowcaseProps panel — what the component was actually rendered with.
+ *
+ * @module shared/components/showcase/showcase-props
+ * @remarks
+ * Prints the resolved props plus a badge saying whether the base record came
+ * from a live service or from the domain fixture. A playground silently showing
+ * a fixture would be worse than none.
+ */
+import type { ShowcaseProps, ShowcaseSource } from './types'
+
+interface Props {
+  props: ShowcaseProps
+  source: ShowcaseSource
+}
+
+const { props, source } = Astro.props as Props
+const isLive = source === 'live'
+---
+
+<section
+  class="border-border bg-surface-raised flex flex-col gap-4 rounded-lg border p-5"
+  aria-label="Resolved props"
+>
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <span aria-hidden="true" class="bg-editorial-accent block h-px w-4"></span>
+      <h2
+        class="font-heading text-focus text-xs font-bold tracking-[0.2em] uppercase"
+      >
+        Resolved
+      </h2>
+    </div>
+
+    <span
+      class="font-heading text-on-surface-muted inline-flex items-center gap-1.5 text-[11px] tracking-widest uppercase"
+    >
+      <span
+        aria-hidden="true"
+        class:list={[
+          'size-1.5 rounded-full',
+          isLive ? 'bg-success' : 'bg-warning',
+        ]}
+      ></span>
+      {isLive ? 'live data' : 'fixture'}
+    </span>
+  </div>
+
+  <pre
+    class="text-on-surface-muted overflow-x-auto font-mono text-[11px] leading-relaxed">{
+      JSON.stringify(props, null, 2)
+    }</pre>
+</section>
