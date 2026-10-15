@@ -73,7 +73,7 @@ import type { APIRoute } from 'astro'
  * ```
  */
 export const GET: APIRoute = withZodValidation(mediaRequestSchema)(
-  async ({ validated }) => {
+  async ({ request, validated }) => {
     try {
       const parsed = mediaService.parsePath(validated.params.path)
 
@@ -93,15 +93,23 @@ export const GET: APIRoute = withZodValidation(mediaRequestSchema)(
         const rawMedia = await mediaService.fetchRawMedia(parsed, {
           version: validated.query.version,
           resolution: validated.query.resolution,
+          range: request.headers.get('range') ?? undefined,
         })
 
-        return new Response(new Uint8Array(rawMedia.buffer), {
+        return new Response(rawMedia.stream, {
+          status: rawMedia.status === 206 ? 206 : 200,
           headers: {
             'Content-Type': rawMedia.mimeType,
             'Cache-Control': 'public, max-age=86400',
             'X-Content-Type-Options': 'nosniff',
             'Content-Disposition': 'inline',
             'Accept-Ranges': 'bytes',
+            ...(rawMedia.contentRange
+              ? { 'Content-Range': rawMedia.contentRange }
+              : {}),
+            ...(rawMedia.contentLength
+              ? { 'Content-Length': rawMedia.contentLength }
+              : {}),
           },
         })
       }

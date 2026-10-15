@@ -1,11 +1,12 @@
 /**
- * Tests for {@link fetchRawMedia}.
+ * Tests for {@link fetchRawMedia} streaming delivery.
  *
  * @module domains/media/__tests__/services/fetch-raw-media
  * @remarks
- * Covers the null-path {@link DomainError}, the placeholder {@link DomainError} (`MEDIA_NOT_FOUND`),
- * the on-disk cache hit, and the fetch-and-persist path. `node:fs/promises`, the media cache,
- * resolver, and fetcher are mocked. Follows the repo TDD/unit-test layout.
+ * Covers the null-path {@link DomainError}, the placeholder {@link DomainError}
+ * (`MEDIA_NOT_FOUND`), MIME allowlist rejection, and Range passthrough. The
+ * media cache, resolver, and stream fetcher are mocked; no filesystem or
+ * network access occurs. Follows the repo TDD/unit-test layout.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DomainError } from '@shared/errors/app-error'
@@ -18,26 +19,19 @@ vi.mock('@media/config', () => ({
   },
 }))
 
-const { mkdir, readFile, writeFile } = vi.hoisted(() => ({
-  mkdir: vi.fn(),
-  readFile: vi.fn(),
-  writeFile: vi.fn(),
-}))
-vi.mock('node:fs/promises', () => ({ mkdir, readFile, writeFile }))
-
-const { getRawMeta, setRawMeta, resolveMedia, fetchMediaAsset } = vi.hoisted(
+const { getRawMeta, setRawMeta, resolveMedia, fetchMediaStream } = vi.hoisted(
   () => ({
     getRawMeta: vi.fn(),
     setRawMeta: vi.fn(),
     resolveMedia: vi.fn(),
-    fetchMediaAsset: vi.fn(),
+    fetchMediaStream: vi.fn(),
   })
 )
 vi.mock('@media/cache/media-cache', () => ({
   mediaCache: { getRawMeta, setRawMeta },
 }))
 vi.mock('@media/services/resolve-media', () => ({ resolveMedia }))
-vi.mock('@media/services/media-fetch', () => ({ fetchMediaAsset }))
+vi.mock('@media/services/media-fetch', () => ({ fetchMediaStream }))
 
 import type { SemanticMediaPath } from '@media/types/media-asset-types'
 import { fetchRawMedia } from '@media/services/fetch-raw-media'
@@ -50,10 +44,21 @@ const path: SemanticMediaPath = {
   mediaId: 1,
 }
 
+const streamResult = (mimeType: string, status = 200) => ({
+  stream: new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new Uint8Array([1, 2, 3]))
+      controller.close()
+    },
+  }),
+  mimeType,
+  status,
+  contentRange: null,
+  contentLength: null,
+})
+
 beforeEach(() => {
   vi.clearAllMocks()
-  mkdir.mockResolvedValue(undefined)
-  writeFile.mockResolvedValue(undefined)
 })
 
 describe('fetchRawMedia', () => {
@@ -71,29 +76,10 @@ describe('fetchRawMedia', () => {
     await expect(fetchRawMedia(path)).rejects.toBeInstanceOf(DomainError)
   })
 
-  it('returns the on-disk cached bytes when present', async () => {
-    getRawMeta.mockResolvedValue({ src: 'https://cdn/song.mp3' })
-    readFile
-      .mockResolvedValueOnce(Buffer.from('cached-bytes')) // cacheFile
-      .mockResolvedValueOnce('audio/mpeg') // cacheMeta
-
-    const result = await fetchRawMedia(path)
-
-    expect(result).toEqual({
-      buffer: Buffer.from('cached-bytes'),
-      mimeType: 'audio/mpeg',
-    })
-    expect(fetchMediaAsset).not.toHaveBeenCalled()
-  })
-
   it('rejects text/html upstreams as DomainError', async () => {
     getRawMeta.mockResolvedValue(null)
     resolveMedia.mockResolvedValue({ src: 'https://cdn/page.html' })
-    readFile.mockRejectedValue(new Error('ENOENT'))
-    fetchMediaAsset.mockResolvedValue({
-      buffer: Buffer.from('<html>'),
-      mimeType: 'text/html',
-    })
+    fetchMediaStream.mockResolvedValue(streamResult('text/html'))
 
     await expect(fetchRawMedia(path)).rejects.toBeInstanceOf(DomainError)
     await expect(fetchRawMedia(path)).rejects.toMatchObject({
@@ -101,30 +87,39 @@ describe('fetchRawMedia', () => {
     })
   })
 
-  it('throws DomainError (not InfraError) for a null path', async () => {
-    await expect(fetchRawMedia(null)).rejects.toBeInstanceOf(DomainError)
-  })
-
-  it('fetches and persists when nothing is cached on disk', async () => {
+  it('streams without touching the filesystem and forwards Range', async () => {
     getRawMeta.mockResolvedValue(null)
     resolveMedia.mockResolvedValue({ src: 'https://cdn/song.mp3' })
-    readFile.mockRejectedValue(new Error('ENOENT'))
-    fetchMediaAsset.mockResolvedValue({
-      buffer: Buffer.from('fresh'),
-      mimeType: 'audio/mpeg',
+    fetchMediaStream.mockResolvedValue({
+      ...streamResult('audio/mpeg', 206),
+      contentRange: 'bytes 0-2/1000',
+      contentLength: '3',
     })
 
-    const result = await fetchRawMedia(path)
+    const result = await fetchRawMedia(path, { range: 'bytes=0-2' })
 
-    expect(fetchMediaAsset).toHaveBeenCalledWith('https://cdn/song.mp3')
+    expect(fetchMediaStream).toHaveBeenCalledWith('https://cdn/song.mp3', {
+      range: 'bytes=0-2',
+    })
     expect(setRawMeta).toHaveBeenCalledWith(
       expect.objectContaining({ entityType: MediaEntity.MUSIC }),
       { src: 'https://cdn/song.mp3' }
     )
-    expect(writeFile).toHaveBeenCalled()
-    expect(result).toEqual({
-      buffer: Buffer.from('fresh'),
-      mimeType: 'audio/mpeg',
+    expect(result.status).toBe(206)
+    expect(result.contentRange).toBe('bytes 0-2/1000')
+    expect(result.mimeType).toBe('audio/mpeg')
+  })
+
+  it('reuses the cached src without re-resolving', async () => {
+    getRawMeta.mockResolvedValue({ src: 'https://cdn/cached.mp3' })
+    fetchMediaStream.mockResolvedValue(streamResult('audio/mpeg'))
+
+    const result = await fetchRawMedia(path)
+
+    expect(resolveMedia).not.toHaveBeenCalled()
+    expect(fetchMediaStream).toHaveBeenCalledWith('https://cdn/cached.mp3', {
+      range: undefined,
     })
+    expect(result.src).toBe('https://cdn/cached.mp3')
   })
 })

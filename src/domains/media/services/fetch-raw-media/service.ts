@@ -1,44 +1,45 @@
 /**
  * @module domains/media/services/fetch-raw-media/service
- * @remarks Resolves and fetches raw media bytes for a semantic path with file-system caching.
- * No optimization or MIME validation is performed.
+ * @remarks Resolves and streams raw media bytes for a semantic path.
+ * No optimization or transcoding is performed; bytes flow from the upstream
+ * response to the client without full buffering or `tmpdir()` file caching.
  */
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError } from '@shared/errors/app-error'
 import { mediaServiceConfig } from '@media/config'
-import { fetchMediaAsset } from '@media/services/media-fetch'
+import { fetchMediaStream } from '@media/services/media-fetch'
 import { resolveMedia } from '@media/services/resolve-media'
 import { mediaCache } from '@media/cache/media-cache'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { tmpdir } from 'node:os'
-import { createHash } from 'node:crypto'
-import type {
-  MediaAsset,
-  OptimizedMedia,
-  SemanticMediaPath,
-} from '@media/types/media-types'
+import type { MediaAsset, SemanticMediaPath } from '@media/types/media-types'
+import type { FetchedMediaStream } from '@media/services/media-fetch'
+
+export interface RawMediaStream extends FetchedMediaStream {
+  src: string
+}
 
 /**
- * Resolves and fetches raw media bytes for a semantic path with file-system caching.
+ * Resolves and streams raw media bytes for a semantic path.
  *
- * @remarks Pipeline: resolve asset → check fs cache → fetch bytes → cache to fs.
- * No optimization or MIME validation is performed. Throws {@link DomainError}
- * (`MEDIA_NOT_FOUND` → 404) when no asset matches the path.
+ * @remarks Pipeline: resolve asset (via cached `src` meta or repositories) →
+ * MIME allowlist → zero-buffer upstream stream. The resolved `src` URL stays
+ * cached in {@link mediaCache} metadata; response bytes are never written to
+ * disk. An optional client `Range` header is forwarded upstream and a `206`
+ * partial response is propagated with its `Content-Range`.
  * @param params - Parsed media path segments, or `null` when invalid
- * @param overrides - Optional version/resolution overrides applied before resolution
- * @returns Raw media buffer and original MIME type
- * @throws {InfraError} When the path is invalid or fetching fails
- * @throws {DomainError} With `MEDIA_NOT_FOUND` when no asset exists for the path
+ * @param overrides - Optional version/resolution overrides plus client range
+ * @returns Upstream stream with MIME type, status, and range metadata
+ * @throws {DomainError} With `INVALID_IMAGE_PATH` for null paths or
+ * disallowed MIME types; with `MEDIA_NOT_FOUND` when no asset exists
  * @example
  * ```typescript
- * const raw = await fetchRawMedia(parsedPath)
+ * const raw = await fetchRawMedia(parsedPath, { range: 'bytes=0-1023' })
+ * return new Response(raw.stream, { status: raw.status })
  * ```
  */
 export const fetchRawMedia = async (
   params: SemanticMediaPath | null,
-  overrides?: { version?: string; resolution?: string }
-): Promise<OptimizedMedia> => {
+  overrides?: { version?: string; resolution?: string; range?: string }
+): Promise<RawMediaStream> => {
   if (!params) {
     throw new DomainError(ErrorCodes.INVALID_IMAGE_PATH, 'Invalid media path', {
       params,
@@ -70,35 +71,23 @@ export const fetchRawMedia = async (
     })
   }
 
-  const cacheKey = createHash('sha256').update(media.src).digest('hex')
-  const cacheDir = join(tmpdir(), 'media-cache')
-  const cacheFile = join(cacheDir, cacheKey)
-  const cacheMeta = join(cacheDir, `${cacheKey}.meta`)
-
-  const cached = await readFile(cacheFile).catch(() => null)
-  if (cached) {
-    const mimeType = await readFile(cacheMeta, 'utf-8').catch(() => null)
-    if (mimeType) return { buffer: cached, mimeType }
-  }
-
-  const result = await fetchMediaAsset(media.src)
+  const fetched = await fetchMediaStream(media.src, {
+    range: overrides?.range,
+  })
 
   const allowedRawMime =
-    result.mimeType === 'application/octet-stream' ||
-    result.mimeType.startsWith('image/') ||
-    result.mimeType.startsWith('video/') ||
-    result.mimeType.startsWith('audio/')
+    fetched.mimeType === 'application/octet-stream' ||
+    fetched.mimeType.startsWith('image/') ||
+    fetched.mimeType.startsWith('video/') ||
+    fetched.mimeType.startsWith('audio/')
   if (!allowedRawMime) {
+    fetched.stream.cancel().catch(() => {})
     throw new DomainError(
       ErrorCodes.INVALID_IMAGE_PATH,
       'Raw media MIME type is not allowed',
-      { mimeType: result.mimeType }
+      { mimeType: fetched.mimeType }
     )
   }
 
-  await mkdir(cacheDir, { recursive: true }).catch(() => {})
-  await writeFile(cacheFile, result.buffer).catch(() => {})
-  await writeFile(cacheMeta, result.mimeType, 'utf-8').catch(() => {})
-
-  return { buffer: result.buffer, mimeType: result.mimeType }
+  return { ...fetched, src: media.src }
 }

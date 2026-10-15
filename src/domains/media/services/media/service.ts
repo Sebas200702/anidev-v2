@@ -55,7 +55,7 @@ export const mediaService = {
   /** Alias for {@link optimizeMedia}. */
   optimizeEntityMedia: optimizeMedia,
 
-  /** Resolves and fetches raw media bytes with fs caching. @see {@link fetchRawMedia} */
+  /** Resolves and streams raw media bytes without buffering. @see {@link fetchRawMedia} */
   fetchRawMedia,
 
   /** Optimizes a direct image URL with caching. @see {@link optimizeMediaByUrl} */

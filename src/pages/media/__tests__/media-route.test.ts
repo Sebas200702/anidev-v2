@@ -34,11 +34,27 @@ vi.mock('@config/env', () => ({
 
 import { GET } from '../[...path]'
 
-const createContext = (path: string) =>
+const createContext = (path: string, headers?: Record<string, string>) =>
   ({
-    request: new Request(`http://localhost:4321/media/${path}`),
+    request: new Request(`http://localhost:4321/media/${path}`, {
+      headers,
+    }),
     params: { path },
   }) as unknown as Parameters<typeof GET>[0]
+
+const streamResult = (mimeType: string, status = 200) => ({
+  stream: new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new Uint8Array([1, 2, 3]))
+      controller.close()
+    },
+  }),
+  mimeType,
+  status,
+  contentRange: null,
+  contentLength: null,
+  src: 'https://cdn/song.mp3',
+})
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -58,6 +74,53 @@ describe('GET /media/[...path]', () => {
     })
     expect(mediaServiceMock.optimizeMedia).not.toHaveBeenCalled()
     expect(mediaServiceMock.fetchRawMedia).not.toHaveBeenCalled()
+  })
+
+  it('streams raw media with hardening headers on 200', async () => {
+    mediaServiceMock.parsePath.mockReturnValue({
+      entityType: 'music',
+      entityId: 1,
+      mediaType: 'audio',
+      mediaSize: 'default',
+    })
+    mediaServiceMock.fetchRawMedia.mockResolvedValue(streamResult('audio/mpeg'))
+
+    const response = await GET(createContext('music/1/audio/default'))
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('Content-Type')).toBe('audio/mpeg')
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
+    expect(response.headers.get('Accept-Ranges')).toBe('bytes')
+    expect(mediaServiceMock.fetchRawMedia).toHaveBeenCalledWith(
+      expect.objectContaining({ entityId: 1 }),
+      expect.objectContaining({ range: undefined })
+    )
+  })
+
+  it('forwards Range and replies 206 with Content-Range', async () => {
+    mediaServiceMock.parsePath.mockReturnValue({
+      entityType: 'music',
+      entityId: 1,
+      mediaType: 'audio',
+      mediaSize: 'default',
+    })
+    mediaServiceMock.fetchRawMedia.mockResolvedValue({
+      ...streamResult('audio/mpeg', 206),
+      contentRange: 'bytes 0-2/1000',
+      contentLength: '3',
+    })
+
+    const response = await GET(
+      createContext('music/1/audio/default', { range: 'bytes=0-2' })
+    )
+
+    expect(response.status).toBe(206)
+    expect(response.headers.get('Content-Range')).toBe('bytes 0-2/1000')
+    expect(response.headers.get('Accept-Ranges')).toBe('bytes')
+    expect(mediaServiceMock.fetchRawMedia).toHaveBeenCalledWith(
+      expect.objectContaining({ entityId: 1 }),
+      expect.objectContaining({ range: 'bytes=0-2' })
+    )
   })
 
   it('responds 200 with optimized image bytes for a valid non-raw path', async () => {

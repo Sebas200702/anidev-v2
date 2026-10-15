@@ -33,7 +33,7 @@
 ## C. Media pipeline
 
 - [x] C.1 **(T-02)** Failing tests then implementation: `buildRawKey`/`buildRawMetaKey` include `version` and `resolution`; `writeRawMeta`/`readRawMeta` single-serialize (`RawMeta` passes straight to cache primitives).
-- [ ] C.2 **(T-03)** `Range`/`206` zero-buffer streaming in `fetchRawMedia` + `/media/[...path]`: forward `Range`, reply `206` with `Content-Range`/`Accept-Ranges`, stream via `ReadableStream`, and stop writing full files to `tmpdir()`; unit + route tests.
+- [x] C.2 **(T-03)** `Range`/`206` zero-buffer streaming in `fetchRawMedia` + `/media/[...path]`: forward `Range`, reply `206` with `Content-Range`/`Accept-Ranges`, stream via `ReadableStream`, and stop writing full files to `tmpdir()`; unit + route tests.
 - [x] C.3 **(T-03, T-04)** `assertSafeExternalUrl` (HTTPS-only; reject credentials, loopback, RFC1918, link-local/metadata IPs) + default `AbortSignal.timeout(8_000)` in the media fetch path, revalidating redirects (`redirect: 'manual'` or post-check of `response.url`); tests for each rejected class.
 - [x] C.4 **(F-04, F-10)** Byte budget while streaming (abort with typed `503`), MIME allowlist for raw media, `nosniff` + safe `Content-Disposition` on raw responses; tests with a `text/html` upstream and an oversized body.
 - [ ] C.5 **(T-07, F-11)** Optimized images move from Redis base64 to a bounded local disk LRU with a byte budget + `Cache-Control: public, max-age=31536000, immutable`; bound `w` to `[16, 2048]` (normalized); decide and implement the `/_image` stance (disable or document + keep `remotePatterns` empty) with a test asserting remote transforms are refused.
