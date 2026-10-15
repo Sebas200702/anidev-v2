@@ -93,6 +93,9 @@ export default defineConfig({
     stdout: 'pipe',
     stderr: 'pipe',
     env: {
+      // Never bake a DSN into the e2e build: the browser SDK would phone home
+      // (localhost:8080 here) and pollute the console-error assertions.
+      PUBLIC_SENTRY_DSN: '',
       HOST,
       PORT: String(PORT),
       APP_BASE_URL: baseURL,
