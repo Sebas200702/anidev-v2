@@ -4,7 +4,7 @@
  * No optimization or MIME validation is performed.
  */
 import { ErrorCodes } from '@shared/errors/codes'
-import { DomainError, InfraError } from '@shared/errors/app-error'
+import { DomainError } from '@shared/errors/app-error'
 import { mediaServiceConfig } from '@media/config'
 import { fetchMediaAsset } from '@media/services/media-fetch'
 import { resolveMedia } from '@media/services/resolve-media'
@@ -40,7 +40,7 @@ export const fetchRawMedia = async (
   overrides?: { version?: string; resolution?: string }
 ): Promise<OptimizedMedia> => {
   if (!params) {
-    throw new InfraError(ErrorCodes.INVALID_IMAGE_PATH, 'Invalid media path', {
+    throw new DomainError(ErrorCodes.INVALID_IMAGE_PATH, 'Invalid media path', {
       params,
     })
   }
@@ -82,6 +82,20 @@ export const fetchRawMedia = async (
   }
 
   const result = await fetchMediaAsset(media.src)
+
+  const allowedRawMime =
+    result.mimeType === 'application/octet-stream' ||
+    result.mimeType.startsWith('image/') ||
+    result.mimeType.startsWith('video/') ||
+    result.mimeType.startsWith('audio/')
+  if (!allowedRawMime) {
+    throw new DomainError(
+      ErrorCodes.INVALID_IMAGE_PATH,
+      'Raw media MIME type is not allowed',
+      { mimeType: result.mimeType }
+    )
+  }
+
   await mkdir(cacheDir, { recursive: true }).catch(() => {})
   await writeFile(cacheFile, result.buffer).catch(() => {})
   await writeFile(cacheMeta, result.mimeType, 'utf-8').catch(() => {})

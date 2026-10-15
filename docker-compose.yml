@@ -31,8 +31,6 @@ services:
   app:
     build:
       context: .
-      args:
-        - ASTRO_ADAPTER=bun
     profiles: ['preview']
     restart: unless-stopped
     ports:

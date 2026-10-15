@@ -41,7 +41,7 @@ Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
 están sincronizados en `openspec/specs/`.
 
 **Changes planificados listos para ejecutar (`openspec/changes/`):**
-- `foundation-hardening-and-media-streaming` — Etapas 1 y 2 de auditoría (privacidad en `/api/user/:userId`, streaming HTTP `Range` `206` + guarda SSRF, fix de `buildRawMetaKey`, caché de imágenes en disco acotado, índices PostgreSQL + límites de `pg.Pool`, frontera `@shared` $\not\to$ `@media`, middleware de headers/rate-limit/sesión ligera y búsqueda en `anime_title_synonym`).
+- `platform-audit-and-stabilization` — Auditoría integral 2026-10-14 + estabilización (fusión de la anterior `foundation-hardening-and-media-streaming`): privacidad en `/api/user/:userId`, guardas SSRF + streaming HTTP `Range` `206` + caché de imágenes en disco acotado, claves `buildRawMetaKey` con versión/resolución, rate-limiting (API/media/credenciales), cabeceras de seguridad reales + CSP, XSS de `/showcase`, índices PostgreSQL + `pg.Pool` acotado, transacción de historial, observabilidad (request-id + access logs + redacción), shell sin islas React + presupuesto de bundle, y gates de dependencias/cobertura en CI.
 - `relational-lists-and-watch-progress` — Tablas relacionales `user_anime_list` y `watch_progress`, reconciliación 3-way con `isNewerOrBetter` (tolerancia 1 s), completado automático al $\ge 90\%$ y carrusel *Continue Watching*.
 - `resilient-playback-and-aniskip` — Motor `PlaybackCoordinator` (leases por generación + `AbortController` + continuidad de segundo exacto), `HlsController` con *fast-probe* paralelo (1.5 s) y failover automático, esquema `episode_source` enriquecido e integración con **AniSkip** + catálogo musical OP/ED.
 - `watch2gether-synchronized-rooms` — Salas sincronizadas **Watch2Gether** para anime y música (`public`, `invite`, `password` con `password_hash` server-only), reloj en tiempo real y Pub/Sub en Dragonfly + SSE, corrección de deriva en 3 niveles ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`), cola compartida, chat, reacciones y encuestas.
@@ -73,7 +73,7 @@ Reglas transversales en **todas** las fases:
 
 Desbloquea todo lo demás. Estabiliza la base y corrige los hallazgos críticos de
 la auditoría técnica antes de escalar las fases de producto.
-_(Change: `foundation-hardening-and-media-streaming` y `component-showcase`.)_
+_(Change: `platform-audit-and-stabilization` y `component-showcase`.)_
 
 - [x] Terminar changes abiertos: provider stack, response-schema wrapper, unit folders, frontend-flow, user writes (todos archivados).
 - [ ] **Privacidad en perfiles (`T-01`)**: proyectar `preferences` e `history.watchedAnimes` como `owner-only` en `GET /api/user/:userId` (incluso en *cache hit*).
@@ -92,7 +92,7 @@ _(Change: `foundation-hardening-and-media-streaming` y `component-showcase`.)_
 
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
-- [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `foundation-hardening-and-media-streaming`.)_
+- [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `platform-audit-and-stabilization`.)_
 - [ ] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
   banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
   el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
@@ -121,7 +121,7 @@ _(Change semilla: `relational-lists-and-watch-progress`.)_
 
 ### Fase 3 — Música y player · _joya de v1, dominio autocontenible_
 
-_(Changes relacionados: `foundation-hardening-and-media-streaming` para Range 206 y `resilient-playback-and-aniskip` para `PlaybackCoordinator`.)_
+_(Changes relacionados: `platform-audit-and-stabilization` para Range 206 y `resilient-playback-and-aniskip` para `PlaybackCoordinator`.)_
 
 - [ ] **Player persistente** — `transition:persist` + `client:idle`, conectado a Nano Stores / Zustand y al **`PlaybackCoordinator`** compartido (cancelación por generación `PlaybackLease` + conservación exacta del segundo actual al conmutar modo Audio ↔ Vídeo o resolución).
 - [ ] **Playlist** — add/remove con toast + undo, siguiente/anterior, shuffle, repeat, limpiar.

@@ -3,12 +3,12 @@
  *
  * @module domains/media/__tests__/services/fetch-raw-media
  * @remarks
- * Covers the null-path {@link InfraError}, the placeholder {@link DomainError} (`MEDIA_NOT_FOUND`),
+ * Covers the null-path {@link DomainError}, the placeholder {@link DomainError} (`MEDIA_NOT_FOUND`),
  * the on-disk cache hit, and the fetch-and-persist path. `node:fs/promises`, the media cache,
  * resolver, and fetcher are mocked. Follows the repo TDD/unit-test layout.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { DomainError, InfraError } from '@shared/errors/app-error'
+import { DomainError } from '@shared/errors/app-error'
 import { ErrorCodes } from '@shared/errors/codes'
 import { MediaEntity, MediaSize, MediaType } from '@media/types/media-enums'
 
@@ -57,8 +57,8 @@ beforeEach(() => {
 })
 
 describe('fetchRawMedia', () => {
-  it('throws an InfraError for a null path', async () => {
-    await expect(fetchRawMedia(null)).rejects.toBeInstanceOf(InfraError)
+  it('throws a DomainError for a null path', async () => {
+    await expect(fetchRawMedia(null)).rejects.toBeInstanceOf(DomainError)
   })
 
   it('throws MEDIA_NOT_FOUND when the resolved asset is the placeholder', async () => {
@@ -84,6 +84,25 @@ describe('fetchRawMedia', () => {
       mimeType: 'audio/mpeg',
     })
     expect(fetchMediaAsset).not.toHaveBeenCalled()
+  })
+
+  it('rejects text/html upstreams as DomainError', async () => {
+    getRawMeta.mockResolvedValue(null)
+    resolveMedia.mockResolvedValue({ src: 'https://cdn/page.html' })
+    readFile.mockRejectedValue(new Error('ENOENT'))
+    fetchMediaAsset.mockResolvedValue({
+      buffer: Buffer.from('<html>'),
+      mimeType: 'text/html',
+    })
+
+    await expect(fetchRawMedia(path)).rejects.toBeInstanceOf(DomainError)
+    await expect(fetchRawMedia(path)).rejects.toMatchObject({
+      code: ErrorCodes.INVALID_IMAGE_PATH,
+    })
+  })
+
+  it('throws DomainError (not InfraError) for a null path', async () => {
+    await expect(fetchRawMedia(null)).rejects.toBeInstanceOf(DomainError)
   })
 
   it('fetches and persists when nothing is cached on disk', async () => {

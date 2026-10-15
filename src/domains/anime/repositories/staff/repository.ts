@@ -32,7 +32,7 @@ export const staffRepository = {
     try {
       if (!ids.length) return []
 
-      return db.select().from(staff).where(inArray(staff.malId, ids))
+      return await db.select().from(staff).where(inArray(staff.malId, ids))
     } catch (error) {
       throw dbError('[GET_MANY_BY_MAL_IDS]', { ids }, error)
     }

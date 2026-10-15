@@ -50,7 +50,9 @@ export const buildKey = (
  * ```
  */
 export const buildRawKey = (params: SemanticMediaPath): string => {
-  return `raw:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
+  const version = params.version ?? 'default'
+  const resolution = params.resolution ?? 'default'
+  return `raw:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:v${version}:r${resolution}`
 }
 
 /**
@@ -62,5 +64,7 @@ export const buildRawKey = (params: SemanticMediaPath): string => {
  * @returns Cache key string
  */
 export const buildRawMetaKey = (params: SemanticMediaPath): string => {
-  return `meta:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
+  const version = params.version ?? 'default'
+  const resolution = params.resolution ?? 'default'
+  return `meta:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:v${version}:r${resolution}`
 }

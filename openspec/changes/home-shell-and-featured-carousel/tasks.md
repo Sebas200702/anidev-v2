@@ -76,13 +76,13 @@
 - [x] 8.3 `bun run check:types` — `astro check`
 - [x] 8.4 `bun run test` — Vitest
 - [x] 8.5 `bun run build`
-- [ ] 8.6 `bun run test:e2e:install` + `bun run test:e2e` (Chromium not installed locally; runs in CI).
+- [x] 8.6 `bun run test:e2e:install` + `bun run test:e2e` (CI runs it: the `e2e` job builds the Bun artifact and Playwright ran green on PR #109 and every `master` merge since; verified 2026-10-14).
 
 ## 9. Release
 
 - [x] 9.1 Move the superseded `.design/` canvas draft out of the repo (it was the only source of Biome errors: 26 a11y/unused-variable findings in `Main.dc.html`).
-- [ ] 9.2 Decide the fate of the remaining untracked leftovers: `install.log` (an unrelated spicetify log dropped in the repo root) and `references/` (the v1 screenshots — commit, or add to `.gitignore`).
+- [x] 9.2 Decide the fate of the remaining untracked leftovers: `install.log` (an unrelated spicetify log dropped in the repo root) and `references/` (the v1 screenshots — commit, or add to `.gitignore`). — Resolved: `references/*.jpg` are committed and `install.log` is not present (verified 2026-10-14).
 - [x] 9.3 Branch `feat/home-shell-and-featured-carousel` off `master` and commit per task group with Conventional Commits (`master` is protected — no direct push).
 - [x] 9.4 Update `ROADMAP.md`: check off Fase 1 "Homepage — héroe + carruseles SSR".
-- [ ] 9.5 Run `bun run release` on the feature branch so the PR carries the version bump, then open the PR against `master`.
-- [ ] 9.6 Archive this change (`openspec-archive-change`) once merged, syncing the four deltas into `openspec/specs/`.
+- [x] 9.5 Run `bun run release` on the feature branch so the PR carries the version bump, then open the PR against `master`. — Done: `v0.6.0` changelog carries the carousel + shell features and the tag is on the remote (verified 2026-10-14).
+- [ ] 9.6 Archive this change (`openspec-archive-change`) once merged, syncing the four deltas into `openspec/specs/`. — Scheduled: `platform-audit-and-stabilization` task A.2 (after tasks 6.2/6.3 land there).

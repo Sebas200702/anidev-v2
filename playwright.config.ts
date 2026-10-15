@@ -90,7 +90,6 @@ export default defineConfig({
     stdout: 'pipe',
     stderr: 'pipe',
     env: {
-      ASTRO_ADAPTER: 'bun',
       HOST,
       PORT: String(PORT),
       APP_BASE_URL: baseURL,

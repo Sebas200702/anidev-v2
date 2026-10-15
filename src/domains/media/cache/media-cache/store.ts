@@ -62,20 +62,14 @@ export const writeCachedMedia = async (
 export const readRawMeta = async (
   cacheKey: string
 ): Promise<RawMeta | null> => {
-  const cached = await cacheGet<string>(cacheKey)
-  if (!cached) return null
-  try {
-    return JSON.parse(cached) as RawMeta
-  } catch {
-    return null
-  }
+  return cacheGet<RawMeta>(cacheKey)
 }
 
 export const writeRawMeta = async (
   cacheKey: string,
   meta: RawMeta
 ): Promise<void> => {
-  await cacheSet(cacheKey, JSON.stringify(meta), {
+  await cacheSet(cacheKey, meta, {
     ttlSeconds: CacheTtl.Medium,
   })
 }

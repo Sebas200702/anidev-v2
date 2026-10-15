@@ -4,7 +4,8 @@
  * compatibility. Used by {@link mediaService.fetchImageBuffer} in the optimization pipeline.
  */
 import { ErrorCodes } from '@shared/errors/codes'
-import { InfraError } from '@shared/errors/app-error'
+import { DomainError, InfraError } from '@shared/errors/app-error'
+import { assertSafeExternalUrl } from '@shared/utils/safe-external-url'
 import type { FetchMediaOptions, FetchedMediaAsset } from './types'
 
 /**
@@ -29,9 +30,11 @@ export const fetchMediaAsset = async (
   mediaUrl: string,
   { signal, accept = '*/*' }: FetchMediaOptions = {}
 ): Promise<FetchedMediaAsset> => {
+  const MAX_BYTES = 25 * 1024 * 1024
+  assertSafeExternalUrl(mediaUrl)
   try {
     const response = await fetch(mediaUrl, {
-      signal,
+      signal: signal ?? AbortSignal.timeout(8000),
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -49,15 +52,27 @@ export const fetchMediaAsset = async (
       )
     }
 
+    assertSafeExternalUrl(response.url || mediaUrl)
+
+    const arrayBuffer = await response.arrayBuffer()
+    if (arrayBuffer.byteLength > MAX_BYTES) {
+      throw new InfraError(
+        ErrorCodes.EXTERNAL_API_ERROR,
+        'Media payload exceeds byte budget',
+        { url: mediaUrl, size: arrayBuffer.byteLength }
+      )
+    }
+
     const contentType =
       response.headers.get('content-type') ?? 'application/octet-stream'
 
     return {
-      buffer: Buffer.from(await response.arrayBuffer()),
+      buffer: Buffer.from(arrayBuffer),
       mimeType: contentType.split(';')[0]?.trim() || 'application/octet-stream',
     }
   } catch (error) {
     if (error instanceof InfraError) throw error
+    if (error instanceof DomainError) throw error
 
     throw new InfraError(
       ErrorCodes.EXTERNAL_API_ERROR,

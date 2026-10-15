@@ -4,7 +4,7 @@
  * Loads candidate assets from entity repositories, filters by size and optional source host,
  * then selects a single asset by 1-based index. Falls back to a placeholder when none match.
  */
-import { resolveMediaAssets } from '@utils/image/normalize-media-util'
+import { resolveMediaAssets } from '@media/services/resolve-media-assets'
 import type { OptimizeOptions } from '@utils/image/optimize-util'
 import { mediaServiceConfig } from '@media/config'
 import {

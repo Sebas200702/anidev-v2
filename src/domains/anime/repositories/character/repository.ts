@@ -50,7 +50,10 @@ export const characterRepository = {
   async getManyByMalIds(malIds: number[]): Promise<CharacterDB[]> {
     try {
       if (!malIds.length) return []
-      return db.select().from(character).where(inArray(character.malId, malIds))
+      return await db
+        .select()
+        .from(character)
+        .where(inArray(character.malId, malIds))
     } catch (error) {
       throw dbError('[GET_MANY_BY_MAL_IDS]', { malIds }, error)
     }

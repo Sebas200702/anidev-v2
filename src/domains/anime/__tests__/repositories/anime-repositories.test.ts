@@ -9,6 +9,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InfraError } from '@shared/errors/app-error'
+import { ErrorCodes } from '@shared/errors/codes'
 import {
   chainResolving,
   throwOnQuery,
@@ -87,6 +88,13 @@ describe('animeCharacterRepository', () => {
     await expect(
       animeCharacterRepository.getCharacterRefsByAnimeId(1)
     ).rejects.toBeInstanceOf(InfraError)
+  })
+
+  it('wraps async rejections as DB_ERROR (missing-await regression)', async () => {
+    select.mockReturnValue(Promise.reject(new Error('connection lost')))
+    await expect(
+      animeCharacterRepository.getCharacterRefsByAnimeId(1)
+    ).rejects.toMatchObject({ code: ErrorCodes.DB_ERROR })
   })
 })
 
@@ -249,6 +257,15 @@ describe('characterRepository', () => {
       characterRepository.getManyByMalIds([1])
     ).rejects.toBeInstanceOf(InfraError)
   })
+
+  it('wraps async rejections as DB_ERROR (missing-await regression)', async () => {
+    select.mockReturnValue(Promise.reject(new Error('connection lost')))
+    await expect(
+      characterRepository.getManyByMalIds([1])
+    ).rejects.toMatchObject({
+      code: ErrorCodes.DB_ERROR,
+    })
+  })
 })
 
 describe('characterStaffRepository', () => {
@@ -286,5 +303,12 @@ describe('staffRepository', () => {
     await expect(staffRepository.getManyByMalIds([1])).rejects.toBeInstanceOf(
       InfraError
     )
+  })
+
+  it('wraps async rejections as DB_ERROR (missing-await regression)', async () => {
+    select.mockReturnValue(Promise.reject(new Error('connection lost')))
+    await expect(staffRepository.getManyByMalIds([1])).rejects.toMatchObject({
+      code: ErrorCodes.DB_ERROR,
+    })
   })
 })

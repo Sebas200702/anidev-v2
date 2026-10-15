@@ -76,3 +76,14 @@ describe('animeListRequestSchema — boundary refinements', () => {
     expect(res.success).toBe(true)
   })
 })
+
+describe('animeListRequestSchema — page bound', () => {
+  it('rejects page over 10000', () => {
+    expect(query({ page: '10001' }).success).toBe(false)
+    expect(query({ page: '999999' }).success).toBe(false)
+  })
+
+  it('accepts page at the boundary', () => {
+    expect(query({ page: '10000' }).success).toBe(true)
+  })
+})

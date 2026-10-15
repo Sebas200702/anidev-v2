@@ -130,6 +130,28 @@ export class ResponseValidationError extends BaseError {
 }
 
 /**
+ * Rate limit exceeded.
+ *
+ * @remarks
+ * Mapped to **429** with `Retry-After`. Logged at `warn`.
+ */
+export class RateLimitedError extends BaseError {
+  constructor(retryAfterSeconds = 60, details?: unknown, cause?: unknown) {
+    super(
+      'RateLimitedError',
+      ErrorCodes.RATE_LIMITED,
+      'Too many requests',
+      'warn',
+      details,
+      cause
+    )
+    this.retryAfterSeconds = retryAfterSeconds
+  }
+
+  readonly retryAfterSeconds: number
+}
+
+/**
  * Authentication or authorization failure.
  *
  * @remarks

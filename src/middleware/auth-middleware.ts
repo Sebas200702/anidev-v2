@@ -21,6 +21,13 @@
 import { defineMiddleware } from 'astro:middleware'
 import { isPublicRoute } from '@config/public-routes'
 import { resolveAuthActor } from '@auth/middleware'
+import {
+  enforceRateLimit,
+  getClientIp,
+  resolveRateLimit,
+} from '@middleware/rate-limit'
+import { applySecurityHeaders } from '@middleware/security-headers'
+import { clearSession, hasAuthCookie } from '@middleware/session-cookies'
 import { initAstroSentry } from '@lib/monitoring/sentry'
 
 // Initialize monitoring at middleware load so the SDK is active before any
@@ -28,44 +35,6 @@ import { initAstroSentry } from '@lib/monitoring/sentry'
 // `sentry.server.config` on page renders, so API-first traffic would otherwise
 // never wire the pino bridge. No-op when SENTRY_DSN is unset.
 initAstroSentry()
-
-/** Cookie substrings that indicate a Better Auth session may be present. */
-const authCookieMarkers = ['session_token=', 'session_data=']
-
-/**
- * Clears authenticated actor state on request locals.
- *
- * @param locals - Astro `App.Locals` for the current request; mutated in place.
- * @returns `void`. Side effect: sets `locals.user` and `locals.session` to `null`.
- *
- * @throws Does not throw.
- *
- * @see {@link onRequest} for call sites
- */
-const clearSession = (locals: App.Locals) => {
-  locals.user = null
-  locals.session = null
-}
-
-/**
- * Detects whether the raw `Cookie` header contains Better Auth session markers.
- *
- * @param cookieHeader - Value of the `Cookie` request header, or `null` when absent.
- * Case-sensitive substring match against {@link authCookieMarkers}.
- * @returns `true` when any marker appears in the header; `false` for `null`,
- * empty string, or headers without session cookies.
- *
- * @throws Does not throw.
- *
- * @see {@link onRequest} for usage before auth resolution
- */
-const hasAuthCookie = (cookieHeader: string | null) => {
-  if (!cookieHeader) {
-    return false
-  }
-
-  return authCookieMarkers.some((marker) => cookieHeader.includes(marker))
-}
 
 /**
  * Populates `locals.user` and `locals.session` from auth cookies when present.
@@ -97,18 +66,44 @@ const hasAuthCookie = (cookieHeader: string | null) => {
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url
+  const requestId =
+    context.request.headers.get('x-request-id') ?? crypto.randomUUID()
+
+  const rateLimit = resolveRateLimit(pathname, getClientIp(context.request))
+  if (rateLimit) {
+    const result = await enforceRateLimit(rateLimit.keys, rateLimit.limit)
+    if (!result.allowed) {
+      const response = new Response(
+        JSON.stringify({
+          data: null,
+          status: 429,
+          error: 'Too many requests',
+          code: 'RATE_LIMITED',
+          meta: {},
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': String(result.retryAfter || 1),
+          },
+        }
+      )
+      return applySecurityHeaders(response, requestId)
+    }
+  }
 
   if (
     pathname.startsWith('/api/auth/login') ||
     pathname.startsWith('/api/auth/register')
   ) {
     clearSession(context.locals)
-    return next()
+    return applySecurityHeaders(await next(), requestId)
   }
 
   if (!hasAuthCookie(context.request.headers.get('cookie'))) {
     clearSession(context.locals)
-    return next()
+    return applySecurityHeaders(await next(), requestId)
   }
 
   const actor = await resolveAuthActor(context.request.headers)
@@ -119,7 +114,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     clearSession(context.locals)
   }
 
-  return next()
+  return applySecurityHeaders(await next(), requestId)
 })
 
 /**

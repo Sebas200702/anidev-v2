@@ -12,11 +12,7 @@
  */
 
 export { normalizeImageUrl } from './normalize-image-url-util'
-export {
-  normalizeMediaId,
-  normalizeAssetSize,
-  resolveMediaAssets,
-} from './normalize-media-util'
+export { normalizeMediaId, normalizeAssetSize } from './normalize-media-util'
 export type {
   ImageFormat,
   ImageSource,

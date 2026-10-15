@@ -24,12 +24,13 @@
  * @see {@link userProfileCache}
  */
 import { mapUserProfile } from '@user/mappers/user'
+import { userPolicies } from '@user/policies/user'
+import { userProfileSchema } from '@user/schemas/user-schema'
 import {
   mapProfileIdentityPatchToDb,
   mapProfileIdentityToDb,
 } from '@user/mappers/user-identity'
 import { userRepository } from '@user/repositories/user'
-import { userPolicies } from '@user/policies/user'
 import { withCache } from '@lib/cache'
 import { userProfileCache } from '@user/cache'
 import {
@@ -65,11 +66,23 @@ export const userService = {
    * ```
    */
   async getUserProfile({ userId, targetId }: GetUserProfileParams) {
-    return withCache({
+    // The cache stores the *full* (owner-level) mapped payload so a single
+    // cached entry can serve every caller; private sections are projected
+    // out at read time based on the caller (see below). Never store a
+    // variant per actor blindly — that would multiply cache keys and leak.
+    const cachedProfile = await withCache({
       key: userProfileCache.key(targetId),
-      getCache: () => userProfileCache.get(targetId),
+      getCache: async () => {
+        const cached = await userProfileCache.get(targetId)
+        // Never serve a cached payload that fails the public contract:
+        // a previously cached invalid result (e.g. stale shape) must not
+        // survive the next read once the DB row is fixed.
+        if (cached == null) return null
+        return userProfileSchema.safeParse(cached).success ? cached : null
+      },
       setCache: (_, userProfile) => userProfileCache.set(targetId, userProfile),
-
+      shouldCache: (userProfile) =>
+        userProfileSchema.safeParse(userProfile).success,
       compute: async () => {
         if (!userPolicies.canViewUserProfile({ userId, targetId })) {
           throw userUnauthorized(targetId)
@@ -86,6 +99,18 @@ export const userService = {
         })
       },
     })
+
+    // Owner-only projection applied *after* the cache read so anonymous and
+    // non-owner callers never see another user's private sections even on a
+    // cache-warm request (owner read first).
+    const projection = { ...cachedProfile }
+    if (!userPolicies.canViewUserPreferences({ userId, targetId })) {
+      delete projection.preferences
+    }
+    if (!userPolicies.canViewUserHistory({ userId, targetId })) {
+      delete projection.history
+    }
+    return projection
   },
 
   /**

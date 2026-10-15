@@ -66,21 +66,16 @@ describe('store: raw meta', () => {
     expect(await readRawMeta('k')).toBeNull()
   })
 
-  it('parses valid JSON meta', async () => {
-    cacheGet.mockResolvedValue(JSON.stringify({ src: 'https://cdn/x.jpg' }))
+  it('passes through deserialized meta', async () => {
+    cacheGet.mockResolvedValue({ src: 'https://cdn/x.jpg' })
     expect(await readRawMeta('k')).toEqual({ src: 'https://cdn/x.jpg' })
   })
 
-  it('returns null on malformed JSON', async () => {
-    cacheGet.mockResolvedValue('{bad')
-    expect(await readRawMeta('k')).toBeNull()
-  })
-
-  it('stringifies on write', async () => {
+  it('passes single-serialized payload on write', async () => {
     await writeRawMeta('k', { src: 'https://cdn/x.jpg' })
     expect(cacheSet).toHaveBeenCalledWith(
       'k',
-      JSON.stringify({ src: 'https://cdn/x.jpg' }),
+      { src: 'https://cdn/x.jpg' },
       expect.objectContaining({ ttlSeconds: expect.any(Number) })
     )
   })
@@ -159,13 +154,13 @@ describe('mediaCache facade', () => {
   })
 
   it('delegates raw-meta get/set with the meta key', async () => {
-    cacheGet.mockResolvedValue(JSON.stringify({ src: 's' }))
+    cacheGet.mockResolvedValue({ src: 's' })
     expect(await mediaCache.getRawMeta(path)).toEqual({ src: 's' })
 
     await mediaCache.setRawMeta(path, { src: 's' })
     expect(cacheSet).toHaveBeenCalledWith(
       mediaCache.rawMetaKey(path),
-      JSON.stringify({ src: 's' }),
+      { src: 's' },
       expect.anything()
     )
   })

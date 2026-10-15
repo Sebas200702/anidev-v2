@@ -41,30 +41,49 @@ import type { MapUserProfileInput } from './types'
  * // profile.history.watchedAnimes is number[]
  * ```
  */
+const parseIdList = (value: string | null): number[] =>
+  (value ?? '')
+    .split(',')
+    .map((entry) => Number.parseInt(entry.trim(), 10))
+    .filter((entry): entry is number => Number.isInteger(entry))
+
+const normalizeGender = (
+  value: string | null
+): UserProfile['gender'] | undefined => {
+  if (value === 'male' || value === 'female' || value === 'other') {
+    return value
+  }
+  return undefined
+}
+
+const normalizeFrequency = (
+  value: string | null
+): UserPreferences['frequency'] | undefined => {
+  if (value === 'daily' || value === 'weekly' || value === 'monthly') {
+    return value
+  }
+  return undefined
+}
+
+const normalizeFanaticLevel = (
+  value: string | null
+): UserPreferences['fanaticLevel'] | undefined => {
+  if (value === 'low' || value === 'medium' || value === 'high') {
+    return value
+  }
+  return undefined
+}
+
 export const mapUserProfile = ({
   userProfile,
 }: MapUserProfileInput): UserProfile => {
   const preferences: UserPreferences = {
-    favoriteAnimes:
-      userProfile.favoriteAnimes
-        ?.split(',')
-        .map((id) => Number.parseInt(id.trim(), 10))
-        .filter(Boolean) || [],
-    frequency: (userProfile.frequency ??
-      undefined) as UserPreferences['frequency'],
-    fanaticLevel: (userProfile.fanaticLevel ??
-      undefined) as UserPreferences['fanaticLevel'],
+    favoriteAnimes: parseIdList(userProfile.favoriteAnimes),
+    frequency: normalizeFrequency(userProfile.frequency),
+    fanaticLevel: normalizeFanaticLevel(userProfile.fanaticLevel),
     preferredFormat: userProfile.preferredFormat ?? undefined,
-    favoriteGenres:
-      userProfile.favoriteGenres
-        ?.split(',')
-        .map((genre) => Number.parseInt(genre.trim(), 10))
-        .filter(Boolean) || [],
-    favoriteStudios:
-      userProfile.favoriteStudios
-        ?.split(',')
-        .map((studio) => Number.parseInt(studio.trim(), 10))
-        .filter(Boolean) || [],
+    favoriteGenres: parseIdList(userProfile.favoriteGenres),
+    favoriteStudios: parseIdList(userProfile.favoriteStudios),
   }
 
   return {
@@ -73,14 +92,10 @@ export const mapUserProfile = ({
     name: userProfile.name,
     lastName: userProfile.lastName,
     birthday: userProfile.birthday ?? undefined,
-    gender: userProfile.gender as UserProfile['gender'],
+    gender: normalizeGender(userProfile.gender),
     preferences,
     history: {
-      watchedAnimes:
-        userProfile.watchedAnimes
-          ?.split(',')
-          .map((id) => Number.parseInt(id.trim(), 10))
-          .filter(Boolean) || [],
+      watchedAnimes: parseIdList(userProfile.watchedAnimes),
     },
   }
 }

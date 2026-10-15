@@ -40,6 +40,10 @@ export const ErrorCodes = {
 
   /** Zod or manual request validation failed — HTTP 400. */
   VALIDATION_ERROR: 'VALIDATION_ERROR',
+  /** Request body exceeded the allowed size (1 MiB) — HTTP 413. */
+  REQUEST_TOO_LARGE: 'REQUEST_TOO_LARGE',
+  /** Too many requests — HTTP 429 with Retry-After. */
+  RATE_LIMITED: 'RATE_LIMITED',
 
   /** Database operation failed — HTTP 500, Sentry. */
   DB_ERROR: 'DB_ERROR',

@@ -67,8 +67,7 @@ jobs:
       REDIS_URL: redis://127.0.0.1:6379
       APP_BASE_URL: http://127.0.0.1:4331
       BETTER_AUTH_SECRET: e2e-secret-e2e-secret-e2e-secret-e2e!!
-      # The self-host artifact under test (Bun standalone), for the build step.
-      ASTRO_ADAPTER: bun
+      # Standalone self-host artifact built by @astrojs/node.
       LOG_LEVEL: warn
     services:
       postgres:

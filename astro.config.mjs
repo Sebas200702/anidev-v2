@@ -3,9 +3,8 @@ import { defineConfig } from 'astro/config'
 import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
 import react from '@astrojs/react'
+import node from '@astrojs/node'
 import tailwindcss from '@tailwindcss/vite'
-import bun from '@nurodev/astro-bun'
-import vercel from '@astrojs/vercel'
 
 import sentryAstro from '@sentry/astro'
 
@@ -17,10 +16,9 @@ const loadedEnv = loadEnv(
 )
 Object.assign(process.env, loadedEnv)
 
-// ASTRO_ADAPTER=bun emits a standalone Bun server (dist/server/entry.mjs),
-// used by the Docker image runtime. Default (Vercel) targets the serverless
-// deploy output and is used by CI.
-const adapter = process.env.ASTRO_ADAPTER === 'bun' ? bun() : vercel()
+// Node adapter in standalone mode emits dist/server/entry.mjs, runnable by
+// either Node or Bun; this is the single self-host runtime for dev, CI, Docker.
+const adapter = node({ mode: 'standalone' })
 
 /** @type {import('astro').AstroIntegration} */
 const sessionMiddlewareIntegration = {

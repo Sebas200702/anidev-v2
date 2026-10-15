@@ -10,18 +10,7 @@
  * @see {@link normalizeMediaId} / {@link normalizeAssetSize}
  */
 
-import { ErrorCodes } from '@shared/errors/codes'
-import { InfraError } from '@shared/errors/app-error'
-import { animeMediaRepository } from '@media/repositories/anime-media'
-import { characterMediaRepository } from '@media/repositories/character-media'
-import { staffMediaRepository } from '@media/repositories/staff-media'
-import { episodeMediaRepository } from '@media/repositories/episode-media'
-import { musicMediaRepository } from '@media/repositories/music-media'
-import {
-  MediaSize,
-  type MediaAsset,
-  type SemanticMediaPath,
-} from '@media/types/media-types'
+import { MediaSize } from '@media/types/media-types'
 
 /**
  * Clamps a 1-based media index to the valid range `[1, total]`.
@@ -65,65 +54,4 @@ export const normalizeAssetSize = (size: string | null): MediaSize => {
   }
 
   return MediaSize.DEFAULT
-}
-
-/**
- * Loads all media assets for the entity described by a semantic media path.
- *
- * @param params - Parsed path with `entityType`, `entityId`, and `mediaType`
- * @returns Media assets from the appropriate domain repository
- * @throws {InfraError} When `params.entityType` is not `anime`, `character`, or `staff` — code `INVALID_IMAGE_PATH`,
- *   details `{ params }`, maps to HTTP **500** via {@link mapErrorToHttp}
- *
- * @remarks
- * Dispatches to {@link animeMediaRepository}, {@link characterMediaRepository}, or
- * {@link staffMediaRepository} based on `entityType`. Does not validate that assets exist; empty arrays are valid.
- *
- * @see {@link parseMediaPath}
- */
-export const resolveMediaAssets = async (
-  params: SemanticMediaPath
-): Promise<MediaAsset[]> => {
-  if (params.entityType === 'anime') {
-    return await animeMediaRepository.getMediaByEntityAndType({
-      mediaType: params.mediaType,
-      animeId: params.entityId,
-    })
-  }
-
-  if (params.entityType === 'character') {
-    return await characterMediaRepository.getMediaByEntityAndType({
-      mediaType: params.mediaType,
-      characterId: params.entityId,
-    })
-  }
-
-  if (params.entityType === 'staff') {
-    return await staffMediaRepository.getMediaByEntityAndType({
-      mediaType: params.mediaType,
-      staffId: params.entityId,
-    })
-  }
-
-  if (params.entityType === 'episode') {
-    return await episodeMediaRepository.getMediaByEntityAndType({
-      mediaType: params.mediaType,
-      episodeId: params.entityId,
-    })
-  }
-
-  if (params.entityType === 'music') {
-    return await musicMediaRepository.getMediaByEntityAndType({
-      mediaType: params.mediaType,
-      musicId: params.entityId,
-      version: params.version,
-      resolution: params.resolution,
-    })
-  }
-
-  throw new InfraError(
-    ErrorCodes.INVALID_IMAGE_PATH,
-    'Unsupported media entity type',
-    { params }
-  )
 }

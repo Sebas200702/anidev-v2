@@ -6,10 +6,8 @@ COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile --ignore-scripts
 
 FROM base AS build
-# Build-time switch: ASTRO_ADAPTER=bun emits a standalone Bun server
-# (dist/server/entry.mjs); the default (Vercel) targets serverless deploy.
-ARG ASTRO_ADAPTER
-ENV ASTRO_ADAPTER=$ASTRO_ADAPTER
+# Standalone server output is always emitted by @astrojs/node now; no adapter
+# build-time switch needed.
 COPY --from=install /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production

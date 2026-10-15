@@ -11,6 +11,7 @@
  * @see {@link ShowcaseControl}
  */
 import { z } from 'zod'
+import { isNavigableUrl } from '@shared/utils/navigable-url'
 import type { ShowcaseControl, ShowcaseProps } from './types'
 
 const jsonSchema = z.string().transform((value, ctx) => {
@@ -48,6 +49,11 @@ export const controlValueSchema = (control: ShowcaseControl) => {
   }
   if (control.kind === 'select') {
     return z.literal([...control.options])
+  }
+  if (control.kind === 'text' && /href/i.test(control.name)) {
+    return z
+      .string()
+      .refine(isNavigableUrl, { message: 'Unsafe navigation target' })
   }
   if (control.kind === 'json') {
     return jsonSchema

@@ -55,8 +55,22 @@ describe('buildKey', () => {
 describe('buildRawKey / buildRawMetaKey', () => {
   it('builds raw and meta keys, defaulting mediaId to 1', () => {
     const noId = { ...path, mediaId: undefined }
-    expect(buildRawKey(noId)).toBe('raw:anime:5114:poster:large:1')
-    expect(buildRawMetaKey(noId)).toBe('meta:anime:5114:poster:large:1')
+    expect(buildRawKey(noId)).toBe(
+      'raw:anime:5114:poster:large:1:vdefault:rdefault'
+    )
+    expect(buildRawMetaKey(noId)).toBe(
+      'meta:anime:5114:poster:large:1:vdefault:rdefault'
+    )
+  })
+
+  it('includes version and resolution in raw and meta keys', () => {
+    const versioned = { ...path, version: '2', resolution: '1080' }
+    expect(buildRawKey(versioned)).toBe(
+      'raw:anime:5114:poster:large:2:v2:r1080'
+    )
+    expect(buildRawMetaKey(versioned)).toBe(
+      'meta:anime:5114:poster:large:2:v2:r1080'
+    )
   })
 })
 

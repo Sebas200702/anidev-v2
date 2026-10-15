@@ -79,26 +79,78 @@ import {
  * // → AuthError { code: 'AUTH_REQUIRED', message: 'Authentication failed' }
  * ```
  */
-export const mapBetterAuthError = (error: unknown): Error => {
-  if (error instanceof Error) {
-    const message = error.message.toLowerCase()
-
-    if (message.includes('invalid') && message.includes('credential')) {
-      return new InvalidCredentialsError(error)
-    }
-
-    if (message.includes('session') && message.includes('expired')) {
-      return new SessionExpiredError(error)
-    }
-
-    if (message.includes('already exists') || message.includes('duplicate')) {
-      return new RegistrationFailedError(error.message, error)
-    }
-
-    if (message.includes('unauthorized') || message.includes('forbidden')) {
-      return new AuthError(ErrorCodes.AUTH_FORBIDDEN, error.message)
+const getBetterAuthCode = (error: unknown): string => {
+  if (!error || typeof error !== 'object') return ''
+  const record = error as Record<string, unknown>
+  const candidates = [record.code, record.status]
+  const body = record.body
+  if (body && typeof body === 'object') {
+    candidates.push((body as Record<string, unknown>).code)
+    candidates.push((body as Record<string, unknown>).message)
+  }
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim() !== '') {
+      return candidate
     }
   }
+  return ''
+}
 
-  return new AuthError(ErrorCodes.AUTH_REQUIRED, 'Authentication failed', error)
+export const mapBetterAuthError = (error: unknown): Error => {
+  const betterAuthCode = getBetterAuthCode(error).toUpperCase()
+  const message =
+    error instanceof Error
+      ? error.message.toLowerCase()
+      : String(error).toLowerCase()
+
+  if (
+    betterAuthCode.includes('INVALID_EMAIL_OR_PASSWORD') ||
+    betterAuthCode.includes('INVALID_CREDENTIAL') ||
+    (message.includes('invalid') && message.includes('credential'))
+  ) {
+    return new InvalidCredentialsError(undefined, error)
+  }
+
+  if (
+    betterAuthCode.includes('SESSION_EXPIRED') ||
+    betterAuthCode.includes('INVALID_TOKEN') ||
+    (message.includes('session') && message.includes('expired'))
+  ) {
+    return new SessionExpiredError(undefined, error)
+  }
+
+  if (
+    betterAuthCode.includes('USER_ALREADY_EXISTS') ||
+    betterAuthCode.includes('ALREADY_EXISTS') ||
+    message.includes('already exists') ||
+    message.includes('duplicate')
+  ) {
+    // Neutral registration outcome: keep the response generic so a duplicate
+    // account cannot be enumerated; the underlying error stays in `cause`.
+    return new RegistrationFailedError(
+      'Registration could not be completed',
+      undefined,
+      error
+    )
+  }
+
+  if (
+    betterAuthCode.includes('FORBIDDEN') ||
+    message.includes('unauthorized') ||
+    message.includes('forbidden')
+  ) {
+    return new AuthError(
+      ErrorCodes.AUTH_FORBIDDEN,
+      error instanceof Error ? error.message : 'Forbidden',
+      undefined,
+      error
+    )
+  }
+
+  return new AuthError(
+    ErrorCodes.AUTH_REQUIRED,
+    'Authentication failed',
+    undefined,
+    error
+  )
 }

@@ -34,7 +34,7 @@ export const mediaRequestSchema = z.object({
   }),
   query: z
     .object({
-      w: z.coerce.number().int().positive().optional(),
+      w: z.coerce.number().int().min(16).max(2048).optional(),
       q: z.coerce.number().int().min(1).max(100).optional(),
       source: z
         .enum([

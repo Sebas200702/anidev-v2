@@ -59,11 +59,11 @@
 - [x] 8.3 Disable JavaScript and confirm the form still drives every control.
 - [x] 8.4 Stop the database and confirm every playground falls back to its fixture with the `fixture` badge.
 - [x] 8.5 Landmark and label pass on `/showcase`: one `banner` (the page's own `<header>` sits inside `<main>`, so it is not a second banner), one `contentinfo`, every control labelled.
-- [ ] 8.6 **Pre-existing defect found, not fixed here**: `header.astro` marks the brand as `<h1>AniDev</h1>`, so *every* page in the app carries a second `<h1>` alongside its own title. Fixing it means demoting the brand to a `<p>` **and** giving the home page a real `<h1>` (it has none today) — a homepage content decision that belongs to its own change, not to this one.
+- [ ] 8.6 **Pre-existing defect found, not fixed here**: `header.astro` marks the brand as `<h1>AniDev</h1>`, so *every* page in the app carries a second `<h1>` alongside its own title. Fixing it means demoting the brand to a `<p>` **and** giving the home page a real `<h1>` (it has none today) — a homepage content decision that belongs to its own change, not to this one. — Scheduled: `platform-audit-and-stabilization` task F.3 (verified live 2026-10-14: `/showcase` renders two `<h1>`).
 
 ## 9. Release
 
-- [ ] 9.1 Branch `feat/component-showcase` off `master`, Conventional Commits per task group.
-- [ ] 9.2 Gate green, then `bun run release:minor` on the branch so the PR carries the bump (standard-version lowers `feat` to a patch while the version is `0.x`).
-- [ ] 9.3 Open the PR against `master`; push the tag after merge.
-- [ ] 9.4 Archive the change, then flip the ROADMAP Fase 0 living-docs item to `[x]`.
+- [x] 9.1 Branch `feat/component-showcase` off `master`, Conventional Commits per task group. — Done: PR #108 merged (verified 2026-10-14).
+- [x] 9.2 Gate green, then `bun run release:minor` on the branch so the PR carries the bump (standard-version lowers `feat` to a patch while the version is `0.x`). — Done: `v0.7.0` changelog carries the showcase features.
+- [x] 9.3 Open the PR against `master`; push the tag after merge. — Done: PR #108 merged; `v0.7.0` tag present on the remote.
+- [ ] 9.4 Archive the change, then flip the ROADMAP Fase 0 living-docs item to `[x]`. — Scheduled: `platform-audit-and-stabilization` task A.2 (after the F.3 `<h1>` fix lands).

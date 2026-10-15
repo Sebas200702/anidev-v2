@@ -8,7 +8,7 @@
  * TDD/unit-test layout.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { InfraError } from '@shared/errors/app-error'
+import { DomainError, InfraError } from '@shared/errors/app-error'
 import { ErrorCodes } from '@shared/errors/codes'
 import { fetchMediaAsset } from '@media/services/media-fetch'
 
@@ -69,5 +69,55 @@ describe('fetchMediaAsset', () => {
     await expect(fetchMediaAsset('https://cdn/x')).rejects.toMatchObject({
       code: ErrorCodes.EXTERNAL_API_ERROR,
     })
+  })
+
+  it('rejects unsafe URLs as DomainError without calling fetch', async () => {
+    await expect(fetchMediaAsset('http://cdn/x.webp')).rejects.toBeInstanceOf(
+      DomainError
+    )
+    await expect(
+      fetchMediaAsset('https://127.0.0.1/x.webp')
+    ).rejects.toBeInstanceOf(DomainError)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('revalidates redirect targets and rejects unsafe final URLs', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      url: 'http://169.254.169.254/latest/meta-data',
+      headers: new Headers({ 'content-type': 'image/webp' }),
+      arrayBuffer: async () => new ArrayBuffer(0),
+    })
+
+    await expect(
+      fetchMediaAsset('https://cdn.example/x.webp')
+    ).rejects.toBeInstanceOf(DomainError)
+  })
+
+  it('aborts oversized payloads with EXTERNAL_API_ERROR', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      url: 'https://cdn.example/x.webp',
+      headers: new Headers({ 'content-type': 'image/webp' }),
+      arrayBuffer: async () => new ArrayBuffer(26 * 1024 * 1024),
+    })
+
+    await expect(
+      fetchMediaAsset('https://cdn.example/x.webp')
+    ).rejects.toMatchObject({ code: ErrorCodes.EXTERNAL_API_ERROR })
+  })
+
+  it('uses an 8s timeout by default', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      url: 'https://cdn.example/x.webp',
+      headers: new Headers({ 'content-type': 'image/webp' }),
+      arrayBuffer: async () => new ArrayBuffer(0),
+    })
+
+    await fetchMediaAsset('https://cdn.example/x.webp')
+
+    const signal = fetchMock.mock.calls[0][1].signal as AbortSignal
+    expect(signal).toBeInstanceOf(AbortSignal)
   })
 })

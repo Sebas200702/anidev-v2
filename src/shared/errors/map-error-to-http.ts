@@ -46,6 +46,7 @@ import {
   AuthError,
   DomainError,
   InfraError,
+  RateLimitedError,
   ResponseValidationError,
   ValidationError,
 } from '@shared/errors/app-error'
@@ -116,6 +117,21 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
     return mapDomainErrorToHttp(error)
   }
 
+  if (error instanceof RateLimitedError) {
+    logger.warn({ err: error }, 'Rate limited')
+    captureError(error, 'warning')
+    return {
+      status: 429,
+      headers: {
+        'Retry-After': String(error.retryAfterSeconds),
+      },
+      body: {
+        code: error.code,
+        message: 'Too many requests',
+      },
+    }
+  }
+
   if (error instanceof ResponseValidationError) {
     logger.error({ err: error }, 'Response validation error')
     captureError(error)
@@ -141,7 +157,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
       body: {
         code: error.code,
         message: 'Service unavailable',
-        meta: { details: error.details },
+        meta: {},
       },
     }
   }

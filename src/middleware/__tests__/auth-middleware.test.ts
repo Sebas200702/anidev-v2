@@ -13,11 +13,32 @@ vi.mock('astro:middleware', () => ({
   defineMiddleware: (fn: unknown) => fn,
 }))
 vi.mock('@lib/monitoring/sentry', () => ({ initAstroSentry: vi.fn() }))
+vi.mock('@config/env', () => ({
+  env: {
+    NODE_ENV: 'test',
+    LOG_LEVEL: 'silent',
+    DATABASE_URL: 'postgres://test:test@localhost/test',
+    REDIS_URL: 'redis://localhost:6379',
+    APP_BASE_URL: 'http://localhost:4321',
+    BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-test-secret',
+  },
+}))
 
 const { resolveAuthActor, isPublicRoute } = vi.hoisted(() => ({
   resolveAuthActor: vi.fn(),
   isPublicRoute: vi.fn(),
 }))
+const { redis } = vi.hoisted(() => ({
+  redis: {
+    incr: vi.fn().mockResolvedValue(1),
+    expire: vi.fn().mockResolvedValue(1),
+    ttl: vi.fn().mockResolvedValue(60),
+    get: vi.fn().mockResolvedValue(null),
+    connect: vi.fn().mockResolvedValue(undefined),
+  },
+}))
+vi.mock('@lib/cache/client', () => ({ redis }))
+
 vi.mock('@auth/middleware', () => ({ resolveAuthActor }))
 vi.mock('@config/public-routes', () => ({ isPublicRoute }))
 

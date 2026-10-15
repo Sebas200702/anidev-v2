@@ -12,14 +12,16 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { poolOnMock, captureHandler } = vi.hoisted(() => {
+const { poolOnMock, captureHandler, poolCtorArgs } = vi.hoisted(() => {
   let registeredHandler: ((err: Error) => void) | undefined
+  const poolCtorArgs: unknown[] = []
   const poolOnMock = vi.fn((event: string, handler: (err: Error) => void) => {
     if (event === 'error') registeredHandler = handler
   })
   return {
     poolOnMock,
     captureHandler: () => registeredHandler,
+    poolCtorArgs,
   }
 })
 
@@ -38,11 +40,14 @@ vi.mock('@config/env', () => ({
 vi.mock('pg', () => ({
   Pool: class {
     on = poolOnMock
+    constructor(options: unknown) {
+      poolCtorArgs.push(options)
+    }
   },
 }))
 
 import { logger } from '@utils/logger-util'
-import '@db/client'
+import { poolOptions } from '@db/client'
 
 describe('postgres pool idle error handling', () => {
   beforeEach(() => {
@@ -51,6 +56,17 @@ describe('postgres pool idle error handling', () => {
 
   it('registers an error handler on the pool', () => {
     expect(typeof captureHandler()).toBe('function')
+  })
+
+  it('configures explicit pool limits and timeouts', () => {
+    expect(poolOptions.max).toBe(20)
+    expect(poolOptions.idleTimeoutMillis).toBe(30_000)
+    expect(poolOptions.connectionTimeoutMillis).toBe(5_000)
+    expect(poolCtorArgs[0]).toMatchObject({
+      max: 20,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 5_000,
+    })
   })
 
   it('logs an idle-client error instead of propagating (does not throw)', () => {
