@@ -29,7 +29,8 @@ const canonicalize = (value: unknown): unknown => {
     const record = value as Record<string, unknown>
     return Object.fromEntries(
       Object.keys(record)
-        .sort()
+        // Codepoint order, not locale order: deterministic on every machine.
+        .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
         .map((key) => [key, canonicalize(record[key])])
     )
   }

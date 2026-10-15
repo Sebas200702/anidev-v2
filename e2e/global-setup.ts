@@ -49,11 +49,12 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
   }
 
   const baseURL = resolveBaseURL(config)
-  // A real browser SPA sends a same-origin Origin header; Astro's CSRF guard
-  // needs it on mutating requests. Mirror the fixtures so the warm register works.
+  // Synthetic client: no Origin header (JSON bodies and origin-less
+  // requests pass Astro 7's `checkOrigin`; Sec-Fetch-Site must never be
+  // forced — it is a forbidden header. Mirror the fixtures.
   const context = await request.newContext({
     baseURL,
-    extraHTTPHeaders: { accept: 'application/json', origin: baseURL },
+    extraHTTPHeaders: { accept: 'application/json' },
   })
 
   try {

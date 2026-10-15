@@ -58,16 +58,13 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
-    // A real browser SPA always sends same-origin `Origin` + `Sec-Fetch-Site`
-    // headers; Astro 7's `checkOrigin` CSRF guard rejects mutating requests
-    // without `Sec-Fetch-Site: same-origin` (403) when the content type is
-    // form-like or absent. Send both so E2E faithfully emulates the browser
-    // client and reaches real handlers.
-    extraHTTPHeaders: {
-      accept: 'application/json',
-      origin: baseURL,
-      'sec-fetch-site': 'same-origin',
-    },
+    // Synthetic API client: send no `Origin` / `Sec-Fetch-Site` headers.
+    // `Sec-Fetch-Site` is a forbidden header name that only the browser may
+    // set per request — forcing it here breaks every subresource load with
+    // ERR_INVALID_ARGUMENT. Astro 7's `checkOrigin` lets these requests
+    // through: JSON bodies pass via the content-type rule and bodyless
+    // DELETEs pass with no Origin present.
+    extraHTTPHeaders: { accept: 'application/json' },
   },
 
   projects: [

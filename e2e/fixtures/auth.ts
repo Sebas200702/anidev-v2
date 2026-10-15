@@ -43,12 +43,14 @@ export const test = base.extend<AuthFixtures>({
 
   authedRequest: async ({ playwright, baseURL, authedUser }, use, testInfo) => {
     // A dedicated context does NOT inherit the project's `extraHTTPHeaders`, so
-    // re-pin them here — notably `origin`, which Astro's `checkOrigin` CSRF guard
-    // requires on mutating requests (DELETE) or it responds 403 before auth.
+    // re-pin `accept` here. Do NOT send `Origin` / `Sec-Fetch-Site`: the
+    // former is unnecessary under Astro 7 (JSON bodies and origin-less
+    // DELETEs pass `checkOrigin`) and the latter is a forbidden header that
+    // breaks subresource loads when forced.
     // A unique `x-forwarded-for` per test isolates rate-limiter buckets: all
     // workers share one egress IP, so without this the per-IP auth throttle
     // (10/min) trips on the suite itself. Production behavior is unchanged.
-    const unique = `${testInfo.workerIndex}-${Date.now()}-${Math.random()}`
+    const unique = `${testInfo.workerIndex}-${Date.now()}-${crypto.randomUUID()}`
     let hash = 0
     for (const char of unique) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
     const forwardedFor = `10.${(hash >>> 16) & 255}.${(hash >>> 8) & 255}.${hash & 255}`
@@ -56,8 +58,6 @@ export const test = base.extend<AuthFixtures>({
       baseURL,
       extraHTTPHeaders: {
         accept: 'application/json',
-        ...(baseURL ? { origin: baseURL } : {}),
-        'sec-fetch-site': 'same-origin',
         'x-forwarded-for': forwardedFor,
       },
     })
