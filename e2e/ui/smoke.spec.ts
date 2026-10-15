@@ -20,6 +20,9 @@ test.describe('home page', () => {
     expect(response?.status() ?? 0).toBeLessThan(400)
     await expect(page).toHaveTitle(/.+/)
 
+    // Single-h1 contract (F.3): the shell brand is not a heading.
+    await expect(page.locator('h1')).toHaveCount(1)
+
     expect(errors, `console errors:\n${errors.join('\n')}`).toEqual([])
   })
 })

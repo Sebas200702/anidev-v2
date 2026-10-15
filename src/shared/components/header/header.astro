@@ -13,10 +13,13 @@
  */
 import { Button } from '@components/button'
 import { Isotipo } from '@components/logos'
-import { format } from '@formkit/tempo'
 import { IconLogin, IconSearch, IconUser } from '@tabler/icons-react'
 
-const issueDate = format(new Date(), 'MM/YYYY', 'es')
+// `MM/YYYY` in Spanish locale (replaces the single @formkit/tempo use).
+const issueDate = new Intl.DateTimeFormat('es', {
+  month: '2-digit',
+  year: 'numeric',
+}).format(new Date())
 
 const nav = [
   { label: 'Discover', href: '/discover', count: '1.2K' },
@@ -85,7 +88,7 @@ const version = 'V2.3.0'
     <a href="/" class="group flex items-center gap-3" aria-label="AniDev — home">
       <Isotipo className="w-12" />
       <span class="flex items-center gap-4 leading-none">
-        <h1 class="text-2xl font-bold tracking-tight">AniDev</h1>
+        <span class="text-2xl font-bold tracking-tight">AniDev</span>
         <div class="bg-border h-8 w-px"></div>
 
         <span
