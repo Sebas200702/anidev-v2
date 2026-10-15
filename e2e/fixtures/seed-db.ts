@@ -13,7 +13,13 @@
  */
 import 'dotenv/config'
 import { Pool } from 'pg'
-import { SEED_ANIME, SEED_MUSIC } from './seed-data'
+import {
+  SEED_ANIME,
+  SEED_ANIME_MAL_ID,
+  SEED_GENRE_MAL_ID,
+  SEED_GENRE_NAME,
+  SEED_MUSIC,
+} from './seed-data'
 
 /**
  * Upserts the canonical E2E dataset into the target Postgres database.
@@ -48,6 +54,17 @@ export async function seedE2eDatabase(): Promise<void> {
         ]
       )
     }
+
+    await pool.query(
+      `INSERT INTO genre (mal_id, name) VALUES ($1, $2)
+       ON CONFLICT (mal_id) DO UPDATE SET name = EXCLUDED.name`,
+      [SEED_GENRE_MAL_ID, SEED_GENRE_NAME]
+    )
+    await pool.query(
+      `INSERT INTO anime_genre (anime_id, genre_id) VALUES ($1, $2)
+       ON CONFLICT DO NOTHING`,
+      [SEED_ANIME_MAL_ID, SEED_GENRE_MAL_ID]
+    )
 
     for (const music of SEED_MUSIC) {
       await pool.query(

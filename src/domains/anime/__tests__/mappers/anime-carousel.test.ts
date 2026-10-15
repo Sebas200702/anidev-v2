@@ -98,8 +98,8 @@ describe('mapCarouselItem', () => {
   it('links each genre to its discover filter', () => {
     const slide = mapCarouselItem({ anime: anime(), media: [], genres })
     expect(slide.genres).toEqual([
-      { malId: 1, name: 'Action', url: '/discover?genre=Action' },
-      { malId: 24, name: 'Sci-Fi', url: '/discover?genre=Sci-Fi' },
+      { malId: 1, name: 'Action', url: '/search?genre=Action' },
+      { malId: 24, name: 'Sci-Fi', url: '/search?genre=Sci-Fi' },
     ])
   })
 
