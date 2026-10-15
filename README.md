@@ -213,12 +213,13 @@ Both DSNs are optional; monitoring is a no-op without them.
 
 ---
 
-## Roadmap
+## Roadmap & Architecture
 
-The product roadmap lives in [`ROADMAP.md`](./ROADMAP.md) — phases 0–7 plus the
-data-platform track (Track D). Each item is delivered as an OpenSpec change:
-write the proposal/design/spec/tasks first, then implement, verify, and release
-per the gate above.
+The product roadmap lives in [`ROADMAP.md`](./ROADMAP.md) — phases 0–7,
+Watch2Gether, and the data-platform track (Track D). The target architecture,
+technical audit findings (`T-01`–`T-14`), domain contracts, and phased OpenSpec
+execution plan live in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
-Each item is an OpenSpec change: write the proposal/design/spec/tasks first, then
-implement, verify, and release per the gate above.
+Each item is delivered as an OpenSpec change under `openspec/changes/`: write
+the proposal/design/spec/tasks first, then implement, verify, and release per
+the gate above.
