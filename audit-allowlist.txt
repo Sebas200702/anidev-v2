@@ -1,0 +1,48 @@
+# Reviewed audit allowlist — one GHSA per line, with reachability justification.
+# Consumed by scripts/audit.sh (`bun audit --ignore=<GHSA> ...`). Every entry
+# was triaged 2026-10-15: all remaining high/critical advisories live in
+# transitive build/dev/release-time dependencies with no production-runtime
+# path to attacker input. Re-triage on every dependency upgrade (F.4) and when
+# `bun audit` reports a NEW ghsa not listed here (the gate fails closed).
+#
+# Format: GHSA-xxxx-yyyy-zzzz # package :: reason (tracking)
+
+# --- handlebars via standard-version (release-time CHANGELOG generation on trusted input) ---
+GHSA-2w6w-674q-4c4q # handlebars :: release tooling only; never handles request input (F.5)
+GHSA-3mfm-83xf-c92r # handlebars :: release tooling only (F.5)
+GHSA-8r5x-fm3f-whwj # handlebars :: release tooling only (F.5)
+GHSA-9cx6-37pm-9jff # handlebars :: release tooling only (F.5)
+GHSA-p8wg-vrv2-v86f # handlebars :: release tooling only (F.5)
+GHSA-xhpv-hc6g-r9c6 # handlebars :: release tooling only (F.5)
+GHSA-xjpj-3mr7-gcpf # handlebars :: release tooling only (F.5)
+# --- lodash via standard-version (same scope) ---
+GHSA-r5fr-rjxr-66jc # lodash :: release tooling only; no _.template use in app code (F.5)
+# --- vite dev-server (never runs in prod/CI: build only) ---
+GHSA-v2wj-q39q-566r # vite :: dev-server fs.deny bypass; dev server not started anywhere (F.5)
+GHSA-p9ff-h696-f583 # vite :: dev-server websocket file read; same (F.5)
+GHSA-fx2h-pf6j-xcff # vite :: dev-server Windows paths; same, plus Linux-only deploys (F.5)
+# --- postcss/nanoid via vite build (our CSS sources only, no user input) ---
+GHSA-6g55-p6wh-862q # postcss :: build-time CSS of first-party sources (F.5)
+GHSA-r28c-9q8g-f849 # postcss :: same (F.5)
+GHSA-28wg-ghj8-5hjv # nanoid :: build-time id generation (F.5)
+GHSA-2v37-7h3g-55p8 # nanoid :: same (F.5)
+GHSA-xwg4-73v4-xw9w # nanoid :: same (F.5)
+# --- fast-uri via @astrojs/check language server (typecheck-time only) ---
+GHSA-5jgf-p345-68v8 # fast-uri :: astro check toolchain, no request path (F.5)
+GHSA-f65p-4m7j-42xc # fast-uri :: same (F.5)
+GHSA-fph4-wmhf-6fwf # fast-uri :: same (F.5)
+GHSA-jqff-g426-hqxp # fast-uri :: same (F.5)
+GHSA-qw65-cvwx-89v3 # fast-uri :: same (F.5)
+# --- glob tooling via sentry plugins / astro check (build-time file matching) ---
+GHSA-3jxr-9vmj-r5cp # brace-expansion :: build-time globbing (F.5)
+GHSA-6j4f-fj2g-mc7p # brace-expansion :: same (F.5)
+GHSA-mh99-v99m-4gvg # brace-expansion :: same (F.5)
+GHSA-qhr7-859c-m2p7 # brace-expansion :: same (F.5)
+GHSA-rgw5-rvv9-x895 # brace-expansion :: same (F.5)
+GHSA-73wf-gq98-2v4g # browserslist :: build-time queries on static config (F.5)
+GHSA-c83g-rgw3-j3cx # browserslist :: same (F.5)
+GHSA-c2c7-rcm5-vvqj # picomatch :: build-time globbing (F.5)
+# --- source-map-js via vitest (test-time only) ---
+GHSA-68fv-2mgg-jv7q # source-map-js :: test runner stack mapping (F.5)
+# --- http-cache-semantics via astro (no shared cross-user HTTP cache in app paths) ---
+GHSA-ch52-4w7c-c8xp # http-cache-semantics :: /media uses native fetch without shared cache (F.5)
