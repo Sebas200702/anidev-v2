@@ -15,6 +15,7 @@
  * - `./cache-store` — `withCache`, `withStaleCache`, `StaleResult`
  * - `./client` — shared `redis` Dragonfly instance
  * - `./config` — `CacheKeyPrefix`, `CacheTtl` enums
+ * - `./stable-stringify` — deterministic key serialization
  *
  * @see {@link module:config/env} for `REDIS_URL`
  * @see {@link module:lib/cache/cache-store} for read-through pattern
@@ -25,4 +26,5 @@ export { cacheGet, cacheSet, cacheDel } from './cache-primitives'
 export type { StaleResult } from './cache-store-types'
 export { withCache, withStaleCache } from './cache-store'
 export { redis } from './client'
+export { stableStringify } from './stable-stringify'
 export { CacheKeyPrefix, CacheTtl } from './config'

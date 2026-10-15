@@ -7,7 +7,7 @@
  * {@link animeListService.getAnimeList}. Key includes the full normalized filter
  * object (pagination + facets) via `JSON.stringify`.
  *
- * **Key format:** `anime:list:{JSON.stringify(filters)}`
+ * **Key format:** `anime:list:{stableStringify(filters)}`
  *
  * **TTL:** `CacheTtl.Medium` (3600 s) — list pages are filter-sensitive; one hour
  * limits stale pagination totals while avoiding repeated `selectDistinct` joins.
@@ -19,6 +19,7 @@
  * @see {@link mapAnimeFilters}
  */
 import { cacheGet, cacheSet } from '@lib/cache'
+import { stableStringify } from '@lib/cache/stable-stringify'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 import type { AnimeFilters } from '@anime/types'
 import type { AnimeListCacheValue } from './types'
@@ -40,7 +41,7 @@ export const animeListCache = {
    * ```
    */
   key(filters: AnimeFilters) {
-    return `${CacheKeyPrefix.AnimeList}:${JSON.stringify(filters)}`
+    return `${CacheKeyPrefix.AnimeList}:${stableStringify(filters)}`
   },
 
   /**

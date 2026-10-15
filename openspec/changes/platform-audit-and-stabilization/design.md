@@ -188,3 +188,25 @@ Its tasks T-01…T-09 map to B.1/B.2 (T-01), C.1 (T-02), C.2/C.3 (T-03), B.10 (T
 - **Incidental fix:** the new integration file first used `999_002_xxx` and
   collided with the music suite's `ANIME = 999_002_101` (parallel workers,
   shared DB) — moved to `999_004_xxx`; all 7 integration files green.
+
+## 11. D.4/D.6/D.7/D.8 evidence
+
+- **D.4:** `searchHistoryRepository.record` runs insert + prune inside
+  `db.transaction` with `pg_advisory_xact_lock(hashtext(userId))` first, so
+  concurrent writes for one user serialize and the 50-row cap holds.
+  Integration proves it: 45 pre-filled + 20 parallel records → exactly 50.
+- **D.6:** `animeListService` runs list + count via `Promise.all`;
+  `buildAnimeListFilters` adds `OR EXISTS (SELECT 1 FROM
+  anime_title_synonym WHERE anime_id = anime.mal_id AND title ILIKE …)`.
+  EXPLAIN shows the planner using the composite
+  `(anime_id, title)` B-tree with the ILIKE as filter at seed scale (GIN
+  valid, wins at volume). Integration: synonym-only term finds the probe
+  row; 5× parallel list/count pairs agree.
+- **D.7:** degraded assembly persists an `anime:full:{id}:degraded` marker
+  (same TTL) alongside the payload; reads OR it into `isStale`, so a stale
+  payload reports stale on every read including cache hits until a fresh
+  recompute clears the marker. Unit covers compute + hit + mark/clear.
+- **D.8:** `stableStringify` (recursive key sort) backs `animeListCache` and
+  `musicListCache` keys; permuted filter objects produce one key (unit +
+  facade tests). Deep-imported (`@lib/cache/stable-stringify`) so existing
+  `@lib/cache` test mocks keep working.

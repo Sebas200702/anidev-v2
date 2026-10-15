@@ -7,7 +7,7 @@
  * {@link musicListService.getMusicList}. Key includes the full normalized filter
  * object (pagination + facets) via `JSON.stringify`.
  *
- * **Key format:** `music:list:{JSON.stringify(filters)}`
+ * **Key format:** `music:list:{stableStringify(filters)}`
  *
  * **TTL:** `CacheTtl.Medium` (3600 s) — list pages are filter-sensitive; one hour
  * limits stale pagination totals while avoiding repeated list queries.
@@ -19,6 +19,7 @@
  * @see {@link mapMusicListFilters}
  */
 import { cacheGet, cacheSet } from '@lib/cache'
+import { stableStringify } from '@lib/cache/stable-stringify'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 import type { MusicListFilters } from '@music/types'
 import type { MusicListCacheValue } from './types'
@@ -40,7 +41,7 @@ export const musicListCache = {
    * ```
    */
   key(filters: MusicListFilters) {
-    return `${CacheKeyPrefix.MusicList}:${JSON.stringify(filters)}`
+    return `${CacheKeyPrefix.MusicList}:${stableStringify(filters)}`
   },
 
   /**
