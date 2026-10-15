@@ -170,6 +170,34 @@ describe('fetchMediaStream', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
+  it('rejects unsafe redirect targets as DomainError', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      url: 'http://169.254.169.254/x',
+      headers: new Headers({ 'content-type': 'image/webp' }),
+      body: streamOf([1]),
+    })
+
+    await expect(
+      fetchMediaStream('https://cdn.example/x.webp')
+    ).rejects.toBeInstanceOf(DomainError)
+  })
+
+  it('fails when the upstream response has no body', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      url: 'https://cdn.example/x.webp',
+      headers: new Headers({ 'content-type': 'image/webp' }),
+      body: null,
+    })
+
+    await expect(
+      fetchMediaStream('https://cdn.example/x.webp')
+    ).rejects.toMatchObject({ code: ErrorCodes.EXTERNAL_API_ERROR })
+  })
+
   it('aborts a declared over-budget content-length with EXTERNAL_API_ERROR', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
