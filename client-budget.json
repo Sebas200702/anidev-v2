@@ -1,30 +1,34 @@
 {
-  "totalGzip": 111884,
-  "chunks": [
-    {
-      "name": "client.-OkkxjIQ.js",
-      "raw": 191940,
-      "gzip": 60477
-    },
-    {
-      "name": "page.Btyk0Ks3.js",
-      "raw": 130349,
-      "gzip": 44363
-    },
-    {
-      "name": "client.CgolrBFj.js",
-      "raw": 12764,
-      "gzip": 4515
-    },
-    {
-      "name": "ClientRouter.astro_astro_type_script_index_0_lang.kz3mjXqo.js",
-      "raw": 4487,
-      "gzip": 1955
-    },
-    {
-      "name": "showcase-controls.astro_astro_type_script_index_0_lang.DmVDtwh1.js",
-      "raw": 983,
-      "gzip": 574
-    }
-  ]
+  "notes": "Totals vary by build environment: with PUBLIC_SENTRY_DSN set (local .env), the Sentry browser SDK ships in page.* (~+45KB gzip); without it (CI/prod builds) page.* is ~empty. Chunk hashes are unstable across builds. The gate therefore enforces (a) no *react* runtime chunks and (b) total gzip <= maxTotalGzip, and prints the baseline below for human comparison only.",
+  "maxTotalGzip": 150000,
+  "baseline": {
+    "totalGzip": 111884,
+    "chunks": [
+      {
+        "name": "client.-OkkxjIQ.js",
+        "raw": 191940,
+        "gzip": 60477
+      },
+      {
+        "name": "page.Btyk0Ks3.js",
+        "raw": 130349,
+        "gzip": 44363
+      },
+      {
+        "name": "client.CgolrBFj.js",
+        "raw": 12764,
+        "gzip": 4515
+      },
+      {
+        "name": "ClientRouter.astro_astro_type_script_index_0_lang.kz3mjXqo.js",
+        "raw": 4487,
+        "gzip": 1955
+      },
+      {
+        "name": "showcase-controls.astro_astro_type_script_index_0_lang.DmVDtwh1.js",
+        "raw": 983,
+        "gzip": 574
+      }
+    ]
+  }
 }

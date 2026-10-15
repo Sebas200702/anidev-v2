@@ -17,10 +17,15 @@ ARG DATABASE_URL=postgres://x:x@localhost:5432/x
 ARG REDIS_URL=redis://localhost:6379
 ARG APP_BASE_URL=http://localhost:3000
 ARG BETTER_AUTH_SECRET=build-time-placeholder-at-least-32-chars
+# Optional: bake the browser error-capture DSN into the client bundle. Empty by
+# default (no browser reporting); pass `--build-arg PUBLIC_SENTRY_DSN=…` to
+# enable it — see docs/monitoring.md.
+ARG PUBLIC_SENTRY_DSN=
 ENV DATABASE_URL=$DATABASE_URL \
     REDIS_URL=$REDIS_URL \
     APP_BASE_URL=$APP_BASE_URL \
-    BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+    BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET \
+    PUBLIC_SENTRY_DSN=$PUBLIC_SENTRY_DSN
 RUN bun run build
 
 FROM base AS runtime

@@ -17,10 +17,17 @@
 
 ## Gzip cost (2026-10-15, `client-budget.json`)
 
-- Total client JS: **111,884 B gzip**.
+- Total client JS with DSN baked in (local `.env` build): **111,884 B gzip**.
 - Sentry browser chunks (`client.*` + `page.*`): **≈104,840 B (~94%)**.
 - App code (ClientRouter transitions + showcase controls + inlined
   controllers): the remaining ~7 KB.
+- Without `PUBLIC_SENTRY_DSN` at build time (CI/prod default), the integration
+  skips client injection: `page.*` ships ~empty and the total is ≈67 KB.
+  Totals legitimately vary by build environment — the `client-budget.mjs` gate
+  enforces a no-React-chunks invariant plus an absolute 150 KB ceiling instead
+  of exact-total matching.
+- Production enables browser capture by passing
+  `--build-arg PUBLIC_SENTRY_DSN=…` to the Docker build (empty by default).
 
 ## Decision: keep shipping the SDK chunk with unset DSN
 

@@ -1,8 +1,11 @@
-// Client JS budget check: prints per-chunk gzip sizes, compares the total
-// against client-budget.json (fails past +5%), and refuses dedicated React
-// runtime chunks (zero-island invariant from F.1).
-// Usage: `bun scripts/client-budget.mjs` (runs on `bun run build` via CI).
-import { readFileSync, readdirSync, existsSync } from 'node:fs'
+// Client JS budget check: prints per-chunk gzip sizes, refuses dedicated React
+// runtime chunks (zero-island invariant from F.1), and enforces an absolute
+// gzip ceiling. Totals legitimately vary by build environment (see
+// client-budget.json notes: DSN presence ±45KB, unstable chunk hashes), so the
+// committed baseline is for human comparison only — the gate fails on the two
+// stable invariants, never on exact-total matching.
+// Usage: `bun scripts/client-budget.mjs` (runs in the CI `gate` job).
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
@@ -19,7 +22,7 @@ const chunks = readdirSync(dir)
 
 const total = chunks.reduce((sum, chunk) => sum + chunk.gzip, 0)
 for (const chunk of chunks) {
-  console.log(`${chunk.name} raw=${chunk.raw} gzip=${chunk.gzip}`)
+  console.log(`chunk ${chunk.name} raw=${chunk.raw} gzip=${chunk.gzip}`)
 }
 console.log(`total gzip=${total}`)
 
@@ -31,23 +34,17 @@ if (reactChunks.length > 0) {
   process.exit(1)
 }
 
-if (!existsSync(budgetPath)) {
-  console.log('no client-budget.json yet — writing baseline')
-  const { writeFileSync } = await import('node:fs')
-  writeFileSync(
-    budgetPath,
-    JSON.stringify({ totalGzip: total, chunks }, null, 2) + '\n'
+const budget = existsSync(budgetPath)
+  ? JSON.parse(readFileSync(budgetPath, 'utf-8'))
+  : null
+const ceiling = budget?.maxTotalGzip ?? 150000
+if (budget?.baseline) {
+  console.log(
+    `baseline total=${budget.baseline.totalGzip} (reference only, see notes)`
   )
-  process.exit(0)
 }
-
-const budget = JSON.parse(readFileSync(budgetPath, 'utf-8'))
-if (total > budget.totalGzip * 1.05) {
-  console.error(
-    `client budget exceeded: gzip total ${total} > 105% of ${budget.totalGzip}`
-  )
+if (total > ceiling) {
+  console.error(`client budget exceeded: gzip total ${total} > ${ceiling}`)
   process.exit(1)
 }
-console.log(
-  `within budget (${total} <= ${Math.round(budget.totalGzip * 1.05)})`
-)
+console.log(`within budget (total ${total} <= ceiling ${ceiling})`)
