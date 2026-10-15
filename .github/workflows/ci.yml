@@ -9,12 +9,10 @@ env:
   # Placeholders that satisfy src/config/env.ts validation for the build step.
   # The gate asserts code quality only; real secrets are never needed here.
   NODE_ENV: test
-  TURSO_DATABASE_URL: https://placeholder.turso.io/local
-  TURSO_AUTH_TOKEN: placeholder
+  DATABASE_URL: postgres://placeholder:placeholder@localhost:5432/placeholder
+  REDIS_URL: redis://localhost:6379
   APP_BASE_URL: https://example.com
   BETTER_AUTH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-  UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
-  UPSTASH_REDIS_REST_TOKEN: placeholder
   LOG_LEVEL: warn
 
 permissions:
@@ -51,6 +49,12 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Client budget
+        run: bun scripts/client-budget.mjs
+
+      - name: Audit (high+, allowlisted)
+        run: bun run audit
 
   e2e:
     # Blocking end-to-end gate: boots the real Bun self-host artifact against a
