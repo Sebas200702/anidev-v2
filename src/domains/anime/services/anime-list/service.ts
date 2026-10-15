@@ -60,8 +60,10 @@ export const animeListService = {
       setStaleCache: (key, value) =>
         cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
-        const animeList = await animeListRepository.getAnimeList(filters)
-        const total = await animeListRepository.getAnimeListCount(filters)
+        const [animeList, total] = await Promise.all([
+          animeListRepository.getAnimeList(filters),
+          animeListRepository.getAnimeListCount(filters),
+        ])
 
         return {
           list: mapAnimeListToCards({
