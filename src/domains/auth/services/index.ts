@@ -22,3 +22,4 @@
 
 export { credentialsService } from './credentials'
 export { sessionService } from './session'
+export * from './credential-throttle'

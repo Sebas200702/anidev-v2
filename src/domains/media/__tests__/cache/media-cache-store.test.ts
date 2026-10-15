@@ -3,9 +3,10 @@
  *
  * @module domains/media/__tests__/cache/media-cache-store
  * @remarks
- * Covers store-level (de)serialization round-trips, raw-meta JSON handling, and the facade's key
- * building + delegation to the store. `@lib/cache` is mocked; serialization is real. Follows the
- * repo TDD/unit-test layout.
+ * Covers the store's delegation to the bounded disk LRU for bytes and to the
+ * shared Redis backend for raw metadata, plus the facade's key building and
+ * delegation. Backends are mocked; real disk behavior lives in
+ * `disk-store.test.ts`. Follows the repo TDD/unit-test layout.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { MediaEntity, MediaSize, MediaType } from '@media/types'
@@ -19,6 +20,15 @@ const { cacheGet, cacheSet } = vi.hoisted(() => ({
   cacheSet: vi.fn(),
 }))
 vi.mock('@lib/cache', () => ({ cacheGet, cacheSet }))
+
+const { readOptimizedDisk, writeOptimizedDisk } = vi.hoisted(() => ({
+  readOptimizedDisk: vi.fn(),
+  writeOptimizedDisk: vi.fn(),
+}))
+vi.mock('@media/cache/media-cache/disk-store', () => ({
+  readOptimizedDisk,
+  writeOptimizedDisk,
+}))
 
 const { readCachedMedia, writeCachedMedia, readRawMeta, writeRawMeta } =
   await import('@media/cache/media-cache/store')
@@ -37,26 +47,32 @@ beforeEach(() => {
 })
 
 describe('store: cached media', () => {
-  it('serializes to base64 on write', async () => {
+  it('delegates writes to the disk LRU', async () => {
     await writeCachedMedia('k', {
       buffer: Buffer.from('hi'),
       mimeType: 'image/webp',
     })
-    expect(cacheSet).toHaveBeenCalledWith(
-      'k',
-      { buffer: Buffer.from('hi').toString('base64'), mimeType: 'image/webp' },
-      expect.objectContaining({ ttlSeconds: expect.any(Number) })
-    )
+    expect(writeOptimizedDisk).toHaveBeenCalledWith('k', {
+      buffer: Buffer.from('hi'),
+      mimeType: 'image/webp',
+    })
+    expect(cacheSet).not.toHaveBeenCalled()
   })
 
-  it('deserializes on read', async () => {
-    cacheGet.mockResolvedValue({
-      buffer: Buffer.from('hi').toString('base64'),
+  it('delegates reads to the disk LRU', async () => {
+    readOptimizedDisk.mockResolvedValue({
+      buffer: Buffer.from('hi'),
       mimeType: 'image/webp',
     })
     const result = await readCachedMedia('k')
+    expect(readOptimizedDisk).toHaveBeenCalledWith('k')
     expect(result?.buffer.toString()).toBe('hi')
     expect(result?.mimeType).toBe('image/webp')
+  })
+
+  it('returns null on disk miss', async () => {
+    readOptimizedDisk.mockResolvedValue(null)
+    await expect(readCachedMedia('k')).resolves.toBeNull()
   })
 })
 
@@ -66,21 +82,16 @@ describe('store: raw meta', () => {
     expect(await readRawMeta('k')).toBeNull()
   })
 
-  it('parses valid JSON meta', async () => {
-    cacheGet.mockResolvedValue(JSON.stringify({ src: 'https://cdn/x.jpg' }))
+  it('passes through deserialized meta', async () => {
+    cacheGet.mockResolvedValue({ src: 'https://cdn/x.jpg' })
     expect(await readRawMeta('k')).toEqual({ src: 'https://cdn/x.jpg' })
   })
 
-  it('returns null on malformed JSON', async () => {
-    cacheGet.mockResolvedValue('{bad')
-    expect(await readRawMeta('k')).toBeNull()
-  })
-
-  it('stringifies on write', async () => {
+  it('passes single-serialized payload on write', async () => {
     await writeRawMeta('k', { src: 'https://cdn/x.jpg' })
     expect(cacheSet).toHaveBeenCalledWith(
       'k',
-      JSON.stringify({ src: 'https://cdn/x.jpg' }),
+      { src: 'https://cdn/x.jpg' },
       expect.objectContaining({ ttlSeconds: expect.any(Number) })
     )
   })
@@ -102,14 +113,13 @@ describe('mediaCache facade', () => {
       {},
       { buffer: Buffer.from('x'), mimeType: 'image/webp' }
     )
-    expect(cacheSet).toHaveBeenCalledWith(
+    expect(writeOptimizedDisk).toHaveBeenCalledWith(
       mediaCache.key(path, {}),
-      expect.objectContaining({ mimeType: 'image/webp' }),
-      expect.anything()
+      expect.objectContaining({ mimeType: 'image/webp' })
     )
 
-    cacheGet.mockResolvedValue({
-      buffer: Buffer.from('x').toString('base64'),
+    readOptimizedDisk.mockResolvedValue({
+      buffer: Buffer.from('x'),
       mimeType: 'image/webp',
     })
     const result = await mediaCache.get(path, {})
@@ -125,14 +135,13 @@ describe('mediaCache facade', () => {
         mimeType: 'image/webp',
       }
     )
-    expect(cacheSet).toHaveBeenCalledWith(
+    expect(writeOptimizedDisk).toHaveBeenCalledWith(
       mediaCache.keyFromUrl('https://cdn/x', {}),
-      expect.objectContaining({ mimeType: 'image/webp' }),
-      expect.anything()
+      expect.objectContaining({ mimeType: 'image/webp' })
     )
 
-    cacheGet.mockResolvedValue({
-      buffer: Buffer.from('u').toString('base64'),
+    readOptimizedDisk.mockResolvedValue({
+      buffer: Buffer.from('u'),
       mimeType: 'image/webp',
     })
     const result = await mediaCache.getFromUrl('https://cdn/x', {})
@@ -144,14 +153,13 @@ describe('mediaCache facade', () => {
       buffer: Buffer.from('r'),
       mimeType: 'audio/mpeg',
     })
-    expect(cacheSet).toHaveBeenCalledWith(
+    expect(writeOptimizedDisk).toHaveBeenCalledWith(
       mediaCache.rawKey(path),
-      expect.objectContaining({ mimeType: 'audio/mpeg' }),
-      expect.anything()
+      expect.objectContaining({ mimeType: 'audio/mpeg' })
     )
 
-    cacheGet.mockResolvedValue({
-      buffer: Buffer.from('r').toString('base64'),
+    readOptimizedDisk.mockResolvedValue({
+      buffer: Buffer.from('r'),
       mimeType: 'audio/mpeg',
     })
     const result = await mediaCache.getRaw(path)
@@ -159,13 +167,13 @@ describe('mediaCache facade', () => {
   })
 
   it('delegates raw-meta get/set with the meta key', async () => {
-    cacheGet.mockResolvedValue(JSON.stringify({ src: 's' }))
+    cacheGet.mockResolvedValue({ src: 's' })
     expect(await mediaCache.getRawMeta(path)).toEqual({ src: 's' })
 
     await mediaCache.setRawMeta(path, { src: 's' })
     expect(cacheSet).toHaveBeenCalledWith(
       mediaCache.rawMetaKey(path),
-      JSON.stringify({ src: 's' }),
+      { src: 's' },
       expect.anything()
     )
   })

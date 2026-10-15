@@ -29,4 +29,31 @@ test.describe('GET /media/*', () => {
     expect(res.status()).toBeLessThan(500)
     expect(res.status()).not.toBe(400)
   })
+
+  test('serves hardening headers on media responses', async ({ request }) => {
+    const res = await request.get(`/media/anime/${SEED_ANIME_MAL_ID}/poster`)
+    expect(res.headers()['x-request-id']).toBeDefined()
+    expect(res.headers()['x-content-type-options']).toBe('nosniff')
+  })
+
+  test('rejects out-of-range width with 400', async ({ request }) => {
+    const res = await request.get(
+      `/media/anime/${SEED_ANIME_MAL_ID}/poster/large?w=99999`
+    )
+    expect(res.status()).toBe(400)
+  })
+
+  // Raw-media `nosniff` on 200 bytes has no fixture source (no seeded upstream
+  // media); the route-level unit test asserts the header on raw 200/206.
+  // Range behavior is covered by route unit tests (206 + Content-Range).
+
+  test('refuses remote /_image transforms (no remotePatterns configured)', async ({
+    request,
+  }) => {
+    const res = await request.get(
+      '/_image?href=https%3A%2F%2Fcdn.myanimelist.net%2Fimage.jpg&w=100&f=webp'
+    )
+    // Remote not allowlisted → Astro refuses with 403, never a server error.
+    expect(res.status()).toBe(403)
+  })
 })

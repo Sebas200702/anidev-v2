@@ -11,7 +11,7 @@ import { db } from '@db/client'
 import { searchHistory } from '@db/schemas/search-history'
 import { SEARCH_HISTORY_PER_USER_CAP } from '@search/constants'
 import { dbError } from '@shared/errors/db-errors'
-import { and, desc, eq, notInArray } from 'drizzle-orm'
+import { and, desc, eq, notInArray, sql } from 'drizzle-orm'
 import type { RecordSearchInput, SearchHistoryRow } from './types'
 
 export const searchHistoryRepository = {
@@ -27,28 +27,34 @@ export const searchHistoryRepository = {
     filters,
   }: RecordSearchInput): Promise<void> {
     try {
-      await db.insert(searchHistory).values({
-        userId,
-        scope,
-        query: query ?? null,
-        filters: filters ?? null,
-      })
+      await db.transaction(async (tx) => {
+        // Serialize concurrent writes for the same user so the cap holds:
+        // without the lock, two overlapping insert+prune pairs can each keep
+        // 50 rows and leave 51 behind.
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${userId}))`)
+        await tx.insert(searchHistory).values({
+          userId,
+          scope,
+          query: query ?? null,
+          filters: filters ?? null,
+        })
 
-      const keptIds = db
-        .select({ id: searchHistory.id })
-        .from(searchHistory)
-        .where(eq(searchHistory.userId, userId))
-        .orderBy(desc(searchHistory.createdAt), desc(searchHistory.id))
-        .limit(SEARCH_HISTORY_PER_USER_CAP)
+        const keptIds = tx
+          .select({ id: searchHistory.id })
+          .from(searchHistory)
+          .where(eq(searchHistory.userId, userId))
+          .orderBy(desc(searchHistory.createdAt), desc(searchHistory.id))
+          .limit(SEARCH_HISTORY_PER_USER_CAP)
 
-      await db
-        .delete(searchHistory)
-        .where(
-          and(
-            eq(searchHistory.userId, userId),
-            notInArray(searchHistory.id, keptIds)
+        await tx
+          .delete(searchHistory)
+          .where(
+            and(
+              eq(searchHistory.userId, userId),
+              notInArray(searchHistory.id, keptIds)
+            )
           )
-        )
+      })
     } catch (error) {
       throw dbError('[RECORD_SEARCH_HISTORY]', { userId }, error)
     }

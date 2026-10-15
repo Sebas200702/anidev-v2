@@ -28,10 +28,10 @@ export const musicArtist = pgTable(
   'music_artist',
   {
     musicId: integer('music_id')
-      .references(() => music.id)
+      .references(() => music.id, { onDelete: 'cascade' })
       .notNull(),
     artistId: integer('artist_id')
-      .references(() => artist.id)
+      .references(() => artist.id, { onDelete: 'cascade' })
       .notNull(),
   },
   (t) => [primaryKey({ columns: [t.musicId, t.artistId] })]

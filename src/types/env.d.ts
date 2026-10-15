@@ -37,5 +37,12 @@ declare namespace App {
      * @see {@link module:lib/auth/server.Session}
      */
     session: import('@lib/auth/server').Session['session'] | null
+
+    /**
+     * Request correlation id for access/error log lines. Always set by the
+     * middleware (client-supplied `x-request-id` or generated); route
+     * wrappers read it to correlate their error lines with the access line.
+     */
+    requestId: string
   }
 }

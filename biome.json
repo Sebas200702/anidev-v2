@@ -30,6 +30,48 @@
   "assist": {
     "enabled": false
   },
+  "overrides": [
+    {
+      "includes": ["src/shared/**", "src/lib/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/shared/*",
+                      "@/domains/*",
+                      "@/lib/*",
+                      "@domains/*",
+                      "@anime/*",
+                      "@auth/*",
+                      "@media/*",
+                      "@music/*",
+                      "@user/*",
+                      "@search/*"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/__tests__/**", "**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    }
+  ],
   "linter": {
     "enabled": true,
     "rules": {

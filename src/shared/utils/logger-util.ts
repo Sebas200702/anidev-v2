@@ -29,8 +29,36 @@ const isDev = env.NODE_ENV !== 'production'
  * Import this singleton rather than creating child loggers at module scope unless you need
  * request-scoped bindings (`logger.child({ requestId })`).
  */
+/**
+ * Pino redaction paths for credentials and session material.
+ *
+ * @remarks Applied to every log line; assertion target for redaction tests.
+ */
+export const LOG_REDACT_PATHS = [
+  '*.password',
+  '*.token',
+  '*.cookie',
+  '*.cookies',
+  '*.authorization',
+  '*.set-cookie',
+  '*.session_token',
+  '*.session_data',
+  'password',
+  'token',
+  'cookie',
+  'cookies',
+  'authorization',
+  'set-cookie',
+  'session_token',
+  'session_data',
+]
+
 export const logger: Logger = pino({
   level: env.LOG_LEVEL || (isDev ? 'debug' : 'info'),
+  redact: {
+    paths: LOG_REDACT_PATHS,
+    censor: '[redacted]',
+  },
   transport: isDev
     ? {
         target: 'pino-pretty',

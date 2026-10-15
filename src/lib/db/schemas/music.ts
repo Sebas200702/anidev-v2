@@ -15,6 +15,7 @@
  * @see {@link module:lib/db/schemas/anime-relations.animeMusic} for anime links
  */
 import {
+  index,
   integer,
   pgTable,
   serial,
@@ -45,14 +46,18 @@ export const music = pgTable('music', {
  * - `versionId` unique — the external catalog id is the version's identity and
  *   is referenced by {@link musicResolution}; Postgres requires it be unique.
  */
-export const musicVersion = pgTable('music_version', {
-  id: serial('id').primaryKey(),
-  musicId: integer('music_id')
-    .notNull()
-    .references(() => music.id, { onDelete: 'cascade' }),
-  version: integer('version').notNull(),
-  versionId: integer('version_id').notNull().unique(),
-})
+export const musicVersion = pgTable(
+  'music_version',
+  {
+    id: serial('id').primaryKey(),
+    musicId: integer('music_id')
+      .notNull()
+      .references(() => music.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+    versionId: integer('version_id').notNull().unique(),
+  },
+  (t) => [index('music_version_music_id_idx').on(t.musicId)]
+)
 
 /**
  * Streamable resolution assets (`music_resolution` table) for a music version.
@@ -77,5 +82,6 @@ export const musicResolution = pgTable(
   },
   (t) => [
     uniqueIndex('music_resolution_song_res_unique').on(t.songId, t.resolution),
+    index('music_resolution_version_id_idx').on(t.musicVersionId),
   ]
 )

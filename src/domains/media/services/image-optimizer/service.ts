@@ -6,7 +6,7 @@
 import {
   optimizeImageBuffer,
   type OptimizeOptions,
-} from '@utils/image/optimize-util'
+} from '@media/utils/image/optimize-util'
 
 /**
  * Optimizes a raw image buffer using shared image utilities.

@@ -22,8 +22,15 @@ import { Pool } from 'pg'
 import { env } from '@config/env'
 import { logger } from '@utils/logger-util'
 
+export const poolOptions = {
+  connectionString: env.DATABASE_URL,
+  max: 20,
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 5_000,
+}
+
 /** Internal PostgreSQL connection pool; prefer {@link db} for queries. */
-const pool = new Pool({ connectionString: env.DATABASE_URL })
+const pool = new Pool(poolOptions)
 
 pool.on('error', (err) => {
   logger.error({ err }, 'PostgreSQL pool idle-client error')

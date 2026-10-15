@@ -33,6 +33,9 @@ export enum CacheKeyPrefix {
   /** Paginated or filtered anime list responses. Value: `'anime:list'`. */
   AnimeList = 'anime:list',
 
+  /** Featured home carousel slides. Value: `'anime:carousel'`. */
+  AnimeCarousel = 'anime:carousel',
+
   /** Core anime detail record without heavy joins. Value: `'anime:details'`. */
   AnimeDetails = 'anime:details',
 

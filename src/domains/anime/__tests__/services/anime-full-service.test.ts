@@ -13,6 +13,11 @@ import { AnimeNotFoundError } from '@anime/errors/anime-not-found-error'
 vi.mock('@config/env', () => ({
   env: { NODE_ENV: 'test', LOG_LEVEL: 'silent' },
 }))
+const { runCompute, cachedValue, isDegraded } = vi.hoisted(() => ({
+  runCompute: vi.fn(() => true),
+  cachedValue: vi.fn(() => ({ malId: 5114 })),
+  isDegraded: vi.fn(async () => false),
+}))
 vi.mock('@lib/cache', () => ({
   cacheGet: vi.fn(),
   cacheSet: vi.fn(),
@@ -27,6 +32,7 @@ vi.mock('@lib/cache', () => ({
   }) => {
     await opts.getCache()
     await opts.getStaleCache(opts.staleKey)
+    if (!runCompute()) return { value: cachedValue(), isStale: false }
     const value = await opts.compute()
     await opts.setCache(opts.key, value)
     await opts.setStaleCache(opts.staleKey, value)
@@ -34,8 +40,19 @@ vi.mock('@lib/cache', () => ({
   },
 }))
 vi.mock('@lib/cache/config', () => ({ CacheTtl: { Stale: 1, Medium: 2 } }))
+const { markDegraded, clearDegraded } = vi.hoisted(() => ({
+  markDegraded: vi.fn(),
+  clearDegraded: vi.fn(),
+}))
 vi.mock('@anime/cache/anime-full', () => ({
-  animeFullCache: { key: () => 'k', get: vi.fn(), set: vi.fn() },
+  animeFullCache: {
+    key: () => 'k',
+    get: vi.fn(),
+    set: vi.fn(),
+    markDegraded,
+    clearDegraded,
+    isDegraded: isDegraded,
+  },
 }))
 
 const {
@@ -106,6 +123,8 @@ const primeRepos = () => {
 describe('animeFullService.getAnimeFullByMalId', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    runCompute.mockReturnValue(true)
+    isDegraded.mockResolvedValue(false)
   })
 
   it('throws AnimeNotFoundError when the core row is missing', async () => {
@@ -139,5 +158,38 @@ describe('animeFullService.getAnimeFullByMalId', () => {
     const result = await animeFullService.getAnimeFullByMalId(5114)
 
     expect(result.isStale).toBe(true)
+  })
+
+  it('reports isStale on cache hits while the degraded marker persists', async () => {
+    runCompute.mockReturnValue(false)
+    isDegraded.mockResolvedValue(true)
+
+    const result = await animeFullService.getAnimeFullByMalId(5114)
+
+    expect(getAnimeByMalId).not.toHaveBeenCalled()
+    expect(result).toEqual({ value: { malId: 5114 }, isStale: true })
+  })
+
+  it('reports fresh on cache hits once recomputed fresh', async () => {
+    runCompute.mockReturnValue(false)
+    isDegraded.mockResolvedValue(false)
+
+    const result = await animeFullService.getAnimeFullByMalId(5114)
+
+    expect(result).toEqual({ value: { malId: 5114 }, isStale: false })
+  })
+
+  it('marks degraded on stale assembly and clears on fresh assembly', async () => {
+    getAnimeByMalId.mockResolvedValue({ malId: 5114 })
+    primeRepos()
+    mapFull.mockReturnValue({ malId: 5114 })
+
+    getMusicByAnimeId.mockResolvedValue({ value: [], isStale: true })
+    await animeFullService.getAnimeFullByMalId(5114)
+    expect(markDegraded).toHaveBeenCalledWith(5114)
+
+    getMusicByAnimeId.mockResolvedValue({ value: [], isStale: false })
+    await animeFullService.getAnimeFullByMalId(5114)
+    expect(clearDegraded).toHaveBeenCalledWith(5114)
   })
 })

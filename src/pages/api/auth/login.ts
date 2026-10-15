@@ -21,6 +21,14 @@ import { withZodValidation } from '@http/with-validation'
 import { withErrorHandling } from '@http/with-error-handling'
 import { loginSchema, type LoginInput } from '@auth/schemas'
 import { credentialsService } from '@auth/services'
+import {
+  checkCredentialLockout,
+  clearCredentialFailures,
+  getClientIpFromHeaders,
+  recordCredentialFailure,
+} from '@auth/services/credential-throttle'
+import { InvalidCredentialsError } from '@auth/errors'
+import { RateLimitedError } from '@shared/errors/app-error'
 
 /**
  * Signs in a user with email and password credentials.
@@ -85,16 +93,45 @@ export const POST: APIRoute = withZodValidation(loginSchema)(
     }: APIContext & {
       validated: { body: LoginInput }
     }) => {
-      const result = await credentialsService.login(
-        validated.body,
-        request.headers
-      )
+      const ip = getClientIpFromHeaders(request.headers)
+      const email = validated.body.email
+      const lockout = await checkCredentialLockout(ip, email)
+      if (lockout.locked) {
+        throw new RateLimitedError(lockout.retryAfter)
+      }
 
-      return {
-        data: result.data,
-        status: 200,
-        meta: {},
-        headers: result.headers,
+      try {
+        const result = await credentialsService.login(
+          validated.body,
+          request.headers
+        )
+
+        await clearCredentialFailures(ip, email)
+
+        const sanitizedData =
+          result.data &&
+          typeof result.data === 'object' &&
+          !Array.isArray(result.data)
+            ? (() => {
+                const { token: _token, ...rest } = result.data as Record<
+                  string,
+                  unknown
+                >
+                return rest
+              })()
+            : result.data
+
+        return {
+          data: sanitizedData,
+          status: 200,
+          meta: {},
+          headers: result.headers,
+        }
+      } catch (error) {
+        if (error instanceof InvalidCredentialsError) {
+          await recordCredentialFailure(ip, email)
+        }
+        throw error
       }
     }
   )

@@ -21,7 +21,12 @@ test.describe('auth session', () => {
     playwright,
     baseURL,
   }, testInfo) => {
-    const context = await playwright.request.newContext({ baseURL })
+    const context = await playwright.request.newContext({
+      baseURL,
+      extraHTTPHeaders: {
+        'x-forwarded-for': `10.210.${testInfo.workerIndex % 256}.${counter % 256}`,
+      },
+    })
     const user = uniqueUser(testInfo.workerIndex)
 
     const register = await context.post('/api/auth/register', { data: user })
@@ -40,14 +45,24 @@ test.describe('auth session', () => {
   }, testInfo) => {
     const user = uniqueUser(testInfo.workerIndex)
 
-    const registerContext = await playwright.request.newContext({ baseURL })
+    const registerContext = await playwright.request.newContext({
+      baseURL,
+      extraHTTPHeaders: {
+        'x-forwarded-for': `10.211.${testInfo.workerIndex % 256}.${counter % 256}`,
+      },
+    })
     expect(
       (await registerContext.post('/api/auth/register', { data: user })).ok()
     ).toBeTruthy()
     await registerContext.dispose()
 
     // Fresh context with no cookies — login must issue its own session.
-    const loginContext = await playwright.request.newContext({ baseURL })
+    const loginContext = await playwright.request.newContext({
+      baseURL,
+      extraHTTPHeaders: {
+        'x-forwarded-for': `10.212.${testInfo.workerIndex % 256}.${counter % 256}`,
+      },
+    })
     const login = await loginContext.post('/api/auth/login', {
       data: { email: user.email, password: user.password },
     })
@@ -58,6 +73,32 @@ test.describe('auth session', () => {
     expect(JSON.stringify(await session.json())).toContain(user.email)
 
     await loginContext.dispose()
+  })
+
+  test('repeated registration trips the per-IP throttle with 429', async ({
+    request,
+  }) => {
+    const tag = Date.now()
+    let lastStatus = 0
+    let lastBody: Record<string, unknown> = {}
+    let lastHeaders: Record<string, string> = {}
+    // AUTH_RATE_LIMIT is 10/min on the shared suite IP (no spoofed header
+    // here by design); the 11th rapid registration must be refused.
+    for (let i = 0; i < 11; i++) {
+      const res = await request.post('/api/auth/register', {
+        data: {
+          email: `e2e-throttle-${tag}-${i}@example.test`,
+          password: 'e2e-password-1234',
+          name: `Throttle ${i}`,
+        },
+      })
+      lastStatus = res.status()
+      lastHeaders = res.headers()
+      lastBody = (await res.json().catch(() => ({}))) as Record<string, unknown>
+    }
+    expect(lastStatus).toBe(429)
+    expect(lastHeaders['retry-after']).toBeDefined()
+    expect(lastBody['code']).toBe('RATE_LIMITED')
   })
 
   test('anonymous request to an authed route is 401', async ({ request }) => {

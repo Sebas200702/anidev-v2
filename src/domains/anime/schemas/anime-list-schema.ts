@@ -40,7 +40,7 @@ export type AnimeSortField = (typeof animeSortFields)[number]
 export type ParentalVariant = 'safe' | 'full'
 
 export const animeFiltersParamsSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
   genre: z.string().optional(),
   status: z.string().optional(),

@@ -62,7 +62,12 @@ export class InvalidCredentialsError extends AuthError {
    * throw new InvalidCredentialsError(originalBetterAuthError)
    * ```
    */
-  constructor(details?: unknown) {
-    super(ErrorCodes.AUTH_INVALID_TOKEN, 'Invalid email or password', details)
+  constructor(details?: unknown, cause?: unknown) {
+    super(
+      ErrorCodes.AUTH_INVALID_TOKEN,
+      'Invalid email or password',
+      details,
+      cause
+    )
   }
 }

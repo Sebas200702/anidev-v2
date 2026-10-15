@@ -39,6 +39,7 @@ import type {
   WithErrorHandlingOptions,
 } from './with-error-handling-types'
 import { ResponseValidationError } from '@shared/errors/app-error'
+import { toLoggableError } from '@shared/errors/error-http-maps'
 import { logger } from '@utils/logger-util'
 
 /**
@@ -91,7 +92,17 @@ export const withErrorHandling = <TContext extends APIContext>(
       return response
     } catch (error) {
       const { payload, headers } = createErrorResponse(error)
-      logger.error({ error, payload, headers }, 'Error in API route')
+      logger.error(
+        {
+          err: toLoggableError(error),
+          status: payload.status,
+          code: payload.code,
+          requestId: (
+            context as APIContext & { locals?: { requestId?: string } }
+          ).locals?.requestId,
+        },
+        'Error in API route'
+      )
       return jsonResponse(payload, headers, payload.status)
     }
   }

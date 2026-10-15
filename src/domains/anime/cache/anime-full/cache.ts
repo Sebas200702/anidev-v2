@@ -16,7 +16,7 @@
  * @see {@link mapAnimeToFullDetails}
  */
 import type { AnimeFullDetails } from '@anime/types'
-import { cacheGet, cacheSet } from '@lib/cache'
+import { cacheDel, cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
 /**
@@ -53,5 +53,45 @@ export const animeFullCache = {
     return cacheSet(this.key(malId), value, {
       ttlSeconds: CacheTtl.Medium,
     })
+  },
+
+  /**
+   * Builds the degraded-provenance marker key for a full entry.
+   *
+   * @param malId - MyAnimeList identifier
+   * @returns `anime:full:{malId}:degraded`
+   */
+  degradedKey(malId: number) {
+    return `${this.key(malId)}:degraded`
+  },
+
+  /**
+   * Marks a cached payload as assembled from degraded sub-reads.
+   *
+   * @param malId - MyAnimeList identifier
+   */
+  async markDegraded(malId: number): Promise<void> {
+    return cacheSet(this.degradedKey(malId), '1', {
+      ttlSeconds: CacheTtl.Medium,
+    })
+  },
+
+  /**
+   * Clears the degraded marker after a fresh recompute.
+   *
+   * @param malId - MyAnimeList identifier
+   */
+  async clearDegraded(malId: number): Promise<void> {
+    return cacheDel(this.degradedKey(malId))
+  },
+
+  /**
+   * Whether the cached payload was assembled from degraded sub-reads.
+   *
+   * @param malId - MyAnimeList identifier
+   * @returns `true` when the marker exists; fail-open `false`
+   */
+  async isDegraded(malId: number): Promise<boolean> {
+    return (await cacheGet<string>(this.degradedKey(malId))) !== null
   },
 }

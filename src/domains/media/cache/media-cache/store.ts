@@ -1,22 +1,20 @@
 /**
  * @module domains/media/cache/media-cache/store
- * @remarks Low-level read/write helpers over the shared cache backend for serialized media
- * payloads. Key construction is the caller's responsibility (see {@link media-cache-keys}).
+ * @remarks Low-level read/write helpers for media payloads. Optimized bytes live
+ * in the bounded local-disk LRU ({@link disk-store}); raw `src` metadata stays
+ * in the shared Redis backend. Key construction is the caller's responsibility
+ * (see {@link media-cache-keys}).
  */
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheTtl } from '@lib/cache/config'
-import {
-  serializeImage,
-  deserializeImage,
-  type CachedOptimizedMedia,
-} from './serialization'
+import { readOptimizedDisk, writeOptimizedDisk } from './disk-store'
 import type { OptimizedMedia } from '@media/types/media-types'
 import type { RawMeta } from './store.types'
 
 export type { RawMeta } from './store.types'
 
 /**
- * Reads and deserializes a cached media payload.
+ * Reads a cached optimized payload from disk.
  *
  * @param cacheKey - Pre-built cache key
  * @returns Cached {@link OptimizedMedia} or `null` when missing or invalid
@@ -30,20 +28,17 @@ export type { RawMeta } from './store.types'
 export const readCachedMedia = async (
   cacheKey: string
 ): Promise<OptimizedMedia | null> => {
-  const cached = await cacheGet<CachedOptimizedMedia | string>(cacheKey)
-
-  return deserializeImage(cached)
+  return readOptimizedDisk(cacheKey)
 }
 
 /**
- * Serializes and writes a media payload under the given key.
+ * Writes an optimized payload to the bounded disk LRU.
  *
- * @remarks TTL defaults to {@link CacheTtl.Long} because optimized bytes are expensive to
- * recompute.
+ * @remarks Best-effort: disk failures degrade to a recompute on the next read
+ * and never break the response.
  * @param cacheKey - Pre-built cache key
  * @param image - Optimized image to cache
  * @returns Resolves when the value is persisted
- * @throws May propagate cache backend write failures
  * @see {@link readCachedMedia} for retrieval
  * @example
  * ```typescript
@@ -54,28 +49,20 @@ export const writeCachedMedia = async (
   cacheKey: string,
   image: OptimizedMedia
 ): Promise<void> => {
-  await cacheSet(cacheKey, serializeImage(image), {
-    ttlSeconds: CacheTtl.Long,
-  })
+  await writeOptimizedDisk(cacheKey, image)
 }
 
 export const readRawMeta = async (
   cacheKey: string
 ): Promise<RawMeta | null> => {
-  const cached = await cacheGet<string>(cacheKey)
-  if (!cached) return null
-  try {
-    return JSON.parse(cached) as RawMeta
-  } catch {
-    return null
-  }
+  return cacheGet<RawMeta>(cacheKey)
 }
 
 export const writeRawMeta = async (
   cacheKey: string,
   meta: RawMeta
 ): Promise<void> => {
-  await cacheSet(cacheKey, JSON.stringify(meta), {
+  await cacheSet(cacheKey, meta, {
     ttlSeconds: CacheTtl.Medium,
   })
 }

@@ -53,6 +53,10 @@ export const animeFullService = {
   ): Promise<StaleResult<AnimeFullDetails>> {
     let musicIsStale = false
     const result = await withStaleCache({
+      // Provenance note: `musicIsStale` is only known when `compute` runs.
+      // Degraded assembly is additionally persisted via the degraded marker
+      // so cache hits keep reporting `isStale: true` until a fresh recompute
+      // clears it (see below).
       key: animeFullCache.key(malId),
       staleKey: `${animeFullCache.key(malId)}:stale`,
       getCache: () => animeFullCache.get(malId),
@@ -89,6 +93,11 @@ export const animeFullService = {
         ])
 
         musicIsStale = animeMusic.isStale
+        if (musicIsStale) {
+          await animeFullCache.markDegraded(malId)
+        } else {
+          await animeFullCache.clearDegraded(malId)
+        }
 
         return mapAnimeToFullDetails({
           anime,
@@ -105,6 +114,10 @@ export const animeFullService = {
       },
     })
 
-    return { value: result.value, isStale: result.isStale || musicIsStale }
+    const degraded = await animeFullCache.isDegraded(malId)
+    return {
+      value: result.value,
+      isStale: result.isStale || musicIsStale || degraded,
+    }
   },
 }

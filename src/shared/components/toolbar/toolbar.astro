@@ -1,0 +1,81 @@
+---
+/**
+ * Toolbar — floating quick-actions, zero client framework.
+ *
+ * @module shared/components/toolbar
+ * @remarks
+ * Presentational Astro component: all markup renders server-side and the
+ * toggle/outside-click/scroll-top behavior lives in the vanilla
+ * {@link initToolbar} controller below. Buttons reuse the global
+ * `.button-*` classes so the toolbar matches the Astro {@link Button}.
+ */
+import {
+  IconArrowsShuffle,
+  IconChevronsUp,
+  IconMenu2,
+  IconPlayerPlay,
+  IconX,
+} from '@tabler/icons-react'
+
+const ICON_CLASS = 'size-5'
+---
+
+<script>
+  import { initToolbar } from './script'
+
+  let controls = initToolbar()
+  document.addEventListener('astro:page-load', () => {
+    controls?.destroy()
+    controls = initToolbar()
+  })
+</script>
+
+<article
+  data-toolbar
+  class="bg-surface-raised border-border absolute right-4 bottom-20 z-100 flex flex-col gap-1 rounded-full border p-1"
+>
+  <button
+    type="button"
+    data-toolbar-top
+    class="button-ghost w-min p-2!"
+    aria-label="Scroll to top"
+    title="Scroll to top"
+  >
+    <IconChevronsUp className={ICON_CLASS} strokeWidth={2} />
+  </button>
+
+  <div data-toolbar-actions class="hidden flex-col gap-1 transition-all ease-in-out">
+    <button
+      type="button"
+      class="button-primary p-2!"
+      aria-label="Play"
+      title="Play"
+    >
+      <IconPlayerPlay className={ICON_CLASS} strokeWidth={2} />
+    </button>
+    <button
+      type="button"
+      class="button-primary p-2!"
+      aria-label="Random anime"
+      title="Random anime"
+    >
+      <IconArrowsShuffle className={ICON_CLASS} strokeWidth={2} />
+    </button>
+  </div>
+
+  <button
+    type="button"
+    data-toolbar-toggle
+    class="button-primary p-2! transition-all duration-500"
+    aria-label="Open menu"
+    title="Open menu"
+    aria-expanded="false"
+  >
+    <span data-toolbar-icon-open>
+      <IconMenu2 className={ICON_CLASS} strokeWidth={2} />
+    </span>
+    <span data-toolbar-icon-close class="hidden">
+      <IconX className={ICON_CLASS} strokeWidth={2} />
+    </span>
+  </button>
+</article>

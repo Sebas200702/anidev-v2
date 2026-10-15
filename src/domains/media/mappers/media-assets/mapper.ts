@@ -6,7 +6,7 @@
 import {
   normalizeAssetSize,
   normalizeMediaId,
-} from '@utils/image/normalize-media-util'
+} from '@media/utils/image/normalize-media-util'
 import type { MediaAsset } from '@media/types/media-types'
 import type { MapAssetsInput, MediaSource } from './types'
 

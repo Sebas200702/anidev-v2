@@ -24,7 +24,7 @@
  * const optimized = await mediaService.optimizeMedia(params, { width: 400, quality: 75 })
  * ```
  */
-import { parseMediaPath } from '@utils/image/parse-media-type-util'
+import { parseMediaPath } from '@media/utils/image/parse-media-type-util'
 import { resolveMedia } from '@media/services/resolve-media'
 import { fetchImageBuffer } from '@media/services/fetch-image-buffer'
 import { optimizeMedia } from '@media/services/optimize-media'
@@ -55,7 +55,7 @@ export const mediaService = {
   /** Alias for {@link optimizeMedia}. */
   optimizeEntityMedia: optimizeMedia,
 
-  /** Resolves and fetches raw media bytes with fs caching. @see {@link fetchRawMedia} */
+  /** Resolves and streams raw media bytes without buffering. @see {@link fetchRawMedia} */
   fetchRawMedia,
 
   /** Optimizes a direct image URL with caching. @see {@link optimizeMediaByUrl} */

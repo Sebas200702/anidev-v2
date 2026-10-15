@@ -13,7 +13,10 @@ interface Props {
   retryHref: string
 }
 
+import { isNavigableUrl } from '@shared/utils/navigable-url'
+
 const { title, message, retryHref } = Astro.props
+const safeHref = isNavigableUrl(retryHref) ? retryHref : undefined
 ---
 
 <section
@@ -35,11 +38,22 @@ const { title, message, retryHref } = Astro.props
     <p class="max-w-[42ch] text-pretty text-base leading-relaxed text-neutral-300">
       {message}
     </p>
-    <a
-      href={retryHref}
-      class="rounded-md border border-brand-600 px-6 py-3 font-semibold text-brand-200 transition-colors hover:border-brand-400 hover:text-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
-    >
-      Retry
-    </a>
+    {
+      safeHref ? (
+        <a
+          href={safeHref}
+          class="rounded-md border border-brand-600 px-6 py-3 font-semibold text-brand-200 transition-colors hover:border-brand-400 hover:text-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-300"
+        >
+          Retry
+        </a>
+      ) : (
+        <span
+          class="rounded-md border border-neutral-700 px-6 py-3 font-semibold text-neutral-400"
+          aria-disabled="true"
+        >
+          Retry
+        </span>
+      )
+    }
   </div>
 </section>

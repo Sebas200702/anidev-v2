@@ -4,13 +4,13 @@
  * @module domains/media/__tests__/mappers/media-assets
  * @remarks
  * Covers source detection by hostname, size/source filtering, and 1-based index selection with
- * clamping. `@utils/image/normalize-media-util` is mocked with pure equivalents so the media
+ * clamping. `@media/utils/image/normalize-media-util` is mocked with pure equivalents so the media
  * repositories (and their DB/config wiring) are not loaded. Follows the repo TDD/unit-test layout.
  */
 import { describe, expect, it, vi } from 'vitest'
 import { MediaSize } from '@media/types/media-types'
 
-vi.mock('@utils/image/normalize-media-util', () => ({
+vi.mock('@media/utils/image/normalize-media-util', () => ({
   normalizeAssetSize: (size: string | null) =>
     size === 'small' || size === 'large' ? size : 'default',
   normalizeMediaId: (mediaId: number | undefined, total: number) => {

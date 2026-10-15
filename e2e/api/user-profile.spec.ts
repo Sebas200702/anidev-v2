@@ -66,6 +66,41 @@ test.describe('user profile lifecycle', () => {
     expect((await updated.json()).data.name).toBe('Alicia')
   })
 
+  test('owner sees private sections; others and anonymous do not', async ({
+    authedRequest,
+    playwright,
+    baseURL,
+    request,
+  }) => {
+    test.skip(
+      profileDrift,
+      'profile.user_id has drifted from text — run against a freshly migrated DB'
+    )
+    const session = await authedRequest.get('/api/auth/session')
+    const userId = (await session.json()).data.user.id
+
+    await authedRequest.post('/api/user', {
+      data: { name: 'Private', lastName: 'Owner', gender: 'other' },
+    })
+
+    const owner = await (await authedRequest.get(`/api/user/${userId}`)).json()
+    expect(owner.data.preferences).toBeDefined()
+    expect(owner.data.history).toBeDefined()
+
+    const stranger = await playwright.request.newContext({ baseURL })
+    const strangerBody = await (
+      await stranger.get(`/api/user/${userId}`)
+    ).json()
+    expect(strangerBody.data.id).toBe(userId)
+    expect(strangerBody.data.preferences).toBeUndefined()
+    expect(strangerBody.data.history).toBeUndefined()
+    await stranger.dispose()
+
+    const anonymous = await (await request.get(`/api/user/${userId}`)).json()
+    expect(anonymous.data.preferences).toBeUndefined()
+    expect(anonymous.data.history).toBeUndefined()
+  })
+
   test('editing another user is forbidden (403)', async ({ authedRequest }) => {
     const res = await authedRequest.patch('/api/user/someone-else-entirely', {
       data: { name: 'Nope' },

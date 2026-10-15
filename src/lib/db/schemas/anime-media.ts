@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent anime entity
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { anime } from '@db/schemas/anime'
 
 /**
@@ -25,12 +25,16 @@ import { anime } from '@db/schemas/anime'
  *
  * @see {@link anime} parent anime row
  */
-export const animeMedia = pgTable('anime_media', {
-  id: serial('id').primaryKey(),
-  animeId: integer('anime_id')
-    .notNull()
-    .references(() => anime.malId, { onDelete: 'cascade' }),
-  mediaType: text('media_type').notNull(),
-  src: text('src').notNull(),
-  size: text('size'),
-})
+export const animeMedia = pgTable(
+  'anime_media',
+  {
+    id: serial('id').primaryKey(),
+    animeId: integer('anime_id')
+      .notNull()
+      .references(() => anime.malId, { onDelete: 'cascade' }),
+    mediaType: text('media_type').notNull(),
+    src: text('src').notNull(),
+    size: text('size'),
+  },
+  (t) => [index('anime_media_anime_id_type_idx').on(t.animeId, t.mediaType)]
+)

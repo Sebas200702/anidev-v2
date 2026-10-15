@@ -1,0 +1,36 @@
+---
+/**
+ * Carousel slide actions: watch-now link and more-info button.
+ *
+ * @module domains/anime/components/anime-carousel/carousel-item-actions
+ * @remarks
+ * Extracted from {@link CarouselItem} so the slide shell stays under the
+ * file-size rule. Presentational only.
+ */
+import { Button } from '@components/button'
+import { IconListDetails, IconPlayerPlay } from '@tabler/icons-react'
+import type { CarouselItemProps as Props } from './types'
+
+const { item } = Astro.props as Props
+---
+
+<ul class="mt-2 flex flex-wrap items-center gap-3" aria-label="Actions">
+  <li>
+    <a href={`/anime/${item.malId}`} class="inline-flex">
+      <Button
+        title="Watch Now"
+        variant="button-primary"
+        Icon={IconPlayerPlay}
+      />
+    </a>
+  </li>
+  <li>
+    <Button
+      variant="button-secondary"
+      title="More Info"
+      ariaLabel="More Info"
+      Icon={IconListDetails}
+      id="play-trailer-btn"
+    />
+  </li>
+</ul>

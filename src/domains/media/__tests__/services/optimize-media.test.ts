@@ -34,7 +34,7 @@ vi.mock('@lib/cache', () => ({
     return value
   },
 }))
-vi.mock('@utils/image/optimize-util', () => ({
+vi.mock('@media/utils/image/optimize-util', () => ({
   normalizeOptimizeOptions: (o: unknown) => o,
 }))
 vi.mock('@media/cache/media-cache', () => ({

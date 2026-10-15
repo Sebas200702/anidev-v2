@@ -60,3 +60,82 @@ When the cache backend is unavailable, the cache operations SHALL NOT propagate 
 #### Scenario: Read-through falls back to database
 - **WHEN** `withCache` runs while the cache is down
 - **THEN** the compute delegate (database) produces the result and the wrapper returns it without error
+
+### Amended 2026-10-15 (`platform-audit-and-stabilization`)
+
+### Requirement: Read-through wrapper retained
+
+The system SHALL retain the `withCache` read-through wrapper for compute-on-miss with optional caching, and MUST NOT write values to the cache that fail the consumer's declared response contract.
+
+#### Scenario: Cache miss triggers compute
+
+- **WHEN** `withCache` runs and the input key misses
+- **THEN** the compute delegate runs, returning the fresh result and storing it unless the caller opts out
+
+#### Scenario: Invalid payload is not persisted
+
+- **WHEN** a computed payload fails the declared response schema for that read
+- **THEN** the value is returned to the error path once and is not stored in the cache
+
+### Requirement: JSON-serialized cache primitives
+
+The cache primitives SHALL store values as JSON strings and deserialize them on read, preserving the existing `cacheGet`/`cacheSet`/`cacheDel` semantics, and cache keys built from structured inputs SHALL be canonical (stable field order and normalized values) so equivalent requests hit the same entry.
+
+#### Scenario: Round-trip a cached value
+
+- **WHEN** a caller sets a value with a TTL and then reads it back before expiry
+- **THEN** the value round-trips with the same serialized/deserialized shape
+
+#### Scenario: Equivalent filter objects share one key
+
+- **WHEN** two requests carry the same filters with different object property insertion order
+- **THEN** both resolve to the same cache key and the second read is a hit
+
+#### Scenario: Miss returns null
+
+- **WHEN** a caller reads a key that does not exist
+- **THEN** `cacheGet` resolves `null`, making the caller fall back to source-of-truth compute
+
+#### Scenario: TTL expiry honored
+
+- **WHEN** a value is stored with a TTL in seconds
+- **THEN** the key expires after that duration and subsequent reads return a miss
+
+### Requirement: Dragonfly compatibility
+
+The cache client SHALL connect to a Redis-compatible backend (Dragonfly) using standard Redis protocol commands, replacing the previous HTTP REST transport.
+
+#### Scenario: Commands use native Redis semantics
+
+- **WHEN** the cache performs operations
+- **THEN** it uses standard Redis protocol semantics accepted by Dragonfly
+
+### Requirement: Cache failure degrades to fallback
+
+When the cache backend is unavailable, the cache operations SHALL NOT propagate errors to callers; reads degrade to a miss and writes become no-ops so the application falls back to the source of truth (the database).
+
+#### Scenario: Read degrades to miss on outage
+
+- **WHEN** the cache backend is unreachable and a caller reads a key
+- **THEN** the read resolves `null` (a cache miss) without throwing, so the caller falls back to the database
+
+#### Scenario: Write becomes no-op on outage
+
+- **WHEN** the cache backend is unreachable and a caller writes a value
+- **THEN** the write completes without throwing and does not persist, while the application continues normally
+
+#### Scenario: Read-through falls back to database
+
+- **WHEN** `withCache` runs while the cache is down
+- **THEN** the compute delegate (database) produces the result and the wrapper returns it without error
+
+## ADDED Requirements
+
+### Requirement: Cache namespaces never collide across features
+
+Cache keys for distinct features MUST use distinct prefixes, and a prefix purge for one feature MUST NOT match another feature's keys.
+
+#### Scenario: Carousel invalidation does not touch list caches
+
+- **WHEN** an operator invalidates the carousel cache by prefix
+- **THEN** list cache entries under `anime:list:` patterns remain untouched

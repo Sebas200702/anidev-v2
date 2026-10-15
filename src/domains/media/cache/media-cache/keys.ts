@@ -3,7 +3,7 @@
  * @remarks Builds deterministic cache keys from semantic media paths or normalized source URLs
  * combined with optimization options, so distinct transform requests never collide.
  */
-import type { OptimizeOptions } from '@utils/image/optimize-util'
+import type { OptimizeOptions } from '@media/utils/image/optimize-util'
 import type { SemanticMediaPath } from '@media/types/media-types'
 
 /**
@@ -50,7 +50,9 @@ export const buildKey = (
  * ```
  */
 export const buildRawKey = (params: SemanticMediaPath): string => {
-  return `raw:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
+  const version = params.version ?? 'default'
+  const resolution = params.resolution ?? 'default'
+  return `raw:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:v${version}:r${resolution}`
 }
 
 /**
@@ -62,5 +64,7 @@ export const buildRawKey = (params: SemanticMediaPath): string => {
  * @returns Cache key string
  */
 export const buildRawMetaKey = (params: SemanticMediaPath): string => {
-  return `meta:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}`
+  const version = params.version ?? 'default'
+  const resolution = params.resolution ?? 'default'
+  return `meta:${params.entityType}:${params.entityId}:${params.mediaType}:${params.mediaSize}:${params.mediaId ?? 1}:v${version}:r${resolution}`
 }

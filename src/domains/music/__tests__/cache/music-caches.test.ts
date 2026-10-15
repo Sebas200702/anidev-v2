@@ -7,6 +7,7 @@
  * cache client. `@lib/cache` is mocked. Follows the repo TDD/unit-test layout.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { stableStringify } from '@lib/cache/stable-stringify'
 import type { MusicListFilters } from '@music/types'
 
 vi.mock('@config/env', () => ({
@@ -48,7 +49,12 @@ describe('musicListCache', () => {
 
   it('encodes filters into the key deterministically', () => {
     expect(musicListCache.key(filters)).toBe(musicListCache.key(filters))
-    expect(musicListCache.key(filters)).toContain(JSON.stringify(filters))
+    expect(musicListCache.key(filters)).toContain(stableStringify(filters))
+  })
+
+  it('hits the same key for permuted filter field order', () => {
+    const permuted = { limit: 10, page: 1 } as MusicListFilters
+    expect(musicListCache.key(permuted)).toBe(musicListCache.key(filters))
   })
 
   it('delegates get/set with the filter key', async () => {

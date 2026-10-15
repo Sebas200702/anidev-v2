@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/character} for parent character entity
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { character } from '@db/schemas/character'
 
 /**
@@ -22,12 +22,21 @@ import { character } from '@db/schemas/character'
  * - `src` — Resource URL or path.
  * - `size` — Optional variant descriptor.
  */
-export const characterMedia = pgTable('character_media', {
-  id: serial('id').primaryKey(),
-  characterId: integer('character_id')
-    .notNull()
-    .references(() => character.malId, { onDelete: 'cascade' }),
-  mediaType: text('media_type').notNull(),
-  src: text('src').notNull(),
-  size: text('size'),
-})
+export const characterMedia = pgTable(
+  'character_media',
+  {
+    id: serial('id').primaryKey(),
+    characterId: integer('character_id')
+      .notNull()
+      .references(() => character.malId, { onDelete: 'cascade' }),
+    mediaType: text('media_type').notNull(),
+    src: text('src').notNull(),
+    size: text('size'),
+  },
+  (t) => [
+    index('character_media_character_id_type_idx').on(
+      t.characterId,
+      t.mediaType
+    ),
+  ]
+)

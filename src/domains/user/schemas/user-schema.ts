@@ -68,7 +68,7 @@ export const userProfileSchema = z.object({
   name: z.string().min(1),
   lastName: z.string().min(1),
   birthday: z.string().optional(),
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum(['male', 'female', 'other']).optional(),
   preferences: preferencesSchema.optional(),
   history: historySchema.optional(),
 })

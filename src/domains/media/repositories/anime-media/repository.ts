@@ -60,12 +60,16 @@ export const animeMediaRepository = {
    * const media = await animeMediaRepository.getMediaByAnimeIds([5114, 9253])
    * ```
    */
-  async getMediaByAnimeIds(animeIds: number[]): Promise<MediaAsset[]> {
+  async getMediaByAnimeIds(
+    animeIds: number[]
+  ): Promise<(MediaAsset & { animeId: number })[]> {
     try {
-      return await db
+      return (await db
         .select()
         .from(animeMedia)
-        .where(inArray(animeMedia.animeId, animeIds))
+        .where(inArray(animeMedia.animeId, animeIds))) as (MediaAsset & {
+        animeId: number
+      })[]
     } catch (error) {
       throw dbError('[GET_MEDIA_BY_ANIME_IDS]', { animeIds }, error)
     }

@@ -1,12 +1,12 @@
 /**
  * @module domains/media/cache/media-cache/cache
  * @remarks Read-through cache facade for optimized media image buffers. Composes deterministic
- * key construction ({@link media-cache-keys}), base64 serialization
- * ({@link media-cache-serialization}), and the cache store ({@link media-cache-store}).
+ * key construction ({@link media-cache-keys}) with the bounded local-disk LRU
+ * ({@link disk-store}) for bytes and the shared Redis backend for raw metadata.
  *
  * Used by {@link mediaService.optimizeMedia} and {@link mediaService.optimizeMediaByUrl} via
- * {@link withCache}. TTL defaults to {@link CacheTtl.Long} because optimized bytes are expensive
- * to recompute.
+ * {@link withCache}. Optimized bytes are expensive to recompute, so they persist
+ * on disk under {@link OPTIMIZED_DISK_BUDGET_BYTES} with LRU eviction.
  *
  * @see {@link mediaService} for the read-through consumer
  * @example
@@ -17,7 +17,7 @@
  * if (!hit) await mediaCache.set(parsedPath, options, optimized)
  * ```
  */
-import type { OptimizeOptions } from '@utils/image/optimize-util'
+import type { OptimizeOptions } from '@media/utils/image/optimize-util'
 import type {
   OptimizedMedia,
   SemanticMediaPath,

@@ -1,4 +1,4 @@
-FROM oven/bun:1.2 AS base
+FROM oven/bun:1.3 AS base
 WORKDIR /app
 
 FROM base AS install
@@ -6,10 +6,8 @@ COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile --ignore-scripts
 
 FROM base AS build
-# Build-time switch: ASTRO_ADAPTER=bun emits a standalone Bun server
-# (dist/server/entry.mjs); the default (Vercel) targets serverless deploy.
-ARG ASTRO_ADAPTER
-ENV ASTRO_ADAPTER=$ASTRO_ADAPTER
+# Standalone server output is always emitted by @astrojs/node now; no adapter
+# build-time switch needed.
 COPY --from=install /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
@@ -19,10 +17,15 @@ ARG DATABASE_URL=postgres://x:x@localhost:5432/x
 ARG REDIS_URL=redis://localhost:6379
 ARG APP_BASE_URL=http://localhost:3000
 ARG BETTER_AUTH_SECRET=build-time-placeholder-at-least-32-chars
+# Optional: bake the browser error-capture DSN into the client bundle. Empty by
+# default (no browser reporting); pass `--build-arg PUBLIC_SENTRY_DSN=…` to
+# enable it — see docs/monitoring.md.
+ARG PUBLIC_SENTRY_DSN=
 ENV DATABASE_URL=$DATABASE_URL \
     REDIS_URL=$REDIS_URL \
     APP_BASE_URL=$APP_BASE_URL \
-    BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+    BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET \
+    PUBLIC_SENTRY_DSN=$PUBLIC_SENTRY_DSN
 RUN bun run build
 
 FROM base AS runtime
@@ -31,12 +34,14 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
-RUN addgroup --system --gid 1001 bunjs \
-  && adduser --system --uid 1001 astro
+RUN groupadd --system --gid 1001 bunjs \
+  && useradd --system --uid 1001 --gid bunjs astro
 
+# Runtime installs production dependencies only (devDependencies stay in the
+# build stage); the standalone server needs no build tooling to run.
+COPY --from=build /app/package.json /app/bun.lock* ./
+RUN bun install --production --frozen-lockfile --ignore-scripts
 COPY --from=build --chown=astro:bunjs /app/dist ./dist
-COPY --from=build --chown=astro:bunjs /app/node_modules ./node_modules
-COPY --from=build --chown=astro:bunjs /app/package.json ./package.json
 
 USER astro
 

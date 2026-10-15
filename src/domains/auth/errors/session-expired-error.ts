@@ -62,7 +62,12 @@ export class SessionExpiredError extends AuthError {
    * throw new SessionExpiredError(originalBetterAuthError)
    * ```
    */
-  constructor(details?: unknown) {
-    super(ErrorCodes.AUTH_SESSION_EXPIRED, 'Session has expired', details)
+  constructor(details?: unknown, cause?: unknown) {
+    super(
+      ErrorCodes.AUTH_SESSION_EXPIRED,
+      'Session has expired',
+      details,
+      cause
+    )
   }
 }

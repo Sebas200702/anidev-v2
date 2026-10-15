@@ -7,6 +7,7 @@
  * the key is a pure function of the normalized filters (no per-call or per-user
  * entropy), so results are never keyed by — or leaked across — users.
  */
+import { stableStringify } from '@lib/cache/stable-stringify'
 import { describe, expect, it, vi } from 'vitest'
 import type { AnimeFilters } from '@anime/types'
 
@@ -51,9 +52,15 @@ describe('animeListCache.key — parental variant isolation', () => {
   it('is fully determined by the filters — no user identifier embedded', () => {
     const safe = filters('safe')
     const key = animeListCache.key(safe)
-    // The key is `${prefix}:${JSON.stringify(filters)}`; reconstructing it from
-    // the same filters must match exactly, so no hidden per-user entropy exists.
-    expect(key.endsWith(JSON.stringify(safe))).toBe(true)
+    // The key is `${prefix}:${stableStringify(filters)}`; reconstructing it
+    // from the same filters must match exactly, so no hidden per-user entropy
+    // exists. Permuted field order must hit the same key.
+    expect(key.endsWith(stableStringify(safe))).toBe(true)
     expect(key).not.toMatch(/user/i)
+    expect(animeListCache.key({ ...safe, page: 2 })).not.toBe(key)
+    const permuted = Object.fromEntries(
+      Object.entries(safe).reverse()
+    ) as typeof safe
+    expect(animeListCache.key(permuted)).toBe(key)
   })
 })

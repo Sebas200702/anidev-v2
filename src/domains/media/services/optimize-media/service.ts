@@ -9,7 +9,7 @@ import { InfraError } from '@shared/errors/app-error'
 import {
   normalizeOptimizeOptions,
   type OptimizeOptions,
-} from '@utils/image/optimize-util'
+} from '@media/utils/image/optimize-util'
 import { mediaServiceConfig } from '@media/config'
 import { mediaCache } from '@media/cache/media-cache'
 import { optimizeMediaImageBuffer } from '@media/services/image-optimizer'

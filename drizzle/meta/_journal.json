@@ -15,6 +15,13 @@
       "when": 1786762135119,
       "tag": "0001_search_text_trgm_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792077182474,
+      "tag": "0002_freezing_natasha_romanoff",
+      "breakpoints": true
     }
   ]
 }

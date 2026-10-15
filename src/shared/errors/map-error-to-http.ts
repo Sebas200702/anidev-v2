@@ -3,82 +3,49 @@
  *
  * @module shared/errors/map-error-to-http
  * @remarks
- * This module is the single bridge between the {@link BaseError} hierarchy and HTTP API responses.
- * Route wrappers such as {@link withErrorHandling} and {@link withZodValidation} rely on
- * {@link mapErrorToHttp} (directly or via {@link createErrorResponse}) so clients always receive
- * a consistent `{ code, message, meta }` error body shape. Per-class mapping helpers live in
- * {@link error-http-maps}; payload types in {@link http-error-types}.
+ * Thin dispatcher over the per-class helpers in {@link error-http-maps}:
+ * validation/auth/domain map inline, server-side classes delegate. Sentry
+ * capture happens here once per error so helpers stay capture-free.
  *
- * **HTTP status mapping overview**
- *
- * | Status | Error class / condition | Error codes (representative) |
- * |--------|-------------------------|------------------------------|
- * | 400 | {@link ValidationError} | `VALIDATION_ERROR` |
- * | 400 | {@link DomainError} (non-not-found) | `ANIME_INVALID_ID`, `MUSIC_INVALID_ID`, `USER_INVALID_ID`, `INVALID_IMAGE_PATH`, … |
- * | 401 | {@link AuthError} (unauthorized) | `AUTH_REQUIRED`, `AUTH_INVALID_TOKEN`, `AUTH_SESSION_EXPIRED` |
- * | 403 | {@link AuthError} (forbidden) | `AUTH_FORBIDDEN` |
- * | 404 | {@link DomainError} (not found) | `ANIME_NOT_FOUND`, `MUSIC_NOT_FOUND`, `WATCH_STATE_NOT_FOUND`, `COLLECTION_NOT_FOUND`, `USER_NOT_FOUND`, `MEDIA_NOT_FOUND` |
- * | 503 | {@link InfraError} | `DB_ERROR`, `CACHE_ERROR`, `EXTERNAL_API_ERROR` |
- * | 500 | Unknown / non-{@link BaseError} throwables | `UNKNOWN_ERROR` |
- *
- * **Sentry behavior**
- * - Every handled error class is reported via {@link captureError} before the response is built.
- * - Client-caused errors — {@link ValidationError}, {@link AuthError}, {@link DomainError} —
- *   are reported at `warning` level.
- * - Server errors — {@link InfraError} and unknown throwables — are reported at `error` level.
- *
- * **Response body shape** (`HttpErrorBody`)
- * - `code` — stable {@link ErrorCode} string from the error instance.
- * - `message` — human-readable text; for {@link InfraError} and unknown errors the client sees a generic
- *   `"Service unavailable"` / `"Internal server error"` while the original message remains in logs.
- * - `meta.details` — optional structured context from `error.details` (validation issues, entity ids, etc.).
- *
- * **Headers**
- * - {@link InfraError} responses include `Retry-After` so clients and load balancers know when to retry.
+ * **Dispatch order** (first match wins): `ValidationError` → `AuthError` →
+ * `DomainError` → `RateLimitedError` → `ResponseValidationError` →
+ * `InfraError` → unknown. Client-caused classes capture at `warning`, server
+ * classes and unknowns at `error`.
  *
  * @see {@link mapErrorToHttp} — public entry point
- * @see {@link createErrorResponse} — wraps this mapper into the API envelope
- * @see {@link withZodValidation} — returns 400 validation responses using the same body shape
- * @see {@link ErrorCodes} — full list of stable error identifiers
+ * @see {@link createErrorResponse} — API envelope wrapper
+ * @see {@link withErrorHandling} — Astro route wrapper using envelopes
  */
 
 import {
   AuthError,
   DomainError,
   InfraError,
+  RateLimitedError,
   ResponseValidationError,
   ValidationError,
 } from '@shared/errors/app-error'
 import { captureError } from '@shared/errors/capture-error'
-import { ErrorCodes } from '@shared/errors/codes'
 import type { HttpErrorResponse } from '@shared/errors/http-error-types'
 import {
   buildAppErrorBody,
   mapAuthErrorToHttp,
   mapDomainErrorToHttp,
+  mapInfraErrorToHttp,
+  mapRateLimitedErrorToHttp,
+  mapResponseValidationErrorToHttp,
+  mapUnknownToHttp,
+  toLoggableError,
 } from '@shared/errors/error-http-maps'
 import { logger } from '@utils/logger-util'
 
-/** Seconds a client/load balancer should wait before retrying a 503 response. */
-export const INFRA_RETRY_AFTER_SECONDS = 30
+export { INFRA_RETRY_AFTER_SECONDS } from '@shared/errors/error-http-maps'
 
 /**
  * Converts a thrown value into an HTTP status and structured JSON error body.
  *
  * @param error - Any value thrown from route handlers, services, or middleware
  * @returns {@link HttpErrorResponse} with status and `body` suitable for `Response.json` / envelope serialization
- *
- * @remarks
- * **Dispatch order** (first match wins):
- * 1. {@link ValidationError} → 400, `warn` log, Sentry capture at `warning`
- * 2. {@link AuthError} → 401 / 403 via {@link mapAuthErrorToHttp}, or fall through if unhandled; Sentry capture at `warning`
- * 3. {@link DomainError} → 404 / 400 via {@link mapDomainErrorToHttp}; Sentry capture at `warning`
- * 4. {@link InfraError} → 503, `error` log, Sentry capture at `error`, generic client message, `Retry-After`
- * 5. Everything else → 500, `error` log, Sentry capture at `error`, `UNKNOWN_ERROR` code
- *
- * **Client-visible messages on 5xx**
- * - {@link InfraError}: `message` is replaced with `"Service unavailable"`; original message and `details` stay in logs/Sentry.
- * - Unknown: `code` is `UNKNOWN_ERROR`, `message` is `"Internal server error"`, no `meta.details`.
  *
  * @example
  * ```typescript
@@ -95,7 +62,7 @@ export const INFRA_RETRY_AFTER_SECONDS = 30
  */
 export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof ValidationError) {
-    logger.warn({ err: error }, 'Validation error')
+    logger.warn({ err: toLoggableError(error) }, 'Validation error')
     captureError(error, 'warning')
     return {
       status: 400,
@@ -116,41 +83,21 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
     return mapDomainErrorToHttp(error)
   }
 
-  if (error instanceof ResponseValidationError) {
-    logger.error({ err: error }, 'Response validation error')
-    captureError(error)
+  if (error instanceof RateLimitedError) {
+    captureError(error, 'warning')
+    return mapRateLimitedErrorToHttp(error)
+  }
 
-    return {
-      status: 500,
-      body: {
-        code: error.code,
-        message: 'Internal server error',
-      },
-    }
+  if (error instanceof ResponseValidationError) {
+    captureError(error)
+    return mapResponseValidationErrorToHttp(error)
   }
 
   if (error instanceof InfraError) {
-    logger.error({ err: error }, 'Infra error')
     captureError(error)
-
-    return {
-      status: 503,
-      headers: {
-        'Retry-After': String(INFRA_RETRY_AFTER_SECONDS),
-      },
-      body: {
-        code: error.code,
-        message: 'Service unavailable',
-        meta: { details: error.details },
-      },
-    }
+    return mapInfraErrorToHttp(error)
   }
 
-  logger.error({ err: error }, 'Unknown error')
   captureError(error)
-
-  return {
-    status: 500,
-    body: { code: ErrorCodes.UNKNOWN_ERROR, message: 'Internal server error' },
-  }
+  return mapUnknownToHttp(error)
 }

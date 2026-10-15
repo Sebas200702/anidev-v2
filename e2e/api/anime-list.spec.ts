@@ -49,4 +49,14 @@ test.describe('GET /api/anime', () => {
     expect(body.error).toBe('Invalid request')
     expect(body.meta.details.issues.length).toBeGreaterThan(0)
   })
+
+  test('rejects page over the 10000 bound with 400', async ({ request }) => {
+    const res = await request.get('/api/anime?page=10001')
+    expect(res.status()).toBe(400)
+  })
+
+  test('serves hardening headers on API responses', async ({ request }) => {
+    const res = await request.get('/api/anime?page=1&limit=1')
+    expect(res.headers()['x-request-id']).toBeDefined()
+  })
 })

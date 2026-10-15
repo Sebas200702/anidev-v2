@@ -36,7 +36,7 @@ export const animeCharacterRepository = {
     animeId: number
   ): Promise<AnimeCharacterDB[]> {
     try {
-      return db
+      return await db
         .select()
         .from(animeCharacter)
         .where(eq(animeCharacter.animeId, animeId))

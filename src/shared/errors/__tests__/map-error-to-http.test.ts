@@ -56,7 +56,7 @@ describe('mapErrorToHttp infra errors', () => {
     expect(headers?.['Retry-After']).toBeDefined()
     expect(body.code).toBe(ErrorCodes.DB_ERROR)
     expect(body.message).toMatch(/service unavailable/i)
-    expect(body.meta?.details).toMatchObject({ malId: 1 })
+    expect(body.meta?.details).toBeUndefined()
   })
 
   it('maps CACHE_ERROR to 503 with its code', () => {

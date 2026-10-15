@@ -38,13 +38,54 @@
 
 import { ErrorCodes } from '@shared/errors/codes'
 import { ValidationError } from '@shared/errors/app-error'
-import { mapErrorToHttp } from '@shared/errors/map-error-to-http'
+import { createErrorResponse } from '@shared/http/create-api-response-util'
+import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import type { APIContext } from 'astro'
 import type { ZodType } from 'zod'
 import type {
   ValidatedHandler,
   ValidationRequestData,
 } from './with-validation-types'
+
+const MAX_REQUEST_BODY_BYTES = 1024 * 1024
+
+const readBoundedBody = async (request: Request): Promise<unknown> => {
+  if (!request.body) return null
+
+  const reader = request.body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    if (value) {
+      total += value.byteLength
+      if (total > MAX_REQUEST_BODY_BYTES) {
+        await reader.cancel()
+        throw new Error('REQUEST_TOO_LARGE')
+      }
+      chunks.push(value)
+    }
+  }
+
+  if (total === 0) return null
+
+  const bytes = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+
+  const text = new TextDecoder().decode(bytes)
+  if (!text.trim()) return null
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    return null
+  }
+}
 
 /**
  * Returns middleware that validates `params`, `query`, and `body`, then calls the handler with `validated` data.
@@ -84,13 +125,62 @@ export const withZodValidation = <T>(schema: ZodType<T>) => {
     return async (context: APIContext) => {
       const url = new URL(context.request.url)
 
+      const method = context.request.method.toUpperCase()
+      const isReadMethod = method === 'GET' || method === 'HEAD'
+
+      // Bound the request body BEFORE parsing JSON, including chunked
+      // payloads without a Content-Length header.
+      if (!isReadMethod) {
+        const contentLengthHeader =
+          context.request.headers.get('content-length')
+        if (contentLengthHeader !== null) {
+          const declaredSize = Number(contentLengthHeader)
+          if (
+            Number.isFinite(declaredSize) &&
+            declaredSize > MAX_REQUEST_BODY_BYTES
+          ) {
+            return new Response(
+              JSON.stringify({
+                data: null,
+                status: 413,
+                error: 'Request too large',
+                code: ErrorCodes.REQUEST_TOO_LARGE,
+                meta: {},
+              }),
+              {
+                status: 413,
+                headers: { 'Content-Type': 'application/json' },
+              }
+            )
+          }
+        }
+      }
+
+      let body: unknown = null
+      if (!isReadMethod) {
+        try {
+          body = await readBoundedBody(context.request)
+        } catch {
+          return new Response(
+            JSON.stringify({
+              data: null,
+              status: 413,
+              error: 'Request too large',
+              code: ErrorCodes.REQUEST_TOO_LARGE,
+              meta: {},
+            }),
+            {
+              status: 413,
+              headers: { 'Content-Type': 'application/json' },
+            }
+          )
+        }
+      }
+
       const data: ValidationRequestData = {
         params: context.params,
         query: Object.fromEntries(url.searchParams.entries()),
-        body:
-          context.request.method === 'GET'
-            ? null
-            : await context.request.json().catch(() => null),
+        body,
       }
 
       const result = schema.safeParse(data)
@@ -102,18 +192,8 @@ export const withZodValidation = <T>(schema: ZodType<T>) => {
           { issues: result.error.issues }
         )
 
-        const { status, body } = mapErrorToHttp(error)
-        const payload = {
-          data: null,
-          status,
-          error: body.message ?? 'Unexpected error',
-          meta: body.meta ?? {},
-        }
-
-        return new Response(JSON.stringify(payload), {
-          status,
-          headers: { 'Content-Type': 'application/json' },
-        })
+        const { payload, headers } = createErrorResponse(error)
+        return jsonResponse(payload, headers, payload.status)
       }
 
       // Attach `validated` without copying the context. Spreading the context

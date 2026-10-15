@@ -12,8 +12,9 @@
  */
 
 export { logger } from './logger-util'
-// Image and string utilities are available via their respective sub-path barrels:
-//   import { normalizeImageUrl } from '@shared/utils/image'
+// String utilities are available via their sub-path barrel:
 //   import { normalizeString } from '@shared/utils/string'
+// Media image helpers live in the media domain:
+//   import { parseMediaPath } from '@media/utils/image'
 
 export { getStatusColor, getStatusDotClass } from './get-status-color'

@@ -22,7 +22,7 @@ const { resolveAssets, mapFiltered, mapIndexed } = vi.hoisted(() => ({
   mapIndexed: vi.fn(),
 }))
 
-vi.mock('@utils/image/normalize-media-util', () => ({
+vi.mock('@media/services/resolve-media-assets', () => ({
   resolveMediaAssets: resolveAssets,
 }))
 vi.mock('@media/mappers/media-assets', () => ({

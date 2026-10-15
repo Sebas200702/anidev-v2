@@ -41,7 +41,7 @@ Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
 están sincronizados en `openspec/specs/`.
 
 **Changes planificados listos para ejecutar (`openspec/changes/`):**
-- `foundation-hardening-and-media-streaming` — Etapas 1 y 2 de auditoría (privacidad en `/api/user/:userId`, streaming HTTP `Range` `206` + guarda SSRF, fix de `buildRawMetaKey`, caché de imágenes en disco acotado, índices PostgreSQL + límites de `pg.Pool`, frontera `@shared` $\not\to$ `@media`, middleware de headers/rate-limit/sesión ligera y búsqueda en `anime_title_synonym`).
+- `platform-audit-and-stabilization` — Auditoría integral 2026-10-14 + estabilización (fusión de la anterior `foundation-hardening-and-media-streaming`): privacidad en `/api/user/:userId`, guardas SSRF + streaming HTTP `Range` `206` + caché de imágenes en disco acotado, claves `buildRawMetaKey` con versión/resolución, rate-limiting (API/media/credenciales), cabeceras de seguridad reales + CSP, XSS de `/showcase`, índices PostgreSQL + `pg.Pool` acotado, transacción de historial, observabilidad (request-id + access logs + redacción), shell sin islas React + presupuesto de bundle, y gates de dependencias/cobertura en CI.
 - `relational-lists-and-watch-progress` — Tablas relacionales `user_anime_list` y `watch_progress`, reconciliación 3-way con `isNewerOrBetter` (tolerancia 1 s), completado automático al $\ge 90\%$ y carrusel *Continue Watching*.
 - `resilient-playback-and-aniskip` — Motor `PlaybackCoordinator` (leases por generación + `AbortController` + continuidad de segundo exacto), `HlsController` con *fast-probe* paralelo (1.5 s) y failover automático, esquema `episode_source` enriquecido e integración con **AniSkip** + catálogo musical OP/ED.
 - `watch2gether-synchronized-rooms` — Salas sincronizadas **Watch2Gether** para anime y música (`public`, `invite`, `password` con `password_hash` server-only), reloj en tiempo real y Pub/Sub en Dragonfly + SSE, corrección de deriva en 3 niveles ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`), cola compartida, chat, reacciones y encuestas.
@@ -73,7 +73,7 @@ Reglas transversales en **todas** las fases:
 
 Desbloquea todo lo demás. Estabiliza la base y corrige los hallazgos críticos de
 la auditoría técnica antes de escalar las fases de producto.
-_(Change: `foundation-hardening-and-media-streaming` y `component-showcase`.)_
+_(Change: `platform-audit-and-stabilization` y `component-showcase`.)_
 
 - [x] Terminar changes abiertos: provider stack, response-schema wrapper, unit folders, frontend-flow, user writes (todos archivados).
 - [ ] **Privacidad en perfiles (`T-01`)**: proyectar `preferences` e `history.watchedAnimes` como `owner-only` en `GET /api/user/:userId` (incluso en *cache hit*).
@@ -82,7 +82,7 @@ _(Change: `foundation-hardening-and-media-streaming` y `component-showcase`.)_
 - [ ] **Índices PostgreSQL, FKs y `pg.Pool` acotado (`T-05`, `T-06`)**: índices B-tree en todas las FKs de tablas `*_media`/`music_*` y columnas de filtro/sort de `anime`, índice único en `profile.user_id`, GIN `pg_trgm` en `anime_title_synonym.title`, `ON DELETE CASCADE` en uniones de catálogo, límite `max: 20` en `pg.Pool` y reubicación de `resolveMediaAssets` fuera de `src/shared/` con regla en `biome.json`.
 - [ ] **Middleware transversal (`T-08`)**: `x-request-id`, rate-limiting en Dragonfly, sesión ligera (saltar DB en `/media/*`, `/api/health*`, `/showcase` y cachear sesión 60 s en Dragonfly), CSP + headers de seguridad (`nosniff`, `DENY`, `Referrer-Policy`).
 - [ ] **SEO base**: sitemaps segmentados (anime, música, géneros, estáticos) + `robots.txt`.
-- [ ] **Patrón de UI documentado y `/showcase` operativo** (living docs — change `component-showcase`).
+- [x] **Patrón de UI documentado y `/showcase` operativo** (living docs — change `component-showcase`, archivado 2026-10-15).
 
 **Salida:** base blindada en seguridad, memoria y latencia SQL + patrón de UI repetible.
 
@@ -92,7 +92,7 @@ _(Change: `foundation-hardening-and-media-streaming` y `component-showcase`.)_
 
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
-- [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `foundation-hardening-and-media-streaming`.)_
+- [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `platform-audit-and-stabilization`.)_
 - [ ] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
   banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
   el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
@@ -117,11 +117,19 @@ _(Change semilla: `relational-lists-and-watch-progress`.)_
 
 **Salida:** cuenta con estado propio e integridad referencial; datos estructurados que alimentan la IA.
 
+> **Decisión documentada (G.6, 2026-10-15): verificación por email fuera de
+> alcance de este cambio.** El registro neutraliza la enumeración (respuesta
+> genérica ante duplicados) y el throttle frena el abuso, pero no hay flujo
+> de verificación (token por correo, expiración, reenvío). Se implementa en
+> un change dedicado cuando exista proveedor SMTP (Fase 2, junto a OAuth),
+> no como parte del endurecimiento. Pre-publicación quedan además: un pase
+> DAST y una prueba de carga (ver diseño §8).
+
 ---
 
 ### Fase 3 — Música y player · _joya de v1, dominio autocontenible_
 
-_(Changes relacionados: `foundation-hardening-and-media-streaming` para Range 206 y `resilient-playback-and-aniskip` para `PlaybackCoordinator`.)_
+_(Changes relacionados: `platform-audit-and-stabilization` para Range 206 y `resilient-playback-and-aniskip` para `PlaybackCoordinator`.)_
 
 - [ ] **Player persistente** — `transition:persist` + `client:idle`, conectado a Nano Stores / Zustand y al **`PlaybackCoordinator`** compartido (cancelación por generación `PlaybackLease` + conservación exacta del segundo actual al conmutar modo Audio ↔ Vídeo o resolución).
 - [ ] **Playlist** — add/remove con toast + undo, siguiente/anterior, shuffle, repeat, limpiar.

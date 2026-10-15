@@ -9,6 +9,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InfraError } from '@shared/errors/app-error'
+import { ErrorCodes } from '@shared/errors/codes'
 import {
   chainResolving,
   throwOnQuery,
@@ -76,6 +77,13 @@ describe('musicRepository', () => {
     await expect(musicRepository.findByType('OP')).rejects.toBeInstanceOf(
       InfraError
     )
+  })
+
+  it('wraps async rejections as DB_ERROR (missing-await regression)', async () => {
+    select.mockReturnValue(Promise.reject(new Error('connection lost')))
+    await expect(musicRepository.findByType('OP')).rejects.toMatchObject({
+      code: ErrorCodes.DB_ERROR,
+    })
   })
 })
 

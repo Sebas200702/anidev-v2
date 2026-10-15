@@ -65,7 +65,8 @@ export const publicRoutes = [
  * @see {@link module:middleware/auth-middleware} for middleware integration
  */
 export const isPublicRoute = (pathname: string) => {
-  return publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  )
+  return publicRoutes.some((route) => {
+    if (route === '/') return pathname === '/'
+    return pathname === route || pathname.startsWith(`${route}/`)
+  })
 }

@@ -15,6 +15,8 @@ import { config } from '@config/index'
 import { AnimeCard, AnimeCarousel } from '@anime/components'
 import { animeCarouselService } from '@anime/services/anime-carousel'
 import { animeListService } from '@anime/services/anime-list'
+import { ServiceUnavailable } from '@shared/components/service-unavailable'
+import { InfraError } from '@shared/errors/app-error'
 import Base from '@layouts/base-layout.astro'
 
 const metadata = {
@@ -24,20 +26,53 @@ const metadata = {
   url: config.baseUrl,
 }
 
-const [carouselItems, animeList] = await Promise.all([
-  animeCarouselService.getCarouselItems(),
-  animeListService.getAnimeList({ page: 1, limit: 6 }),
-])
+let carouselItems: Awaited<
+  ReturnType<typeof animeCarouselService.getCarouselItems>
+> = []
+let list: Awaited<ReturnType<typeof animeListService.getAnimeList>>['value']['list'] = []
 
-const { list } = animeList.value
+let infraError = false
+try {
+  const [items, animeListResult] = await Promise.all([
+    animeCarouselService.getCarouselItems(),
+    animeListService.getAnimeList({ page: 1, limit: 6 }),
+  ])
+  carouselItems = items
+  list = animeListResult.value.list
+} catch (error) {
+  if (error instanceof InfraError) {
+    infraError = true
+  } else {
+    throw error
+  }
+}
+
+if (infraError) {
+  Astro.response.status = 503
+}
 ---
 
 <Base {...metadata}>
-  {carouselItems.length > 0 && <AnimeCarousel items={carouselItems} />}
-  <section
-    class="grid grid-cols-2 gap-x-4 gap-y-8 px-4 py-12 md:grid-cols-3 md:gap-x-6 md:px-40 md:py-16 lg:grid-cols-6"
-    aria-label="Top rated anime"
-  >
-    {list.map((anime) => <AnimeCard anime={anime} />)}
-  </section>
+  {
+    infraError ? (
+      <ServiceUnavailable
+        title="We could not load the home page right now"
+        message="Something went wrong on our side. Please retry in a moment."
+        retryHref={Astro.url.pathname}
+      />
+    ) : (
+      <>
+        {carouselItems.length > 0 && <AnimeCarousel items={carouselItems} />}
+        <h1 class="sr-only">Top rated anime</h1>
+        <section
+          class="grid grid-cols-2 gap-x-4 gap-y-8 px-4 py-12 md:grid-cols-3 md:gap-x-6 md:px-40 md:py-16 lg:grid-cols-6"
+          aria-label="Top rated anime"
+        >
+          {list.map((anime) => (
+            <AnimeCard anime={anime} />
+          ))}
+        </section>
+      </>
+    )
+  }
 </Base>

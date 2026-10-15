@@ -21,7 +21,7 @@ const { optimizeImageBuffer, fetchMediaAsset } = vi.hoisted(() => ({
   fetchMediaAsset: vi.fn(),
 }))
 
-vi.mock('@utils/image/optimize-util', () => ({
+vi.mock('@media/utils/image/optimize-util', () => ({
   optimizeImageBuffer,
 }))
 vi.mock('@media/services/media-fetch', () => ({ fetchMediaAsset }))
@@ -73,5 +73,19 @@ describe('fetchImageBuffer', () => {
     await expect(fetchImageBuffer('https://cdn/x')).rejects.toBeInstanceOf(
       InfraError
     )
+  })
+
+  it('serves the placeholder from local disk without fetching', async () => {
+    const result = await fetchImageBuffer('http://localhost/placeholder.webp')
+
+    expect(result.length).toBeGreaterThan(0)
+    expect(fetchMediaAsset).not.toHaveBeenCalled()
+  })
+
+  it('serves the placeholder for blank URLs without fetching', async () => {
+    const result = await fetchImageBuffer('   ')
+
+    expect(result.length).toBeGreaterThan(0)
+    expect(fetchMediaAsset).not.toHaveBeenCalled()
   })
 })

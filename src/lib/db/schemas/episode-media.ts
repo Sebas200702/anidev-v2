@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/episode} for parent episode rows
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { episode } from '@db/schemas/episode'
 
 /**
@@ -22,12 +22,18 @@ import { episode } from '@db/schemas/episode'
  * - `src` — Media URL or path.
  * - `size` — Optional resolution/variant label.
  */
-export const episodeMedia = pgTable('episode_media', {
-  id: serial('id').primaryKey(),
-  episodeId: integer('episode_id')
-    .notNull()
-    .references(() => episode.id, { onDelete: 'cascade' }),
-  mediaType: text('media_type').notNull(),
-  src: text('src').notNull(),
-  size: text('size'),
-})
+export const episodeMedia = pgTable(
+  'episode_media',
+  {
+    id: serial('id').primaryKey(),
+    episodeId: integer('episode_id')
+      .notNull()
+      .references(() => episode.id, { onDelete: 'cascade' }),
+    mediaType: text('media_type').notNull(),
+    src: text('src').notNull(),
+    size: text('size'),
+  },
+  (t) => [
+    index('episode_media_episode_id_type_idx').on(t.episodeId, t.mediaType),
+  ]
+)

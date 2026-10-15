@@ -13,6 +13,7 @@
  * @see {@link module:lib/cache/config} for key prefixes and TTL presets
  */
 import { redis } from '@lib/cache/client'
+import { config } from '@config/index'
 import { logger } from '@utils/logger-util'
 import type { CacheGetSetOptions } from './cache-primitives-types'
 
@@ -40,9 +41,21 @@ export type { CacheGetSetOptions } from './cache-primitives-types'
  * @see {@link cacheSet} for writing values
  * @see {@link withCache} for read-through pattern
  */
+/**
+ * Namespaces a cache key by the app origin.
+ *
+ * @remarks Cached payloads embed absolute URLs built from `APP_BASE_URL`
+ * (cards, details, carousel slides). Without namespacing, processes serving
+ * different origins from one Redis (dev ports, preview deploys, e2e runs)
+ * read each other's payloads — stale-origin poisoning with wrong links and
+ * CSP violations. Old un-namespaced entries simply stop being read and
+ * expire via TTL.
+ */
+const namespacedKey = (key: string): string => `${key}|${config.baseUrl}`
+
 export const cacheGet = async <T>(key: string): Promise<T | null> => {
   try {
-    const raw = await redis.get(key)
+    const raw = await redis.get(namespacedKey(key))
     if (!raw) return null
 
     return JSON.parse(raw) as T
@@ -79,7 +92,7 @@ export const cacheSet = async <T>(
 ): Promise<void> => {
   try {
     const payload = JSON.stringify(value)
-    await redis.set(key, payload, 'EX', ttlSeconds)
+    await redis.set(namespacedKey(key), payload, 'EX', ttlSeconds)
   } catch (error) {
     logger.warn({ err: error, key }, 'Cache degraded (cache write skipped)')
   }
@@ -102,7 +115,7 @@ export const cacheSet = async <T>(
  */
 export const cacheDel = async (key: string): Promise<void> => {
   try {
-    await redis.del(key)
+    await redis.del(namespacedKey(key))
   } catch (error) {
     logger.warn({ err: error, key }, 'Cache degraded (cache delete skipped)')
   }

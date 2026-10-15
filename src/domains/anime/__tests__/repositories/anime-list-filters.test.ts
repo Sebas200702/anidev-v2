@@ -44,6 +44,21 @@ describe('buildAnimeListFilters — season and score range', () => {
     expect(params).toContain(9)
   })
 
+  it('matches synonym titles via EXISTS for free-text query', () => {
+    const conditions = buildAnimeListFilters({
+      query: 'zqxw',
+      parentalVariant: 'full',
+    })
+    const { sql } = db
+      .select()
+      .from(anime)
+      .where(and(...conditions))
+      .toSQL()
+
+    expect(sql.toLowerCase()).toContain('exists')
+    expect(sql).toContain('anime_title_synonym')
+  })
+
   it('emits an index-backed ILIKE predicate for free-text query', () => {
     const conditions = buildAnimeListFilters({
       query: 'naruto',

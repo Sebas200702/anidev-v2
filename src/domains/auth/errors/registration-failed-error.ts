@@ -62,7 +62,11 @@ export class RegistrationFailedError extends AuthError {
    * throw new RegistrationFailedError('Email already registered', originalError)
    * ```
    */
-  constructor(message = 'Registration failed', details?: unknown) {
-    super(ErrorCodes.VALIDATION_ERROR, message, details)
+  constructor(
+    message = 'Registration failed',
+    details?: unknown,
+    cause?: unknown
+  ) {
+    super(ErrorCodes.VALIDATION_ERROR, message, details, cause)
   }
 }

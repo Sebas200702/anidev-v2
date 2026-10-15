@@ -56,6 +56,32 @@ describe.skipIf(!enabled)('searchHistoryRepository (integration)', () => {
     expect(rows[0].scope).toBe('anime')
   })
 
+  it('holds the cap under concurrent writes', async () => {
+    await repo.clearByUser(TEST_USER)
+    for (let i = 0; i < 45; i++) {
+      await repo.record({
+        userId: TEST_USER,
+        scope: 'anime',
+        query: `pre${i}`,
+        filters: null,
+      })
+    }
+
+    await Promise.all(
+      Array.from({ length: 20 }, (_, i) =>
+        repo.record({
+          userId: TEST_USER,
+          scope: 'anime',
+          query: `race${i}`,
+          filters: null,
+        })
+      )
+    )
+
+    const rows = await repo.listByUser(TEST_USER, 100)
+    expect(rows).toHaveLength(50)
+  })
+
   it('clears all rows for the user', async () => {
     const removed = await repo.clearByUser(TEST_USER)
     expect(removed).toBeGreaterThan(0)

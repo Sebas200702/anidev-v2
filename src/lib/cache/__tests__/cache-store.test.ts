@@ -61,7 +61,7 @@ describe('cache-primitives with a healthy ioredis client', () => {
 
     expect(got).toEqual({ malId: 5114, title: 'Cowboy Bebop' })
     expect(setMock).toHaveBeenCalledWith(
-      'anime:details:5114',
+      'anime:details:5114|http://localhost:4321',
       '{"malId":5114,"title":"Cowboy Bebop"}',
       'EX',
       CacheTtl.Medium
@@ -71,7 +71,12 @@ describe('cache-primitives with a healthy ioredis client', () => {
   it('writes every entry with the required EX TTL', async () => {
     await cacheSet('k', 1, { ttlSeconds: CacheTtl.Short })
 
-    expect(setMock).toHaveBeenCalledWith('k', '1', 'EX', CacheTtl.Short)
+    expect(setMock).toHaveBeenCalledWith(
+      'k|http://localhost:4321',
+      '1',
+      'EX',
+      CacheTtl.Short
+    )
   })
 
   it('treats a missing key as a miss (null)', async () => {
@@ -80,12 +85,26 @@ describe('cache-primitives with a healthy ioredis client', () => {
     await expect(cacheGet('missing')).resolves.toBeNull()
   })
 
+  it('namespaces keys by origin so origins never share payloads', async () => {
+    setMock.mockResolvedValueOnce('OK')
+    await cacheSet('k', 1, { ttlSeconds: CacheTtl.Short })
+
+    expect(setMock).toHaveBeenCalledWith(
+      `k|http://localhost:4321`,
+      '1',
+      'EX',
+      CacheTtl.Short
+    )
+  })
+
   it('deletes a key via redis.del', async () => {
     delMock.mockResolvedValueOnce(1)
 
     await cacheDel('anime:full:5114')
 
-    expect(delMock).toHaveBeenCalledWith('anime:full:5114')
+    expect(delMock).toHaveBeenCalledWith(
+      'anime:full:5114|http://localhost:4321'
+    )
   })
 })
 
@@ -109,7 +128,9 @@ describe('withCache graceful degradation', () => {
 
     expect(result).toEqual({ malId: 5114, title: 'Cowboy Bebop' })
     expect(compute).toHaveBeenCalledTimes(1)
-    expect(getMock).toHaveBeenCalledWith('anime:details:5114')
+    expect(getMock).toHaveBeenCalledWith(
+      'anime:details:5114|http://localhost:4321'
+    )
   })
 
   it('does not throw when the cache read fails', async () => {

@@ -83,7 +83,11 @@ export const musicRepository = {
    */
   async findByType(type: string, limit = 50): Promise<MusicDB[]> {
     try {
-      return db.select().from(music).where(eq(music.type, type)).limit(limit)
+      return await db
+        .select()
+        .from(music)
+        .where(eq(music.type, type))
+        .limit(limit)
     } catch (error) {
       throw dbError('findByType', { type, limit }, error)
     }
