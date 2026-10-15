@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/Sebas200702/anidev-v2/compare/v0.7.0...v0.8.0) (2026-10-15)
+
+
+### Features
+
+* **a11y:** single-h1 contract on home, showcase and anime pages ([3344192](https://github.com/Sebas200702/anidev-v2/commit/334419246c335ad0bff18282e442d4eca642f571))
+* **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
+* **anime:** concurrent list+count and synonym EXISTS search ([ff1555e](https://github.com/Sebas200702/anidev-v2/commit/ff1555e8a712f85e0cf42895beebebd28767d463))
+* **anime:** persist full-details degraded provenance across cache hits ([cfb988e](https://github.com/Sebas200702/anidev-v2/commit/cfb988eb40998226886616045622d74523d427f0))
+* **anime:** set-based carousel eligibility and batched fan-out ([e684ac4](https://github.com/Sebas200702/anidev-v2/commit/e684ac49c4dc33a448a0e1a0304a306277a3d793))
+* **cache:** canonical list-cache keys via stable stringify ([d2d9863](https://github.com/Sebas200702/anidev-v2/commit/d2d9863e5b5e6078cda89b9ec6c18d5fd8539620))
+* **db:** add D.2 indexes, profile uniqueness and junction cascades ([8a3ce38](https://github.com/Sebas200702/anidev-v2/commit/8a3ce38a248f33d540c721ff1ae6a34b7d3a1328))
+* **deploy:** packaging cleanup and production-only runtime image ([b952766](https://github.com/Sebas200702/anidev-v2/commit/b952766efc2746fff447325cebfe330de5bf36aa))
+* **deps:** drizzle 0.45.4, vitest 4.1.12, better-auth 1.6.33 ([29c97b8](https://github.com/Sebas200702/anidev-v2/commit/29c97b84724fb3c96fbaeac2183d1b6b6620be0b))
+* **e2e:** harden harness and expand coverage ([f53eac8](https://github.com/Sebas200702/anidev-v2/commit/f53eac8a0f6087bf41c01be6077314ffa1c5237e))
+* **media:** cache optimized images on bounded disk LRU ([70c160f](https://github.com/Sebas200702/anidev-v2/commit/70c160f379467cbaa468165521cd4fbc4f65b58b))
+* **media:** stream raw media with Range/206 and no tmpdir cache ([1fbffe4](https://github.com/Sebas200702/anidev-v2/commit/1fbffe462e45f1dd6ef367fa7924e1a48571bcab))
+* **obs:** request-scoped access logs and PII redaction ([a31eee5](https://github.com/Sebas200702/anidev-v2/commit/a31eee5131dca1bb0efcd4789a0ebbe94af765c6))
+* **platform:** decouple media image utils and close hardening pass ([8c678ee](https://github.com/Sebas200702/anidev-v2/commit/8c678ee1341883035d221cb8146d11c551f4f0b8))
+* **platform:** harden auth/media/user paths and normalize error handling ([100c48b](https://github.com/Sebas200702/anidev-v2/commit/100c48ba598e1ee9f6e63e20998c73dcbd7792f6))
+* **quality:** coverage thresholds and navigable-url/sentry branch tests ([159c7d6](https://github.com/Sebas200702/anidev-v2/commit/159c7d64e22e98c5d3c93a824929352cd689bb08))
+* **search:** atomic search-history record with per-user lock ([e934b4a](https://github.com/Sebas200702/anidev-v2/commit/e934b4af40de63cddd630d575b22754fac44d2c4))
+* **security:** audit gate with reviewed allowlist and renovate policy ([2d220e5](https://github.com/Sebas200702/anidev-v2/commit/2d220e58b66af1b16546e2ab5085993b96e235bc))
+* **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
+* **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
+* **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
+* **ui:** replace Toolbar island with vanilla controller ([ddf01db](https://github.com/Sebas200702/anidev-v2/commit/ddf01db8d70126d33d1ea88a15fa91faf262ce8a))
+
+
+### Bug Fixes
+
+* **lint:** expand compound assignment flagged by noAssignInExpressions ([5569882](https://github.com/Sebas200702/anidev-v2/commit/55698826fc46dc01b217ae2e5cea50c57ca41966))
+
 ## [0.7.0](https://github.com/Sebas200702/anidev-v2/compare/v0.6.0...v0.7.0) (2026-08-19)
 
 
