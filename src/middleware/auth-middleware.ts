@@ -29,6 +29,7 @@ import {
 import { applySecurityHeaders } from '@middleware/security-headers'
 import { clearSession, hasAuthCookie } from '@middleware/session-cookies'
 import { initAstroSentry } from '@lib/monitoring/sentry'
+import { logger } from '@utils/logger-util'
 
 // Initialize monitoring at middleware load so the SDK is active before any
 // request — page or API endpoint — is handled. `@sentry/astro` only injects
@@ -68,28 +69,47 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url
   const requestId =
     context.request.headers.get('x-request-id') ?? crypto.randomUUID()
+  context.locals.requestId = requestId
+  const startedAt = Date.now()
+
+  const finish = <T>(response: T): T => {
+    const status = response instanceof Response ? response.status : 'unknown'
+    logger.info(
+      {
+        requestId,
+        method: context.request.method,
+        route: pathname,
+        status,
+        durationMs: Date.now() - startedAt,
+        actor: context.locals.user ? 'user' : 'anonymous',
+      },
+      'request'
+    )
+    return applySecurityHeaders(response, requestId)
+  }
 
   const rateLimit = resolveRateLimit(pathname, getClientIp(context.request))
   if (rateLimit) {
     const result = await enforceRateLimit(rateLimit.keys, rateLimit.limit)
     if (!result.allowed) {
-      const response = new Response(
-        JSON.stringify({
-          data: null,
-          status: 429,
-          error: 'Too many requests',
-          code: 'RATE_LIMITED',
-          meta: {},
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': String(result.retryAfter || 1),
-          },
-        }
+      return finish(
+        new Response(
+          JSON.stringify({
+            data: null,
+            status: 429,
+            error: 'Too many requests',
+            code: 'RATE_LIMITED',
+            meta: {},
+          }),
+          {
+            status: 429,
+            headers: {
+              'Content-Type': 'application/json',
+              'Retry-After': String(result.retryAfter || 1),
+            },
+          }
+        )
       )
-      return applySecurityHeaders(response, requestId)
     }
   }
 
@@ -98,12 +118,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     pathname.startsWith('/api/auth/register')
   ) {
     clearSession(context.locals)
-    return applySecurityHeaders(await next(), requestId)
+    return finish(await next())
   }
 
   if (!hasAuthCookie(context.request.headers.get('cookie'))) {
     clearSession(context.locals)
-    return applySecurityHeaders(await next(), requestId)
+    return finish(await next())
   }
 
   const actor = await resolveAuthActor(context.request.headers)
@@ -114,7 +134,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     clearSession(context.locals)
   }
 
-  return applySecurityHeaders(await next(), requestId)
+  return finish(await next())
 })
 
 /**

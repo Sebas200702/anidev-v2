@@ -33,6 +33,13 @@ import { account, session, user, verification } from '@db/schemas/auth-schema'
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.APP_BASE_URL,
+  // Pin the internal logger to `warn`: Better Auth logs an info line containing
+  // the raw email on duplicate sign-up (`Sign-up attempt for existing email`),
+  // and this option object is the only control it exposes (verified against
+  // @better-auth/core `createLogger`: `{ disabled, level, disableColors, log }`,
+  // default level `warn`). Errors still surface; our mapped auth errors keep
+  // the cause in our own redacted logs.
+  logger: { level: 'warn' },
   emailAndPassword: {
     enabled: true,
   },

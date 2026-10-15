@@ -68,6 +68,30 @@ describe('monitoring log capture', () => {
     expect(sentryAstroInit).not.toHaveBeenCalled()
   })
 
+  it('disables default PII and scrubs events in the Node SDK', async () => {
+    mockEnv.SENTRY_DSN = 'http://key@localhost:8080/1'
+    const { initServerSentry, scrubEvent } = await loadSentry()
+
+    initServerSentry()
+
+    expect(sentryNodeInit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sendDefaultPii: false,
+        beforeSend: expect.any(Function),
+      })
+    )
+    const scrubbed = scrubEvent({
+      request: {
+        headers: { cookie: 'session_token=abc', 'content-type': 'json' },
+        cookies: 'session_token=abc',
+      },
+      user: { id: '1', email: 'user@example.com' },
+    })
+    expect(JSON.stringify(scrubbed)).not.toContain('session_token=abc')
+    expect(JSON.stringify(scrubbed)).not.toContain('user@example.com')
+    expect(scrubbed.request.headers['content-type']).toBe('json')
+  })
+
   it('enables pino log capture in the Node SDK when a DSN is set', async () => {
     mockEnv.SENTRY_DSN = 'http://key@localhost:8080/1'
     const { initServerSentry } = await loadSentry()

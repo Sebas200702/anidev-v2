@@ -58,6 +58,47 @@ let hasInitialized = false
  *
  * @see {@link initAstroSentry} for Astro-specific SDK
  */
+const SENSITIVE_KEYS = [
+  'email',
+  'password',
+  'token',
+  'cookie',
+  'authorization',
+  'set-cookie',
+]
+
+/**
+ * Scrubs PII from a Sentry event before it leaves the process.
+ *
+ * @param event - Outgoing Sentry event
+ * @returns The event with sensitive request data, user, and breadcrumb fields redacted
+ */
+export const scrubEvent = <T>(event: T): T => {
+  const record = event as Record<string, unknown>
+  const request = record.request
+  if (request && typeof request === 'object') {
+    const reqRecord = request as Record<string, unknown>
+    const headers = reqRecord.headers
+    if (headers && typeof headers === 'object') {
+      const scrubbed: Record<string, unknown> = {
+        ...(headers as Record<string, unknown>),
+      }
+      for (const key of Object.keys(scrubbed)) {
+        if (SENSITIVE_KEYS.includes(key.toLowerCase()))
+          scrubbed[key] = '[redacted]'
+      }
+      reqRecord.headers = scrubbed
+    }
+    if (typeof reqRecord.cookies === 'string') reqRecord.cookies = '[redacted]'
+  }
+  const user = record.user
+  if (user && typeof user === 'object') {
+    const { email: _email, ...rest } = user as Record<string, unknown>
+    record.user = rest
+  }
+  return event
+}
+
 export const initServerSentry = () => {
   if (!isEnabled) return
 
@@ -66,6 +107,8 @@ export const initServerSentry = () => {
     environment: env.NODE_ENV,
     tracesSampleRate: 0.1,
     enableLogs: true,
+    sendDefaultPii: false,
+    beforeSend: (event) => scrubEvent(event),
     integrations: [SentryNode.pinoIntegration()],
   })
 }
@@ -100,6 +143,8 @@ export const initAstroSentry = () => {
     environment: env.NODE_ENV,
     tracesSampleRate: 0.1,
     enableLogs: true,
+    sendDefaultPii: false,
+    beforeSend: (event) => scrubEvent(event),
     integrations: [SentryAstro.pinoIntegration()],
   })
 }

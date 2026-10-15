@@ -42,6 +42,11 @@ vi.mock('@lib/cache/client', () => ({ redis }))
 vi.mock('@auth/middleware', () => ({ resolveAuthActor }))
 vi.mock('@config/public-routes', () => ({ isPublicRoute }))
 
+const { loggerInfo } = vi.hoisted(() => ({ loggerInfo: vi.fn() }))
+vi.mock('@utils/logger-util', () => ({
+  logger: { info: loggerInfo, warn: vi.fn(), error: vi.fn() },
+}))
+
 import { onRequest } from '../auth-middleware'
 
 type Middleware = (ctx: unknown, next: () => unknown) => Promise<unknown>
@@ -103,5 +108,51 @@ describe('onRequest', () => {
 
     expect(isPublicRoute).toHaveBeenCalledWith('/dashboard')
     expect(context.locals.user).toBeNull()
+  })
+})
+
+describe('onRequest access logging', () => {
+  it('emits one structured access line correlated by requestId', async () => {
+    resolveAuthActor.mockResolvedValue({ user: null, session: null })
+    isPublicRoute.mockReturnValue(true)
+    const context = ctx('/api/anime', null)
+    const response = new Response(JSON.stringify({}), {
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const nextWithResponse = vi.fn(async () => response)
+
+    const result = (await (onRequest as Middleware)(
+      context,
+      nextWithResponse
+    )) as Response
+
+    expect(context.locals.requestId).toEqual(expect.any(String))
+    expect(result.headers.get('x-request-id')).toBe(context.locals.requestId)
+    expect(loggerInfo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        requestId: context.locals.requestId,
+        method: 'GET',
+        route: '/api/anime',
+        status: 200,
+        actor: 'anonymous',
+        durationMs: expect.any(Number),
+      }),
+      'request'
+    )
+  })
+
+  it('marks authenticated actors as user', async () => {
+    resolveAuthActor.mockResolvedValue({
+      user: { id: 1 },
+      session: { id: 's' },
+    })
+    const context = ctx('/dashboard', 'session_token=abc')
+
+    await (onRequest as Middleware)(context, next)
+
+    expect(loggerInfo).toHaveBeenCalledWith(
+      expect.objectContaining({ actor: 'user' }),
+      'request'
+    )
   })
 })

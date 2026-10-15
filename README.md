@@ -191,7 +191,16 @@ All handled errors are reported to a self-hosted Sentry-compatible backend
 `error` level — via `mapErrorToHttp`, and the browser SDK reports global errors
 and unhandled rejections when `PUBLIC_SENTRY_DSN` is set (no-op otherwise).
 Malformed media paths return `400 INVALID_IMAGE_PATH` rather than a 503.
-Both DSNs are optional; monitoring is a no-op without them.
+Both DSNs are optional; monitoring is a no-op without them. Every response
+carries `x-request-id`, and each request emits one structured access line
+(`requestId`, `method`, `route`, `status`, `durationMs`, `actor`) that
+correlates with error lines. Logs redact credentials/session material and
+error lines carry whitelisted fields only.
+
+Ops docs: [alert rules](docs/alerts.md) ·
+[backup & restore](docs/runbooks/backup-restore.md) ·
+[release rollback](docs/runbooks/release-rollback.md) ·
+[incident triage](docs/runbooks/incident-triage.md).
 
 ## Versioning
 

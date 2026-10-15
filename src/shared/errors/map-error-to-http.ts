@@ -57,6 +57,7 @@ import {
   buildAppErrorBody,
   mapAuthErrorToHttp,
   mapDomainErrorToHttp,
+  toLoggableError,
 } from '@shared/errors/error-http-maps'
 import { logger } from '@utils/logger-util'
 
@@ -96,7 +97,7 @@ export const INFRA_RETRY_AFTER_SECONDS = 30
  */
 export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   if (error instanceof ValidationError) {
-    logger.warn({ err: error }, 'Validation error')
+    logger.warn({ err: toLoggableError(error) }, 'Validation error')
     captureError(error, 'warning')
     return {
       status: 400,
@@ -118,7 +119,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   }
 
   if (error instanceof RateLimitedError) {
-    logger.warn({ err: error }, 'Rate limited')
+    logger.warn({ err: toLoggableError(error) }, 'Rate limited')
     captureError(error, 'warning')
     return {
       status: 429,
@@ -133,7 +134,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   }
 
   if (error instanceof ResponseValidationError) {
-    logger.error({ err: error }, 'Response validation error')
+    logger.error({ err: toLoggableError(error) }, 'Response validation error')
     captureError(error)
 
     return {
@@ -146,7 +147,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
   }
 
   if (error instanceof InfraError) {
-    logger.error({ err: error }, 'Infra error')
+    logger.error({ err: toLoggableError(error) }, 'Infra error')
     captureError(error)
 
     return {
@@ -162,7 +163,7 @@ export const mapErrorToHttp = (error: unknown): HttpErrorResponse => {
     }
   }
 
-  logger.error({ err: error }, 'Unknown error')
+  logger.error({ err: toLoggableError(error) }, 'Unknown error')
   captureError(error)
 
   return {

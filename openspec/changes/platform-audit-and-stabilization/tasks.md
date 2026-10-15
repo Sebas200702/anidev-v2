@@ -53,10 +53,10 @@
 
 ## E. Observability & operations
 
-- [ ] E.1 **(T-08, F-20)** Request-scoped logger: bind `x-request-id`, emit one structured access line per request (method, route, status, duration, actor class); tests for the line shape and correlation between access and error lines.
-- [ ] E.2 **(F-20)** Redaction pass: `pino` `redact` for cookies/authorization/tokens; stop logging full payloads/headers in `withErrorHandling` (whitelist fields); disable or redact Better Auth's internal logger emails; Sentry `sendDefaultPii: false` + `beforeSend` scrubbing; tests asserting no email/token appears in emitted logs.
-- [ ] E.3 **(F-20)** Version the alert rules doc (Rustrak/Sentry): 5xx rate, consecutive readiness failures, auth lockout surge, disk threshold — each with threshold, window, and first response.
-- [ ] E.4 **(F-20)** Ops runbooks: backup/restore (perform one drill on the local stack and record the result), release rollback (previous image tag, additive-only migrations), incident triage via requestId; link them from `README.md`.
+- [x] E.1 **(T-08, F-20)** Request-scoped logger: bind `x-request-id`, emit one structured access line per request (method, route, status, duration, actor class); tests for the line shape and correlation between access and error lines.
+- [x] E.2 **(F-20)** Redaction pass: `pino` `redact` for cookies/authorization/tokens; stop logging full payloads/headers in `withErrorHandling` (whitelist fields); disable or redact Better Auth's internal logger emails; Sentry `sendDefaultPii: false` + `beforeSend` scrubbing; tests asserting no email/token appears in emitted logs.
+- [x] E.3 **(F-20)** Version the alert rules doc (Rustrak/Sentry): 5xx rate, consecutive readiness failures, auth lockout surge, disk threshold — each with threshold, window, and first response.
+- [x] E.4 **(F-20)** Ops runbooks: backup/restore (perform one drill on the local stack and record the result), release rollback (previous image tag, additive-only migrations), incident triage via requestId; link them from `README.md`.
 
 ## F. Bundle, dependencies & build hygiene
 
