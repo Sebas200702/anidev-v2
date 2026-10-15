@@ -29,4 +29,14 @@ test.describe('GET /media/*', () => {
     expect(res.status()).toBeLessThan(500)
     expect(res.status()).not.toBe(400)
   })
+
+  test('refuses remote /_image transforms (no remotePatterns configured)', async ({
+    request,
+  }) => {
+    const res = await request.get(
+      '/_image?href=https%3A%2F%2Fcdn.myanimelist.net%2Fimage.jpg&w=100&f=webp'
+    )
+    // Remote not allowlisted → Astro refuses with 403, never a server error.
+    expect(res.status()).toBe(403)
+  })
 })

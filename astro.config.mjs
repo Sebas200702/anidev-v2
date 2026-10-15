@@ -53,6 +53,12 @@ export default defineConfig({
   output: 'server',
   adapter,
 
+  // Image stance (C.5): no `image.remotePatterns`/`image.domains` is configured
+  // on purpose, so Astro's `/_image` endpoint refuses remote transforms (400)
+  // and only local images are transformable. All remote media flows through
+  // the hardened `/media` proxy instead (SSRF allowlist, MIME allowlist, byte
+  // budgets). Revisit only with an explicit allowlist + e2e coverage.
+
   vite: {
     plugins: [tailwindcss()],
     resolve: {

@@ -3,7 +3,7 @@
  *
  * @module domains/media/cache/media-cache
  */
-export * from './serialization'
+export * from './disk-store'
 export * from './keys'
 export * from './store'
 export * from './cache'

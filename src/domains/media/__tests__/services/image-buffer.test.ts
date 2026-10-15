@@ -74,4 +74,18 @@ describe('fetchImageBuffer', () => {
       InfraError
     )
   })
+
+  it('serves the placeholder from local disk without fetching', async () => {
+    const result = await fetchImageBuffer('http://localhost/placeholder.webp')
+
+    expect(result.length).toBeGreaterThan(0)
+    expect(fetchMediaAsset).not.toHaveBeenCalled()
+  })
+
+  it('serves the placeholder for blank URLs without fetching', async () => {
+    const result = await fetchImageBuffer('   ')
+
+    expect(result.length).toBeGreaterThan(0)
+    expect(fetchMediaAsset).not.toHaveBeenCalled()
+  })
 })
