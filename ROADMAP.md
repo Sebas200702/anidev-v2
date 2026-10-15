@@ -93,11 +93,12 @@ _(Change: `platform-audit-and-stabilization` y `component-showcase`.)_
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
 - [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `platform-audit-and-stabilization`.)_
-- [ ] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
+- [x] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
   banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
   el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
   (por temporada, por género) quedan pendientes.
-  _(Change abierto: `home-shell-and-featured-carousel`.)_
+  _(Change archivado: `home-shell-and-featured-carousel`; elegibilidad set-based
+  y fan-out por lotes en `platform-audit-and-stabilization`.)_
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (servicios sobre tablas relacionales existentes).
 - [ ] **Taxonomía** — páginas por género y por estudio/productora.
 - [x] **Control parental** — exclusión de ratings adultos embebida en las queries del catálogo (default seguro, fail-closed; variante `full` requiere opt-in, change pendiente).

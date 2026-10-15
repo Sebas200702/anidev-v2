@@ -81,7 +81,7 @@ export const animeShowcaseEntries: readonly ShowcaseEntry[] = [
         label: 'Genres (JSON)',
         kind: 'json',
         placeholder:
-          '[{"malId":1,"name":"Action","url":"/discover?genre=Action"}]',
+          '[{"malId":1,"name":"Action","url":"/search?genre=Action"}]',
       },
       { name: 'item.bannerImage', label: 'Banner URL', kind: 'text' },
       { name: 'item.clearLogo', label: 'Clear logo URL', kind: 'text' },

@@ -95,7 +95,7 @@ export const mapCarouselItem = ({
   genres: genres.map((genre) => ({
     malId: genre.malId,
     name: genre.name,
-    url: `/discover?genre=${encodeURIComponent(genre.name)}`,
+    url: `/search?genre=${encodeURIComponent(genre.name)}`,
   })),
   score: anime.score ?? 0,
   year: anime.year ?? 0,

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/Sebas200702/anidev-v2/compare/v0.8.0...v0.9.0) (2026-10-15)
+
+
+### Features
+
+* **search:** unified results route with genre and keyword search ([426f0f7](https://github.com/Sebas200702/anidev-v2/commit/426f0f705d547e39b188220e3cfe02f6557880c2))
+
+
+### Bug Fixes
+
+* **ci:** environment-stable client budget gate and DSN build-arg ([b01f7d2](https://github.com/Sebas200702/anidev-v2/commit/b01f7d23545db742cb0619bbf929fe883f69ffef))
+* **e2e:** drop forced Origin/Sec-Fetch-Site headers breaking subresources ([7a92571](https://github.com/Sebas200702/anidev-v2/commit/7a9257160f4585363a230662e67ae4f4333c3382))
+* **e2e:** never bake a Sentry DSN into e2e builds ([e98b12c](https://github.com/Sebas200702/anidev-v2/commit/e98b12c5b84c87e8c0ba060ff0baa97aaaa57c85))
+* **lint:** apply formatter to namespaced key assertions ([7694107](https://github.com/Sebas200702/anidev-v2/commit/76941071cacbc66ca8aa1cc24a0bdef04d361a2d))
+* **tests:** namespace-aware redis key assertions in stale-serve suites ([844ea36](https://github.com/Sebas200702/anidev-v2/commit/844ea3614225eb91566d31737382054915115ed1))
+
 ## [0.8.0](https://github.com/Sebas200702/anidev-v2/compare/v0.7.0...v0.8.0) (2026-10-15)
 
 
