@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime-relations} for anime ↔ taxonomy links
  */
-import { integer, pgTable, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text } from 'drizzle-orm/pg-core'
 
 /**
  * Genre lookup values (`genre` table) keyed by MyAnimeList ID.
@@ -20,10 +20,14 @@ import { integer, pgTable, text } from 'drizzle-orm/pg-core'
  * - `malId` — Primary key; MAL genre id.
  * - `name` — Human-readable genre label (e.g. Action, Romance).
  */
-export const genre = pgTable('genre', {
-  malId: integer('mal_id').primaryKey(),
-  name: text('name').notNull(),
-})
+export const genre = pgTable(
+  'genre',
+  {
+    malId: integer('mal_id').primaryKey(),
+    name: text('name').notNull(),
+  },
+  (t) => [index('genre_name_idx').on(t.name)]
+)
 
 /**
  * Theme lookup values (`theme` table) keyed by MyAnimeList ID.

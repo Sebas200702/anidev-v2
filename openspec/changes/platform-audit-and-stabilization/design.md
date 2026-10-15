@@ -132,3 +132,31 @@ Its tasks T-01…T-09 map to B.1/B.2 (T-01), C.1 (T-02), C.2/C.3 (T-03), B.10 (T
 - **Approval needed:** removing/replacing `@formkit/tempo` and moving packages to `devDependencies` (F.6) — low risk, verified by build + tests.
 - **Not covered by this audit (declared):** dynamic pentest/fuzzing, cloud/Vercel account configuration, deployed Rustrak exposure, git history secret scan, load testing. Recommended follow-up: one DAST pass + one load test before the first public release, tracked in the ROADMAP.
 - **Rollback:** app is image-tagged; migrations in this change are additive (indexes + unique index on `profile.user_id` — requires a pre-flight duplicate check query documented in the migration task); no destructive DDL.
+
+## 9. D.2 evidence (indexes migration `drizzle/0002`)
+
+- **Generated with `db:generate`** from schema edits (no hand-written DDL; the
+  synonym GIN uses drizzle's native `.using('gin', t.title.op('gin_trgm_ops'))`
+  and emits `USING gin ("title" gin_trgm_ops)`).
+- **Added:** composite B-tree `(entity_id, media_type)` on `anime_media`,
+  `character_media`, `staff_media`, `episode_media`, `music_media`;
+  `music_version(music_id)`; `music_resolution(music_version_id)`; catalog
+  filters `anime(year, season, score, status, type, rating)`, `genre(name)`;
+  GIN trgm `anime_title_synonym(title)`; `UNIQUE profile(user_id)`.
+- **Skipped by evidence:** `episode(anime_id)` is already the leftmost prefix
+  of `episode_anime_number_unique` — a second index would be redundant.
+- **Cascade added:** `anime_music`, `anime_relation` (both FKs),
+  `music_artist` (both FKs); all other catalog junctions already cascade.
+- **Pre-flight (additive-only rule):** `SELECT user_id, COUNT(*) FROM profile
+  GROUP BY user_id HAVING COUNT(*) > 1` → 0 rows (0 profiles locally), so the
+  unique index is safe.
+- **EXPLAIN (local seed scale, 4 anime):**
+  - `anime_media WHERE anime_id=1 AND media_type='poster'`: before → `Seq Scan
+    (cost=0.00..19.15)`; after → `Index Scan using
+    anime_media_anime_id_type_idx (cost=0.15..8.17)`. Proven used by default.
+  - `anime WHERE year=2024 AND status IN (...) ORDER BY popularity_rank LIMIT
+    10` and `anime_title_synonym WHERE title ILIKE '%cowboy%'`: still `Seq
+    Scan` after — correct planner choice at this row count; indexes verified
+    present in `pg_indexes` and valid (migration applied cleanly). Value is at
+    production volume.
+- **Integration:** `test:integration` 6 files / 20 tests green after migrate.

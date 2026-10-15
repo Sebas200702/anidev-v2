@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/staff} for parent staff entity
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { staff } from '@db/schemas/staff'
 
 /**
@@ -22,12 +22,16 @@ import { staff } from '@db/schemas/staff'
  * - `src` — URL or path to media.
  * - `size` — Optional size variant.
  */
-export const staffMedia = pgTable('staff_media', {
-  id: serial('id').primaryKey(),
-  staffId: integer('staff_id')
-    .notNull()
-    .references(() => staff.malId, { onDelete: 'cascade' }),
-  mediaType: text('media_type').notNull(),
-  src: text('src').notNull(),
-  size: text('size'),
-})
+export const staffMedia = pgTable(
+  'staff_media',
+  {
+    id: serial('id').primaryKey(),
+    staffId: integer('staff_id')
+      .notNull()
+      .references(() => staff.malId, { onDelete: 'cascade' }),
+    mediaType: text('media_type').notNull(),
+    src: text('src').notNull(),
+    size: text('size'),
+  },
+  (t) => [index('staff_media_staff_id_type_idx').on(t.staffId, t.mediaType)]
+)

@@ -47,10 +47,10 @@ export const animeMusic = pgTable(
   'anime_music',
   {
     animeId: integer('anime_id')
-      .references(() => anime.malId)
+      .references(() => anime.malId, { onDelete: 'cascade' })
       .notNull(),
     musicId: integer('music_id')
-      .references(() => music.id)
+      .references(() => music.id, { onDelete: 'cascade' })
       .notNull(),
   },
   (t) => [primaryKey({ columns: [t.animeId, t.musicId] })]
@@ -88,11 +88,11 @@ export const animeRelatedAnime = pgTable(
   'anime_relation',
   {
     animeId: integer('anime_id')
-      .references(() => anime.malId)
+      .references(() => anime.malId, { onDelete: 'cascade' })
       .notNull(),
     relationType: text('relation_type').notNull(),
     relatedAnimeId: integer('related_anime_id')
-      .references(() => anime.malId)
+      .references(() => anime.malId, { onDelete: 'cascade' })
       .notNull(),
   },
   (t) => [

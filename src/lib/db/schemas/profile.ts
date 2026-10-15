@@ -13,7 +13,7 @@
  * @see {@link module:lib/db/schemas/auth-schema.user} for auth user root
  * @see {@link module:lib/cache/config.CacheKeyPrefix.UserProfile} for profile cache keys
  */
-import { text, pgTable } from 'drizzle-orm/pg-core'
+import { text, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 import { user } from '@db/schemas/auth-schema'
 
 /**
@@ -29,21 +29,25 @@ import { user } from '@db/schemas/auth-schema'
  * - `frequency` / `fanaticLevel` / `preferredFormat` — Viewing habit questionnaire answers.
  * - `watchedAnimes` — Serialized watch history or list snapshot.
  */
-export const profile = pgTable('profile', {
-  id: text('id').primaryKey().notNull(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  avatar: text('avatar'),
-  name: text('name').notNull(),
-  lastName: text('last_name').notNull(),
-  birthday: text('birthday'),
-  gender: text('gender'),
-  favoriteAnimes: text('favorite_animes'),
-  favoriteGenres: text('favorite_genres'),
-  favoriteStudios: text('favorite_studios'),
-  frequency: text('frequency'),
-  fanaticLevel: text('fanatic_level'),
-  preferredFormat: text('preferred_format'),
-  watchedAnimes: text('watched_animes'),
-})
+export const profile = pgTable(
+  'profile',
+  {
+    id: text('id').primaryKey().notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    avatar: text('avatar'),
+    name: text('name').notNull(),
+    lastName: text('last_name').notNull(),
+    birthday: text('birthday'),
+    gender: text('gender'),
+    favoriteAnimes: text('favorite_animes'),
+    favoriteGenres: text('favorite_genres'),
+    favoriteStudios: text('favorite_studios'),
+    frequency: text('frequency'),
+    fanaticLevel: text('fanatic_level'),
+    preferredFormat: text('preferred_format'),
+    watchedAnimes: text('watched_animes'),
+  },
+  (t) => [uniqueIndex('profile_user_id_unique').on(t.userId)]
+)

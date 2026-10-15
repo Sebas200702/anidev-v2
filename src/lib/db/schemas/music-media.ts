@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/music} for parent music entity
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { music } from '@db/schemas/music'
 
 /**
@@ -22,12 +22,16 @@ import { music } from '@db/schemas/music'
  * - `src` — Image URL or CDN path.
  * - `size` — Optional variant (small, large).
  */
-export const musicMedia = pgTable('music_media', {
-  id: serial('id').primaryKey(),
-  musicId: integer('music_id')
-    .notNull()
-    .references(() => music.id, { onDelete: 'cascade' }),
-  mediaType: text('media_type').notNull(),
-  src: text('src').notNull(),
-  size: text('size'),
-})
+export const musicMedia = pgTable(
+  'music_media',
+  {
+    id: serial('id').primaryKey(),
+    musicId: integer('music_id')
+      .notNull()
+      .references(() => music.id, { onDelete: 'cascade' }),
+    mediaType: text('media_type').notNull(),
+    src: text('src').notNull(),
+    size: text('size'),
+  },
+  (t) => [index('music_media_music_id_type_idx').on(t.musicId, t.mediaType)]
+)
