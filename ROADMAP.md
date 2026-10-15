@@ -82,7 +82,7 @@ _(Change: `platform-audit-and-stabilization` y `component-showcase`.)_
 - [ ] **Índices PostgreSQL, FKs y `pg.Pool` acotado (`T-05`, `T-06`)**: índices B-tree en todas las FKs de tablas `*_media`/`music_*` y columnas de filtro/sort de `anime`, índice único en `profile.user_id`, GIN `pg_trgm` en `anime_title_synonym.title`, `ON DELETE CASCADE` en uniones de catálogo, límite `max: 20` en `pg.Pool` y reubicación de `resolveMediaAssets` fuera de `src/shared/` con regla en `biome.json`.
 - [ ] **Middleware transversal (`T-08`)**: `x-request-id`, rate-limiting en Dragonfly, sesión ligera (saltar DB en `/media/*`, `/api/health*`, `/showcase` y cachear sesión 60 s en Dragonfly), CSP + headers de seguridad (`nosniff`, `DENY`, `Referrer-Policy`).
 - [ ] **SEO base**: sitemaps segmentados (anime, música, géneros, estáticos) + `robots.txt`.
-- [ ] **Patrón de UI documentado y `/showcase` operativo** (living docs — change `component-showcase`).
+- [x] **Patrón de UI documentado y `/showcase` operativo** (living docs — change `component-showcase`, archivado 2026-10-15).
 
 **Salida:** base blindada en seguridad, memoria y latencia SQL + patrón de UI repetible.
 
@@ -116,6 +116,14 @@ _(Change semilla: `relational-lists-and-watch-progress`.)_
 - [ ] **Listas de anime relacionales (`user_anime_list`)** — reemplaza el CSV `profile.favorite_animes` por una tabla relacional con estados (`watching`, `completed`, `plan_to_watch`, `on_hold`, `dropped`), `is_favorite`, `score` (1–10) y add/remove **optimista + deshacer**.
 
 **Salida:** cuenta con estado propio e integridad referencial; datos estructurados que alimentan la IA.
+
+> **Decisión documentada (G.6, 2026-10-15): verificación por email fuera de
+> alcance de este cambio.** El registro neutraliza la enumeración (respuesta
+> genérica ante duplicados) y el throttle frena el abuso, pero no hay flujo
+> de verificación (token por correo, expiración, reenvío). Se implementa en
+> un change dedicado cuando exista proveedor SMTP (Fase 2, junto a OAuth),
+> no como parte del endurecimiento. Pre-publicación quedan además: un pase
+> DAST y una prueba de carga (ver diseño §8).
 
 ---
 

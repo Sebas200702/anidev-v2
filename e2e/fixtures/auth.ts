@@ -57,6 +57,7 @@ export const test = base.extend<AuthFixtures>({
       extraHTTPHeaders: {
         accept: 'application/json',
         ...(baseURL ? { origin: baseURL } : {}),
+        'sec-fetch-site': 'same-origin',
         'x-forwarded-for': forwardedFor,
       },
     })

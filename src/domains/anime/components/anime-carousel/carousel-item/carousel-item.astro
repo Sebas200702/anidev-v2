@@ -4,18 +4,19 @@
  *
  * @module domains/anime/components/anime-carousel/carousel-item
  * @remarks
- * Presentational only: the banner sits behind three token-driven
+ * Presentational shell: the banner sits behind three token-driven
  * {@link Overlay} scrims (top, bottom and a wide right-to-left wash) so the
- * copy stays readable over any artwork, and the clear logo carries the title.
+ * copy stays readable over any artwork. Copy blocks live in
+ * `carousel-item-header.astro` and `carousel-item-actions.astro`.
  *
  * @see {@link CarouselItemProps}
  * @see {@link animeCarouselService}
  */
-import { Button } from '@components/button'
 import { Overlay } from '@components/overlay'
 import Picture from '@components/picture/picture.astro'
-import { IconListDetails, IconPlayerPlay, IconStar } from '@tabler/icons-react'
 import type { CarouselItemProps as Props } from './types'
+import CarouselItemActions from './carousel-item-actions.astro'
+import CarouselItemHeader from './carousel-item-header.astro'
 
 const { item } = Astro.props as Props
 
@@ -56,65 +57,7 @@ const season = item.season.charAt(0).toUpperCase() + item.season.slice(1)
     class="relative z-10 flex h-full w-full flex-col justify-center px-4 py-8 md:px-40"
   >
     <div class="flex max-w-xl flex-col items-start gap-4 text-left">
-      <header class="flex flex-col items-start gap-3">
-        <div class="flex items-center gap-2">
-          <div class="bg-editorial-accent h-px w-6"></div>
-          <span
-            class="text-editorial-accent font-heading text-sm font-bold tracking-[0.2em] uppercase"
-          >
-            Most Trending
-          </span>
-          <div class="bg-on-surface-muted h-1 w-1 rounded-full"></div>
-          <span
-            class="text-on-surface-muted font-heading text-xs font-bold uppercase"
-          >
-            N° {String(item.malId).slice(0, 2)}
-          </span>
-        </div>
-
-        <ul
-          class="font-heading flex flex-wrap gap-2 text-xs font-medium"
-          aria-label="Anime genres"
-        >
-          {
-            item.genres.map((genre) => (
-              <li class="group relative cursor-pointer">
-                <span class="border-border absolute right-0 size-1 border-b border-l" />
-                <a
-                  href={genre.url}
-                  class="text-on-surface-muted hover:text-focus p-2 transition-colors"
-                >
-                  #{genre.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-        <Picture
-          imageUrl={item.clearLogo}
-          smallImageUrl={item.clearLogo}
-          alt={item.title}
-          imageStyles="w-110"
-          aspectRatio="440/165"
-        />
-        <h4 class="font-heading text-lg font-bold">{item.title}</h4>
-        <div
-          class="text-on-surface-muted font-heading flex flex-wrap items-center gap-3 text-xs font-semibold tracking-wider uppercase"
-        >
-          <span
-            class="text-warning flex items-center gap-1 px-1"
-            role="status"
-            aria-label={`Score: ${item.score}`}
-          >
-            <IconStar className="w-3.5 h-3.5 text-warning" aria-hidden="true" />
-            <span>{item.score.toFixed(1)}</span>
-          </span>
-          <span>·</span>
-          <time datetime={String(item.year)}>{item.year}</time>
-          <span>·</span>
-          <span class="rounded px-2 py-0.5">TV</span>
-        </div>
-      </header>
+      <CarouselItemHeader item={item} />
 
       <p
         class="text-on-surface-muted font-body line-clamp-3 text-sm leading-relaxed font-light text-pretty"
@@ -132,26 +75,7 @@ const season = item.season.charAt(0).toUpperCase() + item.season.slice(1)
         ></span>
       </div>
 
-      <ul class="mt-2 flex flex-wrap items-center gap-3" aria-label="Actions">
-        <li>
-          <a href={`/anime/${item.malId}`} class="inline-flex">
-            <Button
-              title="Watch Now"
-              variant="button-primary"
-              Icon={IconPlayerPlay}
-            />
-          </a>
-        </li>
-        <li>
-          <Button
-            variant="button-secondary"
-            title="More Info"
-            ariaLabel="More Info"
-            Icon={IconListDetails}
-            id="play-trailer-btn"
-          />
-        </li>
-      </ul>
+      <CarouselItemActions item={item} />
     </div>
   </article>
 </section>

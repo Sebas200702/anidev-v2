@@ -39,8 +39,7 @@ export const shellShowcaseEntries: readonly ShowcaseEntry[] = [
     slug: 'toolbar',
     title: 'Toolbar',
     owner: 'shared',
-    summary:
-      'Zero-JS shell actions; already live in the corner of this page.',
+    summary: 'Zero-JS shell actions; already live in the corner of this page.',
     fixture: {},
     controls: [],
     renderedByShell: true,

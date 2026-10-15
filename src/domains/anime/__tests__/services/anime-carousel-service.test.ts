@@ -21,7 +21,8 @@ vi.mock('@lib/cache', () => ({
     setCache: (k: string, v: unknown) => Promise<unknown>
     compute: () => Promise<unknown>
   }) => {
-    await opts.getCache()
+    const cached = await opts.getCache()
+    if (cached !== null) return cached
     const value = await opts.compute()
     await opts.setCache(opts.key, value)
     return value
@@ -29,7 +30,7 @@ vi.mock('@lib/cache', () => ({
 }))
 
 const { cacheGet, cacheSet, cacheKey } = vi.hoisted(() => ({
-  cacheGet: vi.fn().mockResolvedValue(null),
+  cacheGet: vi.fn(),
   cacheSet: vi.fn(),
   cacheKey: vi.fn(() => 'anime:carousel:slides'),
 }))
@@ -64,6 +65,7 @@ const animeB = { malId: 2, title: 'B' }
 beforeEach(() => {
   vi.clearAllMocks()
   cacheKey.mockReturnValue('anime:carousel:slides')
+  cacheGet.mockResolvedValue(null)
   mapCarouselItem.mockImplementation(({ anime }) => ({ anime }))
 })
 
@@ -104,6 +106,17 @@ describe('animeCarouselService.getCarouselItems', () => {
       media: [],
       genres: [{ malId: 20, name: 'Action' }],
     })
+  })
+
+  it('serves cache hits without touching the database', async () => {
+    cacheGet.mockResolvedValue([{ cached: true }])
+
+    const result = await animeCarouselService.getCarouselItems()
+
+    expect(result).toEqual([{ cached: true }])
+    expect(getTopPopularWithMedia).not.toHaveBeenCalled()
+    expect(getAnimeMediaByIds).not.toHaveBeenCalled()
+    expect(getGenresByAnimeIds).not.toHaveBeenCalled()
   })
 
   it('reads through the dedicated carousel cache prefix', async () => {

@@ -23,6 +23,10 @@ test.describe('home page', () => {
     // Single-h1 contract (F.3): the shell brand is not a heading.
     await expect(page.locator('h1')).toHaveCount(1)
 
+    // Hero omission (A.1): the seed has no eligible artwork, so no carousel
+    // renders — and the page stays clean without it.
+    await expect(page.locator('#shared-carousel')).toHaveCount(0)
+
     expect(errors, `console errors:\n${errors.join('\n')}`).toEqual([])
   })
 })

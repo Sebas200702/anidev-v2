@@ -129,9 +129,9 @@ describe('monitoring log capture', () => {
 
     expect(scrubEvent({})).toEqual({})
     expect(scrubEvent({ user: null })).toEqual({ user: null })
-    expect(
-      scrubEvent({ request: { headers: 'not-an-object' } })
-    ).toEqual({ request: { headers: 'not-an-object' } })
+    expect(scrubEvent({ request: { headers: 'not-an-object' } })).toEqual({
+      request: { headers: 'not-an-object' },
+    })
   })
 
   it('initializes the Astro SDK exactly once across repeated calls', async () => {

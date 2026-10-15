@@ -32,6 +32,22 @@ function resolveBaseURL(config: FullConfig): string {
 }
 
 export default async function globalSetup(config: FullConfig): Promise<void> {
+  // Suite isolation: start from an empty cache/rate-limit state so no run
+  // inherits counters or payloads from dev servers, manual probes, or earlier
+  // runs sharing the local Dragonfly. Best-effort (CI containers start empty).
+  try {
+    const { Redis } = await import('ioredis')
+    const redis = new Redis(
+      process.env.E2E_REDIS_URL ?? 'redis://127.0.0.1:6379',
+      { lazyConnect: true }
+    )
+    await redis.connect().catch(() => undefined)
+    await redis.flushdb().catch(() => undefined)
+    await redis.quit().catch(() => undefined)
+  } catch {
+    // A down cache degrades the app anyway; never fail setup on it.
+  }
+
   const baseURL = resolveBaseURL(config)
   // A real browser SPA sends a same-origin Origin header; Astro's CSRF guard
   // needs it on mutating requests. Mirror the fixtures so the warm register works.

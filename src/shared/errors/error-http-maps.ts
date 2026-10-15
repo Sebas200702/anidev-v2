@@ -7,7 +7,13 @@
  * capture for every mapped error happens in the top-level mapper via {@link captureError}).
  */
 
-import type { AuthError, DomainError } from '@shared/errors/app-error'
+import type {
+  AuthError,
+  DomainError,
+  InfraError,
+  RateLimitedError,
+  ResponseValidationError,
+} from '@shared/errors/app-error'
 import { BaseError } from '@shared/errors/base-error'
 import { ErrorCodes, type ErrorCode } from '@shared/errors/codes'
 import type {
@@ -167,5 +173,92 @@ export const mapDomainErrorToHttp = (error: DomainError): HttpErrorResponse => {
   return {
     status: 400,
     body: buildAppErrorBody(error),
+  }
+}
+
+/** Seconds a client/load balancer should wait before retrying a 503 response. */
+export const INFRA_RETRY_AFTER_SECONDS = 30
+
+/**
+ * Maps {@link RateLimitedError} to a 429 response with `Retry-After`.
+ *
+ * @param error - Rate limit rejection with retry hint
+ * @returns **429** with client-safe message
+ *
+ * @internal
+ */
+export const mapRateLimitedErrorToHttp = (
+  error: RateLimitedError
+): HttpErrorResponse => {
+  logger.warn({ err: toLoggableError(error) }, 'Rate limited')
+  return {
+    status: 429,
+    headers: {
+      'Retry-After': String(error.retryAfterSeconds),
+    },
+    body: {
+      code: error.code,
+      message: 'Too many requests',
+    },
+  }
+}
+
+/**
+ * Maps {@link ResponseValidationError} to a generic 500 response.
+ *
+ * @param error - Server-side contract violation (schema issues stay in logs)
+ * @returns **500** with `Internal server error`
+ *
+ * @internal
+ */
+export const mapResponseValidationErrorToHttp = (
+  error: ResponseValidationError
+): HttpErrorResponse => {
+  logger.error({ err: toLoggableError(error) }, 'Response validation error')
+  return {
+    status: 500,
+    body: {
+      code: error.code,
+      message: 'Internal server error',
+    },
+  }
+}
+
+/**
+ * Maps {@link InfraError} to a 503 response with `Retry-After`.
+ *
+ * @param error - Infrastructure failure (details hidden from clients)
+ * @returns **503** with `Service unavailable`
+ *
+ * @internal
+ */
+export const mapInfraErrorToHttp = (error: InfraError): HttpErrorResponse => {
+  logger.error({ err: toLoggableError(error) }, 'Infra error')
+  return {
+    status: 503,
+    headers: {
+      'Retry-After': String(INFRA_RETRY_AFTER_SECONDS),
+    },
+    body: {
+      code: error.code,
+      message: 'Service unavailable',
+      meta: {},
+    },
+  }
+}
+
+/**
+ * Maps unknown throwables to a generic 500 response.
+ *
+ * @param error - Any non-{@link BaseError} value
+ * @returns **500** with `UNKNOWN_ERROR`
+ *
+ * @internal
+ */
+export const mapUnknownToHttp = (error: unknown): HttpErrorResponse => {
+  logger.error({ err: toLoggableError(error) }, 'Unknown error')
+  return {
+    status: 500,
+    body: { code: ErrorCodes.UNKNOWN_ERROR, message: 'Internal server error' },
   }
 }

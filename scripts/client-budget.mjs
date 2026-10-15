@@ -19,9 +19,7 @@ const chunks = readdirSync(dir)
 
 const total = chunks.reduce((sum, chunk) => sum + chunk.gzip, 0)
 for (const chunk of chunks) {
-  console.log(
-    `${chunk.name} raw=${chunk.raw} gzip=${chunk.gzip}`
-  )
+  console.log(`${chunk.name} raw=${chunk.raw} gzip=${chunk.gzip}`)
 }
 console.log(`total gzip=${total}`)
 

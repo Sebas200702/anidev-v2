@@ -10,7 +10,14 @@
     },
     {
       "description": "Sensitive upgrades need manual review (runtime switches, auth, ORM)",
-      "matchPackageNames": ["better-auth", "astro", "@astrojs/*", "drizzle-orm", "drizzle-kit", "sharp"],
+      "matchPackageNames": [
+        "better-auth",
+        "astro",
+        "@astrojs/*",
+        "drizzle-orm",
+        "drizzle-kit",
+        "sharp"
+      ],
       "labels": ["needs-manual-qa"],
       "prBodyNotes": "Run the full gate plus e2e before merging (auth/ORM/adapter changes)."
     }
