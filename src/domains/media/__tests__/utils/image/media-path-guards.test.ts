@@ -1,7 +1,7 @@
 /**
  * Tests for the media path type guards.
  *
- * @module shared/__tests__/utils/image/media-path-guards
+ * @module domains/media/__tests__/utils/image/media-path-guards
  * @remarks
  * Covers entity, media-type, and size validation against {@link mediaServiceConfig}, plus the
  * free-text media-type rule for `episode`/`music` entities. Follows the repo TDD/unit-test layout.
@@ -38,7 +38,7 @@ import {
   isSupportedMediaSize,
   isSupportedMediaType,
   isValidMediaType,
-} from '@utils/image/media-path-guards'
+} from '@media/utils/image/media-path-guards'
 
 describe('RAW_ENTITIES', () => {
   it('contains exactly episode and music', () => {

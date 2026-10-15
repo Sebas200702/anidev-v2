@@ -1,7 +1,7 @@
 /**
  * Type guards and constant sets for semantic media path parsing.
  *
- * @module shared/utils/image/media-path-guards
+ * @module domains/media/utils/image/media-path-guards
  * @remarks Validates entity, media-type, and size segments against
  * {@link mediaServiceConfig}. For `episode` and `music` entities the media type is free-text.
  * @see {@link parseMediaPath}

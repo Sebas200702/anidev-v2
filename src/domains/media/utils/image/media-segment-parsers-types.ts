@@ -1,7 +1,7 @@
 /**
  * Types for the semantic media-path segment parsers.
  *
- * @module shared/utils/image/media-segment-parsers-types
+ * @module domains/media/utils/image/media-segment-parsers-types
  * @remarks
  * Consumed by {@link module:shared/utils/image/media-segment-parsers} as the
  * intermediate parse result before building {@link SemanticMediaPath}.

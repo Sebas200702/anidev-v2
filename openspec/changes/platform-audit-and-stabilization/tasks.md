@@ -26,7 +26,7 @@
 - [x] B.6 **(F-21)** Auth surface hardening with tests: neutral registration outcome for existing emails, `token` removed from login/register JSON bodies, provider payloads out of `meta.details` (kept in `cause`), credential-error mapping keyed by Better Auth's stable error code so the documented `401` path is reachable.
 - [x] B.7 **(F-22)** Bound request bodies in `withZodValidation`: reject `Content-Length`/streamed size over 1 MiB with `413` before `request.json()`; tests for oversized and chunked-unknown-length cases.
 - [x] B.8 **(F-19, F-22)** Bound `page` (≤ `10_000`) in anime/music list schemas; tests assert `400 VALIDATION_ERROR` and that no query runs.
-- [ ] B.9 **(T-06, T-08, F-03, F-07)** Middleware/security header pass: `x-request-id` on every response, `nosniff`, `X-Frame-Options`/`frame-ancestors 'none'`, `Referrer-Policy`, HSTS (prod), CSP as a real HTTP header; remove `'unsafe-inline'` from `script-src` if Astro inline injections can be hashed in this version (document any residual). Add `biome.json` overrides forbidding domain imports inside `src/shared/**` and `src/lib/**`, then fix the remaining violations (move `resolveMediaAssets` out of `src/shared/utils/image/` per C.7).
+- [x] B.9 **(T-06, T-08, F-03, F-07)** Middleware/security header pass: `x-request-id` on every response, `nosniff`, `X-Frame-Options`/`frame-ancestors 'none'`, `Referrer-Policy`, HSTS (prod), CSP as a real HTTP header; remove `'unsafe-inline'` from `script-src` if Astro inline injections can be hashed in this version (document any residual). Add `biome.json` overrides forbidding domain imports inside `src/shared/**` and `src/lib/**`, then fix the remaining violations (move `resolveMediaAssets` out of `src/shared/utils/image/` per C.7).
 - [x] B.10 **(T-04, F-09)** Error envelope unification: `withZodValidation` and `/media/[...path]` error paths use `createErrorResponse` (code + `Retry-After`); 503 bodies omit `error.details`; `/` renders `<ServiceUnavailable />` with `503` on `InfraError`; tests for each.
 - [x] B.11 **(F-25)** `isPublicRoute('//…')` returns true via the `'/'` prefix; make the root route an exact match and add a unit test.
 
@@ -38,7 +38,7 @@
 - [x] C.4 **(F-04, F-10)** Byte budget while streaming (abort with typed `503`), MIME allowlist for raw media, `nosniff` + safe `Content-Disposition` on raw responses; tests with a `text/html` upstream and an oversized body.
 - [ ] C.5 **(T-07, F-11)** Optimized images move from Redis base64 to a bounded local disk LRU with a byte budget + `Cache-Control: public, max-age=31536000, immutable`; bound `w` to `[16, 2048]` (normalized); decide and implement the `/_image` stance (disable or document + keep `remotePatterns` empty) with a test asserting remote transforms are refused.
 - [x] C.6 **(F-19/F-28 item)** Unsupported-but-parsed entities (e.g. `studio`) fail as `404/400` domain errors, not `503`; test asserts no `InfraError` alert path.
-- [ ] C.7 **(T-06)** Move `resolveMediaAssets` into `src/domains/media/services/resolve-media-assets/` and decouple `src/shared/utils/image/**` from every `@media/*` import; update consumers.
+- [x] C.7 **(T-06)** Move `resolveMediaAssets` into `src/domains/media/services/resolve-media-assets/` and decouple `src/shared/utils/image/**` from every `@media/*` import; update consumers.
 
 ## D. Database & performance
 

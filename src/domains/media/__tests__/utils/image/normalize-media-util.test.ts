@@ -1,7 +1,7 @@
 /**
  * Tests for the media normalization helpers.
  *
- * @module shared/__tests__/utils/image/normalize-media-util
+ * @module domains/media/__tests__/utils/image/normalize-media-util
  * @remarks
  * Covers index clamping ({@link normalizeMediaId}) and size normalization ({@link normalizeAssetSize}).
  * Follows the repo TDD/unit-test layout.
@@ -11,7 +11,7 @@ import { MediaSize } from '@media/types/media-types'
 import {
   normalizeAssetSize,
   normalizeMediaId,
-} from '@utils/image/normalize-media-util'
+} from '@media/utils/image/normalize-media-util'
 
 describe('normalizeMediaId', () => {
   it('clamps values above the total', () => {

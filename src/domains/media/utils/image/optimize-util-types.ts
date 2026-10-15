@@ -1,7 +1,7 @@
 /**
  * Types for image buffer optimization options and output formats.
  *
- * @module shared/utils/image/optimize-util-types
+ * @module domains/media/utils/image/optimize-util-types
  * @remarks
  * Consumed by {@link module:shared/utils/image/optimize-util} for option shaping
  * and by the media cache/mapper layers for typed optimization defaults.

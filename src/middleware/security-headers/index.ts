@@ -4,3 +4,4 @@
  * @module middleware/security-headers
  */
 export * from './service'
+export * from './policy'

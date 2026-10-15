@@ -1,7 +1,7 @@
 /**
  * Tests for {@link normalizeImageUrl}.
  *
- * @module shared/__tests__/utils/image/normalize-image-url-util
+ * @module domains/media/__tests__/utils/image/normalize-image-url-util
  * @remarks
  * Covers non-string input, whitespace-only strings, and trimming of valid URLs, asserting the
  * configured placeholder fallback. Follows the repo TDD/unit-test layout.
@@ -19,7 +19,7 @@ vi.mock('@media/config', () => ({
 }))
 
 import { mediaServiceConfig } from '@media/config'
-import { normalizeImageUrl } from '@utils/image/normalize-image-url-util'
+import { normalizeImageUrl } from '@media/utils/image/normalize-image-url-util'
 
 describe('normalizeImageUrl', () => {
   const placeholder = mediaServiceConfig.defaultPlaceholderUrl

@@ -1,7 +1,7 @@
 /**
  * Tests for the semantic media segment parsers.
  *
- * @module shared/__tests__/utils/image/media-segment-parsers
+ * @module domains/media/__tests__/utils/image/media-segment-parsers
  * @remarks
  * Covers the type-first, slug-then-type, and raw-entity layouts including size/index resolution
  * and index defaulting/validation. Follows the repo TDD/unit-test layout.
@@ -37,7 +37,7 @@ import {
   parseRawEntityPattern,
   parseSlugThenTypePattern,
   parseTypeFirstPattern,
-} from '@utils/image/media-segment-parsers'
+} from '@media/utils/image/media-segment-parsers'
 
 describe('parseTypeFirstPattern', () => {
   it('returns null when the media type is invalid for the entity', () => {

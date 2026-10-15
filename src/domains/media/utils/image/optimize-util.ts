@@ -1,7 +1,7 @@
 /**
  * Image buffer optimization using Sharp — resize, re-encode, and guardrails for size and pixels.
  *
- * @module shared/utils/image/optimize-util
+ * @module domains/media/utils/image/optimize-util
  * @remarks
  * Used by the media proxy pipeline to serve WebP/AVIF derivatives. Enforces hard limits before Sharp
  * decodes untrusted upstream images.

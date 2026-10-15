@@ -2,7 +2,7 @@
  * Tests for image buffer optimization guardrails in
  * {@link module:shared/utils/image/optimize-util}.
  *
- * @module shared/__tests__/utils/image/optimize-util
+ * @module domains/media/__tests__/utils/image/optimize-util
  * @remarks
  * Focuses on the pre-Sharp validations that reject malformed input before the
  * (native, hard to run in CI) decoder is invoked: empty buffers throw a typed
@@ -24,7 +24,7 @@ vi.mock('@media/config', () => ({
 import {
   EmptyImageError,
   optimizeImageBuffer,
-} from '@utils/image/optimize-util'
+} from '@media/utils/image/optimize-util'
 
 describe('optimizeImageBuffer guardrails', () => {
   it('rejects an empty buffer with EmptyImageError', async () => {

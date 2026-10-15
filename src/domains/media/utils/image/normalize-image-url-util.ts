@@ -1,7 +1,7 @@
 /**
  * Normalizes external image URLs and applies configured placeholder fallbacks.
  *
- * @module shared/utils/image/normalize-image-url-util
+ * @module domains/media/utils/image/normalize-image-url-util
  * @remarks
  * Used when rendering anime/character artwork from upstream APIs that may return empty or malformed URLs.
  * Does not validate URL structure or fetch reachability — only type, trim, and emptiness checks.

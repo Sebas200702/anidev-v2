@@ -1,7 +1,7 @@
 /**
  * Helpers for resolving, indexing, and sizing media assets for semantic media routes.
  *
- * @module shared/utils/image/normalize-media-util
+ * @module domains/media/utils/image/normalize-media-util
  * @remarks
  * Works with {@link SemanticMediaPath} from the media domain and repository lookups by entity type.
  * Thrown {@link InfraError} with `INVALID_IMAGE_PATH` maps to HTTP 500 when not caught and rethrown as {@link DomainError}.

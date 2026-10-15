@@ -4,11 +4,11 @@
  * resolution. Used for already-known absolute image URLs.
  */
 import { withCache } from '@lib/cache'
-import { normalizeImageUrl } from '@utils/image/normalize-image-url-util'
+import { normalizeImageUrl } from '@media/utils/image/normalize-image-url-util'
 import {
   normalizeOptimizeOptions,
   type OptimizeOptions,
-} from '@utils/image/optimize-util'
+} from '@media/utils/image/optimize-util'
 import { mediaCache } from '@media/cache/media-cache'
 import { optimizeMediaImageBuffer } from '@media/services/image-optimizer'
 import { fetchImageBuffer } from '@media/services/fetch-image-buffer'

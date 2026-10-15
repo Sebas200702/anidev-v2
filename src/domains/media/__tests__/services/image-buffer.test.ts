@@ -21,7 +21,7 @@ const { optimizeImageBuffer, fetchMediaAsset } = vi.hoisted(() => ({
   fetchMediaAsset: vi.fn(),
 }))
 
-vi.mock('@utils/image/optimize-util', () => ({
+vi.mock('@media/utils/image/optimize-util', () => ({
   optimizeImageBuffer,
 }))
 vi.mock('@media/services/media-fetch', () => ({ fetchMediaAsset }))

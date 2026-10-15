@@ -1,7 +1,7 @@
 /**
  * Segment-level parsers for semantic media paths.
  *
- * @module shared/utils/image/media-segment-parsers
+ * @module domains/media/utils/image/media-segment-parsers
  * @remarks Convert trailing URL segments into intermediate {@link ParsedMediaSegments} for the
  * type-first, slug-then-type, and raw-entity (music/episode) layouts.
  * @see {@link parseMediaPath}
@@ -12,7 +12,7 @@ import { MediaSize as MediaSizeEnum } from '@media/types/media-types'
 import {
   isSupportedMediaSize,
   isValidMediaType,
-} from '@utils/image/media-path-guards'
+} from '@media/utils/image/media-path-guards'
 import type {
   ParsedMediaSegments,
   SizeAndIndex,

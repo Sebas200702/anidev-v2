@@ -1,7 +1,7 @@
 /**
  * Parses semantic media URL path segments into typed {@link SemanticMediaPath} descriptors.
  *
- * @module shared/utils/image/parse-media-type-util
+ * @module domains/media/utils/image/parse-media-type-util
  * @remarks
  * Supports two layouts after `/{entity}/{id}/`:
  * - **Type-first**: `{mediaType}/{size?}/{index?}`
@@ -20,12 +20,15 @@
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError } from '@shared/errors/app-error'
 import type { SemanticMediaPath } from '@media/types/media-types'
-import { RAW_ENTITIES, isSupportedEntity } from '@utils/image/media-path-guards'
+import {
+  RAW_ENTITIES,
+  isSupportedEntity,
+} from '@media/utils/image/media-path-guards'
 import {
   parseRawEntityPattern,
   parseSlugThenTypePattern,
   parseTypeFirstPattern,
-} from '@utils/image/media-segment-parsers'
+} from '@media/utils/image/media-segment-parsers'
 
 /**
  * Parses a raw media path into a {@link SemanticMediaPath}.

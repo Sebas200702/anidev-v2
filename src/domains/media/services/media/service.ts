@@ -24,7 +24,7 @@
  * const optimized = await mediaService.optimizeMedia(params, { width: 400, quality: 75 })
  * ```
  */
-import { parseMediaPath } from '@utils/image/parse-media-type-util'
+import { parseMediaPath } from '@media/utils/image/parse-media-type-util'
 import { resolveMedia } from '@media/services/resolve-media'
 import { fetchImageBuffer } from '@media/services/fetch-image-buffer'
 import { optimizeMedia } from '@media/services/optimize-media'

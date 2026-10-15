@@ -1,7 +1,7 @@
 /**
  * Tests for {@link optimizeImageBuffer} and {@link normalizeOptimizeOptions} with real images.
  *
- * @module shared/__tests__/utils/image/optimize-util-sharp
+ * @module domains/media/__tests__/utils/image/optimize-util-sharp
  * @remarks
  * Uses `sharp` to synthesize a tiny real image, then exercises the resize + format branches and the
  * {@link ImageTooLargeError} guard. `@media/config` is mocked for the option defaults. Follows the
@@ -24,7 +24,7 @@ import {
   ImageTooLargeError,
   normalizeOptimizeOptions,
   optimizeImageBuffer,
-} from '@utils/image/optimize-util'
+} from '@media/utils/image/optimize-util'
 
 let png: Buffer
 

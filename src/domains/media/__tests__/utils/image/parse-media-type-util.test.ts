@@ -1,7 +1,7 @@
 /**
  * Tests for {@link parseMediaPath}.
  *
- * @module shared/__tests__/utils/image/parse-media-type-util
+ * @module domains/media/__tests__/utils/image/parse-media-type-util
  * @remarks
  * Covers segment-count and id validation (null returns), the type-first / slug-then-type layouts,
  * raw-entity (music/episode) parsing, and the {@link DomainError} thrown for unsupported
@@ -36,7 +36,7 @@ vi.mock('@media/config', () => ({
 import { DomainError } from '@shared/errors/app-error'
 import { ErrorCodes } from '@shared/errors/codes'
 import { MediaSize } from '@media/types/media-types'
-import { parseMediaPath } from '@utils/image/parse-media-type-util'
+import { parseMediaPath } from '@media/utils/image/parse-media-type-util'
 
 describe('parseMediaPath', () => {
   it('returns null for fewer than 3 segments', () => {

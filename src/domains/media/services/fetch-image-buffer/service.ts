@@ -5,7 +5,7 @@
  */
 import { ErrorCodes } from '@shared/errors/codes'
 import { InfraError } from '@shared/errors/app-error'
-import { normalizeImageUrl } from '@utils/image/normalize-image-url-util'
+import { normalizeImageUrl } from '@media/utils/image/normalize-image-url-util'
 import { fetchMediaAsset } from '@media/services/media-fetch'
 
 /**

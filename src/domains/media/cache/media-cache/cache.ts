@@ -17,7 +17,7 @@
  * if (!hit) await mediaCache.set(parsedPath, options, optimized)
  * ```
  */
-import type { OptimizeOptions } from '@utils/image/optimize-util'
+import type { OptimizeOptions } from '@media/utils/image/optimize-util'
 import type {
   OptimizedMedia,
   SemanticMediaPath,

@@ -1,7 +1,7 @@
 /**
  * Image optimization, URL normalization, semantic path parsing, and media asset resolution.
  *
- * @module shared/utils/image
+ * @module domains/media/utils/image
  * @remarks
  * Used by the media proxy route: {@link parseMediaPath} → {@link resolveMediaAssets} →
  * {@link optimizeImageBuffer} with {@link normalizeImageUrl} for upstream URLs.

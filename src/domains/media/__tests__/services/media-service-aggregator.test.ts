@@ -8,7 +8,7 @@
  */
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@utils/image/parse-media-type-util', () => ({
+vi.mock('@media/utils/image/parse-media-type-util', () => ({
   parseMediaPath: vi.fn(),
 }))
 vi.mock('@media/services/resolve-media', () => ({ resolveMedia: vi.fn() }))

@@ -3,7 +3,7 @@
  * @remarks Builds deterministic cache keys from semantic media paths or normalized source URLs
  * combined with optimization options, so distinct transform requests never collide.
  */
-import type { OptimizeOptions } from '@utils/image/optimize-util'
+import type { OptimizeOptions } from '@media/utils/image/optimize-util'
 import type { SemanticMediaPath } from '@media/types/media-types'
 
 /**

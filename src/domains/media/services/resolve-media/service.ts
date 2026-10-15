@@ -5,7 +5,7 @@
  * then selects a single asset by 1-based index. Falls back to a placeholder when none match.
  */
 import { resolveMediaAssets } from '@media/services/resolve-media-assets'
-import type { OptimizeOptions } from '@utils/image/optimize-util'
+import type { OptimizeOptions } from '@media/utils/image/optimize-util'
 import { mediaServiceConfig } from '@media/config'
 import {
   mapFilteredMediaAssets,
