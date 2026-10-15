@@ -1,4 +1,4 @@
-FROM oven/bun:1.2 AS base
+FROM oven/bun:1.3 AS base
 WORKDIR /app
 
 FROM base AS install
@@ -29,12 +29,14 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
-RUN addgroup --system --gid 1001 bunjs \
-  && adduser --system --uid 1001 astro
+RUN groupadd --system --gid 1001 bunjs \
+  && useradd --system --uid 1001 --gid bunjs astro
 
+# Runtime installs production dependencies only (devDependencies stay in the
+# build stage); the standalone server needs no build tooling to run.
+COPY --from=build /app/package.json /app/bun.lock* ./
+RUN bun install --production --frozen-lockfile --ignore-scripts
 COPY --from=build --chown=astro:bunjs /app/dist ./dist
-COPY --from=build --chown=astro:bunjs /app/node_modules ./node_modules
-COPY --from=build --chown=astro:bunjs /app/package.json ./package.json
 
 USER astro
 
