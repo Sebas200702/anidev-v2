@@ -81,8 +81,14 @@ describe('getMusicByAnimeId stale-serve degradation', () => {
     const result = await getMusicByAnimeId(5114)
 
     expect(result).toEqual({ value: TRACKS, isStale: true })
-    expect(getMock).toHaveBeenNthCalledWith(1, 'music:anime:5114|http://localhost:4321')
-    expect(getMock).toHaveBeenNthCalledWith(2, 'music:anime:5114:stale|http://localhost:4321')
+    expect(getMock).toHaveBeenNthCalledWith(
+      1,
+      'music:anime:5114|http://localhost:4321'
+    )
+    expect(getMock).toHaveBeenNthCalledWith(
+      2,
+      'music:anime:5114:stale|http://localhost:4321'
+    )
   })
 
   it('rethrows InfraError when the DB is down and no snapshot exists', async () => {
