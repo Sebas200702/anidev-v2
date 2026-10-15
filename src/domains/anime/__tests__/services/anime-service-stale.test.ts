@@ -111,8 +111,8 @@ describe('animeService stale-serve degradation', () => {
     const result = await animeService.getAnimeDetails(5114)
 
     expect(result).toEqual({ value: DETAILS, isStale: true })
-    expect(getMock).toHaveBeenNthCalledWith(1, 'anime:details:5114')
-    expect(getMock).toHaveBeenNthCalledWith(2, 'anime:details:5114:stale')
+    expect(getMock).toHaveBeenNthCalledWith(1, 'anime:details:5114|http://localhost:4321')
+    expect(getMock).toHaveBeenNthCalledWith(2, 'anime:details:5114:stale|http://localhost:4321')
   })
 
   it('rethrows InfraError when DB is down and no stale snapshot exists', async () => {
@@ -134,7 +134,7 @@ describe('animeService stale-serve degradation', () => {
     expect(result).toEqual({ value: DETAILS, isStale: false })
     expect(getAnimeByMalIdMock).toHaveBeenCalledWith(5114)
     expect(setMock).toHaveBeenCalledWith(
-      'anime:details:5114',
+      'anime:details:5114|http://localhost:4321',
       JSON.stringify(DETAILS),
       'EX',
       CacheTtl.Medium
@@ -147,7 +147,7 @@ describe('animeService stale-serve degradation', () => {
     await animeService.getAnimeDetails(5114)
 
     expect(setMock).toHaveBeenCalledWith(
-      'anime:details:5114:stale',
+      'anime:details:5114:stale|http://localhost:4321',
       JSON.stringify(DETAILS),
       'EX',
       CacheTtl.Stale

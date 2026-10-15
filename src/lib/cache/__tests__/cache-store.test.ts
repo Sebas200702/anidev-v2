@@ -102,7 +102,9 @@ describe('cache-primitives with a healthy ioredis client', () => {
 
     await cacheDel('anime:full:5114')
 
-    expect(delMock).toHaveBeenCalledWith('anime:full:5114|http://localhost:4321')
+    expect(delMock).toHaveBeenCalledWith(
+      'anime:full:5114|http://localhost:4321'
+    )
   })
 })
 
