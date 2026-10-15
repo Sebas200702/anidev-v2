@@ -1,11 +1,15 @@
 /**
- * Public exports for the toolbar island.
+ * Public exports for the toolbar component.
  *
  * @module shared/components/toolbar
  * @remarks
- * React (CSR) component — needs a `client:*` directive at the usage site.
+ * Zero-JS presentational component; behavior lives in the vanilla
+ * `./script` controller bundled via the inline `<script>` tag.
  *
  * @see {@link Toolbar}
+ * @see {@link initToolbar}
  */
 
-export { Toolbar } from './toolbar'
+export { default as Toolbar } from './toolbar.astro'
+export { initToolbar } from './script'
+export type { ToolbarControls } from './script'

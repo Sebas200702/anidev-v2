@@ -40,7 +40,7 @@ export const shellShowcaseEntries: readonly ShowcaseEntry[] = [
     title: 'Toolbar',
     owner: 'shared',
     summary:
-      'The shell’s only hydrated island; already live in the corner of this page.',
+      'Zero-JS shell actions; already live in the corner of this page.',
     fixture: {},
     controls: [],
     renderedByShell: true,
