@@ -18,13 +18,19 @@ vi.mock('@config/env', () => ({
   env: { NODE_ENV: 'test', LOG_LEVEL: 'silent' },
 }))
 
-const { select, insert, del } = vi.hoisted(() => ({
-  select: vi.fn(),
-  insert: vi.fn(),
-  del: vi.fn(),
-}))
+const { select, insert, del, execute, transaction } = vi.hoisted(() => {
+  const select = vi.fn()
+  const insert = vi.fn()
+  const del = vi.fn()
+  const execute = vi.fn()
+  const tx = { select, insert, delete: del, execute }
+  const transaction = vi.fn(async (cb: (tx: unknown) => Promise<unknown>) =>
+    cb(tx)
+  )
+  return { select, insert, del, execute, transaction }
+})
 vi.mock('@db/client', () => ({
-  db: { select, insert, delete: del },
+  db: { select, insert, delete: del, transaction },
 }))
 
 const { searchHistoryRepository } = await import(
@@ -59,8 +65,20 @@ describe('searchHistoryRepository.record', () => {
     expect(insert).toHaveBeenCalled()
   })
 
+  it('takes the per-user advisory lock inside the transaction', async () => {
+    await searchHistoryRepository.record({
+      userId: 'u1',
+      scope: 'anime',
+    } as never)
+
+    expect(transaction).toHaveBeenCalled()
+    expect(execute).toHaveBeenCalled()
+    expect(insert).toHaveBeenCalled()
+    expect(del).toHaveBeenCalled()
+  })
+
   it('wraps errors', async () => {
-    insert.mockImplementation(throwOnQuery)
+    transaction.mockImplementation(throwOnQuery)
     await expect(
       searchHistoryRepository.record({ userId: 'u1', scope: 'anime' } as never)
     ).rejects.toBeInstanceOf(InfraError)
