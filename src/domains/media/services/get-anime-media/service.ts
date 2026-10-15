@@ -41,7 +41,12 @@ export const getAnimeMediaByIds = async (
   const rows = await animeMediaRepository.getMediaByAnimeIds(animeIds)
   const grouped: Record<number, MediaAsset[]> = {}
   for (const { animeId, ...asset } of rows) {
-    ;(grouped[animeId] ??= []).push(asset)
+    const list = grouped[animeId]
+    if (list) {
+      list.push(asset)
+    } else {
+      grouped[animeId] = [asset]
+    }
   }
   return grouped
 }
