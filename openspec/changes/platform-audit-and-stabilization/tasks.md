@@ -14,7 +14,7 @@
 
 - [x] A.1 Add the missing regression tests that keep `home-shell-and-featured-carousel` honest: service-level unit test for `getCarouselItems` (cache hit, empty-eligibility short-circuit, media/genre fan-out shape) and an E2E check that `/` renders the hero when eligible anime exist and omits it cleanly when not (its tasks 6.2/6.3).
 - [x] A.2 After F.3 lands, archive `component-showcase` (its task 8.6 defect is fixed here) and then archive `home-shell-and-featured-carousel`, syncing their deltas into `openspec/specs/`.
-- [ ] A.3 Archive this change after G.4, syncing all deltas (including the new music/media/search committed specs) into `openspec/specs/`.
+- [x] A.3 Archive this change after G.4, syncing all deltas (including the new music/media/search committed specs) into `openspec/specs/`.
 
 ## B. Security & privacy (P1 → P2)
 
@@ -72,7 +72,7 @@
 
 - [x] G.1 **(F-24)** Enforce coverage thresholds in `vitest.config.ts` (statements 85, branches 82, functions 84, lines 85) and keep `test:coverage` blocking in CI.
 - [x] G.2 **(F-24, B.1)** E2E additions (real stack): owner/non-owner/anonymous profile visibility; `429` after threshold; hardening headers present on page/API/media; invalid `w`/`page` rejected; raw-media `nosniff` when a fixture source exists.
-- [ ] G.3 Full local verification with the real stack up: `docker compose up -d` → `db:migrate` → `db:seed:e2e` → `format` → `check` → `check:types` → `test` → `test:integration` → `test:e2e` → `build`; re-run the audit probe script (headers, privacy, `h1` count, chunk sizes) and append before/after numbers to this change's design.
+- [x] G.3 Full local verification with the real stack up: `docker compose up -d` → `db:migrate` → `db:seed:e2e` → `format` → `check` → `check:types` → `test` → `test:integration` → `test:e2e` → `build`; re-run the audit probe script (headers, privacy, `h1` count, chunk sizes) and append before/after numbers to this change's design.
 - [x] G.4 **(F-28)** Refactor the 4 files over the 150-line rule (`carousel-item.astro` 157, `map-error-to-http.ts` 156, `app-error.ts` 156, `pages/api/user/[userId].ts` 152) by responsibility, no behavior change.
-- [ ] G.5 Release on the feature branch (`bun run release:minor` — features included), open the PR, get both CI jobs green, push the tag after merge, then archive (A.3).
+- [x] G.5 Release on the feature branch (`bun run release:minor` — features included), open the PR, get both CI jobs green, push the tag after merge, then archive (A.3).
 - [x] G.6 Decision record: document the email-verification stance (implement in a dedicated change or declare out of scope) in `ROADMAP.md`; note the DAST/load-test follow-ups for pre-public-release.

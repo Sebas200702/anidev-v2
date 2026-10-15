@@ -210,3 +210,29 @@ Its tasks T-01…T-09 map to B.1/B.2 (T-01), C.1 (T-02), C.2/C.3 (T-03), B.10 (T
   `musicListCache` keys; permuted filter objects produce one key (unit +
   facade tests). Deep-imported (`@lib/cache/stable-stringify`) so existing
   `@lib/cache` test mocks keep working.
+
+## 12. G.3 verification record (2026-10-15, local stack)
+
+Full gate green: `format` clean · `check` 4 baseline warnings · `check:types`
+0 errors · unit 579 passed · integration 26 passed · `build` clean ·
+`test:coverage` 86.02/82.58/87.03/86.31 with enforced thresholds (85/82/84/85)
+· `bun run audit` 0 unlisted high/critical · Docker image builds and boots
+with production-only deps on `oven/bun:1.3`.
+
+| Probe | Before | After |
+|---|---|---|
+| Security headers | none | `x-request-id`, `nosniff`, `DENY`, `Referrer-Policy`, HSTS (prod), CSP header on documents |
+| Profile privacy (anon read) | `preferences` + `history` leaked | public identity only (e2e owner/other/anonymous) |
+| `h1` count (`/`, `/showcase`, `/anime/[id]/[slug]`) | 0 / 2 / 2 (brand heading) | 1 / 1 / 1, verified live |
+| Client JS chunks | 7 incl. React runtime (~110.7 KB gzip) | 5, React chunks gone; 111,884 B total, ~94% Sentry SDK (documented in `docs/monitoring.md`) |
+| Unit tests | 493 | 579 |
+| Carousel cold queries | 14 (2 + 2N) | 3 (1 when empty) |
+| DB indexes (media/filter) | PKs only | 16 + `profile.user_id` unique + junction cascades (`drizzle/0002`) |
+| E2E api project | — | 33/33 green (visibility, 429, headers, bounds, `/_image` 403) |
+
+Caveat: the `ui` smoke is red **only in this sandbox** — every page subresource
+fails with `ERR_INVALID_ARGUMENT` under the test-runner-driven
+headless-shell-1234 while the identical page, server build, and browser
+binaries load clean outside the runner (plus curl/Node-fetch green). No app
+code is involved in Chromium subresource fetching. Kept strict; CI (Ubuntu +
+pinned browsers) adjudicates.
