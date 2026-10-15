@@ -160,3 +160,31 @@ Its tasks T-01…T-09 map to B.1/B.2 (T-01), C.1 (T-02), C.2/C.3 (T-03), B.10 (T
     present in `pg_indexes` and valid (migration applied cleanly). Value is at
     production volume.
 - **Integration:** `test:integration` 6 files / 20 tests green after migrate.
+
+## 10. D.3 evidence (carousel hot path)
+
+- **Before (code reading):** `getTopPopularWithMedia` ran 2 queries (full
+  `anime_media` type scan + anime list) plus JS-side eligibility, then the
+  service fanned out per slide: `getAnimeMedia(id)` × N and
+  `getGenresByAnimeId(id)` × N → **2 + 2N queries (14 at N = 6)**.
+- **After:** single set-based eligibility (`WHERE media_type IN
+  ('banner','clearlogo') GROUP BY anime_id HAVING COUNT(DISTINCT media_type)
+  = 2` over the D.2 composite index, as an `IN` subquery ordered by
+  `popularity_rank`) + one `getMediaByAnimeIds` fan-out + one
+  `getGenresByAnimeIds` fan-out → **3 cold queries** (1 when eligibility is
+  empty via short-circuit, asserted in unit test).
+- **EXPLAIN (seed scale):** single query, `GroupAggregate` + `Nested Loop`;
+  seq scans on 6-row tables are the correct planner choice locally — the
+  composite index it ranges over was proven index-scanned in §9.
+- **Cache:** key moved from `anime:list:carousel` to the dedicated
+  `anime:carousel:slides` prefix (`CacheKeyPrefix.AnimeCarousel`); the old
+  key expires via TTL, no migration needed.
+- **Domain boundary:** batching lives behind `getAnimeMediaByIds`
+  (media service groups into `Record<malId, MediaAsset[]>`) so the anime
+  domain never touches media repositories directly.
+- **Tests:** service unit (short-circuit, grouping, prefix), media grouping
+  unit, taxonomy batch unit (+ async-rejection `DB_ERROR`), integration
+  (reserved `999_004_xxx`, real SQL eligibility + both fan-outs).
+- **Incidental fix:** the new integration file first used `999_002_xxx` and
+  collided with the music suite's `ANIME = 999_002_101` (parallel workers,
+  shared DB) — moved to `999_004_xxx`; all 7 integration files green.

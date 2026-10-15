@@ -7,7 +7,7 @@ import type { CarouselItem } from '@anime/types'
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
-const CAROUSEL_CACHE_KEY = `${CacheKeyPrefix.AnimeList}:carousel`
+const CAROUSEL_CACHE_KEY = `${CacheKeyPrefix.AnimeCarousel}:slides`
 
 /**
  * Read/write access to the single carousel payload.

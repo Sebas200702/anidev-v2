@@ -216,6 +216,21 @@ describe('animeTaxonomyRepository', () => {
       animeTaxonomyRepository.getThemesByAnimeId(1)
     ).rejects.toBeInstanceOf(InfraError)
   })
+
+  it('batches genres and wraps async rejections as DB_ERROR', async () => {
+    select.mockReturnValue(
+      chainResolving([{ malId: 1, name: 'Action', animeId: 7 }])
+    )
+    expect(await animeTaxonomyRepository.getGenresByAnimeIds([7])).toHaveLength(
+      1
+    )
+    expect(await animeTaxonomyRepository.getGenresByAnimeIds([])).toEqual([])
+
+    select.mockReturnValue(Promise.reject(new Error('connection lost')))
+    await expect(
+      animeTaxonomyRepository.getGenresByAnimeIds([7])
+    ).rejects.toMatchObject({ code: 'DB_ERROR' })
+  })
 })
 
 describe('animeTitleRepository', () => {

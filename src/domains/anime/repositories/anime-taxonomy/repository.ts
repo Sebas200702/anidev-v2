@@ -5,7 +5,7 @@
  */
 import { genre, demographic, theme } from '@db/schemas/anime-taxonomy'
 import { db } from '@db/client'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { dbError } from '@shared/errors/db-errors'
 import {
   animeGenre,
@@ -48,6 +48,32 @@ export const animeTaxonomyRepository = {
         .where(eq(animeGenre.animeId, animeId))
     } catch (error) {
       throw dbError('[GET_GENRES_BY_ANIME_ID]', { animeId }, error)
+    }
+  },
+  /**
+   * Loads genres for several anime in one query.
+   *
+   * @param animeIds - Parent anime MAL IDs
+   * @returns Genre rows each carrying its `animeId` for grouping
+   *
+   * @throws {InfraError} (`[GET_GENRES_BY_ANIME_IDS]`)
+   */
+  async getGenresByAnimeIds(
+    animeIds: number[]
+  ): Promise<(GenreDB & { animeId: number })[]> {
+    try {
+      if (animeIds.length === 0) return []
+      return await db
+        .select({
+          malId: genre.malId,
+          name: genre.name,
+          animeId: animeGenre.animeId,
+        })
+        .from(genre)
+        .innerJoin(animeGenre, eq(animeGenre.genreId, genre.malId))
+        .where(inArray(animeGenre.animeId, animeIds))
+    } catch (error) {
+      throw dbError('[GET_GENRES_BY_ANIME_IDS]', { animeIds }, error)
     }
   },
 

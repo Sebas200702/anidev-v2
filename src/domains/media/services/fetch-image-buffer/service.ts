@@ -32,11 +32,8 @@ const PLACEHOLDER_CANDIDATES = [
  */
 export const readPlaceholderBuffer = async (): Promise<Buffer> => {
   for (const candidate of PLACEHOLDER_CANDIDATES) {
-    try {
-      return await readFile(join(process.cwd(), candidate))
-    } catch {
-      continue
-    }
+    const hit = await readFile(join(process.cwd(), candidate)).catch(() => null)
+    if (hit) return hit
   }
   throw new InfraError(
     ErrorCodes.EXTERNAL_API_ERROR,

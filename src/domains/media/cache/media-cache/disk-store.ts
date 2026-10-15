@@ -76,14 +76,16 @@ export const enforceDiskBudget = async (
     const entries: Array<{ name: string; size: number; mtimeMs: number }> = []
     let total = 0
     for (const name of names) {
-      if (name.endsWith('.meta')) continue
-      try {
-        const info = await stat(join(dir, name))
-        if (!info.isFile()) continue
-        total += info.size
-        entries.push({ name, size: info.size, mtimeMs: info.mtimeMs })
-      } catch {
-        continue
+      if (!name.endsWith('.meta')) {
+        try {
+          const info = await stat(join(dir, name))
+          if (info.isFile()) {
+            total += info.size
+            entries.push({ name, size: info.size, mtimeMs: info.mtimeMs })
+          }
+        } catch {
+          // Skip unreadable entries; eviction is best-effort.
+        }
       }
     }
     entries.sort((a, b) => a.mtimeMs - b.mtimeMs)
