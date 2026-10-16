@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent MAL-keyed anime row
  */
-import { integer, text, pgTable, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, text, pgTable, timestamp } from 'drizzle-orm/pg-core'
 
 import { anime } from '@db/schemas/anime'
 
@@ -22,6 +22,7 @@ import { anime } from '@db/schemas/anime'
  * - `animeId` — Primary key and FK to {@link anime.malId}.
  * - `animeThemesSlug` — Slug on AnimeThemes.net when known.
  * - `kitsuId` / `tvdbId` — Numeric external catalog identifiers.
+ * - `anilistId` — AniList numeric media id (sembrado del dump offline).
  * - `createdAt` / `updatedAt` — Row lifecycle timestamps (JS `Date` mode).
  *
  * @see {@link anime} canonical anime record
@@ -35,6 +36,7 @@ export const animeExternalIds = pgTable('anime_external_ids', {
   animeThemesSlug: text('anime_themes_slug'),
   kitsuId: integer('kitsu_id'),
   tvdbId: integer('tvdb_id'),
+  anilistId: integer('anilist_id'),
 
   createdAt: timestamp('created_at')
     .notNull()
