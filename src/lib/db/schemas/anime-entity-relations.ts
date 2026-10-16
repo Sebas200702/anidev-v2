@@ -15,7 +15,7 @@ import { character } from '@db/schemas/character'
 import { producer } from '@db/schemas/producer'
 import { staff } from '@db/schemas/staff'
 
-import { integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
+import { index, integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
 
 /**
  * Staff credits (`anime_staff` table) attached to an anime with role metadata.
@@ -103,7 +103,10 @@ export const animeRelatedAnime = pgTable(
 /**
  * Production company links (`anime_producer` table) between anime and producers.
  *
- * **Key columns:** `animeId`, `producerId` — composite primary key.
+ * **Key columns:** `animeId`, `producerId`, `role` — composite primary key.
+ * `role` discriminates animation studios (`studio`), licensors and production
+ * committees (`licensor`) and generic producers (`producer`), so the same company
+ * can appear twice under different roles.
  */
 export const animeProducer = pgTable(
   'anime_producer',
@@ -114,6 +117,10 @@ export const animeProducer = pgTable(
     producerId: integer('producer_id')
       .notNull()
       .references(() => producer.malId, { onDelete: 'cascade' }),
+    role: text('role').notNull().default('producer'),
   },
-  (t) => [primaryKey({ columns: [t.animeId, t.producerId] })]
+  (t) => [
+    primaryKey({ columns: [t.animeId, t.producerId, t.role] }),
+    index('anime_producer_role_idx').on(t.role, t.producerId),
+  ]
 )
