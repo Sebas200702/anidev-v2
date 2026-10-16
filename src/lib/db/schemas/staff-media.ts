@@ -32,6 +32,13 @@ export const staffMedia = pgTable(
     mediaType: text('media_type').notNull(),
     src: text('src').notNull(),
     size: text('size'),
+    /** Origen del asset (anilist, tvdb, jikan, animethemes…). */
+    source: text('source'),
+    /**
+     * Orden de preferencia al elegir una variante del mismo `mediaType`
+     * (menor = primero). AniList es la fuente primaria de banners ⇒ 10.
+     */
+    priority: integer('priority').notNull().default(100),
   },
-  (t) => [index('staff_media_staff_id_type_idx').on(t.staffId, t.mediaType)]
+  (t) => [index('staff_media_staff_id_type_priority_idx').on(t.staffId, t.mediaType, t.priority)]
 )

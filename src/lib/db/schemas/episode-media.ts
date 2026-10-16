@@ -32,8 +32,15 @@ export const episodeMedia = pgTable(
     mediaType: text('media_type').notNull(),
     src: text('src').notNull(),
     size: text('size'),
+    /** Origen del asset (anilist, tvdb, jikan, animethemes…). */
+    source: text('source'),
+    /**
+     * Orden de preferencia al elegir una variante del mismo `mediaType`
+     * (menor = primero). AniList es la fuente primaria de banners ⇒ 10.
+     */
+    priority: integer('priority').notNull().default(100),
   },
   (t) => [
-    index('episode_media_episode_id_type_idx').on(t.episodeId, t.mediaType),
+    index('episode_media_episode_id_type_priority_idx').on(t.episodeId, t.mediaType, t.priority),
   ]
 )

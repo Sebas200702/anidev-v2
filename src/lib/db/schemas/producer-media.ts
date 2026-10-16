@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/producer} for parent producer entity
  */
-import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
 import { producer } from '@db/schemas/producer'
 
 /**
@@ -30,4 +30,13 @@ export const producerMedia = pgTable('producer_media', {
   mediaType: text('media_type').notNull(),
   src: text('src').notNull(),
   size: text('size'),
-})
+  /** Origen del asset (anilist, tvdb, jikan, animethemes…). */
+  source: text('source'),
+  /**
+   * Orden de preferencia al elegir una variante del mismo `mediaType`
+   * (menor = primero). AniList es la fuente primaria de banners ⇒ 10.
+   */
+  priority: integer('priority').notNull().default(100),
+}, (t) => [
+  index('producer_media_producer_id_type_priority_idx').on(t.producerId, t.mediaType, t.priority),
+])
