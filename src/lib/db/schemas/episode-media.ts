@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/episode} for parent episode rows
  */
-import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
 import { episode } from '@db/schemas/episode'
 
 /**
@@ -42,5 +42,6 @@ export const episodeMedia = pgTable(
   },
   (t) => [
     index('episode_media_episode_id_type_priority_idx').on(t.episodeId, t.mediaType, t.priority),
+    uniqueIndex('episode_media_entity_type_src_unique').on(t.episodeId, t.mediaType, t.src),
   ]
 )

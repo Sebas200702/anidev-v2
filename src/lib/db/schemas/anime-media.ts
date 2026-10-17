@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent anime entity
  */
-import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
 import { anime } from '@db/schemas/anime'
 
 /**
@@ -43,5 +43,10 @@ export const animeMedia = pgTable(
      */
     priority: integer('priority').notNull().default(100),
   },
-  (t) => [index('anime_media_anime_id_type_priority_idx').on(t.animeId, t.mediaType, t.priority)]
+  (t) => [
+    index('anime_media_anime_id_type_priority_idx').on(t.animeId, t.mediaType, t.priority),
+    // Identidad natural: una fila por (entidad, tipo, url); las variantes
+    // conviven porque cambia `src`. Da un target valido a ON CONFLICT.
+    uniqueIndex('anime_media_entity_type_src_unique').on(t.animeId, t.mediaType, t.src),
+  ]
 )

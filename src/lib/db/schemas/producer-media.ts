@@ -10,7 +10,7 @@
  *
  * @see {@link module:lib/db/schemas/producer} for parent producer entity
  */
-import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
 import { producer } from '@db/schemas/producer'
 
 /**
@@ -39,4 +39,5 @@ export const producerMedia = pgTable('producer_media', {
   priority: integer('priority').notNull().default(100),
 }, (t) => [
   index('producer_media_producer_id_type_priority_idx').on(t.producerId, t.mediaType, t.priority),
+  uniqueIndex('producer_media_entity_type_src_unique').on(t.producerId, t.mediaType, t.src),
 ])
