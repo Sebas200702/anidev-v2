@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/Sebas200702/anidev-v2/compare/v0.10.0...v0.11.0) (2026-10-18)
+
+
+### Features
+
+* **anime:** episode item and detail mappers ([ba8727e](https://github.com/Sebas200702/anidev-v2/commit/ba8727e725724bef5537b3ec14c2a4262f62f8bb))
+* **anime:** episode list and detail schemas and types ([edba2ce](https://github.com/Sebas200702/anidev-v2/commit/edba2cedd53dc78f9fb8824d22b6f672d931f9f3))
+* **anime:** episode thumbnail link and alt text on every item ([22ccf40](https://github.com/Sebas200702/anidev-v2/commit/22ccf401782647a2a4e06eb2a5a87bafbb2ea189))
+* **anime:** EPISODE_NOT_FOUND domain error mapped to 404 ([20f418d](https://github.com/Sebas200702/anidev-v2/commit/20f418de49bf68652282cb599b1791a150071337))
+* **anime:** episodes cache keyed by page and episode number ([a4ab0a3](https://github.com/Sebas200702/anidev-v2/commit/a4ab0a3432c7e635121d91eec4401bb6be161a8a))
+* **anime:** episodes repository with page, count and detail ([5cad3dd](https://github.com/Sebas200702/anidev-v2/commit/5cad3dd803994b0f8135e4b1e0dd793dd44b8202))
+* **anime:** episodes service with stale cache and not-found checks ([33dde37](https://github.com/Sebas200702/anidev-v2/commit/33dde376e23f7544c6dfd28fcee5be12dad727ae))
+* **anime:** GET /api/anime/:malId/episodes list and detail routes ([c9e1a15](https://github.com/Sebas200702/anidev-v2/commit/c9e1a1507485a5bfe99359bd7f7f58d7acbdfa84))
+
+
+### Bug Fixes
+
+* **media:** serve episode thumbnails through the image pipeline ([92bf6e6](https://github.com/Sebas200702/anidev-v2/commit/92bf6e601e0c1d6470aa2e913d24c0eeed6f7967))
+
 ## [0.10.0](https://github.com/Sebas200702/anidev-v2/compare/v0.9.0...v0.10.0) (2026-10-18)
 
 
