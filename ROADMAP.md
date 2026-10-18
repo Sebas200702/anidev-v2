@@ -93,11 +93,12 @@ _(Change: `platform-audit-and-stabilization` y `component-showcase`.)_
 El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
 - [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `platform-audit-and-stabilization`.)_
-- [ ] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
+- [x] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
   banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
   el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
   (por temporada, por género) quedan pendientes.
-  _(Change abierto: `home-shell-and-featured-carousel`.)_
+  _(Change archivado: `home-shell-and-featured-carousel`; elegibilidad set-based
+  y fan-out por lotes en `platform-audit-and-stabilization`.)_
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (servicios sobre tablas relacionales existentes).
 - [ ] **Taxonomía** — páginas por género y por estudio/productora.
 - [x] **Control parental** — exclusión de ratings adultos embebida en las queries del catálogo (default seguro, fail-closed; variante `full` requiere opt-in, change pendiente).
@@ -251,6 +252,16 @@ Kitsu/TVDB/AniZip (IDs cruzados). Video de episodios: sin fuente legal → muro 
 | studios/licensors split + broadcast | Filtros de **estudio** y **día** (Fase 1), Schedule (Fase 6) |
 | voice-actor links (~4.2k de 217k en v1) | Fichas de seiyuu (Fase 6) |
 | episode `video_url` / `episode_source` | **Muro de Fase 5** — requiere decisión de fuente, no backfill |
+
+**Estado (2026-10-18) — mitad esquema del backfill hecha** (change
+`catalog-coverage-fields`): `anime` ya tiene `broadcast_day/time/timezone`
+(índice por día), `aired_from/to`, `trailer_youtube_id/embed_url`, `duration`,
+`source`, `rank`, `members`, `favorites`; `anime_producer` tiene `role`
+(`studio|licensor|producer`) con PK `(anime_id, producer_id, role)` e índice
+`(role, producer_id)`; `anime_external_ids` tiene `anilist_id`. El contrato de
+escritura y la query de cobertura viven en el `design.md` del change. **Falta la
+mitad de datos**: la corrida Fase 3 del scraper (mappers `/full` + promoción
+diff-upsert con `role` en el conflict target).
 
 ---
 

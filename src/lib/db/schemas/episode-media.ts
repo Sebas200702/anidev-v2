@@ -10,7 +10,14 @@
  *
  * @see {@link module:lib/db/schemas/episode} for parent episode rows
  */
-import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 import { episode } from '@db/schemas/episode'
 
 /**
@@ -32,8 +39,24 @@ export const episodeMedia = pgTable(
     mediaType: text('media_type').notNull(),
     src: text('src').notNull(),
     size: text('size'),
+    /** Origen del asset (anilist, tvdb, jikan, animethemes…). */
+    source: text('source'),
+    /**
+     * Orden de preferencia al elegir una variante del mismo `mediaType`
+     * (menor = primero). AniList es la fuente primaria de banners ⇒ 10.
+     */
+    priority: integer('priority').notNull().default(100),
   },
   (t) => [
-    index('episode_media_episode_id_type_idx').on(t.episodeId, t.mediaType),
+    index('episode_media_episode_id_type_priority_idx').on(
+      t.episodeId,
+      t.mediaType,
+      t.priority
+    ),
+    uniqueIndex('episode_media_entity_type_src_unique').on(
+      t.episodeId,
+      t.mediaType,
+      t.src
+    ),
   ]
 )

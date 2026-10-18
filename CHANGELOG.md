@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/Sebas200702/anidev-v2/compare/v0.9.0...v0.10.0) (2026-10-18)
+
+
+### Features
+
+* **catalog:** coverage columns on anime plus anilist_id ([8e3fcd0](https://github.com/Sebas200702/anidev-v2/commit/8e3fcd0ec2f629cdd92409b2f2f02477009cdc71))
+* **catalog:** role discriminator on anime_producer (studio|licensor|producer) ([a459de9](https://github.com/Sebas200702/anidev-v2/commit/a459de9f24fab4254a56afaad1804c8db1c3ec4a))
+* **media:** source and priority columns so variants can be ordered ([6631148](https://github.com/Sebas200702/anidev-v2/commit/663114805ed458fee18dc6d848071c0f41acbb00))
+
+
+### Bug Fixes
+
+* **anime:** related-anime projection selects coverage columns ([2755d6d](https://github.com/Sebas200702/anidev-v2/commit/2755d6d6e9ab878eece85852199837c6647e8110))
+* **media:** restore uniqueness as (entity, media_type, src) ([7ab6ed6](https://github.com/Sebas200702/anidev-v2/commit/7ab6ed68015e4fd9dc468c0d3df5737e4422f70c))
+* **media:** size and source fallback so real assets beat the placeholder ([a928558](https://github.com/Sebas200702/anidev-v2/commit/a928558a54a8595cb1803280f0a4bd00b7d5b17f))
+
+## [0.9.0](https://github.com/Sebas200702/anidev-v2/compare/v0.8.0...v0.9.0) (2026-10-15)
+
+
+### Features
+
+* **search:** unified results route with genre and keyword search ([426f0f7](https://github.com/Sebas200702/anidev-v2/commit/426f0f705d547e39b188220e3cfe02f6557880c2))
+
+
+### Bug Fixes
+
+* **ci:** environment-stable client budget gate and DSN build-arg ([b01f7d2](https://github.com/Sebas200702/anidev-v2/commit/b01f7d23545db742cb0619bbf929fe883f69ffef))
+* **e2e:** drop forced Origin/Sec-Fetch-Site headers breaking subresources ([7a92571](https://github.com/Sebas200702/anidev-v2/commit/7a9257160f4585363a230662e67ae4f4333c3382))
+* **e2e:** never bake a Sentry DSN into e2e builds ([e98b12c](https://github.com/Sebas200702/anidev-v2/commit/e98b12c5b84c87e8c0ba060ff0baa97aaaa57c85))
+* **lint:** apply formatter to namespaced key assertions ([7694107](https://github.com/Sebas200702/anidev-v2/commit/76941071cacbc66ca8aa1cc24a0bdef04d361a2d))
+* **tests:** namespace-aware redis key assertions in stale-serve suites ([844ea36](https://github.com/Sebas200702/anidev-v2/commit/844ea3614225eb91566d31737382054915115ed1))
+
 ## [0.8.0](https://github.com/Sebas200702/anidev-v2/compare/v0.7.0...v0.8.0) (2026-10-15)
 
 

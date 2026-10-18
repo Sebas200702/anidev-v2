@@ -22,6 +22,34 @@
       "when": 1792077182474,
       "tag": "0002_freezing_natasha_romanoff",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792118710988,
+      "tag": "0003_violet_bastion",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792157828999,
+      "tag": "0004_sweet_ken_ellis",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792181186957,
+      "tag": "0005_fine_pyro",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792205021209,
+      "tag": "0006_mature_solo",
+      "breakpoints": true
     }
   ]
 }

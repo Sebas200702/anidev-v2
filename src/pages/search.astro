@@ -1,0 +1,126 @@
+---
+/**
+ * Search results page — full results for keyword and taxonomy queries.
+ *
+ * @module pages/search
+ * @remarks
+ * Container route: validates the URL against {@link animeListRequestSchema},
+ * loads one page from {@link animeListService}, and renders the `AnimeCard`
+ * grid with server-rendered pagination. The entry points are the header
+ * search (via `?query=`) and the `#Genre` pills (via `?genre=`).
+ *
+ * @see {@link animeListService}
+ */
+import { config } from '@config/index'
+import { AnimeCard } from '@anime/components'
+import { animeListRequestSchema } from '@anime/schemas/anime-list-schema'
+import { animeListService } from '@anime/services/anime-list'
+import { ServiceUnavailable } from '@shared/components/service-unavailable'
+import { InfraError } from '@shared/errors/app-error'
+import Base from '@layouts/base-layout.astro'
+
+const PAGE_SIZE = 12
+
+const parsed = animeListRequestSchema.safeParse({
+  query: Object.fromEntries(Astro.url.searchParams.entries()),
+})
+
+if (!parsed.success) {
+  Astro.response.status = 400
+}
+
+const filters = parsed.success ? parsed.data.query : null
+
+let list: Awaited<
+  ReturnType<typeof animeListService.getAnimeList>
+>['value']['list'] = []
+let total = 0
+let infraError = false
+
+if (filters) {
+  try {
+    const result = await animeListService.getAnimeList({
+      ...filters,
+      page: filters.page ?? 1,
+      limit: PAGE_SIZE,
+    })
+    list = result.value.list
+    total = result.value.total
+  } catch (error) {
+    if (error instanceof InfraError) {
+      infraError = true
+    } else {
+      throw error
+    }
+  }
+}
+
+if (infraError) {
+  Astro.response.status = 503
+}
+
+const page = filters?.page ?? 1
+const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+const genre = filters?.genre ?? null
+const query = filters?.query ?? null
+const heading = genre
+  ? `Anime in ${genre}`
+  : query
+    ? `Results for “${query}”`
+    : 'Search anime'
+
+const pageHref = (target: number) => {
+  const params = new URLSearchParams(Astro.url.searchParams)
+  params.set('page', String(target))
+  return `/search?${params.toString()}`
+}
+
+const metadata = {
+  title: `${heading} - AniDev`,
+  description: `Browse anime: ${heading}. Page ${page} of ${pageCount}.`,
+  imageUrl: config.baseImage,
+  url: `${config.baseUrl}/search`,
+}
+---
+
+<Base {...metadata}>
+  {
+    infraError ? (
+      <ServiceUnavailable
+        title="We could not search right now"
+        message="Something went wrong on our side. Please retry in a moment."
+        retryHref={Astro.url.pathname}
+      />
+    ) : !parsed.success ? (
+      <>
+        <h1>Search anime</h1>
+        <p>Invalid search parameters.</p>
+      </>
+    ) : (
+      <>
+        <h1>{heading}</h1>
+        {list.length === 0 ? (
+          <p>No results found. Try another keyword or genre.</p>
+        ) : (
+          <>
+            <section
+              class="grid grid-cols-2 gap-x-4 gap-y-8 px-4 py-12 md:grid-cols-3 md:gap-x-6 md:px-40 md:py-16 lg:grid-cols-6"
+              aria-label={heading}
+            >
+              {list.map((anime) => (
+                <AnimeCard anime={anime} />
+              ))}
+            </section>
+            <nav aria-label="Search pages">
+              {page > 1 && <a href={pageHref(page - 1)}>Previous</a>}
+              <span>
+                Page {page} of {pageCount} ({total} results)
+              </span>
+              {page < pageCount && <a href={pageHref(page + 1)}>Next</a>}
+            </nav>
+          </>
+        )}
+      </>
+    )
+  }
+</Base>

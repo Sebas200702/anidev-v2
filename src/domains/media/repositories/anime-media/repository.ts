@@ -42,7 +42,9 @@ export const animeMediaRepository = {
         .select()
         .from(animeMedia)
         .where(eq(animeMedia.animeId, animeId))
-        .orderBy(asc(animeMedia.id))
+        // `priority` manda: el asset preferido (p. ej. el banner de AniList,
+        // priority 10) queda primero frente a otras variantes (TVDB, 30).
+        .orderBy(asc(animeMedia.priority), asc(animeMedia.id))
     } catch (error) {
       throw dbError('[GET_MEDIA_BY_ANIME_ID]', { animeId }, error)
     }
@@ -67,7 +69,11 @@ export const animeMediaRepository = {
       return (await db
         .select()
         .from(animeMedia)
-        .where(inArray(animeMedia.animeId, animeIds))) as (MediaAsset & {
+        .where(inArray(animeMedia.animeId, animeIds))
+        .orderBy(
+          asc(animeMedia.priority),
+          asc(animeMedia.id)
+        )) as (MediaAsset & {
         animeId: number
       })[]
     } catch (error) {
@@ -78,10 +84,11 @@ export const animeMediaRepository = {
   /**
    * Loads media assets for an anime filtered by media type.
    *
-   * @remarks Results are ordered ascending by `id` so {@link mapIndexedMediaAsset} selects
-   * assets deterministically by 1-based index.
+   * @remarks Results are ordered by `priority` ascending and then by `id`, so
+   * the preferred variant (AniList banners = 10 before TVDB = 30) is selected
+   * first and {@link mapIndexedMediaAsset} stays deterministic by 1-based index.
    * @param params - Anime ID and media type filter
-   * @returns Matching {@link MediaAsset} rows ordered by ID
+   * @returns Matching {@link MediaAsset} rows ordered by priority and ID
    * @throws {DbError} When the database query fails
    * @see {@link mediaService.resolveMedia} for size/source filtering after load
    * @example
@@ -100,7 +107,7 @@ export const animeMediaRepository = {
       return await db
         .select()
         .from(animeMedia)
-        .orderBy(asc(animeMedia.id))
+        .orderBy(asc(animeMedia.priority), asc(animeMedia.id))
         .where(
           and(
             eq(animeMedia.animeId, animeId),

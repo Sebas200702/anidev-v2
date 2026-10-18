@@ -27,6 +27,10 @@ export const SEED_ANIME_QUERY = 'E2E Seed Anime'
 /** Primary seeded anime id, asserted directly in list/search specs. */
 export const SEED_ANIME_MAL_ID = 999_000_001
 
+/** Genre linked only to the primary seeded anime (taxonomy e2e). */
+export const SEED_GENRE_NAME = 'E2ESeedGenre'
+export const SEED_GENRE_MAL_ID = 999_000_011
+
 export const SEED_ANIME: SeedAnime[] = [
   {
     malId: SEED_ANIME_MAL_ID,

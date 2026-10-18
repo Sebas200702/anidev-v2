@@ -16,9 +16,9 @@ export const carouselItemFixture: CarouselItem = {
   description:
     'In an alternate timeline, an exiled prince gains the power to command absolute obedience and turns it against the empire that discarded him.',
   genres: [
-    { malId: 1, name: 'Action', url: '/discover?genre=Action' },
-    { malId: 8, name: 'Drama', url: '/discover?genre=Drama' },
-    { malId: 24, name: 'Sci-Fi', url: '/discover?genre=Sci-Fi' },
+    { malId: 1, name: 'Action', url: '/search?genre=Action' },
+    { malId: 8, name: 'Drama', url: '/search?genre=Drama' },
+    { malId: 24, name: 'Sci-Fi', url: '/search?genre=Sci-Fi' },
   ],
   score: 8.7,
   year: 2006,

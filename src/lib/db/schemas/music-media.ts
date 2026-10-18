@@ -10,7 +10,14 @@
  *
  * @see {@link module:lib/db/schemas/music} for parent music entity
  */
-import { index, integer, pgTable, serial, text } from 'drizzle-orm/pg-core'
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 import { music } from '@db/schemas/music'
 
 /**
@@ -32,6 +39,26 @@ export const musicMedia = pgTable(
     mediaType: text('media_type').notNull(),
     src: text('src').notNull(),
     size: text('size'),
+    /** Origen del asset (anilist, tvdb, jikan, animethemes…). */
+    source: text('source'),
+    /**
+     * Orden de preferencia al elegir una variante del mismo `mediaType`
+     * (menor = primero). AniList es la fuente primaria de banners ⇒ 10.
+     */
+    priority: integer('priority').notNull().default(100),
   },
-  (t) => [index('music_media_music_id_type_idx').on(t.musicId, t.mediaType)]
+  (t) => [
+    index('music_media_music_id_type_priority_idx').on(
+      t.musicId,
+      t.mediaType,
+      t.priority
+    ),
+    // Identidad natural: una fila por (entidad, tipo, url); las variantes
+    // conviven porque cambia `src`. Da un target valido a ON CONFLICT.
+    uniqueIndex('music_media_entity_type_src_unique').on(
+      t.musicId,
+      t.mediaType,
+      t.src
+    ),
+  ]
 )
