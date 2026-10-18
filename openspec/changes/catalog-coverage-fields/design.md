@@ -85,3 +85,80 @@ queryable (count of non-null rows), which feeds the D.3 coverage metrics.
 - **Backfill in the same change** — rejected: schema first (anidev owns DDL),
   data second (scraper owns ingestion); keeps the change reviewable and
   lets Fase 2 land in parallel.
+
+## 5. Write contract (single source for the scraper)
+
+Every field below is written only by the ingestion pipeline. Source endpoint
+for all of them is Jikan `GET /anime/{id}/full` (`data.*`), task type
+`anime_details_hydration` (Modo A backfill and Modo B incremental refresh alike). A Jikan
+`null` writes SQL `NULL`; the writer never invents a value.
+
+| Column (`anime`) | Type | Jikan source |
+|---|---|---|
+| `broadcast_day` | `text` | `broadcast.day` (verbatim, e.g. `"Sundays"`) |
+| `broadcast_time` | `text` | `broadcast.time` (verbatim `"HH:mm"`) |
+| `broadcast_timezone` | `text` | `broadcast.timezone` (e.g. `"Asia/Tokyo"`) |
+| `aired_from` / `aired_to` | `timestamptz` | `aired.from` / `aired.to` (ISO-8601) |
+| `trailer_youtube_id` | `text` | `trailer.youtube_id` |
+| `trailer_embed_url` | `text` | `trailer.embed_url` |
+| `duration` | `text` | `duration` (verbatim, e.g. `"24 min per ep"`) |
+| `source` | `text` | `source` (verbatim, e.g. `"Manga"`) |
+| `rank` | `integer` | `rank` |
+| `members` | `integer` | `members` |
+| `favorites` | `integer` | `favorites` |
+
+| Junction (`anime_producer`) | Jikan source |
+|---|---|
+| `role = 'studio'` | `studios[].mal_id` |
+| `role = 'licensor'` | `licensors[].mal_id` |
+| `role = 'producer'` | `producers[].mal_id` |
+
+Rules for the writer:
+
+- **FK-safe order**: `producer` rows (by `mal_id`) → `anime` → `anime_producer`.
+  A missing company enqueues its parent first; the link retries afterwards.
+- **Upsert target**: `anime_producer` conflicts on
+  `(anime_id, producer_id, role)`; dedupe within a role, never across roles.
+- **Diff semantics**: a role set that shrinks on refresh deletes only the
+  dropped `(anime, producer, role)` links of that anime; other roles stay.
+- `anime_external_ids.anilist_id` is out of this contract; its mapping source
+  is a separate scraper task.
+
+**Deviation recorded**: `broadcast_time` landed as `text` (migration 0004), not
+`time` as D-C2 first stated. Kept: it stores the source value verbatim, the
+day index is the only filter, and a cast is free at read time when a schedule
+page needs ordering. No migration follows from this.
+
+## 6. Coverage query
+
+Non-null share per new column, over the whole catalog (feeds D.3 and the Modo A
+promotion gate):
+
+```sql
+SELECT
+  count(*) AS total,
+  round(100.0 * count(broadcast_day)      / count(*), 1) AS broadcast_day_pct,
+  round(100.0 * count(broadcast_time)     / count(*), 1) AS broadcast_time_pct,
+  round(100.0 * count(broadcast_timezone) / count(*), 1) AS broadcast_timezone_pct,
+  round(100.0 * count(aired_from)         / count(*), 1) AS aired_from_pct,
+  round(100.0 * count(aired_to)           / count(*), 1) AS aired_to_pct,
+  round(100.0 * count(trailer_youtube_id) / count(*), 1) AS trailer_pct,
+  round(100.0 * count(duration)           / count(*), 1) AS duration_pct,
+  round(100.0 * count(source)             / count(*), 1) AS source_pct,
+  round(100.0 * count(rank)               / count(*), 1) AS rank_pct,
+  round(100.0 * count(members)            / count(*), 1) AS members_pct,
+  round(100.0 * count(favorites)          / count(*), 1) AS favorites_pct
+FROM anime;
+
+-- Role coverage: share of titles with at least one link per role.
+SELECT role,
+       count(DISTINCT anime_id) AS titles,
+       round(100.0 * count(DISTINCT anime_id)
+             / (SELECT count(*) FROM anime), 1) AS titles_pct
+FROM anime_producer
+GROUP BY role;
+```
+
+`NULL` alone cannot tell "not yet backfilled" from "source has no value"; the
+ingest queue's completed `anime_details_hydration` tasks per title are the discriminator
+(a title with a completed task and a `NULL` column has no source value).

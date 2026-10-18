@@ -25,7 +25,7 @@
 
 ## B. Ingestion contract + consumers
 
-- [ ] B.1 Document the write contract (fields ← source endpoint ← task type)
+- [x] B.1 Document the write contract (fields ← source endpoint ← task type)
   for the scraper: `/anime/{id}/full` → `anime` broadcast/aired/trailer/stats,
   `studios`/`licensors`/`producers` → role-tagged junction rows. Keep it in the
   change's delta or the scraper repo's `ROADMAP.md` (single source).
@@ -35,7 +35,7 @@
   mapper to emit studios/licensors with roles, broadcast, trailer and stats;
   promotion diff-upsert must upsert the junction with `role` in its conflict
   target.
-- [ ] B.4 Coverage query documented: non-null percentage per new column over
+- [x] B.4 Coverage query documented: non-null percentage per new column over
   `anime` (feeds the D.3 metrics and the Modo A promotion gate).
 
 ## C. Verification, release & archive
