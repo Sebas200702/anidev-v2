@@ -12,6 +12,16 @@ import { SEED_ANIME_MAL_ID, SEED_EPISODES } from '../fixtures/seed-data'
 
 const base = `/api/anime/${SEED_ANIME_MAL_ID}/episodes`
 
+// Own rate-limit bucket: the whole suite shares one egress IP and the general
+// /api budget (60/min); these requests must not consume it. Same pattern as
+// `fixtures/auth.ts`. Production behavior is unchanged.
+test.use({
+  extraHTTPHeaders: {
+    accept: 'application/json',
+    'x-forwarded-for': '10.250.0.7',
+  },
+})
+
 test.describe('anime episode endpoints', () => {
   test('lists seeded episodes in order with pagination meta', async ({
     request,
