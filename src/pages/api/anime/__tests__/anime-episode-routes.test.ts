@@ -56,6 +56,8 @@ const item = {
   title: 'Asteroid Blues',
   duration: '25 min',
   aired: '1998-10-23',
+  imageUrl: 'http://localhost:4321/media/episode/10/thumbnail',
+  altImageText: 'Image for Episode 1: Asteroid Blues',
 }
 
 beforeEach(() => {
