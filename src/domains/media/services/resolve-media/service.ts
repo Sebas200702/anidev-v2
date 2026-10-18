@@ -3,6 +3,12 @@
  * @remarks Resolves the best matching {@link MediaAsset} for a parsed semantic media path.
  * Loads candidate assets from entity repositories, filters by size and optional source host,
  * then selects a single asset by 1-based index. Falls back to a placeholder when none match.
+ *
+ * Size filtering uses the fallback rules documented in
+ * {@link module:domains/media/mappers/media-assets/mapper}: when no asset matches the requested
+ * size, {@link MediaSize.DEFAULT} assets are tried next, still preferring the requested upstream
+ * source but ultimately returning the highest-priority default asset to avoid serving a
+ * placeholder for real rows that only store a generic size.
  */
 import { resolveMediaAssets } from '@media/services/resolve-media-assets'
 import type { OptimizeOptions } from '@media/utils/image/optimize-util'

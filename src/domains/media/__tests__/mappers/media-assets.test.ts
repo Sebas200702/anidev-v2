@@ -84,6 +84,44 @@ describe('mapFilteredMediaAssets', () => {
     })
     expect(result.map((a) => a.id)).toEqual([1])
   })
+
+  it('falls back to default-sized assets when no exact size match exists', () => {
+    const result = mapFilteredMediaAssets({
+      assets: [
+        asset({ id: 1, size: 'default', src: 'https://anilist.co/a.jpg' }),
+      ],
+      mediaSize: MediaSize.LARGE,
+    })
+    expect(result.map((a) => a.id)).toEqual([1])
+  })
+
+  it('prefers default assets of the requested source over exact-size assets of another source', () => {
+    const result = mapFilteredMediaAssets({
+      assets: [
+        asset({ id: 1, size: 'large', src: 'https://anilist.co/a.jpg' }),
+        asset({
+          id: 2,
+          size: 'default',
+          src: 'https://cdn.myanimelist.net/b.jpg',
+        }),
+      ],
+      mediaSize: MediaSize.LARGE,
+      source: 'myanimelist',
+    })
+    expect(result.map((a) => a.id)).toEqual([2])
+  })
+
+  it('falls back to any default asset when the requested source has no match', () => {
+    const result = mapFilteredMediaAssets({
+      assets: [
+        asset({ id: 1, size: 'default', src: 'https://anilist.co/a.jpg' }),
+        asset({ id: 2, size: 'default', src: 'https://thetvdb.com/b.jpg' }),
+      ],
+      mediaSize: MediaSize.SMALL,
+      source: 'myanimelist',
+    })
+    expect(result.map((a) => a.id)).toEqual([1, 2])
+  })
 })
 
 describe('mapIndexedMediaAsset', () => {
