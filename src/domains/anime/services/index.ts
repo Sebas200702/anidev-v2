@@ -9,6 +9,7 @@
 
 export { animeCarouselService } from './anime-carousel'
 export { animeCharacterService } from './anime-characters'
+export { animeEpisodesService } from './anime-episodes'
 export { animeFullService } from './anime-full'
 export { animeListService } from './anime-list'
 export { animeService } from './anime'
