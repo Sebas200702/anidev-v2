@@ -40,12 +40,12 @@
 
 ## C. Verification, release & archive
 
-- [ ] C.1 Full gate on the feature branch (`format` → `check` → `check:types` →
+- [x] C.1 Full gate on the feature branch (`format` → `check` → `check:types` →
   `test` → `test:integration` → `build`).
-- [ ] C.2 Doubt pass: confirm the archived `advanced-anime-search` deferrals
+- [x] C.2 Doubt pass: confirm the archived `advanced-anime-search` deferrals
   (studio filter, broadcast-day filter) are now unblocked at the schema level
   and no deferred behavior was silently implemented here.
 - [ ] C.3 Release on the branch (`bun run release:minor`), open PR, green CI,
   merge, push tag, then archive (sync delta into `openspec/specs/`).
-- [ ] C.4 Note in `ROADMAP.md` Track D that the schema half of the backfill is
+- [x] C.4 Note in `ROADMAP.md` Track D that the schema half of the backfill is
   done and the data half is the scraper's Fase-3 run.

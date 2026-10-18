@@ -253,6 +253,16 @@ Kitsu/TVDB/AniZip (IDs cruzados). Video de episodios: sin fuente legal → muro 
 | voice-actor links (~4.2k de 217k en v1) | Fichas de seiyuu (Fase 6) |
 | episode `video_url` / `episode_source` | **Muro de Fase 5** — requiere decisión de fuente, no backfill |
 
+**Estado (2026-10-18) — mitad esquema del backfill hecha** (change
+`catalog-coverage-fields`): `anime` ya tiene `broadcast_day/time/timezone`
+(índice por día), `aired_from/to`, `trailer_youtube_id/embed_url`, `duration`,
+`source`, `rank`, `members`, `favorites`; `anime_producer` tiene `role`
+(`studio|licensor|producer`) con PK `(anime_id, producer_id, role)` e índice
+`(role, producer_id)`; `anime_external_ids` tiene `anilist_id`. El contrato de
+escritura y la query de cobertura viven en el `design.md` del change. **Falta la
+mitad de datos**: la corrida Fase 3 del scraper (mappers `/full` + promoción
+diff-upsert con `role` en el conflict target).
+
 ---
 
 ## Frontend (islas · estado · caché)
