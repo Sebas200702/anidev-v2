@@ -21,6 +21,7 @@
  * @see playwright.config.ts — `globalSetup` + `webServer`
  */
 import { type FullConfig, request } from '@playwright/test'
+import { SEED_ANIME_MAL_ID } from './fixtures/seed-data'
 
 /** Resolve the configured base URL from any project's `use` block. */
 function resolveBaseURL(config: FullConfig): string {
@@ -62,6 +63,9 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
     await context.get('/api/anime?page=1&limit=5')
     await context.get('/api/anime?page=0') // validation path (400) — warms the wrapper
     await context.get('/api/music?page=1&limit=5')
+    // Episode routes are two lazy chunks hit in parallel by the episodes spec.
+    await context.get(`/api/anime/${SEED_ANIME_MAL_ID}/episodes?limit=1`)
+    await context.get(`/api/anime/${SEED_ANIME_MAL_ID}/episodes/1`)
 
     // Write/auth path — prime Better Auth register (hashing + insert) and the
     // session-resolution middleware that every subsequent request flows through.
