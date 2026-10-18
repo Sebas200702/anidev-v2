@@ -10,7 +10,14 @@
  *
  * @see {@link module:lib/db/schemas/staff} for parent staff entity
  */
-import { index, integer, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 import { staff } from '@db/schemas/staff'
 
 /**
@@ -41,9 +48,17 @@ export const staffMedia = pgTable(
     priority: integer('priority').notNull().default(100),
   },
   (t) => [
-    index('staff_media_staff_id_type_priority_idx').on(t.staffId, t.mediaType, t.priority),
+    index('staff_media_staff_id_type_priority_idx').on(
+      t.staffId,
+      t.mediaType,
+      t.priority
+    ),
     // Identidad natural: una fila por (entidad, tipo, url); las variantes
     // conviven porque cambia `src`. Da un target valido a ON CONFLICT.
-    uniqueIndex('staff_media_entity_type_src_unique').on(t.staffId, t.mediaType, t.src),
+    uniqueIndex('staff_media_entity_type_src_unique').on(
+      t.staffId,
+      t.mediaType,
+      t.src
+    ),
   ]
 )

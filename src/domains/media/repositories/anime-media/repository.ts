@@ -70,7 +70,10 @@ export const animeMediaRepository = {
         .select()
         .from(animeMedia)
         .where(inArray(animeMedia.animeId, animeIds))
-        .orderBy(asc(animeMedia.priority), asc(animeMedia.id))) as (MediaAsset & {
+        .orderBy(
+          asc(animeMedia.priority),
+          asc(animeMedia.id)
+        )) as (MediaAsset & {
         animeId: number
       })[]
     } catch (error) {

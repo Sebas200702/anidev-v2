@@ -10,7 +10,14 @@
  *
  * @see {@link module:lib/db/schemas/character} for parent character entity
  */
-import { index, integer, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 import { character } from '@db/schemas/character'
 
 /**
@@ -43,7 +50,8 @@ export const characterMedia = pgTable(
   (t) => [
     index('character_media_character_id_type_priority_idx').on(
       t.characterId,
-      t.mediaType, t.priority
+      t.mediaType,
+      t.priority
     ),
     uniqueIndex('character_media_entity_type_src_unique').on(
       t.characterId,
