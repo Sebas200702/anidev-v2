@@ -41,6 +41,15 @@ falls back on `InfraError`).
 standard `:stale` copy. Episodes change only through the ingestion pipeline;
 a day of staleness is acceptable, as for staff.
 
+### D-E6 — Thumbnail link and alt text on every item
+Following the card/detail convention (`imageUrl` + `altImageText`), each item
+links `/media/episode/{episode.id}/thumbnail` via `buildMediaUrl`. Episode
+media types are free text, so the type is fixed as
+`EPISODE_THUMBNAIL_MEDIA_TYPE = 'thumbnail'`, and the pipeline must write that
+value. Until then `/media` serves the placeholder, so the link never breaks.
+Alt text is `Image for Episode {number}: {title}`; the anime title is omitted
+to avoid a second query and is already given by the page context.
+
 ### D-E5 — Fields as stored
 `duration` and `aired` stay as the source text (`"24 min"`, `"1998-10-23"`);
 no parsing at request time.

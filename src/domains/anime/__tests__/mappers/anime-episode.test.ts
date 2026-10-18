@@ -4,9 +4,19 @@
  * @module domains/anime/__tests__/mappers/anime-episode
  * @remarks
  * List items drop `animeId` and `synopsis`; the detail keeps the synopsis. Source text fields
- * (`duration`, `aired`) pass through unparsed.
+ * (`duration`, `aired`) pass through unparsed. Every payload carries the `/media` thumbnail URL
+ * (keyed by `episode.id`) and its alt text. {@link buildMediaUrl} is mocked.
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const { buildMediaUrl } = vi.hoisted(() => ({
+  buildMediaUrl: vi.fn(
+    ({ entity, entity_id, type }: Record<string, unknown>) =>
+      `/media/${entity}/${entity_id}/${type}`
+  ),
+}))
+vi.mock('@media/mappers/media-url', () => ({ buildMediaUrl }))
+
 import {
   mapAnimeEpisodeDetail,
   mapAnimeEpisodeItems,
@@ -33,6 +43,8 @@ describe('mapAnimeEpisodeItems', () => {
         title: 'Asteroid Blues',
         duration: '25 min',
         aired: '1998-10-23',
+        imageUrl: '/media/episode/10/thumbnail',
+        altImageText: 'Image for Episode 1: Asteroid Blues',
       },
     ])
   })
@@ -52,5 +64,7 @@ describe('mapAnimeEpisodeDetail', () => {
     const detail = mapAnimeEpisodeDetail(row())
     expect(detail.synopsis).toBe('Spike and Jet head to Tijuana.')
     expect(detail).not.toHaveProperty('animeId')
+    expect(detail.imageUrl).toBe('/media/episode/10/thumbnail')
+    expect(detail.altImageText).toBe('Image for Episode 1: Asteroid Blues')
   })
 })

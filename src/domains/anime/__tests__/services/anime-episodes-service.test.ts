@@ -35,6 +35,9 @@ vi.mock('@anime/repositories/anime-episodes', () => ({
     getEpisodeByNumber: getEpisode,
   },
 }))
+vi.mock('@media/mappers/media-url', () => ({
+  buildMediaUrl: () => 'http://localhost:4321/media/episode/10/thumbnail',
+}))
 vi.mock('@anime/repositories/anime', () => ({
   animeRepository: { getAnimeByMalId: getAnime },
 }))
@@ -66,13 +69,7 @@ describe('animeEpisodesService.getEpisodes', () => {
     expect(getPage).toHaveBeenCalledWith(input)
     expect(value.total).toBe(26)
     expect(value.list).toEqual([
-      {
-        id: 10,
-        number: 1,
-        title: 'Asteroid Blues',
-        duration: '25 min',
-        aired: '1998-10-23',
-      },
+      expect.objectContaining({ id: 10, number: 1, title: 'Asteroid Blues' }),
     ])
     expect(getAnime).not.toHaveBeenCalled()
   })

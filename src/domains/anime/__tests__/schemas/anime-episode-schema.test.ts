@@ -69,7 +69,16 @@ describe('episode payload schemas', () => {
     title: 'Asteroid Blues',
     duration: '25 min',
     aired: '1998-10-23',
+    imageUrl: 'http://localhost:4321/media/episode/10/thumbnail',
+    altImageText: 'Image for Episode 1: Asteroid Blues',
   }
+
+  it('requires the image URL and its alt text', () => {
+    const { imageUrl: _image, ...withoutImage } = base
+    const { altImageText: _alt, ...withoutAlt } = base
+    expect(animeEpisodeItemSchema.safeParse(withoutImage).success).toBe(false)
+    expect(animeEpisodeItemSchema.safeParse(withoutAlt).success).toBe(false)
+  })
 
   it('accepts a list item with nullable duration/aired', () => {
     const parsed = animeEpisodeItemSchema.parse({

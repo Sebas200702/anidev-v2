@@ -8,11 +8,16 @@ import type {
   AnimeEpisodeItem,
   EpisodeDB,
 } from '@anime/types'
+import { EPISODE_THUMBNAIL_MEDIA_TYPE } from '@media/constants'
+import { buildMediaUrl } from '@media/mappers/media-url'
 
 /**
  * Maps one row to a list item.
  *
- * @remarks Drops `animeId` (implied by the route) and `synopsis` (detail only).
+ * @remarks
+ * Drops `animeId` (implied by the route) and `synopsis` (detail only). The
+ * thumbnail is keyed by `episode.id` (the `episode_media` FK) and always
+ * resolves: `/media` falls back to the placeholder while no asset exists.
  */
 const mapAnimeEpisodeItem = ({
   id,
@@ -20,7 +25,19 @@ const mapAnimeEpisodeItem = ({
   title,
   duration,
   aired,
-}: EpisodeDB): AnimeEpisodeItem => ({ id, number, title, duration, aired })
+}: EpisodeDB): AnimeEpisodeItem => ({
+  id,
+  number,
+  title,
+  duration,
+  aired,
+  imageUrl: buildMediaUrl({
+    entity: 'episode',
+    entity_id: id,
+    type: EPISODE_THUMBNAIL_MEDIA_TYPE,
+  }),
+  altImageText: `Image for Episode ${number}: ${title}`,
+})
 
 /**
  * Maps a page of rows to {@link AnimeEpisodeItem}s, preserving order.

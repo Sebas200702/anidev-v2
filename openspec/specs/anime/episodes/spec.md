@@ -12,7 +12,8 @@ synopsis) read-only over the public API, independent of streaming sources.
 The system SHALL serve `GET /api/anime/:malId/episodes` returning the anime's
 episodes ordered by episode number ascending, paginated by `page` (1–10 000,
 default 1) and `limit` (1–100, default 24). Each item SHALL include `id`,
-`number`, `title`, `duration` and `aired`; the response meta SHALL include
+`number`, `title`, `duration`, `aired`, an `imageUrl` thumbnail link and its
+`altImageText`; the response meta SHALL include
 `page`, `limit`, `total` and `hasNext`.
 
 #### Scenario: First page of a series
@@ -36,7 +37,8 @@ default 1) and `limit` (1–100, default 24). Each item SHALL include `id`,
 ### Requirement: Episode detail
 
 The system SHALL serve `GET /api/anime/:malId/episodes/:number` returning one
-episode with `id`, `number`, `title`, `synopsis`, `duration` and `aired`.
+episode with `id`, `number`, `title`, `synopsis`, `duration`, `aired`,
+`imageUrl` and `altImageText`.
 
 #### Scenario: Existing episode
 
@@ -47,6 +49,18 @@ episode with `id`, `number`, `title`, `synopsis`, `duration` and `aired`.
 
 - **WHEN** the anime exists but has no episode with that number
 - **THEN** the response is `404 EPISODE_NOT_FOUND`
+
+### Requirement: Every episode links an image with alt text
+
+Each episode payload SHALL carry `imageUrl` pointing at
+`/media/episode/{id}/thumbnail` and a non-empty `altImageText`
+(`Image for Episode {number}: {title}`). The link SHALL resolve to an image
+even before thumbnails are ingested (the media placeholder).
+
+#### Scenario: Thumbnail not yet ingested
+
+- **WHEN** a client follows an episode `imageUrl` and no thumbnail is stored
+- **THEN** the response is `200` with an image (the placeholder)
 
 ### Requirement: Unknown anime is not found
 

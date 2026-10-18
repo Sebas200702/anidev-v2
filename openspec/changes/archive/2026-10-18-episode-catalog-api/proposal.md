@@ -44,8 +44,9 @@ and `/skip-times`; it now consumes this list instead of defining it. -->
 
 ## Non-goals
 
-- Episode thumbnails: `episode_media` is empty everywhere; they arrive with the
-  media backfill and can be added as a nullable field later.
+- Ingesting episode thumbnails: `episode_media` is empty everywhere. The API
+  already links `/media/episode/{id}/thumbnail` (placeholder until the pipeline
+  writes `media_type = 'thumbnail'`).
 - Streaming sources and subtitles (`resilient-playback-and-aniskip`).
 - Filler/recap flags: not in the schema.
 - UI (episode list component/page): a follow-up change consumes this API.

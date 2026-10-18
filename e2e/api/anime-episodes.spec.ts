@@ -30,6 +30,20 @@ test.describe('anime episode endpoints', () => {
     })
   })
 
+  test('links a thumbnail that resolves to an image, with alt text', async ({
+    request,
+  }) => {
+    const body = await (await request.get(`${base}?limit=1`)).json()
+    const [episode] = body.data
+    expect(episode.altImageText).toBe(
+      `Image for Episode 1: ${SEED_EPISODES[0].title}`
+    )
+
+    const image = await request.get(new URL(episode.imageUrl).pathname)
+    expect(image.status()).toBe(200)
+    expect(image.headers()['content-type']).toMatch(/^image\//)
+  })
+
   test('returns one episode with its synopsis', async ({ request }) => {
     const res = await request.get(`${base}/2`)
     expect(res.status()).toBe(200)

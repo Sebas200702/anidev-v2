@@ -21,7 +21,10 @@ const malIdSchema = z.coerce.number().int().positive()
 /**
  * Validates one episode in a list page.
  *
- * @remarks `id` is the `episode.id` surrogate key used by watch progress.
+ * @remarks
+ * `id` is the `episode.id` surrogate key used by watch progress. `imageUrl` is
+ * the `/media/episode/{id}/thumbnail` route, which serves the placeholder until
+ * the pipeline stores a thumbnail.
  */
 export const animeEpisodeItemSchema = z.object({
   id: z.number().int(),
@@ -29,6 +32,8 @@ export const animeEpisodeItemSchema = z.object({
   title: z.string(),
   duration: z.string().nullable(),
   aired: z.string().nullable(),
+  imageUrl: z.url(),
+  altImageText: z.string(),
 })
 
 /**
