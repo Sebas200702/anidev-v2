@@ -29,7 +29,7 @@
   for the scraper: `/anime/{id}/full` → `anime` broadcast/aired/trailer/stats,
   `studios`/`licensors`/`producers` → role-tagged junction rows. Keep it in the
   change's delta or the scraper repo's `ROADMAP.md` (single source).
-- [ ] B.2 Update exposed types/repositories that surface anime rows so the new
+- [x] B.2 Update exposed types/repositories that surface anime rows so the new
   columns are selectable (no behavior change; no route reads them yet).
 - [ ] B.3 Cross-repo (separate PR in `anime-scraper-v2`): extend the `/full`
   mapper to emit studios/licensors with roles, broadcast, trailer and stats;

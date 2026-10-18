@@ -11,7 +11,7 @@
  *
  * @see {@link module:lib/db/schemas/anime} for parent MAL-keyed anime row
  */
-import { index, integer, text, pgTable, timestamp } from 'drizzle-orm/pg-core'
+import { integer, text, pgTable, timestamp } from 'drizzle-orm/pg-core'
 
 import { anime } from '@db/schemas/anime'
 

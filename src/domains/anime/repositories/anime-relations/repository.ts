@@ -56,7 +56,8 @@ export const animeRelationsRepository = {
    *
    * @remarks
    * **SQL:** `anime` INNER JOIN `anime_related_anime` ON `related_anime_id = mal_id`.
-   * Selected columns: `malId`, titles, `type`, `episodes`, `status`, `score`, etc.
+   * Selected columns: `malId`, titles, `type`, `episodes`, `status`, `score`, etc., plus the
+   * catalog-coverage fields (broadcast, aired window, trailer, stats).
    */
   async getAnimeRelatedAnimeDataByAnimeId(animeId: number): Promise<AnimeDB[]> {
     try {
@@ -77,6 +78,18 @@ export const animeRelationsRepository = {
           rating: anime.rating,
           background: anime.background,
           season: anime.season,
+          broadcastDay: anime.broadcastDay,
+          broadcastTime: anime.broadcastTime,
+          broadcastTimezone: anime.broadcastTimezone,
+          airedFrom: anime.airedFrom,
+          airedTo: anime.airedTo,
+          trailerYoutubeId: anime.trailerYoutubeId,
+          trailerEmbedUrl: anime.trailerEmbedUrl,
+          duration: anime.duration,
+          source: anime.source,
+          rank: anime.rank,
+          members: anime.members,
+          favorites: anime.favorites,
         })
         .from(anime)
         .innerJoin(
