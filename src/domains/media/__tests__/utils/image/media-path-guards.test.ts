@@ -37,6 +37,7 @@ import {
   isSupportedEntity,
   isSupportedMediaSize,
   isSupportedMediaType,
+  isStreamedMedia,
   isValidMediaType,
 } from '@media/utils/image/media-path-guards'
 
@@ -45,6 +46,21 @@ describe('RAW_ENTITIES', () => {
     expect(RAW_ENTITIES.has('episode')).toBe(true)
     expect(RAW_ENTITIES.has('music')).toBe(true)
     expect(RAW_ENTITIES.has('anime')).toBe(false)
+  })
+})
+
+describe('isStreamedMedia', () => {
+  it('streams episode and music media by default', () => {
+    expect(isStreamedMedia('episode', 'video')).toBe(true)
+    expect(isStreamedMedia('music', 'audio')).toBe(true)
+  })
+
+  it('serves episode thumbnails through the image pipeline', () => {
+    expect(isStreamedMedia('episode', 'thumbnail')).toBe(false)
+  })
+
+  it('never streams image entities', () => {
+    expect(isStreamedMedia('anime', 'poster')).toBe(false)
   })
 })
 

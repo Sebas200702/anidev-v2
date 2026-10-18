@@ -28,6 +28,7 @@ export {
   isSupportedMediaType,
   isSupportedEntity,
   isSupportedMediaSize,
+  isStreamedMedia,
   isValidMediaType,
 } from './media-path-guards'
 export {

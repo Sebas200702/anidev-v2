@@ -23,7 +23,7 @@ import { createErrorResponse } from '@shared/http/create-api-response-util'
 import { jsonResponse } from '@shared/http/api-response-serialize-util'
 import { mediaRequestSchema } from '@media/schemas/media-schema'
 import { mediaService } from '@media/services/media'
-import { MediaEntity } from '@media/types'
+import { isStreamedMedia } from '@media/utils/image/media-path-guards'
 import type { APIRoute } from 'astro'
 
 /**
@@ -85,11 +85,7 @@ export const GET: APIRoute = withZodValidation(mediaRequestSchema)(
         )
       }
 
-      const isRawMedia =
-        parsed?.entityType === MediaEntity.EPISODE ||
-        parsed?.entityType === MediaEntity.MUSIC
-
-      if (isRawMedia) {
+      if (isStreamedMedia(parsed.entityType, parsed.mediaType)) {
         const rawMedia = await mediaService.fetchRawMedia(parsed, {
           version: validated.query.version,
           resolution: validated.query.resolution,
