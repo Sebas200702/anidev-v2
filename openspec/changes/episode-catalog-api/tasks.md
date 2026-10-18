@@ -11,7 +11,7 @@
 - [x] A.3 Repository `anime-episodes`: page query ordered by number + concurrent
   count; detail by `(animeId, number)`; `dbError` on failure.
 - [x] A.4 Mapper `anime-episode`: DB row → list item (no synopsis) / detail.
-- [ ] A.5 Cache `anime-episodes`: list/detail keys, `CacheTtl.Long`.
+- [x] A.5 Cache `anime-episodes`: list/detail keys, `CacheTtl.Long`.
 - [ ] A.6 Service `anime-episodes`: stale-cache pipeline; anime existence check
   only on empty total / missing episode (D-E3).
 
