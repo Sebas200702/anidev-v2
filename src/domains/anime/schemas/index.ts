@@ -48,3 +48,11 @@ export {
   getAnimeCarouselSchema,
   animeCarouselResponseSchema,
 } from './anime-carousel-schema'
+export {
+  animeEpisodeItemSchema,
+  animeEpisodeDetailSchema,
+  getAnimeEpisodesSchema,
+  getAnimeEpisodeSchema,
+  animeEpisodesResponseSchema,
+  animeEpisodeResponseSchema,
+} from './anime-episode-schema'

@@ -29,6 +29,7 @@ export type {
   CharacterNicknameDB,
   ProducerDB,
   StaffDB,
+  EpisodeDB,
   GenreDB,
   ThemeDB,
   DemographicDB,
@@ -59,3 +60,7 @@ export type {
   AnimeListResponse,
 } from './anime-list.d-types'
 export type { AnimeStaff } from './anime-staff.d-types'
+export type {
+  AnimeEpisodeItem,
+  AnimeEpisodeDetail,
+} from './anime-episode.d-types'

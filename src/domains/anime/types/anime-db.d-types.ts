@@ -11,6 +11,7 @@ import type { InferSelectModel } from 'drizzle-orm'
 import type { anime, animeTitleSynonym } from '@db/schemas/anime'
 import type { animeExternalIds } from '@db/schemas/anime-external'
 import type { character, characterNickname } from '@db/schemas/character'
+import type { episode } from '@db/schemas/episode'
 import type { producer } from '@db/schemas/producer'
 import type { staff } from '@db/schemas/staff'
 import type { genre, theme, demographic } from '@db/schemas/anime-taxonomy'
@@ -74,6 +75,13 @@ export type ProducerDB = InferSelectModel<typeof producer>
  * @see {@link staffRepository}
  */
 export type StaffDB = InferSelectModel<typeof staff>
+
+/**
+ * Row shape for the `episode` table (per-anime episode metadata).
+ *
+ * @see {@link animeEpisodesRepository}
+ */
+export type EpisodeDB = InferSelectModel<typeof episode>
 
 /**
  * Row shape for the `genre` taxonomy table.

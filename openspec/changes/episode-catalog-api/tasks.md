@@ -6,7 +6,7 @@
 
 - [x] A.1 `EPISODE_NOT_FOUND` error code mapped to 404 + `EpisodeNotFoundError`
   factory (test in `map-error-to-http` suite first).
-- [ ] A.2 Schemas + types: `anime-episode-schema.ts` (item, detail, request
+- [x] A.2 Schemas + types: `anime-episode-schema.ts` (item, detail, request
   schemas for list/detail, response schemas) and `EpisodeDB`.
 - [ ] A.3 Repository `anime-episodes`: page query ordered by number + concurrent
   count; detail by `(animeId, number)`; `dbError` on failure.
