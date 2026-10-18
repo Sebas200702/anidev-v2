@@ -31,7 +31,8 @@
   change's delta or the scraper repo's `ROADMAP.md` (single source).
 - [x] B.2 Update exposed types/repositories that surface anime rows so the new
   columns are selectable (no behavior change; no route reads them yet).
-- [ ] B.3 Cross-repo (separate PR in `anime-scraper-v2`): extend the `/full`
+- [x] B.3 _(Out of scope for this repo: tracked in `anime-scraper-v2`
+  `ROADMAP.md` Fase 3; the contract it must follow is `design.md` §5.)_ Cross-repo (separate PR in `anime-scraper-v2`): extend the `/full`
   mapper to emit studios/licensors with roles, broadcast, trailer and stats;
   promotion diff-upsert must upsert the junction with `role` in its conflict
   target.
@@ -45,7 +46,7 @@
 - [x] C.2 Doubt pass: confirm the archived `advanced-anime-search` deferrals
   (studio filter, broadcast-day filter) are now unblocked at the schema level
   and no deferred behavior was silently implemented here.
-- [ ] C.3 Release on the branch (`bun run release:minor`), open PR, green CI,
+- [x] C.3 Release on the branch (`bun run release:minor`), open PR, green CI,
   merge, push tag, then archive (sync delta into `openspec/specs/`).
 - [x] C.4 Note in `ROADMAP.md` Track D that the schema half of the backfill is
   done and the data half is the scraper's Fase-3 run.
