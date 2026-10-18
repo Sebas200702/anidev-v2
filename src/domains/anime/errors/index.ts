@@ -12,3 +12,7 @@
 
 export { AnimeInvalidIdError, animeInvalidId } from './anime-invalid-id-error'
 export { AnimeNotFoundError, animeNotFound } from './anime-not-found-error'
+export {
+  EpisodeNotFoundError,
+  episodeNotFound,
+} from './episode-not-found-error'

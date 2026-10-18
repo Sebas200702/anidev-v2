@@ -4,7 +4,7 @@
 
 ## A. Domain (TDD)
 
-- [ ] A.1 `EPISODE_NOT_FOUND` error code mapped to 404 + `EpisodeNotFoundError`
+- [x] A.1 `EPISODE_NOT_FOUND` error code mapped to 404 + `EpisodeNotFoundError`
   factory (test in `map-error-to-http` suite first).
 - [ ] A.2 Schemas + types: `anime-episode-schema.ts` (item, detail, request
   schemas for list/detail, response schemas) and `EpisodeDB`.
