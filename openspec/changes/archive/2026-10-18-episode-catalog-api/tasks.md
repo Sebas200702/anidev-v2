@@ -28,7 +28,7 @@
 
 ## D. Verification, release & archive
 
-- [ ] D.1 Gate (`format` → `check` → `check:types` → `test` →
+- [x] D.1 Gate (`format` → `check` → `check:types` → `test` →
   `test:integration` → `test:e2e` → `build`).
-- [ ] D.2 Doubt pass against this spec and `AGENTS.md`.
-- [ ] D.3 Release on the branch, open PR, archive the change.
+- [x] D.2 Doubt pass against this spec and `AGENTS.md`.
+- [x] D.3 Release on the branch, open PR, archive the change.
