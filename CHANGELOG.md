@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/Sebas200702/anidev-v2/compare/v0.9.0...v0.10.0) (2026-10-18)
+
+
+### Features
+
+* **catalog:** coverage columns on anime plus anilist_id ([8e3fcd0](https://github.com/Sebas200702/anidev-v2/commit/8e3fcd0ec2f629cdd92409b2f2f02477009cdc71))
+* **catalog:** role discriminator on anime_producer (studio|licensor|producer) ([a459de9](https://github.com/Sebas200702/anidev-v2/commit/a459de9f24fab4254a56afaad1804c8db1c3ec4a))
+* **media:** source and priority columns so variants can be ordered ([6631148](https://github.com/Sebas200702/anidev-v2/commit/663114805ed458fee18dc6d848071c0f41acbb00))
+
+
+### Bug Fixes
+
+* **anime:** related-anime projection selects coverage columns ([2755d6d](https://github.com/Sebas200702/anidev-v2/commit/2755d6d6e9ab878eece85852199837c6647e8110))
+* **media:** restore uniqueness as (entity, media_type, src) ([7ab6ed6](https://github.com/Sebas200702/anidev-v2/commit/7ab6ed68015e4fd9dc468c0d3df5737e4422f70c))
+* **media:** size and source fallback so real assets beat the placeholder ([a928558](https://github.com/Sebas200702/anidev-v2/commit/a928558a54a8595cb1803280f0a4bd00b7d5b17f))
+
 ## [0.9.0](https://github.com/Sebas200702/anidev-v2/compare/v0.8.0...v0.9.0) (2026-10-15)
 
 
