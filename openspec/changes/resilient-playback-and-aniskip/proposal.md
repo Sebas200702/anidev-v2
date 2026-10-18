@@ -31,4 +31,4 @@ In `Snozxyx/Tatakai`, `PlaybackCoordinator.ts`, `SourceAdapterRegistry.ts`, `Hls
 
 - **Database**: Additive columns on `episode_source` and `episode_subtitle` in `src/lib/db/schemas/episode.ts` + migration in `drizzle/`.
 - **Playback engine**: Reusable across the Fase 3 `<PersistentMusicPlayer />` (`transition:persist`) and Fase 5 `<EpisodeVideoPlayer />`.
-- **API routes**: `GET /api/anime/:malId/episodes`, `GET /api/anime/:malId/episodes/:number/sources`, and `GET /api/anime/:malId/episodes/:number/skip-times`.
+- **API routes**: `GET /api/anime/:malId/episodes/:number/sources` and `GET /api/anime/:malId/episodes/:number/skip-times`. The episode list and detail (`GET /api/anime/:malId/episodes[/:number]`) ship in the archived `episode-catalog-api` change and are consumed here.

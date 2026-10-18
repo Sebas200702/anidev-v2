@@ -4,6 +4,7 @@
 
 - [ ] 1.1 Extend `episodeSource` (`provider`, `serverName`, `format`, `quality`, `audio`, `headers`, `priority`) and `episodeSubtitle` (`label`, `format`, `isDefault`) in `src/lib/db/schemas/episode.ts` with backward-compatible defaults.
 - [ ] 1.2 Generate the Drizzle migration (`bun run db:generate`) and add repository/mapper unit folders in `src/domains/watch/` (or `src/domains/anime/`).
+- [ ] 1.3 Write failing route tests, then implement `GET /api/anime/[malId]/episodes/[number]/sources.ts` (enriched sources ordered by `priority`, `404 EPISODE_NOT_FOUND` reused from `episode-catalog-api`).
 
 ## 2. PlaybackCoordinator & serialized adapter registry (`T-11.2`)
 
