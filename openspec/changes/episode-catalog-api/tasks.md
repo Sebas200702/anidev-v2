@@ -8,7 +8,7 @@
   factory (test in `map-error-to-http` suite first).
 - [x] A.2 Schemas + types: `anime-episode-schema.ts` (item, detail, request
   schemas for list/detail, response schemas) and `EpisodeDB`.
-- [ ] A.3 Repository `anime-episodes`: page query ordered by number + concurrent
+- [x] A.3 Repository `anime-episodes`: page query ordered by number + concurrent
   count; detail by `(animeId, number)`; `dbError` on failure.
 - [ ] A.4 Mapper `anime-episode`: DB row → list item (no synopsis) / detail.
 - [ ] A.5 Cache `anime-episodes`: list/detail keys, `CacheTtl.Long`.
