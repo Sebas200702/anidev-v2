@@ -17,9 +17,9 @@
 
 ## B. Routes (TDD)
 
-- [ ] B.1 `GET /api/anime/[malId]/episodes` route + route tests (200 envelope
+- [x] B.1 `GET /api/anime/[malId]/episodes` route + route tests (200 envelope
   and meta, 400 on bad page/limit).
-- [ ] B.2 `GET /api/anime/[malId]/episodes/[number]` route + route tests.
+- [x] B.2 `GET /api/anime/[malId]/episodes/[number]` route + route tests.
 
 ## C. Real-stack verification
 
