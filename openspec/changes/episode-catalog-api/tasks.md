@@ -23,8 +23,8 @@
 
 ## C. Real-stack verification
 
-- [ ] C.1 Integration spec for the repository (ordering, pagination, total).
-- [ ] C.2 E2E: seed episodes for a seed anime; list, detail, 404s.
+- [x] C.1 Integration spec for the repository (ordering, pagination, total).
+- [x] C.2 E2E: seed episodes for a seed anime; list, detail, 404s.
 
 ## D. Verification, release & archive
 

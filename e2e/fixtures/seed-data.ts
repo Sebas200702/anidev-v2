@@ -91,3 +91,17 @@ export interface SeedMusic {
 export const SEED_MUSIC: SeedMusic[] = [
   { id: 999_000_001, title: 'E2E Seed Song', type: 'opening' },
 ]
+
+/** A minimal episode row for the episode catalog API specs. */
+export interface SeedEpisode {
+  number: number
+  title: string
+  synopsis: string
+}
+
+/** Episodes of {@link SEED_ANIME_MAL_ID}; `/episodes` asserts this order and count. */
+export const SEED_EPISODES: SeedEpisode[] = [
+  { number: 1, title: 'E2E Episode One', synopsis: 'First seeded episode.' },
+  { number: 2, title: 'E2E Episode Two', synopsis: 'Second seeded episode.' },
+  { number: 3, title: 'E2E Episode Three', synopsis: 'Third seeded episode.' },
+]
