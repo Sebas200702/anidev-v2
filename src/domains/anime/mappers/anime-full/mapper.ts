@@ -43,6 +43,7 @@ export const mapAnimeToFullDetails = ({
   relationData,
   externalIds,
   animeMusic,
+  producers,
 }: MapAnimeToFullDetailsInput): AnimeFullDetails => {
   const titles = buildAnimeTitles(anime, titleSynonyms)
 
@@ -84,10 +85,13 @@ export const mapAnimeToFullDetails = ({
     score: anime.score ?? 0,
     scoredBy: anime.scoredBy ?? 0,
     popularityRank: anime.popularityRank ?? 0,
+    members: anime.members ?? 0,
+    favorites: anime.favorites ?? 0,
     rating: anime.rating ?? 'Unknown',
     season: anime.season ?? 'Unknown',
     background: anime.background ?? '',
     status: anime.status ?? 'Unknown',
+    producers: producers.map((p) => ({ name: p.name, role: p.role })),
     genres: genres.map((g) => ({ name: g.name, malId: g.malId })),
     themes: themes.map((t) => ({ name: t.name, malId: t.malId })),
     demographics: demographics.map((d) => ({ name: d.name, malId: d.malId })),

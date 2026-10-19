@@ -3,7 +3,11 @@
  *
  * @module domains/anime/repositories/anime-relations/repository
  */
-import { animeRelatedAnime } from '@db/schemas/anime-relations'
+import {
+  animeProducer,
+  animeRelatedAnime,
+} from '@db/schemas/anime-relations'
+import { producer, producerTitle } from '@db/schemas/producer'
 import { anime } from '@db/schemas/anime'
 import { dbError } from '@shared/errors/db-errors'
 import type { AnimeDB, AnimeRelationsDB } from '@anime/types'
@@ -20,6 +24,41 @@ import { db } from '@db/client'
  * @see {@link mapAnimeToFullDetails}
  */
 export const animeRelationsRepository = {
+  /**
+   * Loads the companies credited on an anime with their role.
+   *
+   * @param animeId - Source anime MAL ID (`anime_producer.anime_id`)
+   * @returns `{ name, role }` rows: studios, licensors and producers
+   *
+   * @throws {InfraError} (`[GET_PRODUCERS_BY_ANIME_ID]`)
+   *
+   * @remarks The display name lives in `producer_title` (the `Default` variant);
+   * the MAL company id is `producer.mal_id`.
+   */
+  async getProducersByAnimeId(
+    animeId: number
+  ): Promise<{ name: string; role: string; malId: number }[]> {
+    try {
+      const rows = await db
+        .select({
+          name: producerTitle.title,
+          role: animeProducer.role,
+          malId: producer.malId,
+        })
+        .from(animeProducer)
+        .innerJoin(producer, eq(animeProducer.producerId, producer.malId))
+        .innerJoin(
+          producerTitle,
+          eq(producerTitle.producerId, producer.malId)
+        )
+        .where(eq(animeProducer.animeId, animeId))
+
+      return rows
+    } catch (error) {
+      throw dbError('[GET_PRODUCERS_BY_ANIME_ID]', { animeId }, error)
+    }
+  },
+
   /**
    * Loads relation rows linked to an anime.
    *

@@ -53,6 +53,7 @@ const baseInput = (
     tvdbId: null,
   } as never,
   animeMusic: [] as AnimeThemeDB[],
+  producers: [],
   ...over,
 })
 

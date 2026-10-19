@@ -31,4 +31,6 @@ export interface MapAnimeToFullDetailsInput {
   relationData: AnimeDB[]
   externalIds: AnimeExternalDB
   animeMusic: AnimeThemeDB[]
+  /** Compañías con rol (estudio, licenciadora, productora). */
+  producers: { name: string; role: string; malId: number }[]
 }
