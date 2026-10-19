@@ -100,8 +100,25 @@ describe('characterMediaRepository', () => {
 })
 
 describe('episodeMediaRepository', () => {
-  it('maps episode sources into media assets', async () => {
-    select.mockReturnValue(chainResolving([{ id: 3, src: 'ep.mp4' }]))
+  it('reads the requested type from episode_media (thumbnail included)', async () => {
+    select.mockReturnValue(
+      chainResolving([
+        { id: 7, mediaType: 'thumbnail', src: 'thumb.jpg', size: null },
+      ])
+    )
+    expect(
+      await episodeMediaRepository.getMediaByEntityAndType({
+        mediaType: 'thumbnail',
+        episodeId: 1,
+      })
+    ).toEqual([
+      { id: 7, mediaType: 'thumbnail', src: 'thumb.jpg', size: null },
+    ])
+  })
+
+  it('falls back to episode_source when episode_media has no rows', async () => {
+    select.mockReturnValueOnce(chainResolving([]))
+    select.mockReturnValueOnce(chainResolving([{ id: 3, src: 'ep.mp4' }]))
     expect(
       await episodeMediaRepository.getMediaByEntityAndType({
         mediaType: 'video',
