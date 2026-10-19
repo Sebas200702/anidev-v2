@@ -24,7 +24,7 @@ vi.mock('@media/mappers/media-assets', () => ({
 import { mapAnimeToFullDetails } from '@anime/mappers/anime-full'
 import type { AnimeDB } from '@anime/types'
 import type { MediaAsset } from '@media/types/media-types'
-import type { MusicDB } from '@music/types'
+import type { AnimeThemeDB } from '@music/types'
 
 const anime = (over: Partial<AnimeDB>): AnimeDB =>
   ({
@@ -52,7 +52,7 @@ const baseInput = (
     kitsuId: null,
     tvdbId: null,
   } as never,
-  animeMusic: [] as MusicDB[],
+  animeMusic: [] as AnimeThemeDB[],
   ...over,
 })
 
@@ -61,8 +61,8 @@ describe('mapAnimeToFullDetails', () => {
     const result = mapAnimeToFullDetails(
       baseInput({
         animeMusic: [
-          { id: 1, title: 'OP1', type: 'OP' } as MusicDB,
-          { id: 2, title: 'ED1', type: 'ED' } as MusicDB,
+          { id: 1, title: 'OP1', type: 'OP', sequence: 1, episodes: '1-12' } as AnimeThemeDB,
+          { id: 2, title: 'ED1', type: 'ED', sequence: 1, episodes: '1-12' } as AnimeThemeDB,
         ],
       })
     )

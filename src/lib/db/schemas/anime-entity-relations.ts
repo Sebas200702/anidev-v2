@@ -42,6 +42,11 @@ export const animeStaff = pgTable(
  * Theme or soundtrack track links (`anime_music` table) between anime and music.
  *
  * **Key columns:** `animeId`, `musicId` — composite primary key.
+ * - `sequence` — Theme number within its {@link music.type} (`1` = OP1/ED1).
+ *   MAL publishes it and it is what lets the UI order OP1 before OP2.
+ * - `episodes` — Episode range the theme covers as published by MAL (`1-30`,
+ *   `13-`). It belongs to the anime↔track link, not to the track: the same song
+ *   reused in a sequel can cover a different range.
  */
 export const animeMusic = pgTable(
   'anime_music',
@@ -52,6 +57,8 @@ export const animeMusic = pgTable(
     musicId: integer('music_id')
       .references(() => music.id, { onDelete: 'cascade' })
       .notNull(),
+    sequence: integer('sequence'),
+    episodes: text('episodes'),
   },
   (t) => [primaryKey({ columns: [t.animeId, t.musicId] })]
 )

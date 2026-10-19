@@ -52,6 +52,8 @@ export const animeMusicSchema = z.object({
   order: z.number(),
   title: z.string(),
   type: z.enum(['opening', 'ending']),
+  /** Rango de episodios que cubre el tema (`1-30`), tal como lo publica MAL. */
+  episodes: z.string().nullable(),
   url: z.url(),
 })
 

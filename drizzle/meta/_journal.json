@@ -50,6 +50,13 @@
       "when": 1792205021209,
       "tag": "0006_mature_solo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792418587233,
+      "tag": "0007_complex_madelyne_pryor",
+      "breakpoints": true
     }
   ]
 }

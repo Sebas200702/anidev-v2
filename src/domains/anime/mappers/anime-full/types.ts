@@ -12,7 +12,7 @@ import type {
   GenreDB,
   ThemeDB,
 } from '@anime/types'
-import type { MusicDB } from '@music/types'
+import type { AnimeThemeDB } from '@music/types'
 import type { MediaAsset } from '@media/types/media-types'
 
 /**
@@ -30,5 +30,5 @@ export interface MapAnimeToFullDetailsInput {
   relations: AnimeRelationsDB[]
   relationData: AnimeDB[]
   externalIds: AnimeExternalDB
-  animeMusic: MusicDB[]
+  animeMusic: AnimeThemeDB[]
 }
