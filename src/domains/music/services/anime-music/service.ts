@@ -2,11 +2,12 @@
  * @module domains/music/services/anime-music/service
  * @remarks Public read exposing an anime's linked music so other domains consume the music
  * domain through its service surface instead of importing {@link animeMusicRepository} directly.
+ * Returns the theme rows with their MAL metadata (`sequence`, `episodes`).
  * Cache-first via {@link withStaleCache}: on infra failure serves the last-known-good snapshot
  * tagged stale instead of throwing.
  */
 import { animeMusicRepository } from '@music/repositories/anime-music'
-import type { MusicDB } from '@music/types/music-db-types'
+import type { AnimeThemeDB } from '@music/types/music-db-types'
 import { animeMusicCache } from '@music/cache/anime-music-cache'
 import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
 import { CacheTtl } from '@lib/cache/config'
@@ -27,12 +28,12 @@ import type { StaleResult } from '@lib/cache/cache-store-types'
  */
 export const getMusicByAnimeId = async (
   animeId: number
-): Promise<StaleResult<MusicDB[]>> =>
+): Promise<StaleResult<AnimeThemeDB[]>> =>
   withStaleCache({
     key: animeMusicCache.key(animeId),
     staleKey: `${animeMusicCache.key(animeId)}:stale`,
     getCache: () => animeMusicCache.get(animeId),
-    getStaleCache: (key) => cacheGet<MusicDB[]>(key),
+    getStaleCache: (key) => cacheGet<AnimeThemeDB[]>(key),
     setCache: (_, value) => animeMusicCache.set(animeId, value),
     setStaleCache: (key, value) =>
       cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),

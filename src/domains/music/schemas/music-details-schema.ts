@@ -88,10 +88,35 @@ export const musicVersionSchema = z.object({
  * })
  * ```
  */
+/**
+ * Validates a licensed-store link for a music track.
+ *
+ * @remarks Holds the store slug (`spotify`, `apple`, `amazon`), the public track
+ * page and the track id inside that store, when the URL carries one.
+ * @see {@link MusicStream} for the inferred TypeScript type
+ * @example
+ * ```typescript
+ * musicStreamSchema.parse({
+ *   provider: 'spotify',
+ *   url: 'https://open.spotify.com/track/7weHG0yOwtAcZ0qBhyODLF',
+ *   externalId: '7weHG0yOwtAcZ0qBhyODLF',
+ *   country: null,
+ * })
+ * ```
+ */
+export const musicStreamSchema = z.object({
+  provider: z.string(),
+  url: z.string(),
+  externalId: z.string().nullable(),
+  country: z.string().nullable(),
+})
+
 export const musicDetailsSchema = z.object({
   title: z.string(),
   type: z.enum(['opening', 'ending', 'unknown']),
   typeCode: z.enum(['OP', 'ED', 'UNK']),
   versions: z.array(musicVersionSchema),
   artist: z.array(musicArtistSchema),
+  /** Enlaces a las tiendas de música de la canción (Spotify/Apple/Amazon). */
+  streams: z.array(musicStreamSchema),
 })

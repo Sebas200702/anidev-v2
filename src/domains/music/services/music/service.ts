@@ -8,6 +8,7 @@ import { musicCache } from '@music/cache/music'
 import { musicNotFound } from '@music/errors'
 import { mapMusicDetail } from '@music/mappers/music-detail'
 import { musicRelationRepository } from '@music/repositories/music-relation'
+import { musicStreamRepository } from '@music/repositories/music-stream'
 import { musicRepository } from '@music/repositories/music'
 import { musicVersionRepository } from '@music/repositories/music-version'
 import type {
@@ -69,10 +70,11 @@ export const musicService = {
       setStaleCache: (key, value) =>
         cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
-        const [music, versions, relations] = await Promise.all([
+        const [music, versions, relations, streams] = await Promise.all([
           musicRepository.getMusicById(id),
           musicVersionRepository.findVersionsByMusicId(id),
           musicRelationRepository.findArtistsByMusicId(id),
+          musicStreamRepository.findStreamsByMusicId(id),
         ])
 
         if (!music) {
@@ -108,6 +110,7 @@ export const musicService = {
           artists: relations,
           versions,
           resolutionsByVersionId,
+          streams,
         })
 
         return details

@@ -43,12 +43,14 @@ const {
   findVersionsByMusicId,
   findResolutionsByVersionId,
   findArtistsByMusicId,
+  findStreamsByMusicId,
   mapDetail,
 } = vi.hoisted(() => ({
   getMusicById: vi.fn(),
   findVersionsByMusicId: vi.fn(),
   findResolutionsByVersionId: vi.fn(),
   findArtistsByMusicId: vi.fn(),
+  findStreamsByMusicId: vi.fn(),
   mapDetail: vi.fn(),
 }))
 
@@ -64,6 +66,9 @@ vi.mock('@music/repositories/music-version', () => ({
 vi.mock('@music/repositories/music-relation', () => ({
   musicRelationRepository: { findArtistsByMusicId },
 }))
+vi.mock('@music/repositories/music-stream', () => ({
+  musicStreamRepository: { findStreamsByMusicId },
+}))
 vi.mock('@music/mappers/music-detail', () => ({ mapMusicDetail: mapDetail }))
 
 import { musicService } from '@music/services/music'
@@ -77,6 +82,7 @@ describe('musicService.getMusicDetailsById', () => {
     getMusicById.mockResolvedValue(null)
     findVersionsByMusicId.mockResolvedValue([])
     findArtistsByMusicId.mockResolvedValue([])
+    findStreamsByMusicId.mockResolvedValue([])
 
     await expect(musicService.getMusicDetailsById(42)).rejects.toBeInstanceOf(
       MusicNotFoundError
@@ -87,6 +93,7 @@ describe('musicService.getMusicDetailsById', () => {
     getMusicById.mockResolvedValue({ id: 42 })
     findVersionsByMusicId.mockResolvedValue([])
     findArtistsByMusicId.mockResolvedValue([{ malId: 1 }])
+    findStreamsByMusicId.mockResolvedValue([])
     mapDetail.mockReturnValue({ title: 'X' })
 
     const { value } = await musicService.getMusicDetailsById(42)
@@ -97,6 +104,7 @@ describe('musicService.getMusicDetailsById', () => {
       artists: [{ malId: 1 }],
       versions: [],
       resolutionsByVersionId: {},
+      streams: [],
     })
     expect(value).toEqual({ title: 'X' })
   })
@@ -108,6 +116,7 @@ describe('musicService.getMusicDetailsById', () => {
       { versionId: 200 },
     ])
     findArtistsByMusicId.mockResolvedValue([])
+    findStreamsByMusicId.mockResolvedValue([])
     findResolutionsByVersionId
       .mockResolvedValueOnce([{ id: 1 }])
       .mockResolvedValueOnce([{ id: 2 }])

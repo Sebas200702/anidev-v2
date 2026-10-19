@@ -95,3 +95,25 @@ export type AnimeThemeDB = {
   sequence: number | null
   episodes: string | null
 }
+
+/**
+ * Store link row of a music track (`music_stream` projection).
+ *
+ * @remarks One row per licensed store (Spotify, Apple Music, Amazon Music) with
+ * the track id inside that store. It is the fallback when the catalog has no
+ * playable file for the track.
+ * @see {@link musicStreamRepository.findStreamsByMusicId}
+ * @example
+ * ```typescript
+ * const streams: MusicStreamDB[] = await musicStreamRepository.findStreamsByMusicId(42)
+ * // [{ provider: 'spotify', url: 'https://open.spotify.com/track/7weHG…', externalId: '7weHG…' }]
+ * ```
+ */
+export type MusicStreamDB = {
+  id: number
+  musicId: number
+  provider: string
+  url: string
+  externalId: string | null
+  country: string | null
+}

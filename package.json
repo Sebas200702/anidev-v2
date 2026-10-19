@@ -16,6 +16,7 @@
     "check:write": "biome check --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:clone-prod": "bash scripts/db/clone-prod.sh",
     "db:seed:e2e": "tsx e2e/fixtures/seed-db.ts",
     "dev": "astro dev",
     "format": "biome format --write .",

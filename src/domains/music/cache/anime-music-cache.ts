@@ -15,7 +15,7 @@
  * @see {@link getMusicByAnimeId} for the read-through consumer
  * @see {@link CacheKeyPrefix.MusicByAnime} for the key prefix constant
  */
-import type { MusicDB } from '@music/types/music-db-types'
+import type { AnimeThemeDB } from '@music/types/music-db-types'
 import { cacheGet, cacheSet } from '@lib/cache'
 import { CacheKeyPrefix, CacheTtl } from '@lib/cache/config'
 
@@ -40,20 +40,20 @@ export const animeMusicCache = {
    * Retrieves cached music tracks for an anime.
    *
    * @param animeId - Internal anime identifier
-   * @returns {@link MusicDB}[] on hit, `null` on miss
+   * @returns {@link AnimeThemeDB}[] on hit, `null` on miss
    */
-  async get(animeId: number): Promise<MusicDB[] | null> {
-    return cacheGet<MusicDB[]>(animeMusicCache.key(animeId))
+  async get(animeId: number): Promise<AnimeThemeDB[] | null> {
+    return cacheGet<AnimeThemeDB[]>(animeMusicCache.key(animeId))
   },
 
   /**
    * Stores an anime's music list in Redis.
    *
    * @param animeId - Internal anime identifier
-   * @param tracks - Partial {@link MusicDB} rows linked to the anime
+   * @param tracks - {@link AnimeThemeDB} rows linked to the anime
    */
-  async set(animeId: number, tracks: MusicDB[]): Promise<void> {
-    return cacheSet<MusicDB[]>(animeMusicCache.key(animeId), tracks, {
+  async set(animeId: number, tracks: AnimeThemeDB[]): Promise<void> {
+    return cacheSet<AnimeThemeDB[]>(animeMusicCache.key(animeId), tracks, {
       ttlSeconds: CacheTtl.Medium,
     })
   },
