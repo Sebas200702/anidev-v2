@@ -16,6 +16,9 @@ import type { AnimeExternalDB, AnimeExternalIds } from '@anime/types'
  * - `animeThemes` — non-empty `animeThemesSlug` (string id)
  * - `kitsu` — `kitsuId !== null`
  * - `tvdb` — `tvdbId !== null`
+ * - `anilist` — `anilistId !== null`
+ * - `ann` — `annId !== null` (Anime News Network: la enciclopedia que publica
+ *   los OP/ED con nº de tema, artista y rango de episodios)
  *
  * **Edge case:** `undefined` input yields `[]` (caller should pass row or omit).
  *
@@ -51,6 +54,20 @@ export const mapExternalIds = (
     result.push({
       id: db.tvdbId,
       source: 'tvdb',
+    })
+  }
+
+  if (typeof db.anilistId === 'number') {
+    result.push({
+      id: db.anilistId,
+      source: 'anilist',
+    })
+  }
+
+  if (typeof db.annId === 'number') {
+    result.push({
+      id: db.annId,
+      source: 'ann',
     })
   }
 
