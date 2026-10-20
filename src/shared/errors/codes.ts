@@ -20,6 +20,9 @@ export const ErrorCodes = {
   /** Episode number does not exist for an existing anime — HTTP 404. */
   EPISODE_NOT_FOUND: 'EPISODE_NOT_FOUND',
 
+  /** Printed-media (manga) id does not exist — HTTP 404. */
+  MANGA_NOT_FOUND: 'MANGA_NOT_FOUND',
+
   /** Music entity does not exist — HTTP 404. */
   MUSIC_NOT_FOUND: 'MUSIC_NOT_FOUND',
   /** Music id failed validation — HTTP 400. */

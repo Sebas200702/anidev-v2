@@ -18,6 +18,7 @@ import type { SemanticMediaPath } from './media-asset-types'
  */
 export enum MediaEntity {
   ANIME = 'anime',
+  MANGA = 'manga',
   CHARACTER = 'character',
   STAFF = 'staff',
   STUDIO = 'studio',
@@ -36,6 +37,7 @@ export enum MediaEntity {
  * ```
  */
 export enum MediaType {
+  COVER = 'cover',
   POSTER = 'poster',
   BANNER = 'banner',
   BACKGROUND = 'background',

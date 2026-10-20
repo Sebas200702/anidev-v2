@@ -9,6 +9,7 @@
       "@/*": ["./src/*"],
       "@styles/*": ["./src/styles/*"],
       "@anime/*": ["./src/domains/anime/*"],
+      "@manga/*": ["./src/domains/manga/*"],
       "@auth/*": ["./src/domains/auth/*"],
       "@media/*": ["./src/domains/media/*"],
       "@music/*": ["./src/domains/music/*"],

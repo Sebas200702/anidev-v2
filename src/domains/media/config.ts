@@ -31,6 +31,7 @@ export const mediaServiceConfig: MediaServiceConfig = {
   defaultPlaceholderUrl: `${config.baseUrl}/placeholder.webp`,
   supportedMediaTypes: [
     MediaType.POSTER,
+    MediaType.COVER,
     MediaType.BANNER,
     MediaType.BACKGROUND,
     MediaType.CLEARART,
@@ -39,6 +40,7 @@ export const mediaServiceConfig: MediaServiceConfig = {
   ],
   supportedEntities: [
     MediaEntity.ANIME,
+    MediaEntity.MANGA,
     MediaEntity.CHARACTER,
     MediaEntity.STAFF,
     MediaEntity.STUDIO,

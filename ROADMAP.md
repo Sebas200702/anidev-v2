@@ -182,10 +182,18 @@ _(Changes: `resilient-playback-and-aniskip`, `relational-lists-and-watch-progres
 ### Fase 6 — Contenido enriquecido
 
 - [ ] **Personajes / artistas / seiyuu** — páginas dedicadas (`/character`, `/artist`, `/voice-actor`) + **backfill** de enlaces voice-actor (v1: ~4.2k de 217k).
+  _Datos listos (2026-10-19): el reparto completo por anime (la ficha HTML de
+  MAL corta en 10; la API v2 da la lista entera), con rol fino de AniList,
+  voz, biografía y retrato de cada personaje._
 - [ ] **Schedule** — calendario semanal de estrenos/emisiones con filtro personalizado *"Mis series en emisión"* (cruzado con `user_anime_list.status = 'watching'`).
 - [ ] **Colecciones** — `/collection/[slug]` con gestión personal.
+- [ ] **Obra impresa: manga y novela** — dominio nuevo (migración `0010`):
+  70.958 obras (57.867 manga, 6.991 novelas, 6.000 one-shots) con sinopsis,
+  capítulos, serialización, editorial, relaciones, enlaces y portada; reparto
+  y staff propios; búsqueda con filtro por tipo.
+  _(Change: `printed-media-domain`; API `/api/manga` y `/api/manga/:malId`.)_
 
-**Salida:** fichas ricas y conexiones cruzadas música ↔ artista ↔ seiyuu.
+**Salida:** fichas ricas y conexiones cruzadas música ↔ artista ↔ seiyuu ↔ obra impresa.
 
 ---
 

@@ -12,6 +12,7 @@
  */
 
 export { animeMediaRepository } from './anime-media'
+export { mangaMediaRepository } from './manga-media'
 export { characterMediaRepository } from './character-media'
 export { staffMediaRepository } from './staff-media'
 export { episodeMediaRepository } from './episode-media'

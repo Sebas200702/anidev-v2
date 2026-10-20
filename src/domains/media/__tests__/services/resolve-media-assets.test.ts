@@ -13,6 +13,7 @@ const characterGet = vi.fn()
 const staffGet = vi.fn()
 const episodeGet = vi.fn()
 const musicGet = vi.fn()
+const mangaGet = vi.fn()
 
 vi.mock('@media/repositories/anime-media', () => ({
   animeMediaRepository: {
@@ -39,10 +40,31 @@ vi.mock('@media/repositories/music-media', () => ({
     getMediaByEntityAndType: (args: unknown) => musicGet(args),
   },
 }))
+vi.mock('@media/repositories/manga-media', () => ({
+  mangaMediaRepository: {
+    getMediaByEntityAndType: (args: unknown) => mangaGet(args),
+  },
+}))
 
 describe('resolveMediaAssets', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('dispatches manga paths to the manga repository', async () => {
+    mangaGet.mockResolvedValue(['asset'])
+    const result = await resolveMediaAssets({
+      entityType: MediaEntity.MANGA,
+      entityId: 1,
+      mediaType: MediaType.COVER,
+      mediaSize: MediaSize.LARGE,
+    })
+
+    expect(mangaGet).toHaveBeenCalledWith({
+      mangaId: 1,
+      mediaType: MediaType.COVER,
+    })
+    expect(result).toEqual(['asset'])
   })
 
   it('dispatches anime paths to the anime repository', async () => {
