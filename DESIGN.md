@@ -138,6 +138,15 @@ flexible, evitando siluetas excesivamente rígidas.
 - **Secondary:** fondo transparente, texto blanco y borde de 2px.
 - **Hover / Focus:** transición breve; el primario puede volverse transparente
   con borde y texto de acento.
+- **Candidates (conviven con las pills, no las reemplazan):**
+  - **A `button-terminal`**: transparente, borde 1px, radio editorial;
+    en hover invierte a claro (17.33:1 en ambos estados).
+  - **B `button-hard`**: sólido `brand-700`, borde 2px, `shadow-hard-sm`;
+    hover a `brand-800` (nunca `brand-600` con texto: 4.19:1).
+  - **C `button-rule`**: solo texto `brand-300` con subrayado
+    (10.42:1); para acciones terciarias editoriales.
+  - **D `button-manifesto`**: sólido claro con texto oscuro (17.33:1);
+    hover a `brand-700` (5.83:1).
 
 ### Navigation
 

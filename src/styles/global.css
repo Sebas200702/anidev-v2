@@ -160,6 +160,23 @@
   @apply bg-danger border-danger hover:bg-danger/90 text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-50;
 }
 
+/* ── Candidates (landing voice — pills stay untouched above) ───────────────
+   Mono labels, 2px editorial radius, hard offsets. Contrast-checked:
+   terminal 17.33, hard 5.83 (hover brand-800 ≈ 9+), rule 10.42,
+   manifesto 17.33 (hover 5.83). */
+.button-terminal {
+  @apply font-label bg-transparent border-border-strong text-on-surface hover:bg-on-surface hover:text-surface hover:border-on-surface flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-hard {
+  @apply font-label bg-editorial-accent border-border-strong text-neutral-50 shadow-hard-sm hover:shadow-hard md:hover:bg-brand-800 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+}
+.button-rule {
+  @apply font-label bg-transparent border-brand-600 text-brand-300 hover:text-on-surface hover:border-on-surface hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center border-b-2 px-2 py-2 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-manifesto {
+  @apply font-label bg-on-surface text-surface hover:bg-editorial-accent hover:text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
 /* ── Type scale ─────────────────────────────────────────────────────────── */
 .title {
   @apply font-display text-[32px] font-bold tracking-tight uppercase md:text-start xl:text-[50px];
