@@ -83,10 +83,15 @@
   /* Editorial — landing: misma paleta, lenguaje de las refs (type, rules,
      hard offset). Sin colores nuevos: display en neutral-50, acento serif
      en brand-300 (10.42:1 sobre #121212), micro-labels en neutral-400. */
-  --font-body: "Inter", sans-serif;
+  --font-body: "Nunito Sans", sans-serif;
   --font-heading: "Nunito", sans-serif;
   --font-display: "Archivo", "Inter", sans-serif;
   --font-label: "Space Mono", ui-monospace, monospace;
+  /* TEMP type vote — remove losers after decision */
+  --font-candidate-fraunces: "Fraunces", Georgia, serif;
+  --font-candidate-bricolage: "Bricolage Grotesque", sans-serif;
+  --font-candidate-unbounded: "Unbounded", sans-serif;
+  --font-candidate-space-grotesk: "Space Grotesk", sans-serif;
 
   --shadow-hard-sm: 2px 2px 0 0 var(--color-brand-700);
   --shadow-hard: 4px 4px 0 0 var(--color-brand-700);
