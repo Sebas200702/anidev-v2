@@ -72,6 +72,7 @@
   --color-success: #7fb069;
   --color-warning: #f4d35e;
   --color-danger: #cd4631;
+  --color-on-danger: #ffffff;
 
   /* Editorial roles — intent aliases (NOT new colors). They map to brand/neutral
      so the system "knows" when it speaks editorially vs operationally. */
@@ -157,7 +158,7 @@
   @apply bg-transparent hover:bg-transparent border-transparent text-on-surface hover:text-focus active:scale-95 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out border font-semibold disabled:cursor-not-allowed disabled:opacity-50;
 }
 .button-destructive {
-  @apply bg-danger border-danger hover:bg-danger/90 text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-50;
+  @apply bg-danger border-danger hover:bg-danger/90 text-on-danger flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 /* ── Candidates (landing voice — pills stay untouched above) ───────────────
@@ -175,6 +176,26 @@
 }
 .button-manifesto {
   @apply font-label bg-on-surface text-surface hover:bg-editorial-accent hover:text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* ── Hard family (B graduates — same shape, five roles) ───────────────────
+   2px border, radius-editorial, mono uppercase, brand offset. Contrast:
+   primary 5.83 (hover brand-800 9.47), secondary 17.33, tertiary 15.77,
+   ghost 8.64, destructive 5.15 via --color-on-danger. */
+.button-hard-primary {
+  @apply font-label bg-editorial-accent border-border-strong text-neutral-50 shadow-hard-sm hover:shadow-hard md:hover:bg-brand-800 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+}
+.button-hard-secondary {
+  @apply font-label bg-transparent border-on-surface-muted text-on-surface hover:border-on-surface hover:bg-neutral-300/10 hover:shadow-hard-sm flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+}
+.button-hard-tertiary {
+  @apply font-label bg-surface-raised border-border-strong text-on-surface hover:border-focus shadow-hard-sm flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+}
+.button-hard-ghost {
+  @apply font-label bg-transparent border-transparent text-on-surface-muted hover:text-on-surface hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-hard-destructive {
+  @apply font-label bg-danger border-border-strong text-on-danger shadow-hard-sm hover:shadow-hard md:hover:bg-danger/90 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
 }
 
 /* ── Type scale ─────────────────────────────────────────────────────────── */

@@ -36,4 +36,9 @@ export const BUTTON_VARIANTS = [
   'button-hard',
   'button-rule',
   'button-manifesto',
+  'button-hard-primary',
+  'button-hard-secondary',
+  'button-hard-tertiary',
+  'button-hard-ghost',
+  'button-hard-destructive',
 ] as const
