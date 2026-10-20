@@ -75,16 +75,6 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
       config={[
         {
           src: [],
-          name: 'Nunito',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap&',
-          preload: true,
-          display: 'swap',
-          selector: 'body',
-          fallback: 'sans-serif',
-        },
-        {
-          src: [],
           name: 'Nunito Sans',
           googleFontsURL:
             'https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400..800&display=swap&',
@@ -95,82 +85,12 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
         },
         {
           src: [],
-          name: 'Archivo',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-display',
-          fallback: 'sans-serif',
-        },
-        {
-          src: [],
-          name: 'Space Mono',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-label',
-          fallback: 'monospace',
-        },
-        {
-          src: [],
-          name: 'Fraunces',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-candidate-fraunces',
-          fallback: 'serif',
-        },
-        {
-          src: [],
-          name: 'Bricolage Grotesque',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-candidate-bricolage',
-          fallback: 'sans-serif',
-        },
-        {
-          src: [],
-          name: 'Unbounded',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Unbounded:wght@400..900&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-candidate-unbounded',
-          fallback: 'sans-serif',
-        },
-        {
-          src: [],
-          name: 'Space Grotesk',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-candidate-space-grotesk',
-          fallback: 'sans-serif',
-        },
-        {
-          src: [],
           name: 'Kode Mono',
           googleFontsURL:
             'https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap&',
           preload: false,
           display: 'swap',
-          selector: '.font-candidate-kode-mono',
-          fallback: 'monospace',
-        },
-        {
-          src: [],
-          name: 'Cascadia Mono',
-          googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400..700&display=swap&',
-          preload: false,
-          display: 'swap',
-          selector: '.font-candidate-cascadia-mono',
+          selector: '.font-heading, .font-display, .font-label',
           fallback: 'monospace',
         },
       ]}

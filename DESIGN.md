@@ -17,11 +17,13 @@ colors:
   complementary: "#1c1c1c"
 typography:
   body:
-    fontFamily: "Nunito, sans-serif"
+    fontFamily: "Nunito Sans, sans-serif"
+  heading:
+    fontFamily: "Kode Mono, ui-monospace, monospace"
   display:
-    fontFamily: "Archivo, Inter, sans-serif"
+    fontFamily: "Kode Mono, ui-monospace, monospace"
   label:
-    fontFamily: "Space Mono, ui-monospace, monospace"
+    fontFamily: "Kode Mono, ui-monospace, monospace"
 rounded:
   md: "0.375rem"
 spacing:
@@ -93,10 +95,13 @@ combinación que incumpla el contraste.
 
 ## Typography
 
-**Body Font:** Nunito (with sans-serif fallback)
+**Body Font:** Nunito Sans (with sans-serif fallback)
 
-**Character:** Cercana y legible, con una jerarquía compacta que favorece la
-consulta frecuente del catálogo.
+**Heading / Display / Label Font:** Kode Mono (with monospace fallback)
+
+**Character:** cercana y legible en el cuerpo; terminal y editorial en los
+titulares. Dos familias en total: la mono grita y etiqueta (700 display,
+400 labels), Nunito Sans lee.
 
 ### Hierarchy
 
@@ -150,11 +155,10 @@ flexible, evitando siluetas excesivamente rígidas.
 La landing copia el lenguaje de las refs sin importar sus colores: fondo
 `#121212`, acento `brand`, texto `neutral-50`. Alcance: solo la ruta landing.
 
-- **Type (dos voces):** display condensado mayúsculas (Archivo, tight,
-  10–15vw) + Space Mono protagonista (nav, pills, placas `FIG. 01`,
+- **Type (dos familias):** display condensado mayúsculas en Kode Mono 700
+  (10–15vw) + labels en Kode Mono 400 (nav, pills, placas `FIG. 01`,
   tickets, micro-labels 10–11px uppercase, tracking 0.18–0.2em).
-  La línea de acento va en Archivo itálica brand-300
-  (10.42:1 sobre `#121212`). Sin serifada: tres familias saturan.
+  La línea de acento va en Kode Mono brand-300. Cuerpo en Nunito Sans.
 - **Rules:** hairlines `neutral-800`, grid tenue, marcas de placa
   (`FIG. 01`), texto vertical en rieles laterales.
 - **Shape:** tarjetas con borde 1–2px `neutral-700`, radio `2px`,
