@@ -5,6 +5,7 @@
  */
 import { db } from '@db/client'
 import { manga } from '@db/schemas/manga'
+import { mangaTitleSynonym } from '@db/schemas/manga'
 import {
   mangaDemographic,
   mangaGenre,
@@ -115,12 +116,21 @@ export const mangaListRepository = {
         )
       }
       if (filters.query?.trim()) {
+        // Índice-backed: los GIN de pg_trgm sobre estas columnas y sobre
+        // `manga_title_synonym.title` aceleran el `ILIKE '%q%'`.
         const term = `%${filters.query.trim()}%`
         conditions.push(
           or(
             ilike(manga.title, term),
             ilike(manga.titleEnglish, term),
-            ilike(manga.titleJapanese, term)
+            ilike(manga.titleJapanese, term),
+            inArray(
+              manga.malId,
+              db
+                .select({ id: mangaTitleSynonym.mangaId })
+                .from(mangaTitleSynonym)
+                .where(ilike(mangaTitleSynonym.title, term))
+            )
           )
         )
       }

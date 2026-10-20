@@ -87,12 +87,20 @@ arquitectónicas:
 |                                                                                                   |
 |  [ Dominios Verticales Cohesivos (src/domains/) ]                                                 |
 |  +------------+ +------------+ +------------+ +------------+ +----------------+ +--------------+  |
-|  |   anime    | |   music    | |   media    | |    user    | |     search     | |    watch     |  |
-|  | (Catálogo, | | (Temas,    | | (Sharp Disk| | (Perfil    | | (Historial,    | | (Episodios,  |  |
-|  |  Sinónimos,| |  Versiones,| |  LRU Cache | |  Público/  | |  BM25/Trgm,    | |  Playback,   |  |
-|  |  Taxonomía,| |  Playlists,| |  + Stream  | |  Privado,  | |  Recomendador  | |  Progreso,   |  |
-|  |  Schedule) | |  Player)   | |  Range 206)| |  Listas)   | |  Híbrido 2-Tier| |  AniSkip,    |  |
-|  +------------+ +------------+ +------------+ +------------+ +----------------+ |  Watch2Gether|  |
+|  |   anime    | |   manga    | |   music    | |   media    | |    user    | |    search     |  |
+|  | (Catálogo, | | (Obra      | | (Temas,    | | (Sharp Disk| | (Perfil    | | (Historial,    |  |
+|  |  Sinónimos,| |  impresa:  | |  Versiones,| |  LRU Cache | |  Público/  | |  BM25/Trgm,    |  |
+|  |  Taxonomía,| |  Manga,    | |  Playlists,| |  + Stream  | |  Privado,  | |  Recomendador  |  |
+|  |  Schedule) | |  Novela,   | |  Player)   | |  Range 206)| |  Listas)   | |  Híbrido 2-Tier|  |
+|  |            | |  One-shot) | |            | |            | |               |  |
+|  +------------+ +------------+ +-----+------+ +-----+----+ +-----+--------+ +-----+---------+ |  |
+|         |              |             |              |                |          +--------------+  |
+|         |              |             |              |                |          |    watch      |  |
+|         |              |             |              |                |          | (Episodios,  |  |
+|         |              |             |              |                |          |  Playback,   |  |
+|         |              |             |              |                |          |  Progreso,   |  |
+|         |              |             |              |                |          |  AniSkip,    |  |
+|         |              |             |              |                |          |  Watch2Gether|  |
 |         |              |             |              |                |          +--------------+  |
 |  [ Infraestructura Compartida (src/lib/) ]                                             |          |
 |   - db/client.ts (Drizzle + pg.Pool max:20)  - cache/ (Dragonfly: JSON + Stale + Pub/Sub)         |
