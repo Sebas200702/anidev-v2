@@ -93,6 +93,7 @@
   --font-candidate-unbounded: "Unbounded", sans-serif;
   --font-candidate-space-grotesk: "Space Grotesk", sans-serif;
   --font-candidate-kode-mono: "Kode Mono", ui-monospace, monospace;
+  --font-candidate-cascadia-mono: "Cascadia Mono", ui-monospace, monospace;
 
   --shadow-hard-sm: 2px 2px 0 0 var(--color-brand-700);
   --shadow-hard: 4px 4px 0 0 var(--color-brand-700);

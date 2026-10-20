@@ -163,6 +163,16 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
           selector: '.font-candidate-kode-mono',
           fallback: 'monospace',
         },
+        {
+          src: [],
+          name: 'Cascadia Mono',
+          googleFontsURL:
+            'https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400..700&display=swap&',
+          preload: false,
+          display: 'swap',
+          selector: '.font-candidate-cascadia-mono',
+          fallback: 'monospace',
+        },
       ]}
     />
     <link rel="canonical" href={url} />
