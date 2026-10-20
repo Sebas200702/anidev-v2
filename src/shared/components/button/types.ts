@@ -13,14 +13,8 @@ export type ButtonVariant =
   | 'button-destructive'
   | 'button-ghost'
   | 'button-terminal'
-  | 'button-hard'
   | 'button-rule'
   | 'button-manifesto'
-  | 'button-hard-primary'
-  | 'button-hard-secondary'
-  | 'button-hard-tertiary'
-  | 'button-hard-ghost'
-  | 'button-hard-destructive'
 
 /**
  * Props accepted by {@link Button}.

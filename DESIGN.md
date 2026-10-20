@@ -133,25 +133,21 @@ flexible, evitando siluetas excesivamente rígidas.
 
 ### Buttons
 
-- **Shape:** esquinas moderadamente redondeadas (`0.375rem`).
-- **Primary:** fondo de acento personal, texto blanco y borde de 2px.
-- **Secondary:** fondo transparente, texto blanco y borde de 2px.
-- **Hover / Focus:** transición breve; el primario puede volverse transparente
-  con borde y texto de acento.
-- **Candidates (conviven con las pills, no las reemplazan):**
-  - **A `button-terminal`**: transparente, borde 1px, radio editorial;
-    en hover invierte a claro (17.33:1 en ambos estados).
-  - **B `button-hard`**: sólido `brand-700`, borde 2px, `shadow-hard-sm`;
-    hover a `brand-800` (nunca `brand-600` con texto: 4.19:1).
-  - **C `button-rule`**: solo texto `brand-300` con subrayado
-    (10.42:1); para acciones terciarias editoriales.
-  - **D `button-manifesto`**: sólido claro con texto oscuro (17.33:1);
-    hover a `brand-700` (5.83:1).
-- **Hard family (B graduate):** misma forma en los cinco roles —
-  `button-hard-primary` (5.83, hover `brand-800` 9.47),
-  `button-hard-secondary` (17.33), `button-hard-tertiary` (15.77),
-  `button-hard-ghost` (8.64), `button-hard-destructive` (5.15 vía
-  `--color-on-danger`). El fix de contraste también sube la pill
+- **Shape:** borde 2px `border-strong`, radio `2px`, mono uppercase con
+  tracking `0.18em`, sombra dura en primario/terciario/destructivo.
+- **Primary:** sólido `brand-700`, texto `neutral-50` (5.83:1); hover a
+  `brand-800` (9.47) con sombra grande. Nunca `brand-600` con texto (4.19).
+- **Secondary:** transparente con borde `on-surface-muted` (17.33:1);
+  hover a borde claro con offset.
+- **Tertiary:** sólido claro `on-surface` con texto oscuro (17.33:1);
+  hover a `neutral-100` con sombra grande. El blanco manda, como antes.
+- **Ghost:** transparente, borde 2px discontinuo, texto tenue (8.64:1);
+  en hover el borde solidifica.
+- **Destructive:** sólido `danger`, texto `on-danger` (5.15:1), offset en
+  rojo profundo `danger-deep`.
+- **Extras situacionales:** `button-terminal` (invierte en hover, 17.33),
+  `button-rule` (subrayado `brand-300`, 10.42), `button-manifesto`
+  (claro que invierte a brand, 17.33/5.83). El fix de contraste también sube la pill
   destructive de 4.30 a 5.15.
 
 ### Navigation

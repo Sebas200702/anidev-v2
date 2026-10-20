@@ -33,12 +33,6 @@ export const BUTTON_VARIANTS = [
   'button-ghost',
   'button-destructive',
   'button-terminal',
-  'button-hard',
   'button-rule',
   'button-manifesto',
-  'button-hard-primary',
-  'button-hard-secondary',
-  'button-hard-tertiary',
-  'button-hard-ghost',
-  'button-hard-destructive',
 ] as const
