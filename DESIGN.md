@@ -18,6 +18,10 @@ colors:
 typography:
   body:
     fontFamily: "Nunito, sans-serif"
+  display:
+    fontFamily: "Archivo, Inter, sans-serif"
+  label:
+    fontFamily: "Space Mono, ui-monospace, monospace"
 rounded:
   md: "0.375rem"
 spacing:
@@ -140,6 +144,23 @@ flexible, evitando siluetas excesivamente rígidas.
 - **Background:** capas neutrales oscuras sobre el fondo principal.
 - **Shadow Strategy:** profundidad tonal; sombra solo para estados.
 - **Internal Padding:** compacto por defecto y ampliado en breakpoints grandes.
+
+## Landing editorial (misma paleta dark + brand)
+
+La landing copia el lenguaje de las refs sin importar sus colores: fondo
+`#121212`, acento `brand`, texto `neutral-50`. Alcance: solo la ruta landing.
+
+- **Type (dos voces):** display condensado mayúsculas (Archivo, tight,
+  10–15vw) + Space Mono protagonista (nav, pills, placas `FIG. 01`,
+  tickets, micro-labels 10–11px uppercase, tracking 0.18–0.2em).
+  La línea de acento va en Archivo itálica brand-300
+  (10.42:1 sobre `#121212`). Sin serifada: tres familias saturan.
+- **Rules:** hairlines `neutral-800`, grid tenue, marcas de placa
+  (`FIG. 01`), texto vertical en rieles laterales.
+- **Shape:** tarjetas con borde 1–2px `neutral-700`, radio `2px`,
+  sombra dura `4px 4px 0 brand-700`; pills solo para CTAs.
+- **Bloque manifiesto:** panel sólido `brand-700` con display
+  `neutral-50` (5.83:1); grano sutil sobre artwork, nunca sobre texto.
 
 ## Do's and Don'ts
 

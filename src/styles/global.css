@@ -80,9 +80,18 @@
   --color-editorial-surface: var(--color-surface-raised);
   --color-editorial-border: var(--color-border);
 
-  /* Fonts */
+  /* Editorial — landing: misma paleta, lenguaje de las refs (type, rules,
+     hard offset). Sin colores nuevos: display en neutral-50, acento serif
+     en brand-300 (10.42:1 sobre #121212), micro-labels en neutral-400. */
   --font-body: "Inter", sans-serif;
   --font-heading: "Nunito", sans-serif;
+  --font-display: "Archivo", "Inter", sans-serif;
+  --font-label: "Space Mono", ui-monospace, monospace;
+
+  --shadow-hard-sm: 2px 2px 0 0 var(--color-brand-700);
+  --shadow-hard: 4px 4px 0 0 var(--color-brand-700);
+
+  --radius-editorial: 2px;
 }
 
 :root {

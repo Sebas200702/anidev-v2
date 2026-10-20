@@ -40,6 +40,16 @@
         "name": "interactive-md",
         "value": "shadow-md",
         "purpose": "Hover feedback on primary and secondary controls."
+      },
+      {
+        "name": "hard-sm",
+        "value": "shadow-hard-sm",
+        "purpose": "Small editorial cards and pills on dark (brand-700 offset)."
+      },
+      {
+        "name": "hard",
+        "value": "shadow-hard",
+        "purpose": "Editorial cards and manifesto blocks on dark (brand-700 offset)."
       }
     ],
     "breakpoints": [{ "name": "md", "value": "768px" }]

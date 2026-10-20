@@ -93,6 +93,26 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
           selector: 'body',
           fallback: 'sans-serif',
         },
+        {
+          src: [],
+          name: 'Archivo',
+          googleFontsURL:
+            'https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&display=swap&',
+          preload: false,
+          display: 'swap',
+          selector: '.font-display',
+          fallback: 'sans-serif',
+        },
+        {
+          src: [],
+          name: 'Space Mono',
+          googleFontsURL:
+            'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap&',
+          preload: false,
+          display: 'swap',
+          selector: '.font-label',
+          fallback: 'monospace',
+        },
       ]}
     />
     <link rel="canonical" href={url} />
