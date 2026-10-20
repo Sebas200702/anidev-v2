@@ -1,0 +1,53 @@
+---
+/**
+ * Type specimens: the two landing voices over the catalog scale.
+ *
+ * @module shared/components/design-system/sections/ds-type
+ * @remarks
+ * Private section of {@link DesignSystem}. Display is Archivo black
+ * uppercase; the mono voice (Space Mono) owns every label. The serif
+ * accent line is Archivo in brand-300 — no third family.
+ */
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="01"
+  title="Type"
+  blurb="Two voices. Display shouts, mono labels. Body stays Inter for the catalog."
+/>
+
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Display / Archivo 900
+    </p>
+    <p class="font-display text-on-surface text-5xl leading-none font-black tracking-tight uppercase md:text-7xl">
+      Libertad de exploración
+    </p>
+    <p class="font-display text-brand-300 text-3xl leading-none font-bold tracking-tight uppercase md:text-5xl">
+      Tokyo 2042
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Mono / Space Mono
+    </p>
+    <p class="font-label text-on-surface text-sm tracking-[0.18em] uppercase">
+      Fig. 01 — Get tickets · May 20–22
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Catalog scale
+    </p>
+    <p class="title text-on-surface">Title — consulta del catálogo</p>
+    <p class="subtitle text-on-surface">Subtitle — sección o grupo</p>
+    <p class="text-l text-on-surface">Text-l — información destacada</p>
+    <p class="text-m text-on-surface-muted">Text-m — cuerpo de catálogo</p>
+    <p class="text-s text-on-surface-muted">Text-s — metadatos</p>
+    <p class="text-sx text-on-surface-subtle">Text-sx — controles densos</p>
+  </div>
+</div>

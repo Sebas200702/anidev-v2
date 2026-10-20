@@ -26,8 +26,13 @@ describe('isPublicRoute', () => {
     expect(isPublicRoute('/showcase')).toBe(true)
   })
 
+  it('exposes the design system', () => {
+    expect(isPublicRoute('/design-system')).toBe(true)
+  })
+
   it('rejects a path that only shares a prefix string', () => {
     expect(isPublicRoute('/showcase-private')).toBe(false)
+    expect(isPublicRoute('/design-system-guide')).toBe(false)
     expect(isPublicRoute('/api/animexyz')).toBe(false)
   })
 

@@ -1,0 +1,42 @@
+---
+/**
+ * Button variants: the five global surfaces plus the editorial shape.
+ *
+ * @module shared/components/design-system/sections/ds-buttons
+ * @remarks
+ * Private section of {@link DesignSystem}. Reuses the shared {@link Button};
+ * the last row shows the landing voice — mono label on a hard offset.
+ */
+import Button from '../../button/button.astro'
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="03"
+  title="Buttons"
+  blurb="Five global pills. Landing speaks mono on a hard brand offset."
+/>
+
+<div class="flex flex-col gap-6">
+  <div class="flex flex-wrap items-center gap-3">
+    <Button title="Primary" variant="button-primary" />
+    <Button title="Secondary" variant="button-secondary" />
+    <Button title="Tertiary" variant="button-tertiary" />
+    <Button title="Ghost" variant="button-ghost" />
+    <Button title="Destructive" variant="button-destructive" />
+  </div>
+  <div class="flex flex-wrap items-center gap-3">
+    <Button title="Disabled" variant="button-primary" disabled />
+    <Button title="Loading" variant="button-secondary" isLoading />
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Editorial / landing
+    </p>
+    <div>
+      <span class="font-label bg-surface-raised text-on-surface border-border-strong shadow-hard rounded-editorial inline-block border-2 px-5 py-2.5 text-xs tracking-[0.2em] uppercase">
+        Get tickets
+      </span>
+    </div>
+  </div>
+</div>

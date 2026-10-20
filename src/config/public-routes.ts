@@ -12,8 +12,9 @@
  * not normalized; callers should pass `context.url.pathname` as-is. API list
  * endpoints under `/api/anime` and `/api/music`, plus the `/api/health` liveness
  * check, are intentionally public for browse-before-login flows and monitoring.
- * `/showcase` is the component playground: public so it is reviewable from a
- * deploy preview, and `noindex` so it never competes with real content.
+ * `/showcase` is the component playground and `/design-system` the token docs:
+ * public so they are reviewable from a deploy preview, and `noindex` so they
+ * never compete with real content.
  *
  * @see {@link module:middleware/auth-middleware} for runtime enforcement
  * @see {@link isPublicRoute} for the matching helper
@@ -37,6 +38,7 @@ export const publicRoutes = [
   '/api/health',
   '/media',
   '/showcase',
+  '/design-system',
 ] as const
 
 /**

@@ -1,0 +1,56 @@
+---
+/**
+ * Rules and rails: hairlines, plate marks, vertical text.
+ *
+ * @module shared/components/design-system/sections/ds-rules
+ * @remarks
+ * Private section of {@link DesignSystem}. Structure is information:
+ * hairlines, grids and plate marks encode the editorial system, they never
+ * decorate the catalog content itself.
+ */
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="05"
+  title="Rules"
+  blurb="Hairlines, grids and plate marks. Vertical rails frame the page."
+/>
+
+<div class="flex flex-col gap-6">
+  <div class="border-border grid grid-cols-2 gap-px border md:grid-cols-4" aria-hidden="true">
+    {
+      ['Agenda', 'Speakers', 'Installations', 'Tickets'].map((cell) => (
+        <div class="bg-surface flex items-center justify-between p-4">
+          <span class="font-label text-on-surface-muted text-[11px] tracking-[0.2em] uppercase">
+            {cell}
+          </span>
+          <span class="bg-focus size-1.5 rounded-full" />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="flex items-center justify-between gap-4">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Fig. 01 / 00–26
+    </p>
+    <div class="flex-1 border-t border-neutral-800" aria-hidden="true"></div>
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Plate Nº 08
+    </p>
+  </div>
+
+  <div class="flex gap-6">
+    <p
+      class="font-label text-on-surface-subtle text-[11px] tracking-[0.3em] uppercase"
+      style="writing-mode: vertical-rl;"
+    >
+      Skills · Systems · Agents
+    </p>
+    <p class="text-m text-on-surface-muted max-w-prose">
+      Los rieles verticales enmarcan la página sin competir con el contenido.
+      El texto va en mono, el contenido respira al lado.
+    </p>
+  </div>
+</div>
