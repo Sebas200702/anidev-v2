@@ -33,6 +33,7 @@ export const publicRoutes = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/anime',
+  '/api/manga',
   '/api/music',
   '/api/health',
   '/media',

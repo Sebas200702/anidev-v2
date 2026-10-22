@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 /** Whitelisted sort fields for the printed-media list. */
-export const mangaSortFields = ['score', 'year', 'title', 'relevance'] as const
+export const mangaSortFields = ['score', 'year', 'title'] as const
 
 /**
  * Validates a compact printed-media card shown in list and grid views.

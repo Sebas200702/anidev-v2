@@ -16,8 +16,8 @@ const row = (over: Partial<AnimeExternalDB>): AnimeExternalDB =>
     animeThemesSlug: null,
     kitsuId: null,
     tvdbId: null,
-  anilistId: null,
-  annId: null,
+    anilistId: null,
+    annId: null,
     ...over,
   }) as AnimeExternalDB
 

@@ -68,6 +68,15 @@ export const manga = pgTable(
     index('manga_type_idx').on(t.type),
     index('manga_score_idx').on(t.score),
     index('manga_status_idx').on(t.status),
+    index('manga_title_trgm_idx').using('gin', t.title.op('gin_trgm_ops')),
+    index('manga_title_english_trgm_idx').using(
+      'gin',
+      t.titleEnglish.op('gin_trgm_ops')
+    ),
+    index('manga_title_japanese_trgm_idx').using(
+      'gin',
+      t.titleJapanese.op('gin_trgm_ops')
+    ),
   ]
 )
 
@@ -88,7 +97,10 @@ export const mangaTitleSynonym = pgTable(
     title: text('title').notNull(),
   },
   (t) => [
-    uniqueIndex('manga_title_synonym_manga_id_title_idx').on(t.mangaId, t.title),
+    uniqueIndex('manga_title_synonym_manga_id_title_idx').on(
+      t.mangaId,
+      t.title
+    ),
     index('manga_title_synonym_title_trgm_idx').using(
       'gin',
       t.title.op('gin_trgm_ops')

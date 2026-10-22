@@ -46,3 +46,5 @@ GHSA-c2c7-rcm5-vvqj # picomatch :: build-time globbing (F.5)
 GHSA-68fv-2mgg-jv7q # source-map-js :: test runner stack mapping (F.5)
 # --- http-cache-semantics via astro (no shared cross-user HTTP cache in app paths) ---
 GHSA-ch52-4w7c-c8xp # http-cache-semantics :: /media uses native fetch without shared cache (F.5)
+GHSA-587h-7wmj-h5pm # launch-editor :: build/dev tooling only; no production runtime path (F.5)
+GHSA-xjj6-f33q-929c # undici :: build-time font fetching via astro/unifont; no request path (F.5)

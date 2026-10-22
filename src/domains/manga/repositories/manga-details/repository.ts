@@ -24,7 +24,7 @@ import { character } from '@db/schemas/character'
 import { staff } from '@db/schemas/staff'
 import { producerTitle } from '@db/schemas/producer'
 import { dbError } from '@shared/errors/db-errors'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 import type {
   MangaCharacterDB,
   MangaDB,
@@ -139,10 +139,7 @@ export const mangaDetailsRepository = {
           name: character.name,
         })
         .from(mangaCharacter)
-        .innerJoin(
-          character,
-          eq(character.malId, mangaCharacter.characterId)
-        )
+        .innerJoin(character, eq(character.malId, mangaCharacter.characterId))
         .where(eq(mangaCharacter.mangaId, mangaId))
         .orderBy(asc(mangaCharacter.role), asc(character.name))
     } catch (error) {
@@ -186,9 +183,12 @@ export const mangaDetailsRepository = {
           name: producerTitle.title,
         })
         .from(mangaProducer)
-        .leftJoin(
+        .innerJoin(
           producerTitle,
-          eq(producerTitle.producerId, mangaProducer.producerId)
+          and(
+            eq(producerTitle.producerId, mangaProducer.producerId),
+            eq(producerTitle.type, 'Default')
+          )
         )
         .where(eq(mangaProducer.mangaId, mangaId))
       return rows.map((row) => ({ ...row, name: row.name ?? '' }))
@@ -218,9 +218,7 @@ export const mangaDetailsRepository = {
   },
 
   /** Loads the external links of a work. */
-  async getExternalLinks(
-    mangaId: number
-  ): Promise<MangaExternalLinkDB[]> {
+  async getExternalLinks(mangaId: number): Promise<MangaExternalLinkDB[]> {
     try {
       return await db
         .select()

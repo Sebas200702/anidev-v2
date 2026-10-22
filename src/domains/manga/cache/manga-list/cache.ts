@@ -51,10 +51,7 @@ export const mangaListCache = {
    * @param filters - Normalized filters
    * @param value - Cards for the current page and the total count
    */
-  async set(
-    filters: MangaFilters,
-    value: MangaListCacheValue
-  ): Promise<void> {
+  async set(filters: MangaFilters, value: MangaListCacheValue): Promise<void> {
     return cacheSet<MangaListCacheValue>(this.key(filters), value, {
       ttlSeconds: CacheTtl.Medium,
     })

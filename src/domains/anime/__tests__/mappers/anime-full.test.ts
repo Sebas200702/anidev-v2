@@ -62,8 +62,20 @@ describe('mapAnimeToFullDetails', () => {
     const result = mapAnimeToFullDetails(
       baseInput({
         animeMusic: [
-          { id: 1, title: 'OP1', type: 'OP', sequence: 1, episodes: '1-12' } as AnimeThemeDB,
-          { id: 2, title: 'ED1', type: 'ED', sequence: 1, episodes: '1-12' } as AnimeThemeDB,
+          {
+            id: 1,
+            title: 'OP1',
+            type: 'OP',
+            sequence: 1,
+            episodes: '1-12',
+          } as AnimeThemeDB,
+          {
+            id: 2,
+            title: 'ED1',
+            type: 'ED',
+            sequence: 1,
+            episodes: '1-12',
+          } as AnimeThemeDB,
         ],
       })
     )

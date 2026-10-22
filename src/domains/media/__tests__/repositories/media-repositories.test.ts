@@ -111,9 +111,7 @@ describe('episodeMediaRepository', () => {
         mediaType: 'thumbnail',
         episodeId: 1,
       })
-    ).toEqual([
-      { id: 7, mediaType: 'thumbnail', src: 'thumb.jpg', size: null },
-    ])
+    ).toEqual([{ id: 7, mediaType: 'thumbnail', src: 'thumb.jpg', size: null }])
   })
 
   it('falls back to episode_source when episode_media has no rows', async () => {

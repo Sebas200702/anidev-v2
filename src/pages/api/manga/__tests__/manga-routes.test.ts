@@ -59,12 +59,17 @@ const card = {
 describe('GET /api/manga', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    getList.mockResolvedValue({ value: { list: [card], total: 1 }, isStale: false })
+    getList.mockResolvedValue({
+      value: { list: [card], total: 1 },
+      isStale: false,
+    })
   })
 
   it('returns the paginated list with the total', async () => {
     const response = await listRoute({
-      request: new Request('http://localhost/api/manga?page=1&limit=10&type=novel'),
+      request: new Request(
+        'http://localhost/api/manga?page=1&limit=10&type=novel'
+      ),
       params: {},
       locals: {},
     } as never)

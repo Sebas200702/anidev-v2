@@ -24,9 +24,7 @@ import type {
  * @param params - Raw query parameters (coerced by Zod at the route)
  * @returns Normalized {@link MangaFilters}
  */
-export const mapMangaFilters = (
-  params: MangaFiltersParams
-): MangaFilters => {
+export const mapMangaFilters = (params: MangaFiltersParams): MangaFilters => {
   const split = (value?: string): string[] | undefined =>
     value
       ?.split(',')
@@ -105,8 +103,7 @@ export const mangaDetailsService = {
     return withStaleCache({
       key,
       staleKey: `${key}:stale`,
-      getCache: () =>
-        cacheGet<MangaDetails>(key),
+      getCache: () => cacheGet<MangaDetails>(key),
       getStaleCache: (staleKey) => cacheGet<MangaDetails>(staleKey),
       setCache: (_, value) =>
         cacheSet(key, value, { ttlSeconds: CacheTtl.Medium }),

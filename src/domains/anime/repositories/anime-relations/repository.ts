@@ -3,10 +3,7 @@
  *
  * @module domains/anime/repositories/anime-relations/repository
  */
-import {
-  animeProducer,
-  animeRelatedAnime,
-} from '@db/schemas/anime-relations'
+import { animeProducer, animeRelatedAnime } from '@db/schemas/anime-relations'
 import { producer, producerTitle } from '@db/schemas/producer'
 import { anime } from '@db/schemas/anime'
 import { dbError } from '@shared/errors/db-errors'
@@ -47,10 +44,7 @@ export const animeRelationsRepository = {
         })
         .from(animeProducer)
         .innerJoin(producer, eq(animeProducer.producerId, producer.malId))
-        .innerJoin(
-          producerTitle,
-          eq(producerTitle.producerId, producer.malId)
-        )
+        .innerJoin(producerTitle, eq(producerTitle.producerId, producer.malId))
         .where(eq(animeProducer.animeId, animeId))
 
       return rows

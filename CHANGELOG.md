@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/Sebas200702/anidev-v2/compare/v0.11.0...v0.12.0) (2026-10-22)
+
+
+### Features
+
+* **anime:** expone los ids de AniList y ANN en los external ids ([25db332](https://github.com/Sebas200702/anidev-v2/commit/25db332c80653fc53086acf47cba1b7466c46ae1))
+* **anime:** favoritos, miembros y companias con rol en el detalle ([b215363](https://github.com/Sebas200702/anidev-v2/commit/b21536388a1ce9957dd0cbd89c64a03bd9ac0ca2))
+* **anime:** id de TMDB en los external ids ([6a7825f](https://github.com/Sebas200702/anidev-v2/commit/6a7825fbfaffa7eb48f67636787d837b07d39abf))
+* **manga:** busqueda por sinonimos, test de integracion y arquitectura ([d94e3f7](https://github.com/Sebas200702/anidev-v2/commit/d94e3f71cfe2e381015b185eaf11990049b59ce6))
+* **manga:** dominio de obra impresa (manga, novela, one-shot) con API ([ca06b37](https://github.com/Sebas200702/anidev-v2/commit/ca06b379c1e15ae45ef9e1aa0c0b503c186253ae))
+* **music:** expose store links (externals) in the music detail ([1fee688](https://github.com/Sebas200702/anidev-v2/commit/1fee688e2c9d4cb2d5fc9659a6cfaf4c33e0ac7b))
+* **music:** theme number and episode range in the anime detail ([75c0f0d](https://github.com/Sebas200702/anidev-v2/commit/75c0f0dccaa281481034743f2d66a5e3ce56dbe0))
+
+
+### Bug Fixes
+
+* **media:** episode media reads episode_media, not episode_source ([0557637](https://github.com/Sebas200702/anidev-v2/commit/0557637568cb8e95ac20cd92771510649e546e08))
+
 ## [0.11.0](https://github.com/Sebas200702/anidev-v2/compare/v0.10.0...v0.11.0) (2026-10-18)
 
 
