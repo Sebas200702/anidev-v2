@@ -23,6 +23,12 @@ export const ADULT_RATINGS = ['Rx - Hentai'] as const
  */
 export const RELEVANCE_RANK_ALIAS = 'sim_rank'
 
+/** Roles a producer can be credited with on an anime (`anime_producer.role`). */
+export const ANIME_PRODUCER_ROLES = ['studio', 'producer', 'licensor'] as const
+
+/** Comma-separated list of positive MAL ids (`producer=14,43`). */
+export const PRODUCER_IDS_PATTERN = /^[1-9]\d{0,9}(,[1-9]\d{0,9})*$/
+
 /** Whitelisted sort fields for the anime list/search query. */
 export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
 
