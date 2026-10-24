@@ -88,8 +88,12 @@ describe('error wrapping', () => {
       characterAppearancesRepository.getAppearances(1, { page: 1, limit: 1 }),
       characterAppearancesRepository.count(1),
     ]
-    for (const call of calls) {
-      await expect(call).rejects.toBeInstanceOf(InfraError)
-    }
+    const results = await Promise.allSettled(calls)
+    expect(
+      results.every(
+        (result) =>
+          result.status === 'rejected' && result.reason instanceof InfraError
+      )
+    ).toBe(true)
   })
 })

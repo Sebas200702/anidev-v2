@@ -63,6 +63,12 @@ export enum CacheKeyPrefix {
   /** Producer detail payload (names, credit counts). Value: `'producer:details'`. */
   ProducerDetails = 'producer:details',
 
+  /** Character profiles, searches and appearance pages. Value: `'people:character'`. */
+  PeopleCharacter = 'people:character',
+
+  /** Person profiles, searches and credit pages. Value: `'people:person'`. */
+  PeoplePerson = 'people:person',
+
   /** Extended user profile preferences and display fields. Value: `'user:profile'`. */
   UserProfile = 'user:profile',
 }
