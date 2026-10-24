@@ -26,6 +26,7 @@ import {
   SEED_PRODUCER_MAL_ID,
   SEED_PRODUCER_NAME,
 } from './seed-data'
+import { seedPeople } from './seed-people'
 
 /**
  * Upserts the canonical E2E dataset into the target Postgres database.
@@ -132,6 +133,8 @@ export async function seedE2eDatabase(): Promise<void> {
         [music.id, music.title, music.type]
       )
     }
+
+    await seedPeople(pool)
   } finally {
     await pool.end()
   }
