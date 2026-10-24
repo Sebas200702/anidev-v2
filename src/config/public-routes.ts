@@ -36,9 +36,13 @@ export const publicRoutes = [
   '/api/manga',
   '/api/music',
   '/api/search',
+  '/api/producers',
   '/api/health',
   '/media',
   '/showcase',
+  '/sitemap.xml',
+  '/sitemaps',
+  '/robots.txt',
 ] as const
 
 /**
