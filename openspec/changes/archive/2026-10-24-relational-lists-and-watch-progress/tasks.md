@@ -19,5 +19,8 @@
 
 ## 4. Client persistence & E2E verification (`T-10.4`)
 
-- [ ] 4.1 Implement the client progress sync helper (`localStorage` synchronous mirror + `navigator.sendBeacon` flush on `visibilitychange` + guest-to-account merge on login). _(deferred to follow-up change)_
-- [ ] 4.2 Add Playwright E2E specs in `e2e/api/` verifying list CRUD, undo snapshot, 90% completion, and *Continue Watching* collapsing. _(deferred to follow-up change)_
+- [x] 4.1 ~~Implement the client progress sync helper (`localStorage` synchronous mirror + `navigator.sendBeacon` flush on `visibilitychange` + guest-to-account merge on login). ~~ → movida a `watch-progress-client-sync`.
+- [x] 4.2 ~~Add Playwright E2E specs in `e2e/api/` verifying list CRUD, undo snapshot, 90% completion, and *Continue Watching* collapsing. ~~ → movida a `watch-progress-client-sync`.
+
+> Cerrado 2026-10-24: slices 1–3 mergeados en #118 (release `0.13.0`). El
+> sync del cliente y el e2e quedan en el change `watch-progress-client-sync`.
