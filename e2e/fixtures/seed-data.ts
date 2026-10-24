@@ -105,3 +105,13 @@ export const SEED_EPISODES: SeedEpisode[] = [
   { number: 2, title: 'E2E Episode Two', synopsis: 'Second seeded episode.' },
   { number: 3, title: 'E2E Episode Three', synopsis: 'Third seeded episode.' },
 ]
+
+/**
+ * Forwarded client IP for the episode routes' own rate-limit bucket.
+ *
+ * @remarks
+ * The suite shares one egress IP and the general `/api` budget; episode
+ * requests (warmup + spec) use this bucket instead. RFC 5737 documentation
+ * range, so it never collides with a real client.
+ */
+export const EPISODES_RATE_LIMIT_IP = '198.51.100.7'

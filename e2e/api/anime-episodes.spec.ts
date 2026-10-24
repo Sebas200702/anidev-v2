@@ -8,7 +8,11 @@
  * (unknown anime vs missing episode) and the 400 pagination bound.
  */
 import { expect, test } from '@playwright/test'
-import { SEED_ANIME_MAL_ID, SEED_EPISODES } from '../fixtures/seed-data'
+import {
+  EPISODES_RATE_LIMIT_IP,
+  SEED_ANIME_MAL_ID,
+  SEED_EPISODES,
+} from '../fixtures/seed-data'
 
 const base = `/api/anime/${SEED_ANIME_MAL_ID}/episodes`
 
@@ -18,7 +22,7 @@ const base = `/api/anime/${SEED_ANIME_MAL_ID}/episodes`
 test.use({
   extraHTTPHeaders: {
     accept: 'application/json',
-    'x-forwarded-for': '10.250.0.7',
+    'x-forwarded-for': EPISODES_RATE_LIMIT_IP,
   },
 })
 

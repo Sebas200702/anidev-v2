@@ -67,15 +67,20 @@ export async function seedE2eDatabase(): Promise<void> {
       [SEED_ANIME_MAL_ID, SEED_GENRE_MAL_ID]
     )
 
-    for (const episode of SEED_EPISODES) {
-      await pool.query(
-        `INSERT INTO episode (anime_id, number, title, synopsis)
-         VALUES ($1, $2, $3, $4)
-         ON CONFLICT (anime_id, number) DO UPDATE SET
-           title = EXCLUDED.title, synopsis = EXCLUDED.synopsis`,
-        [SEED_ANIME_MAL_ID, episode.number, episode.title, episode.synopsis]
-      )
-    }
+    // One statement for every episode row instead of a query per row.
+    await pool.query(
+      `INSERT INTO episode (anime_id, number, title, synopsis)
+       SELECT $1, number, title, synopsis
+       FROM unnest($2::int[], $3::text[], $4::text[]) AS e(number, title, synopsis)
+       ON CONFLICT (anime_id, number) DO UPDATE SET
+         title = EXCLUDED.title, synopsis = EXCLUDED.synopsis`,
+      [
+        SEED_ANIME_MAL_ID,
+        SEED_EPISODES.map(({ number }) => number),
+        SEED_EPISODES.map(({ title }) => title),
+        SEED_EPISODES.map(({ synopsis }) => synopsis),
+      ]
+    )
 
     for (const music of SEED_MUSIC) {
       await pool.query(
