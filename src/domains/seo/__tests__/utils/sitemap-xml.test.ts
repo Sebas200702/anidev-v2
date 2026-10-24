@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildSitemapIndexXml,
-  buildUrlSetXml,
-} from '@seo/utils/sitemap-xml'
+import { buildSitemapIndexXml, buildUrlSetXml } from '@seo/utils/sitemap-xml'
 
 const BASE = 'https://anidev.example'
 
