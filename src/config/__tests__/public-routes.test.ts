@@ -26,6 +26,11 @@ describe('isPublicRoute', () => {
     expect(isPublicRoute('/showcase')).toBe(true)
   })
 
+  it('exposes the catalog search but not the search history', () => {
+    expect(isPublicRoute('/api/search')).toBe(true)
+    expect(isPublicRoute('/api/search-history')).toBe(false)
+  })
+
   it('rejects a path that only shares a prefix string', () => {
     expect(isPublicRoute('/showcase-private')).toBe(false)
     expect(isPublicRoute('/api/animexyz')).toBe(false)
