@@ -15,7 +15,7 @@ import type { Pool as PgPool } from 'pg'
 
 const enabled = !!process.env.RUN_DB_TESTS
 
-const ANIME = 999_005_101
+const ANIME = 999_005_201
 
 const PLACEHOLDER = '/placeholder.webp'
 
