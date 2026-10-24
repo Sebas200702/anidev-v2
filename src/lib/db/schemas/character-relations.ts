@@ -12,7 +12,7 @@
  * @see {@link module:lib/db/schemas/character} for character root
  * @see {@link module:lib/db/schemas/staff} for staff/voice actor profiles
  */
-import { integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
+import { index, integer, primaryKey, pgTable, text } from 'drizzle-orm/pg-core'
 import { character } from '@db/schemas/character'
 import { staff } from '@db/schemas/staff'
 
@@ -35,5 +35,8 @@ export const characterVoiceActor = pgTable(
       .references(() => staff.malId, { onDelete: 'cascade' }),
     language: text('language').notNull(),
   },
-  (t) => [primaryKey({ columns: [t.characterId, t.staffId, t.language] })]
+  (t) => [
+    primaryKey({ columns: [t.characterId, t.staffId, t.language] }),
+    index('character_voice_actor_staff_id_idx').on(t.staffId),
+  ]
 )

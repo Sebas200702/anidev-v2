@@ -14,7 +14,7 @@
  */
 import { music } from '@db/schemas/music'
 import { artist } from '@db/schemas/artist'
-import { pgTable, integer, primaryKey } from 'drizzle-orm/pg-core'
+import { index, pgTable, integer, primaryKey } from 'drizzle-orm/pg-core'
 
 /**
  * Artist credits (`music_artist` table) linking a music track to artists.
@@ -34,5 +34,8 @@ export const musicArtist = pgTable(
       .references(() => artist.id, { onDelete: 'cascade' })
       .notNull(),
   },
-  (t) => [primaryKey({ columns: [t.musicId, t.artistId] })]
+  (t) => [
+    primaryKey({ columns: [t.musicId, t.artistId] }),
+    index('music_artist_artist_id_idx').on(t.artistId),
+  ]
 )
