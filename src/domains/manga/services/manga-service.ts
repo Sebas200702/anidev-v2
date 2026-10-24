@@ -53,13 +53,18 @@ export const mangaListService = {
    * Loads a filtered, paginated printed-media list with the total count.
    *
    * @param filtersParams - Raw query parameters
+   * @param scope - Server-side scope (e.g. `producerId`), folded into the cache key
    * @returns `{ value, isStale }` — `{ list, total }` plus a stale flag
    * @throws {InfraError} On repository or cache failures
    */
   async getMangaList(
-    filtersParams: MangaFiltersParams
+    filtersParams: MangaFiltersParams,
+    scope: Pick<MangaFilters, 'producerId'> = {}
   ): Promise<StaleResult<{ list: MangaCard[]; total: number }>> {
-    const filters: MangaFilters = mapMangaFilters(filtersParams)
+    const filters: MangaFilters = {
+      ...mapMangaFilters(filtersParams),
+      ...scope,
+    }
     return withStaleCache({
       key: mangaListCache.key(filters),
       staleKey: `${mangaListCache.key(filters)}:stale`,
