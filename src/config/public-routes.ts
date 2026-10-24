@@ -37,6 +37,8 @@ export const publicRoutes = [
   '/api/music',
   '/api/search',
   '/api/producers',
+  '/api/characters',
+  '/api/people',
   '/api/health',
   '/media',
   '/showcase',

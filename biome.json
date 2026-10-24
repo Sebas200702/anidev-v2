@@ -53,7 +53,8 @@
                       "@user/*",
                       "@search/*",
                       "@producer/*",
-                      "@seo/*"
+                      "@seo/*",
+                      "@people/*"
                     ]
                   }
                 ]

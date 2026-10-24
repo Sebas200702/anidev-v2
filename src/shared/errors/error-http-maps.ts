@@ -50,6 +50,8 @@ const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
   ErrorCodes.MANGA_NOT_FOUND,
   ErrorCodes.PRODUCER_NOT_FOUND,
   ErrorCodes.SITEMAP_NOT_FOUND,
+  ErrorCodes.CHARACTER_NOT_FOUND,
+  ErrorCodes.PERSON_NOT_FOUND,
   ErrorCodes.EPISODE_NOT_FOUND,
   ErrorCodes.MUSIC_NOT_FOUND,
   ErrorCodes.WATCH_STATE_NOT_FOUND,
