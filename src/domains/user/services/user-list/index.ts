@@ -1,0 +1,1 @@
+export { userListService } from './service'

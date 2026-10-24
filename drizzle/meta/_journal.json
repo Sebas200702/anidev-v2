@@ -85,6 +85,20 @@
       "when": 1792710917897,
       "tag": "0011_living_pandemic",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792856354372,
+      "tag": "0012_thin_swarm",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792857641433,
+      "tag": "0013_flat_night_thrasher",
+      "breakpoints": true
     }
   ]
 }

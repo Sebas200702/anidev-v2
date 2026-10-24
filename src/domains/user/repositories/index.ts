@@ -12,3 +12,5 @@
  */
 
 export { userRepository } from './user'
+export { userListRepository } from './user-list'
+export { watchProgressRepository } from './watch-progress'
