@@ -11,3 +11,8 @@ export {
   searchHistoryListResponseSchema,
   searchHistoryClearResponseSchema,
 } from './search-history-schema'
+export {
+  catalogSearchQuerySchema,
+  catalogSearchRequestSchema,
+  catalogSearchResponseSchema,
+} from './catalog-search-schema'

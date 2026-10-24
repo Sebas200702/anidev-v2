@@ -115,3 +115,15 @@ export const SEED_EPISODES: SeedEpisode[] = [
  * range, so it never collides with a real client.
  */
 export const EPISODES_RATE_LIMIT_IP = '198.51.100.7'
+
+/** Seeded printed work: list, detail, `/full` and `/api/search?type=manga`. */
+export const SEED_MANGA_MAL_ID = 999_000_101
+export const SEED_MANGA_TITLE = 'E2E Seed Manga'
+/** Alternative title only reachable through `manga_title_synonym`. */
+export const SEED_MANGA_SYNONYM = 'E2E Printed Synonym'
+
+/**
+ * Forwarded client IP for the manga spec's own rate-limit bucket (RFC 5737
+ * documentation range), so it does not consume the shared `/api` budget.
+ */
+export const MANGA_RATE_LIMIT_IP = '198.51.100.8'

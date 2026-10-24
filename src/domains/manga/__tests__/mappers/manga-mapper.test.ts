@@ -65,6 +65,7 @@ describe('mapMangaDetails', () => {
       themes: [{ name: 'Ninja' }],
       demographics: [{ name: 'Shonen' }],
       characters: [{ characterId: 5, name: 'Naruto Uzumaki', role: 'Main' }],
+      voiceActors: [],
       staff: [{ staffId: 9, name: 'Kishimoto', role: 'Story & Art' }],
       publishers: [{ producerId: 3, name: 'Shueisha', role: 'publisher' }],
       related: [
@@ -122,6 +123,7 @@ describe('mapMangaDetails', () => {
       themes: [],
       demographics: [],
       characters: [],
+      voiceActors: [],
       staff: [],
       publishers: [],
       related: [],

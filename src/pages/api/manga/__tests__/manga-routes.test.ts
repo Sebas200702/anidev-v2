@@ -30,13 +30,18 @@ const { getList, getDetails } = vi.hoisted(() => ({
 
 vi.mock('@manga/services/manga-service', () => ({
   mangaListService: { getMangaList: getList },
-  mangaDetailsService: { getMangaDetails: getDetails },
   mapMangaFilters: (params: unknown) => params,
+}))
+vi.mock('@manga/services/manga-detail', () => ({
+  mangaDetailsService: { getMangaDetails: getDetails },
 }))
 
 vi.mock('@manga/schemas/manga-schema', async (orig) => ({
   ...(await orig<typeof import('@manga/schemas/manga-schema')>()),
   mangaListResponseSchema: z.any(),
+}))
+vi.mock('@manga/schemas/manga-details-schema', async (orig) => ({
+  ...(await orig<typeof import('@manga/schemas/manga-details-schema')>()),
   mangaDetailsResponseSchema: z.any(),
 }))
 

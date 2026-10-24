@@ -74,7 +74,7 @@ describe('animeCharacterService.getAnimeCharacters', () => {
       { characterId: 100 },
       { characterId: 200 },
     ])
-    getCharacters.mockResolvedValue([{ malId: 100 }])
+    getCharacters.mockResolvedValue([{ malId: 100, name: 'Spike' }])
     getVoices.mockResolvedValue([
       { characterId: 100, staffId: 500 },
       { characterId: 200, staffId: 500 },
@@ -88,5 +88,28 @@ describe('animeCharacterService.getAnimeCharacters', () => {
     expect(getVoices).toHaveBeenCalledWith([100, 200])
     expect(getStaff).toHaveBeenCalledWith([500])
     expect(value).toEqual(['character'])
+  })
+
+  it('drops characters with a provisional name and their refs', async () => {
+    getCharacterRefs.mockResolvedValue([
+      { characterId: 100 },
+      { characterId: 300 },
+    ])
+    getCharacters.mockResolvedValue([
+      { malId: 100, name: 'Spike' },
+      { malId: 300, name: 'Personaje 300' },
+    ])
+    getVoices.mockResolvedValue([])
+    getStaff.mockResolvedValue([])
+    mapCharacters.mockReturnValue([])
+
+    await animeCharacterService.getAnimeCharacters(5114)
+
+    expect(mapCharacters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        refs: [{ characterId: 100 }],
+        characters: [{ malId: 100, name: 'Spike' }],
+      })
+    )
   })
 })

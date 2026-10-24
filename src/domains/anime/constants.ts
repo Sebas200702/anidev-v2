@@ -94,3 +94,13 @@ export const SHOWCASE_CARD_SEARCH_LIMIT = 24
 export const EPISODE_PAGE_DEFAULT_LIMIT = 24
 export const EPISODE_PAGE_MAX_LIMIT = 100
 export const EPISODE_MAX_PAGE = 10_000
+
+/**
+ * Prefix of the provisional character names the scraper writes while a
+ * character still lacks its real name (`Personaje <id>`).
+ *
+ * @remarks
+ * The promotion step should replace them; cast queries also drop them so a
+ * placeholder never reaches the app.
+ */
+export const PROVISIONAL_CHARACTER_NAME_PREFIX = 'Personaje '

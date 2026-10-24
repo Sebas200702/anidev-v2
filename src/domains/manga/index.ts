@@ -6,7 +6,11 @@
  * anime domain: repositories → service → mapper → cache → schema → API.
  */
 
-export { mangaListService, mangaDetailsService } from './services'
+export {
+  mangaListService,
+  mangaDetailsService,
+  mangaFullService,
+} from './services'
 export { mangaListRepository, mangaDetailsRepository } from './repositories'
 export { mapMangaCard, mapMangaDetails } from './mappers'
 export { mangaListCache } from './cache'

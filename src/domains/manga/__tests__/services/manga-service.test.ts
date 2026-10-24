@@ -21,13 +21,11 @@ vi.mock('@manga/cache/manga-list/cache', () => ({
 }))
 vi.mock('@manga/mappers/manga-mapper', () => ({
   mapMangaCard: (work: any) => ({ malId: work.malId, card: true }),
-  mapMangaDetails: (input: any) => ({ malId: input.work.malId, detail: true }),
 }))
 
-const { getList, getCount, getManga } = vi.hoisted(() => ({
+const { getList, getCount } = vi.hoisted(() => ({
   getList: vi.fn(),
   getCount: vi.fn(),
-  getManga: vi.fn(),
 }))
 
 vi.mock('@manga/repositories/manga-list', () => ({
@@ -36,27 +34,7 @@ vi.mock('@manga/repositories/manga-list', () => ({
     countMangaList: getCount,
   },
 }))
-vi.mock('@manga/repositories/manga-details', () => ({
-  mangaDetailsRepository: {
-    getManga: getManga,
-    getGenres: vi.fn().mockResolvedValue([]),
-    getThemes: vi.fn().mockResolvedValue([]),
-    getDemographics: vi.fn().mockResolvedValue([]),
-    getCharacters: vi.fn().mockResolvedValue([]),
-    getStaff: vi.fn().mockResolvedValue([]),
-    getPublishers: vi.fn().mockResolvedValue([]),
-    getRelated: vi.fn().mockResolvedValue([]),
-    getExternalLinks: vi.fn().mockResolvedValue([]),
-  },
-}))
-vi.mock('@manga/errors/manga-not-found-error', () => ({
-  mangaNotFound: (id: number) => new Error(`not found ${id}`),
-}))
-
-import {
-  mangaListService,
-  mangaDetailsService,
-} from '@manga/services/manga-service'
+import { mangaListService } from '@manga/services/manga-service'
 
 describe('mangaListService', () => {
   beforeEach(() => {
@@ -79,22 +57,5 @@ describe('mangaListService', () => {
     getCount.mockResolvedValue(0)
     await mangaListService.getMangaList({ type: 'manga,novel' } as any)
     expect(getList).toHaveBeenCalled()
-  })
-})
-
-describe('mangaDetailsService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('throws when work missing', async () => {
-    getManga.mockResolvedValue(null)
-    await expect(mangaDetailsService.getMangaDetails(99)).rejects.toThrow()
-  })
-
-  it('returns detail when work exists', async () => {
-    getManga.mockResolvedValue({ malId: 7 })
-    const { value } = await mangaDetailsService.getMangaDetails(7)
-    expect(value).toMatchObject({ malId: 7, detail: true })
   })
 })
