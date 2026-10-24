@@ -21,7 +21,7 @@
  * @see playwright.config.ts — `globalSetup` + `webServer`
  */
 import { type FullConfig, request } from '@playwright/test'
-import { SEED_ANIME_MAL_ID } from './fixtures/seed-data'
+import { EPISODES_RATE_LIMIT_IP, SEED_ANIME_MAL_ID } from './fixtures/seed-data'
 
 /** Resolve the configured base URL from any project's `use` block. */
 function resolveBaseURL(config: FullConfig): string {
@@ -65,7 +65,9 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
     await context.get('/api/music?page=1&limit=5')
     // Episode routes are two lazy chunks hit in parallel by the episodes spec.
     // Sent from the episodes spec's own rate-limit bucket (see that spec).
-    const episodeHeaders = { headers: { 'x-forwarded-for': '10.250.0.7' } }
+    const episodeHeaders = {
+      headers: { 'x-forwarded-for': EPISODES_RATE_LIMIT_IP },
+    }
     await context.get(
       `/api/anime/${SEED_ANIME_MAL_ID}/episodes?limit=1`,
       episodeHeaders
