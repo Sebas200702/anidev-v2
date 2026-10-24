@@ -11,7 +11,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  * Character id that does not exist or still has a provisional name.
  *
  * @param malId - MyAnimeList character id
- * @returns {@link DomainError} with code `CHARACTER_NOT_FOUND`
+ * @returns A `DomainError` with code `CHARACTER_NOT_FOUND`
  */
 export const characterNotFound = (malId: number) =>
   new DomainError(ErrorCodes.CHARACTER_NOT_FOUND, 'Character not found', {
@@ -22,7 +22,7 @@ export const characterNotFound = (malId: number) =>
  * Person (staff, voice actor, author) id that does not exist.
  *
  * @param malId - MyAnimeList person id
- * @returns {@link DomainError} with code `PERSON_NOT_FOUND`
+ * @returns A `DomainError` with code `PERSON_NOT_FOUND`
  */
 export const personNotFound = (malId: number) =>
   new DomainError(ErrorCodes.PERSON_NOT_FOUND, 'Person not found', { malId })
