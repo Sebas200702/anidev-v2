@@ -6,12 +6,16 @@
 import { db } from '@db/client'
 import { dbError } from '@shared/errors/db-errors'
 import {
+  alias,
   pageSql,
   safeAnimeSql,
   safeMangaSql,
 } from '@people/repositories/shared/sql'
 import type { PeopleMedium, PeoplePage, PersonCreditRow } from '@people/types'
 import { sql, type SQL } from 'drizzle-orm'
+
+const safeAnimeWork = safeAnimeSql(alias('w'))
+const safeMangaWork = safeMangaSql(alias('w'))
 
 /**
  * One row per credited work with every position held (`safe` floor applied).
@@ -22,12 +26,12 @@ export const creditedWorksSql = (malId: number, medium: PeopleMedium): SQL =>
     ? sql`SELECT 'anime' AS medium, w.mal_id AS "malId", w.title, w.year,
         array_agg(DISTINCT s.role ORDER BY s.role) AS positions
       FROM anime_staff s JOIN anime w ON w.mal_id = s.anime_id
-      WHERE s.staff_id = ${malId} AND ${safeAnimeSql(sql`w`)}
+      WHERE s.staff_id = ${malId} AND ${safeAnimeWork}
       GROUP BY w.mal_id, w.title, w.year`
     : sql`SELECT 'manga' AS medium, w.mal_id AS "malId", w.title, w.year,
         array_agg(DISTINCT s.role ORDER BY s.role) AS positions
       FROM manga_staff s JOIN manga w ON w.mal_id = s.manga_id
-      WHERE s.staff_id = ${malId} AND ${safeMangaSql(sql`w`)}
+      WHERE s.staff_id = ${malId} AND ${safeMangaWork}
       GROUP BY w.mal_id, w.title, w.year`
 
 /** Repository of a person's staff credits. */

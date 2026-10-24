@@ -16,8 +16,10 @@
  *
  * @see {@link personService.getCredits}
  */
-import { personCreditsRequestSchema } from '@people/schemas/person-schema'
-import { personCreditsResponseSchema } from '@people/schemas/person-schema'
+import {
+  personCreditsRequestSchema,
+  personCreditsResponseSchema,
+} from '@people/schemas/person-schema'
 import { personService } from '@people/services/person'
 import { createPagedPeopleRoute } from '@people/utils/paged-route'
 

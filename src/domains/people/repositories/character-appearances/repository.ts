@@ -6,6 +6,7 @@
 import { db } from '@db/client'
 import { dbError } from '@shared/errors/db-errors'
 import {
+  alias,
   castRoleRankSql,
   pageSql,
   safeAnimeSql,
@@ -13,6 +14,10 @@ import {
 } from '@people/repositories/shared/sql'
 import type { AppearanceRow, PeoplePage } from '@people/types'
 import { sql } from 'drizzle-orm'
+
+const safeAnime = safeAnimeSql(alias('a'))
+const safeManga = safeMangaSql(alias('m'))
+const roleRank = castRoleRankSql(alias('role'))
 
 /**
  * Anime and manga appearances, one row per work. The source can hold the
@@ -23,13 +28,13 @@ const appearancesSql = (malId: number) => sql`
   SELECT DISTINCT ON (medium, "malId") medium, "malId", title, role FROM (
     SELECT 'anime' AS medium, a.mal_id AS "malId", a.title, ac.role
     FROM anime_character ac JOIN anime a ON a.mal_id = ac.anime_id
-    WHERE ac.character_id = ${malId} AND ${safeAnimeSql(sql`a`)}
+    WHERE ac.character_id = ${malId} AND ${safeAnime}
     UNION ALL
     SELECT 'manga', m.mal_id, m.title, mc.role
     FROM manga_character mc JOIN manga m ON m.mal_id = mc.manga_id
-    WHERE mc.character_id = ${malId} AND ${safeMangaSql(sql`m`)}
+    WHERE mc.character_id = ${malId} AND ${safeManga}
   ) credits
-  ORDER BY medium, "malId", ${castRoleRankSql(sql`role`)}`
+  ORDER BY medium, "malId", ${roleRank}`
 
 /** Repository of a character's appearances (`safe` floor on both media). */
 export const characterAppearancesRepository = {
@@ -48,7 +53,7 @@ export const characterAppearancesRepository = {
     try {
       const result = await db.execute<AppearanceRow>(sql`
         SELECT * FROM (${appearancesSql(malId)}) works
-        ORDER BY ${castRoleRankSql(sql`role`)}, title, medium, "malId"
+        ORDER BY ${roleRank}, title, medium, "malId"
         ${pageSql(page)}`)
       return result.rows
     } catch (error) {

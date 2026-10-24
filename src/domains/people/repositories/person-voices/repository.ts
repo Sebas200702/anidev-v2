@@ -7,6 +7,7 @@ import { db } from '@db/client'
 import { VOICE_ROLE_ANIME_LIMIT } from '@people/constants'
 import { dbError } from '@shared/errors/db-errors'
 import {
+  alias,
   pageSql,
   PROVISIONAL_NAME_PATTERN,
   safeAnimeSql,
@@ -14,28 +15,32 @@ import {
 import type { PeoplePage, PersonVoiceRow } from '@people/types'
 import { sql, type SQL } from 'drizzle-orm'
 
+const safeAnime = safeAnimeSql(alias('a'))
+
 /**
  * Voice credits of a person: one row per character and language. Only real
  * names, and only characters with at least one `safe` anime, so an adult-only
  * character never surfaces through a voice actor.
  */
-export const voicedCharactersSql = (
-  malId: number,
-  language?: string
-): SQL => sql`
+export const voicedCharactersSql = (malId: number, language?: string): SQL => {
+  const byLanguage = language
+    ? sql`AND cva.language = ${language}`
+    : sql.empty()
+  return sql`
   SELECT cva.character_id, cva.language, c.name, c.favorites
   FROM character_voice_actor cva JOIN character c ON c.mal_id = cva.character_id
   WHERE cva.staff_id = ${malId}
-    ${language ? sql`AND cva.language = ${language}` : sql``}
+    ${byLanguage}
     AND c.name NOT LIKE ${PROVISIONAL_NAME_PATTERN}
     AND EXISTS (SELECT 1 FROM anime_character ac JOIN anime a ON a.mal_id = ac.anime_id
-      WHERE ac.character_id = cva.character_id AND ${safeAnimeSql(sql`a`)})`
+      WHERE ac.character_id = cva.character_id AND ${safeAnime})`
+}
 
 /** Up to {@link VOICE_ROLE_ANIME_LIMIT} `safe` anime of a character, most members first. */
 const characterAnimeSql = sql`(SELECT json_agg(json_build_object('malId', t.mal_id, 'title', t.title))
   FROM (SELECT DISTINCT a.mal_id, a.title, a.members FROM anime_character ac
     JOIN anime a ON a.mal_id = ac.anime_id
-    WHERE ac.character_id = v.character_id AND ${safeAnimeSql(sql`a`)}
+    WHERE ac.character_id = v.character_id AND ${safeAnime}
     ORDER BY a.members DESC NULLS LAST, a.mal_id LIMIT ${VOICE_ROLE_ANIME_LIMIT}) t)`
 
 /** Repository of a person's voice roles. */

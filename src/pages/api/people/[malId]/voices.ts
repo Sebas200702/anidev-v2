@@ -16,8 +16,10 @@
  *
  * @see {@link personService.getVoices}
  */
-import { personVoicesRequestSchema } from '@people/schemas/person-schema'
-import { personVoicesResponseSchema } from '@people/schemas/person-schema'
+import {
+  personVoicesRequestSchema,
+  personVoicesResponseSchema,
+} from '@people/schemas/person-schema'
 import { personService } from '@people/services/person'
 import { createPagedPeopleRoute } from '@people/utils/paged-route'
 
