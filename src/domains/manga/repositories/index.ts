@@ -7,3 +7,6 @@
 
 export { mangaListRepository } from './manga-list/repository'
 export { mangaDetailsRepository } from './manga-details/repository'
+export { mangaCastRepository } from './manga-cast/repository'
+export { mangaTaxonomyRepository } from './manga-taxonomy/repository'
+export { mangaTitlesRepository } from './manga-titles/repository'

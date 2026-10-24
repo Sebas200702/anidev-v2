@@ -7,16 +7,9 @@ import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
 import { CacheTtl } from '@lib/cache/config'
 import type { StaleResult } from '@lib/cache/cache-store-types'
 import { mangaListCache } from '@manga/cache/manga-list/cache'
-import { mapMangaCard, mapMangaDetails } from '@manga/mappers/manga-mapper'
+import { mapMangaCard } from '@manga/mappers/manga-mapper'
 import { mangaListRepository } from '@manga/repositories/manga-list'
-import { mangaDetailsRepository } from '@manga/repositories/manga-details'
-import { mangaNotFound } from '@manga/errors/manga-not-found-error'
-import type {
-  MangaCard,
-  MangaDetails,
-  MangaFilters,
-  MangaFiltersParams,
-} from '@manga/types'
+import type { MangaCard, MangaFilters, MangaFiltersParams } from '@manga/types'
 
 /**
  * Normalizes the raw query parameters into repository filters.
@@ -82,68 +75,6 @@ export const mangaListService = {
           mangaListRepository.countMangaList(filters),
         ])
         return { list: rows.map(mapMangaCard), total }
-      },
-    })
-  },
-}
-
-/**
- * Coordinates repository access and mapping for the printed-media detail.
- */
-export const mangaDetailsService = {
-  /**
-   * Loads a printed work with its taxonomy, cast, staff and links.
-   *
-   * @param mangaId - MyAnimeList id of the work
-   * @returns `{ value, isStale }` — the detail DTO plus a stale flag
-   * @throws {InfraError} On repository or cache failures
-   */
-  async getMangaDetails(mangaId: number): Promise<StaleResult<MangaDetails>> {
-    const key = `manga:detail:${mangaId}`
-    return withStaleCache({
-      key,
-      staleKey: `${key}:stale`,
-      getCache: () => cacheGet<MangaDetails>(key),
-      getStaleCache: (staleKey) => cacheGet<MangaDetails>(staleKey),
-      setCache: (_, value) =>
-        cacheSet(key, value, { ttlSeconds: CacheTtl.Medium }),
-      setStaleCache: (staleKey, value) =>
-        cacheSet(staleKey, value, { ttlSeconds: CacheTtl.Stale }),
-      compute: async () => {
-        const work = await mangaDetailsRepository.getManga(mangaId)
-        if (!work) throw mangaNotFound(mangaId)
-
-        const [
-          genreLinks,
-          themeLinks,
-          demographicLinks,
-          characters,
-          staff,
-          publishers,
-          related,
-          externalLinks,
-        ] = await Promise.all([
-          mangaDetailsRepository.getGenres(mangaId),
-          mangaDetailsRepository.getThemes(mangaId),
-          mangaDetailsRepository.getDemographics(mangaId),
-          mangaDetailsRepository.getCharacters(mangaId),
-          mangaDetailsRepository.getStaff(mangaId),
-          mangaDetailsRepository.getPublishers(mangaId),
-          mangaDetailsRepository.getRelated(mangaId),
-          mangaDetailsRepository.getExternalLinks(mangaId),
-        ])
-
-        return mapMangaDetails({
-          work,
-          genres: genreLinks,
-          themes: themeLinks,
-          demographics: demographicLinks,
-          characters,
-          staff,
-          publishers,
-          related,
-          externalLinks,
-        })
       },
     })
   },

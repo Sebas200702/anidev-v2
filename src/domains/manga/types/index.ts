@@ -32,7 +32,9 @@ export type {
 
 export type {
   MangaCard,
+  MangaCastMember,
   MangaDetails,
+  MangaFullDetails,
   MangaFilters,
   MangaFiltersParams,
 } from './manga-api.d-types'

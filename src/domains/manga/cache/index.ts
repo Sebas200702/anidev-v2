@@ -6,3 +6,4 @@
 
 export { mangaListCache } from './manga-list/cache'
 export type { MangaListCacheValue } from './manga-list/cache'
+export { mangaDetailCacheKeys } from './manga-detail/keys'

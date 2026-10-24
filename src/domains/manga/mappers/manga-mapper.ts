@@ -7,6 +7,11 @@ import { config } from '@/config'
 import { normalizeString } from '@utils/string/normalize-string-util'
 import { buildMediaUrl } from '@media/mappers/media-url'
 import type { MangaCard, MangaDB, MangaDetails } from '@manga/types'
+import {
+  mapMangaCast,
+  type MangaCastRow,
+  type MangaVoiceActorInput,
+} from '@manga/mappers/manga-cast'
 
 /**
  * Maps a work row into its compact card payload.
@@ -47,7 +52,8 @@ export interface MapMangaDetailsInput {
   genres: { name: string }[]
   themes: { name: string }[]
   demographics: { name: string }[]
-  characters: { characterId: number; name: string; role: string }[]
+  characters: MangaCastRow[]
+  voiceActors: MangaVoiceActorInput[]
   staff: { staffId: number; name: string; role: string }[]
   publishers: { producerId: number; name: string; role: string }[]
   related: { relatedMangaId: number; title: string; relationType: string }[]
@@ -66,6 +72,7 @@ export const mapMangaDetails = ({
   themes,
   demographics,
   characters,
+  voiceActors,
   staff,
   publishers,
   related,
@@ -117,17 +124,7 @@ export const mapMangaDetails = ({
       type: 'banner',
       entity_id: work.malId,
     }),
-    characters: characters.map((c) => ({
-      characterId: c.characterId,
-      name: c.name,
-      role: c.role,
-      imageUrl: buildMediaUrl({
-        entity: 'character',
-        type: 'poster',
-        size: 'small',
-        entity_id: c.characterId,
-      }),
-    })),
+    characters: mapMangaCast(characters, voiceActors),
     staff: staff.map((s) => ({
       staffId: s.staffId,
       name: s.name,
