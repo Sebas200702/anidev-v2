@@ -4,13 +4,12 @@
  * @module domains/manga/repositories/manga-list/filters
  */
 import { db } from '@db/client'
-import { manga } from '@db/schemas/manga'
+import { manga, mangaTitleSynonym } from '@db/schemas/manga'
 import {
   mangaGenre,
   mangaTheme,
   mangaDemographic,
 } from '@db/schemas/manga-relations'
-import { mangaTitleSynonym } from '@db/schemas/manga'
 import {
   demographic as demographicTable,
   genre as genreTable,
@@ -18,11 +17,9 @@ import {
 } from '@db/schemas/anime-taxonomy'
 import { ADULT_MANGA_GENRES } from '@manga/constants'
 import {
-  and,
   eq,
   ilike,
   inArray,
-  isNull,
   notInArray,
   or,
   sql,

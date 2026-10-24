@@ -8,9 +8,10 @@ import { manga } from '@db/schemas/manga'
 import { mangaGenre } from '@db/schemas/manga-relations'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { dbError } from '@shared/errors/db-errors'
-import { and, asc, countDistinct, desc, eq } from 'drizzle-orm'
+import { and, countDistinct, eq } from 'drizzle-orm'
 import type { MangaDB, MangaFilters } from '@manga/types'
 import { buildMangaListConditions } from './filters'
+import { buildMangaListSort } from './sort'
 
 /**
  * Repository for querying filtered and paginated printed-media lists.
@@ -39,26 +40,13 @@ export const mangaListRepository = {
     try {
       const conditions = buildMangaListConditions(filters)
 
-      const orderBy =
-        filters.sort === 'title'
-          ? filters.order === 'asc'
-            ? [asc(manga.title)]
-            : [desc(manga.title)]
-          : filters.sort === 'year'
-            ? filters.order === 'asc'
-              ? [asc(manga.year)]
-              : [desc(manga.year)]
-            : filters.order === 'asc'
-              ? [asc(manga.score)]
-              : [desc(manga.score)]
-
       const rows = await db
         .selectDistinct({ manga })
         .from(manga)
         .leftJoin(mangaGenre, eq(mangaGenre.mangaId, manga.malId))
         .leftJoin(genreTable, eq(genreTable.malId, mangaGenre.genreId))
         .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(...orderBy)
+        .orderBy(...buildMangaListSort(filters))
         .limit(limit)
         .offset((page - 1) * limit)
 

@@ -99,6 +99,6 @@ describe('buildMangaListConditions', () => {
   it('unset variant is fail-closed (safe)', () => {
     const unset = buildMangaListConditions({} as any)
     const safe = buildMangaListConditions({ parentalVariant: 'safe' } as any)
-    expect(unset.length).toBe(safe.length)
+    expect(unset).toHaveLength(safe.length)
   })
 })
