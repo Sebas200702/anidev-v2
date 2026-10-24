@@ -16,15 +16,7 @@ import {
   theme as themeTable,
 } from '@db/schemas/anime-taxonomy'
 import { ADULT_MANGA_GENRES } from '@manga/constants'
-import {
-  eq,
-  ilike,
-  inArray,
-  notInArray,
-  or,
-  sql,
-  type SQL,
-} from 'drizzle-orm'
+import { eq, ilike, inArray, notInArray, or, sql, type SQL } from 'drizzle-orm'
 import type { MangaFilters } from '@manga/types'
 
 /**
