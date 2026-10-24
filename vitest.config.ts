@@ -17,6 +17,7 @@ export default defineConfig({
       '@search': alias('./src/domains/search'),
       '@producer': alias('./src/domains/producer'),
       '@seo': alias('./src/domains/seo'),
+      '@people': alias('./src/domains/people'),
       '@shared': alias('./src/shared'),
       '@lib': alias('./src/lib'),
       '@config': alias('./src/config'),

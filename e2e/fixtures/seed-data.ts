@@ -137,3 +137,14 @@ export const SEED_PRODUCER_NAME = 'E2E Seed Studio'
  * (RFC 5737 documentation range).
  */
 export const CATALOG_RATE_LIMIT_IP = '198.51.100.9'
+
+/** Seeded character: main cast of {@link SEED_ANIME_MAL_ID}. */
+export const SEED_CHARACTER_MAL_ID = 999_000_301
+export const SEED_CHARACTER_NAME = 'E2E Seed Character'
+
+/**
+ * Seeded person: Japanese voice of the seeded character, director of the
+ * seeded anime and artist of the first seeded theme.
+ */
+export const SEED_PERSON_MAL_ID = 999_000_401
+export const SEED_PERSON_NAME = 'E2E Seed Person'

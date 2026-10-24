@@ -13,6 +13,7 @@
  * @see {@link module:lib/db/schemas/staff} for optional staff linkage
  */
 import {
+  index,
   integer,
   pgTable,
   serial,
@@ -38,5 +39,8 @@ export const artist = pgTable(
 
     malId: integer('mal_id').references(() => staff.malId),
   },
-  (t) => [uniqueIndex('artist_name_unique').on(t.name)]
+  (t) => [
+    uniqueIndex('artist_name_unique').on(t.name),
+    index('artist_mal_id_idx').on(t.malId),
+  ]
 )

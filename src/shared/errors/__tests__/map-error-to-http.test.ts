@@ -158,6 +158,15 @@ describe('mapErrorToHttp sentry capture', () => {
     expect(mapErrorToHttp(error).status).toBe(404)
   })
 
+  it.each([ErrorCodes.CHARACTER_NOT_FOUND, ErrorCodes.PERSON_NOT_FOUND])(
+    'maps %s to 404',
+    (code) => {
+      expect(mapErrorToHttp(new DomainError(code, 'Not found')).status).toBe(
+        404
+      )
+    }
+  )
+
   it('reports DomainError as warning for a 400 response', () => {
     const error = new DomainError(
       ErrorCodes.INVALID_IMAGE_PATH,

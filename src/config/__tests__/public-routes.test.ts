@@ -33,6 +33,11 @@ describe('isPublicRoute', () => {
     expect(isPublicRoute('/api/producers/1/anime')).toBe(true)
   })
 
+  it('exposes the character and people API', () => {
+    expect(isPublicRoute('/api/characters/1/appearances')).toBe(true)
+    expect(isPublicRoute('/api/people/1/voices')).toBe(true)
+  })
+
   it('exposes the catalog search but not the search history', () => {
     expect(isPublicRoute('/api/search')).toBe(true)
     expect(isPublicRoute('/api/search-history')).toBe(false)

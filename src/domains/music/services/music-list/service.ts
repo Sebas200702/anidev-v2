@@ -52,6 +52,7 @@ export const musicListService = {
    * Loads a filtered, paginated music list with total count.
    *
    * @param filtersParams - Raw query parameters (coerced by Zod at the route)
+   * @param scope - Server-side scope (`artistIds`), folded into the cache key
    * @returns `{ value, isStale }` — `{ list: MusicCard[], total: number }`
    * payload plus a stale flag
    *
@@ -65,9 +66,13 @@ export const musicListService = {
    * ```
    */
   async getMusicList(
-    filtersParams: MusicListFiltersParams
+    filtersParams: MusicListFiltersParams,
+    scope: Pick<MusicListFilters, 'artistIds'> = {}
   ): Promise<StaleResult<{ list: MusicCard[]; total: number }>> {
-    const filters: MusicListFilters = mapMusicListFilters(filtersParams)
+    const filters: MusicListFilters = {
+      ...mapMusicListFilters(filtersParams),
+      ...scope,
+    }
 
     return withStaleCache({
       key: musicListCache.key(filters),

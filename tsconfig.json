@@ -17,6 +17,7 @@
       "@search/*": ["./src/domains/search/*"],
       "@producer/*": ["./src/domains/producer/*"],
       "@seo/*": ["./src/domains/seo/*"],
+      "@people/*": ["./src/domains/people/*"],
       "@shared/*": ["./src/shared/*"],
       "@lib/*": ["./src/lib/*"],
       "@config/*": ["./src/config/*"],

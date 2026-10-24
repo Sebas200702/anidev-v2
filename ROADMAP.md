@@ -189,6 +189,7 @@ _(Changes: `resilient-playback-and-aniskip`, `relational-lists-and-watch-progres
 ### Fase 6 — Contenido enriquecido
 
 - [ ] **Personajes / artistas / seiyuu** — páginas dedicadas (`/character`, `/artist`, `/voice-actor`) + **backfill** de enlaces voice-actor (v1: ~4.2k de 217k).
+  _API ✅ (change archivado `characters-and-people-api`): `/api/characters` (búsqueda, perfil con voces, apariciones) y `/api/people` (búsqueda, perfil, voces, créditos, música); faltan las páginas._
   _Datos listos (2026-10-19): el reparto completo por anime (la ficha HTML de
   MAL corta en 10; la API v2 da la lista entera), con rol fino de AniList,
   voz, biografía y retrato de cada personaje._

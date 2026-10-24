@@ -26,6 +26,11 @@ export const ErrorCodes = {
   /** Producer (studio, licensor, magazine) id does not exist — HTTP 404. */
   PRODUCER_NOT_FOUND: 'PRODUCER_NOT_FOUND',
 
+  /** Character id does not exist (or still has a provisional name) — HTTP 404. */
+  CHARACTER_NOT_FOUND: 'CHARACTER_NOT_FOUND',
+  /** Person (staff, voice actor, author) id does not exist — HTTP 404. */
+  PERSON_NOT_FOUND: 'PERSON_NOT_FOUND',
+
   /** Sitemap segment or page does not exist — HTTP 404. */
   SITEMAP_NOT_FOUND: 'SITEMAP_NOT_FOUND',
 

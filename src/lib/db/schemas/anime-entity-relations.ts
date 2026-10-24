@@ -35,7 +35,10 @@ export const animeStaff = pgTable(
       .references(() => staff.malId, { onDelete: 'cascade' }),
     role: text('role').notNull(),
   },
-  (t) => [primaryKey({ columns: [t.animeId, t.staffId, t.role] })]
+  (t) => [
+    primaryKey({ columns: [t.animeId, t.staffId, t.role] }),
+    index('anime_staff_staff_id_idx').on(t.staffId),
+  ]
 )
 
 /**
@@ -81,7 +84,10 @@ export const animeCharacter = pgTable(
       .references(() => character.malId, { onDelete: 'cascade' }),
     role: text('role').notNull(),
   },
-  (t) => [primaryKey({ columns: [t.animeId, t.characterId, t.role] })]
+  (t) => [
+    primaryKey({ columns: [t.animeId, t.characterId, t.role] }),
+    index('anime_character_character_id_idx').on(t.characterId),
+  ]
 )
 
 /**
