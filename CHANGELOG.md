@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/Sebas200702/anidev-v2/compare/v0.12.0...v0.13.0) (2026-10-24)
+
+
+### Features
+
+* **user:** relational lists and watch progress (Etapa 3A) ([af2fc5f](https://github.com/Sebas200702/anidev-v2/commit/af2fc5f5698b37fb7c7e89471728858ec03eee51))
+
 ## [0.12.0](https://github.com/Sebas200702/anidev-v2/compare/v0.11.0...v0.12.0) (2026-10-22)
 
 
