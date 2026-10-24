@@ -1,10 +1,12 @@
+# printed-media Specification
+
 ## Purpose
 
 Catálogo de obras impresas (manga, novela, one-shot) y fichas de personaje
 completas: el dominio que hoy no existe en el catálogo y que la app necesita
 para cubrir "anime **y manga**" y las fichas de personajes/seiyuus (Fase 6).
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Printed media catalog
 The system SHALL expose the printed-media catalog (`manga` table) keyed by
@@ -21,6 +23,17 @@ serialization, origin, score, popularity and cover artwork.
 - **WHEN** a client requests a work by its MyAnimeList id
 - **THEN** the response returns the work with its taxonomy, cast, staff,
   publisher, related works and external links
+
+#### Scenario: Extended work detail
+- **WHEN** a client requests `GET /api/manga/:malId/full`
+- **THEN** the response nests the taxonomy as `{ malId, name }`, lists every
+  title (main, english, japanese, synonyms) and groups the related works by
+  relation type
+
+#### Scenario: Catalog search by type
+- **WHEN** a client requests `GET /api/search?q=<term>&type=manga`
+- **THEN** the response returns the printed works whose title or synonyms
+  match the term, with the searched type in `meta.type` (default `anime`)
 
 #### Scenario: Unknown work
 - **WHEN** a client requests an id that does not exist
@@ -44,6 +57,11 @@ actors.
 #### Scenario: Long series with a large cast
 - **WHEN** an anime has more characters than the source's summary page lists
 - **THEN** every character is stored with its role and voice actor
+
+#### Scenario: Provisional character names
+- **WHEN** a character still carries the provisional scraper name
+  `Personaje <id>`
+- **THEN** it is left out of every cast returned by the API
 
 #### Scenario: Character profile
 - **WHEN** a character's profile is requested

@@ -21,23 +21,26 @@
 - [x] `malPerson` — nombre, bio, alias y retrato de personas
 - [x] `anilistMedia` — pase profundo (reparto con voz, créditos, relaciones)
 - [x] `musicMeta` — metadatos de las tiendas (Spotify oEmbed + iTunes)
-- [ ] Correr las cinco fuentes y promover el resultado
+- [x] Correr las cinco fuentes y promover el resultado (scraper, fuera de
+      este repo: 70.860 obras promovidas, 0 personajes con nombre provisional)
 
 ## 3. API
 
-- [ ] `GET /api/manga` — lista con filtros (tipo, género, estado, año, score),
+- [x] `GET /api/manga` — lista con filtros (tipo, género, estado, año, score),
       paginación y orden por whitelist
-- [ ] `GET /api/manga/:malId` — detalle: taxonomía, reparto con voz, staff con
+- [x] `GET /api/manga/:malId` — detalle: taxonomía, reparto con voz, staff con
       rol, editorial, relaciones y enlaces externos
-- [ ] `GET /api/manga/:malId/full` — variante con objetos anidados
-- [ ] Índice de sinónimos de manga en `pg_trgm` y cobertura en `/api/search`
+- [x] `GET /api/manga/:malId/full` — variante con objetos anidados
+- [x] Índice de sinónimos de manga en `pg_trgm` y cobertura en `/api/search`
       con `type=anime|manga`
-- [ ] Control parental: el filtro `safe` excluye también las obras adultas
+- [x] Control parental: el filtro `safe` excluye también las obras adultas
 
 ## 4. Calidad
 
-- [ ] Tests de integración con Postgres real: lista, detalle, 404 y paginación
-- [ ] Test de la promoción: los personajes con nombre provisional no llegan a
+- [x] Tests de integración con Postgres real: lista, detalle, 404 y paginación
+- [x] Test de la promoción: los personajes con nombre provisional no llegan a
       la app
-- [ ] Verificación de cobertura: obras con portada, sinopsis, taxonomía y
-      reparto
+- [x] Verificación de cobertura: obras con portada, sinopsis, taxonomía y
+      reparto (test de integración + medición sobre la base: 70.327 con
+      portada, 53.867 con sinopsis, 70.206 con taxonomía, 17.351 con reparto
+      de 70.860)
