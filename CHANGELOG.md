@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.13.0...v0.14.0) (2026-10-24)
+
+
+### Features
+
+* **anime:** el reparto descarta personajes con nombre provisional ([2929507](https://github.com/Sebas200702/docs-hackathon/commit/2929507ddf0f54a81f97a9821ef66ef3208a4980))
+* **manga:** reparto con voz en el detalle y GET /api/manga/:malId/full ([fa431ba](https://github.com/Sebas200702/docs-hackathon/commit/fa431ba1d2bde173b4563ad171e87e56297c7f7b))
+* **search:** GET /api/search con type=anime|manga ([0160c89](https://github.com/Sebas200702/docs-hackathon/commit/0160c897dd75bd002cbbe8bc198382e5b0e7db2e))
+
+
+### Bug Fixes
+
+* **scripts:** clone-prod sin credencial local embebida ([13f3cec](https://github.com/Sebas200702/docs-hackathon/commit/13f3cec201f899bc1b905124bf36f04481e3b0a5))
+
 ## [0.13.0](https://github.com/Sebas200702/anidev-v2/compare/v0.12.0...v0.13.0) (2026-10-24)
 
 
