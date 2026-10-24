@@ -25,7 +25,7 @@ const { producerListRepository, producerDetailsRepository } = await import(
 const { PgDialect } = await import('drizzle-orm/pg-core')
 
 const query = { page: 2, limit: 10, sort: 'works' as const }
-const lastSql = () => new PgDialect().sqlToQuery(execute.mock.calls.at(-1)[0])
+const lastSql = () => new PgDialect().sqlToQuery(execute.mock.calls.at(-1)?.[0])
 
 beforeEach(() => {
   vi.clearAllMocks()
