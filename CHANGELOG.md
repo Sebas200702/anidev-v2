@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.15.0...v0.16.0) (2026-10-24)
+
+
+### Features
+
+* **db:** indices inversos de reparto/staff/voces/artistas y trigram de nombres ([b1dcf35](https://github.com/Sebas200702/docs-hackathon/commit/b1dcf356a38ae0dd4a271028fa9f9ba510ed92f2))
+* **music:** scope interno artistIds en la lista de musica ([d5e2e42](https://github.com/Sebas200702/docs-hackathon/commit/d5e2e4256c7a0e07ae84ebaaba8f1b7f507832ce))
+* **people:** alias [@people](https://github.com/people), errores 404 y rutas publicas ([f65b791](https://github.com/Sebas200702/docs-hackathon/commit/f65b7910318bd9c6267ee77ab650db4132648366))
+* **people:** esquemas, tipos y mappers de personajes y personas ([93f7d53](https://github.com/Sebas200702/docs-hackathon/commit/93f7d53bceef279458d60021e8821020957e0090))
+* **people:** GET /api/characters, /:malId y /:malId/appearances ([4ae6636](https://github.com/Sebas200702/docs-hackathon/commit/4ae663659f14ad3733012a5b7615e9461f998ad4))
+* **people:** GET /api/people, /:malId, /:malId/voices, /credits y /music ([3329da9](https://github.com/Sebas200702/docs-hackathon/commit/3329da96ff9940279f227512f1d84c2a779571ce))
+* **people:** repositorios de busqueda, perfil y apariciones de personajes ([809f594](https://github.com/Sebas200702/docs-hackathon/commit/809f594530b0e464e1853b97614dbad7ae93d6df))
+* **people:** repositorios de busqueda, perfil, voces y creditos de personas ([9b9f81c](https://github.com/Sebas200702/docs-hackathon/commit/9b9f81c57dbbfbf1654cb23b314c4cef3f52eaa5))
+
 ## [0.15.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.14.0...v0.15.0) (2026-10-24)
 
 
