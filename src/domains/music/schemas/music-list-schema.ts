@@ -30,6 +30,8 @@ export const musicListFiltersParamsSchema = z.object({
  */
 export const musicListFiltersSchema = musicListFiltersParamsSchema.extend({
   type: z.enum(['OP', 'ED', 'UNK']).optional(),
+  /** Server-derived artist scope (`/api/people/:id/music`; never a client param). */
+  artistIds: z.array(z.number().int().positive()).optional(),
 })
 
 /**

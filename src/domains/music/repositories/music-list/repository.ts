@@ -5,11 +5,12 @@
  */
 import { db } from '@db/client'
 import { music } from '@db/schemas/music'
+import { musicArtist } from '@db/schemas/music-relations'
 import { dbError } from '@shared/errors/db-errors'
 import { normalizeString } from '@utils/string/normalize-string-util'
 import type { MusicDB, MusicListFilters } from '@music/types'
 import type { MusicListFilterParams } from './types'
-import { and, count, eq, sql, type SQL } from 'drizzle-orm'
+import { and, count, eq, inArray, sql, type SQL } from 'drizzle-orm'
 
 /**
  * Builds SQL filter clauses for music list queries.
@@ -22,6 +23,7 @@ import { and, count, eq, sql, type SQL } from 'drizzle-orm'
  * |--------|--------|----------|
  * | `type` | `music.type` | equality (`OP`, `ED`, `UNK`) |
  * | `query` | `music.title` | normalized `LIKE` (spaces stripped, lowercased) |
+ * | `artistIds` | `music_artist.artist_id` | `IN` subquery; `[]` matches nothing |
  *
  * @see {@link mapMusicListFilters}
  * @see {@link musicListRepository.getMusicList}
@@ -29,8 +31,23 @@ import { and, count, eq, sql, type SQL } from 'drizzle-orm'
 export const buildMusicListFilters = ({
   type,
   query,
+  artistIds,
 }: MusicListFilterParams): SQL[] => {
   const filters: SQL[] = []
+
+  if (artistIds) {
+    filters.push(
+      artistIds.length
+        ? inArray(
+            music.id,
+            db
+              .select({ id: musicArtist.musicId })
+              .from(musicArtist)
+              .where(inArray(musicArtist.artistId, artistIds))
+          )
+        : sql`false`
+    )
+  }
 
   if (type) {
     filters.push(eq(music.type, type))
