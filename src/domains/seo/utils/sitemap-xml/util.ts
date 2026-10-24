@@ -3,9 +3,9 @@
  *
  * @module domains/seo/utils/sitemap-xml/util
  * @remarks
- * No I/O: callers pass the base URL and the site-relative paths. Paths are
- * URI-encoded (spaces, non-ASCII) and then XML-escaped, as the protocol
- * requires.
+ * No I/O: callers pass the base URL and site-relative paths that are already
+ * URI-encoded (segments encode their query values); the builder only
+ * XML-escapes them, as the protocol requires.
  * @see https://www.sitemaps.org/protocol.html
  */
 import type { SitemapUrl } from './types'
@@ -24,9 +24,9 @@ const XML_ENTITIES: Record<string, string> = {
 const escapeXml = (value: string) =>
   value.replaceAll(/[&<>"']/g, (char) => XML_ENTITIES[char])
 
-/** Joins base URL and path into an encoded, escaped absolute `<loc>` value. */
+/** Joins base URL and path into an escaped absolute `<loc>` value. */
 const toLoc = (baseUrl: string, path: string) =>
-  escapeXml(encodeURI(`${baseUrl.replace(/\/$/, '')}${path}`))
+  escapeXml(`${baseUrl.replace(/\/$/, '')}${path}`)
 
 /**
  * Builds a `<urlset>` document.

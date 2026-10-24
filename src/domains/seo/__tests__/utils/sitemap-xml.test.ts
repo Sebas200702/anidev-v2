@@ -4,10 +4,10 @@ import { buildSitemapIndexXml, buildUrlSetXml } from '@seo/utils/sitemap-xml'
 const BASE = 'https://anidev.example'
 
 describe('buildUrlSetXml', () => {
-  it('renders absolute, escaped <loc> entries', () => {
+  it('renders absolute, XML-escaped <loc> entries', () => {
     const xml = buildUrlSetXml(BASE, [
       { path: '/' },
-      { path: '/search?genre=Boys Love&page=1' },
+      { path: '/search?genre=Boys%20Love&page=1' },
     ])
     expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true)
     expect(xml).toContain(

@@ -26,6 +26,9 @@ export const ErrorCodes = {
   /** Producer (studio, licensor, magazine) id does not exist — HTTP 404. */
   PRODUCER_NOT_FOUND: 'PRODUCER_NOT_FOUND',
 
+  /** Sitemap segment or page does not exist — HTTP 404. */
+  SITEMAP_NOT_FOUND: 'SITEMAP_NOT_FOUND',
+
   /** Music entity does not exist — HTTP 404. */
   MUSIC_NOT_FOUND: 'MUSIC_NOT_FOUND',
   /** Music id failed validation — HTTP 400. */
