@@ -17,6 +17,7 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core'
 
@@ -34,6 +35,19 @@ export const character = pgTable('character', {
   name: text('name').notNull(),
   nameKanji: text('name_kanji'),
   about: text('about'),
+  /** AniList character id, para cruzar con la fuente que da el reparto. */
+  anilistId: integer('anilist_id'),
+  /** `Male` / `Female` / `Non-binary` (AniList). */
+  gender: text('gender'),
+  dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
+  bloodType: text('blood_type'),
+  /** Altura en cm y peso en kg (AniList). */
+  height: integer('height'),
+  weight: integer('weight'),
+  /** Edad declarada en la ficha de AniList (texto: "17", "23-25"). */
+  age: text('age'),
+  /** Puestos como favorito en AniList (mide popularidad del personaje). */
+  favorites: integer('favorites'),
 })
 
 /**

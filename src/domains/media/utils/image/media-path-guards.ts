@@ -8,6 +8,7 @@
  */
 
 import { mediaServiceConfig } from '@media/config'
+import { STREAMED_ENTITY_IMAGE_TYPES } from '@media/constants'
 import type {
   MediaEntity,
   MediaSize,
@@ -67,3 +68,20 @@ export const isValidMediaType = (
   if (entity === 'episode' || entity === 'music') return true
   return isSupportedMediaType(type)
 }
+
+/**
+ * Whether a parsed media path is proxied as a raw stream (video/audio).
+ *
+ * @param entity - Parsed entity type
+ * @param mediaType - Parsed media type
+ * @returns `true` for {@link RAW_ENTITIES} except image types such as episode
+ * thumbnails, which use the optimize pipeline and its placeholder fallback
+ *
+ * @example
+ * ```typescript
+ * isStreamedMedia('episode', 'video') // true
+ * isStreamedMedia('episode', 'thumbnail') // false
+ * ```
+ */
+export const isStreamedMedia = (entity: string, mediaType: string): boolean =>
+  RAW_ENTITIES.has(entity) && !STREAMED_ENTITY_IMAGE_TYPES.has(mediaType)

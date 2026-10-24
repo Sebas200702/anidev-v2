@@ -63,6 +63,7 @@ const {
   getSynonyms,
   getRelations,
   getRelationData,
+  getProducers,
   getExternal,
   getAnimeMedia,
   getMusicByAnimeId,
@@ -75,6 +76,7 @@ const {
   getSynonyms: vi.fn(),
   getRelations: vi.fn(),
   getRelationData: vi.fn(),
+  getProducers: vi.fn(),
   getExternal: vi.fn(),
   getAnimeMedia: vi.fn(),
   getMusicByAnimeId: vi.fn(),
@@ -91,6 +93,7 @@ vi.mock('@anime/repositories/anime-relations', () => ({
   animeRelationsRepository: {
     getRelatedAnimeByAnimeId: getRelations,
     getAnimeRelatedAnimeDataByAnimeId: getRelationData,
+    getProducersByAnimeId: getProducers,
   },
 }))
 vi.mock('@anime/repositories/anime-taxonomy', () => ({
@@ -125,6 +128,7 @@ describe('animeFullService.getAnimeFullByMalId', () => {
     vi.clearAllMocks()
     runCompute.mockReturnValue(true)
     isDegraded.mockResolvedValue(false)
+    getProducers.mockResolvedValue([])
   })
 
   it('throws AnimeNotFoundError when the core row is missing', async () => {

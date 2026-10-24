@@ -80,6 +80,7 @@ export const animeFullService = {
           relationData,
           externalIds,
           animeMusic,
+          producers,
         ] = await Promise.all([
           getAnimeMedia(malId),
           animeTaxonomyRepository.getGenresByAnimeId(malId),
@@ -90,6 +91,7 @@ export const animeFullService = {
           animeRelationsRepository.getAnimeRelatedAnimeDataByAnimeId(malId),
           animeExternalRepository.getExternalLinksByAnimeId(malId),
           getMusicByAnimeId(malId),
+          animeRelationsRepository.getProducersByAnimeId(malId),
         ])
 
         musicIsStale = animeMusic.isStale
@@ -110,6 +112,7 @@ export const animeFullService = {
           relationData,
           externalIds,
           animeMusic: animeMusic.value,
+          producers,
         })
       },
     })

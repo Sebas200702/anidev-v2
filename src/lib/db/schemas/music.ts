@@ -15,6 +15,7 @@
  * @see {@link module:lib/db/schemas/anime-relations.animeMusic} for anime links
  */
 import {
+  date,
   index,
   integer,
   pgTable,
@@ -35,6 +36,16 @@ export const music = pgTable('music', {
   id: integer('id').primaryKey().notNull(),
   title: text('title'),
   type: text('type').notNull(),
+  /** Álbum al que pertenece la pista (Spotify/iTunes). */
+  album: text('album'),
+  /** Duración en segundos (Spotify/iTunes). */
+  duration: integer('duration'),
+  /** Fecha de publicación del álbum. */
+  releaseDate: date('release_date'),
+  /** Letra de la canción cuando la fuente la publica. */
+  lyrics: text('lyrics'),
+  /** Fuente que aportó la fila (mal, ann, animethemes, spotify, itunes). */
+  source: text('source'),
 })
 
 /**

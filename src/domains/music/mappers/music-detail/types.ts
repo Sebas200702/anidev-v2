@@ -7,6 +7,7 @@ import type {
   MusicArtistDB,
   MusicDB,
   MusicResolutionDB,
+  MusicStreamDB,
   MusicVersionDB,
 } from '@music/types/music-db-types'
 
@@ -16,4 +17,5 @@ export interface MapMusicDetailInput {
   artists: MusicArtistDB[]
   versions: MusicVersionDB[]
   resolutionsByVersionId: Record<number, MusicResolutionDB[]>
+  streams: MusicStreamDB[]
 }

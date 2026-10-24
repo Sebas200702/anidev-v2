@@ -6,6 +6,7 @@
 import { ErrorCodes } from '@shared/errors/codes'
 import { DomainError } from '@shared/errors/app-error'
 import { animeMediaRepository } from '@media/repositories/anime-media'
+import { mangaMediaRepository } from '@media/repositories/manga-media'
 import { characterMediaRepository } from '@media/repositories/character-media'
 import { staffMediaRepository } from '@media/repositories/staff-media'
 import { episodeMediaRepository } from '@media/repositories/episode-media'
@@ -26,6 +27,13 @@ export const resolveMediaAssets = async (
     return await animeMediaRepository.getMediaByEntityAndType({
       mediaType: params.mediaType,
       animeId: params.entityId,
+    })
+  }
+
+  if (params.entityType === 'manga') {
+    return await mangaMediaRepository.getMediaByEntityAndType({
+      mediaType: params.mediaType,
+      mangaId: params.entityId,
     })
   }
 

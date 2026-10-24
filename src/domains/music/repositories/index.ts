@@ -13,5 +13,6 @@
 export { animeMusicRepository } from './anime-music'
 export { buildMusicListFilters, musicListRepository } from './music-list'
 export { musicRelationRepository } from './music-relation'
+export { musicStreamRepository } from './music-stream'
 export { musicRepository } from './music'
 export { musicVersionRepository } from './music-version'

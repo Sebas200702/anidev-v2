@@ -19,6 +19,19 @@
 export { anime, animeTitleSynonym } from './anime'
 export { animeExternalIds } from './anime-external'
 export { animeMedia } from './anime-media'
+export { animeExternalLink, mangaExternalLink } from './external-link'
+export { manga, mangaTitleSynonym } from './manga'
+export { mangaExternalIds } from './manga-external'
+export { mangaMedia } from './manga-media'
+export {
+  mangaGenre,
+  mangaTheme,
+  mangaDemographic,
+  mangaStaff,
+  mangaCharacter,
+  mangaProducer,
+  mangaRelation,
+} from './manga-relations'
 export {
   animeStaff,
   animeMusic,
@@ -47,6 +60,7 @@ export { episodeMedia } from './episode-media'
 export { music, musicVersion, musicResolution } from './music'
 export { musicMedia } from './music-media'
 export { musicArtist } from './music-relations'
+export { musicStream } from './music-stream'
 export { producer, producerTitle } from './producer'
 export { producerMedia } from './producer-media'
 export { profile } from './profile'

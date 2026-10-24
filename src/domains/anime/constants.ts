@@ -83,3 +83,14 @@ export const ANIME_STATUSES = [
 
 /** How many cards the showcase scans when resolving `?id=` for a card demo. */
 export const SHOWCASE_CARD_SEARCH_LIMIT = 24
+
+/**
+ * Pagination bounds for `GET /api/anime/:malId/episodes`.
+ *
+ * @remarks
+ * Long series exceed 3 000 episodes, so the list is always paginated; the
+ * default page matches a 4/6/8-column grid.
+ */
+export const EPISODE_PAGE_DEFAULT_LIMIT = 24
+export const EPISODE_PAGE_MAX_LIMIT = 100
+export const EPISODE_MAX_PAGE = 10_000

@@ -52,6 +52,8 @@ export const animeMusicSchema = z.object({
   order: z.number(),
   title: z.string(),
   type: z.enum(['opening', 'ending']),
+  /** Rango de episodios que cubre el tema (`1-30`), tal como lo publica MAL. */
+  episodes: z.string().nullable(),
   url: z.url(),
 })
 
@@ -74,6 +76,17 @@ export const animeFullDetailsSchema = z.object({
   score: z.number(),
   scoredBy: z.number(),
   popularityRank: z.number(),
+  /** Miembros con el anime en su lista. */
+  members: z.number(),
+  /** Miembros que lo marcaron como favorito (dato de MAL, solo en su web). */
+  favorites: z.number(),
+  /** Compañías con su rol (estudio, licenciadora, productora). */
+  producers: z.array(
+    z.object({
+      name: z.string(),
+      role: z.string(),
+    })
+  ),
   rating: z.string(),
   season: z.string(),
   background: z.string(),

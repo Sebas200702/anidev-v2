@@ -3,7 +3,7 @@
  *
  * @module domains/anime/__tests__/mappers/anime-music
  * @remarks
- * Covers OP/ED type mapping, 1-based order, title fallback, and site URL construction. `@/config`
+ * Covers OP/ED type mapping, theme order, title fallback, and site URL construction. `@/config`
  * is mocked so the env-validated config is not loaded. Follows the repo TDD/unit-test layout.
  */
 import { describe, expect, it, vi } from 'vitest'
@@ -13,10 +13,17 @@ vi.mock('@/config', () => ({
 }))
 
 import { mapMusicListToAnimeMusic } from '@anime/mappers/anime-music'
-import type { MusicDB } from '@music/types/music-db-types'
+import type { AnimeThemeDB } from '@music/types/music-db-types'
 
-const music = (over: Partial<MusicDB>): MusicDB =>
-  ({ id: 1, title: 'Blue Bird', type: 'OP', ...over }) as MusicDB
+const music = (over: Partial<AnimeThemeDB>): AnimeThemeDB =>
+  ({
+    id: 1,
+    title: 'Blue Bird',
+    type: 'OP',
+    sequence: 1,
+    episodes: '1-12',
+    ...over,
+  }) as AnimeThemeDB
 
 describe('mapMusicListToAnimeMusic', () => {
   it('maps OP to opening and ED to ending', () => {
@@ -34,9 +41,26 @@ describe('mapMusicListToAnimeMusic', () => {
     ).toBe('opening')
   })
 
-  it('assigns 1-based order by array position', () => {
-    const result = mapMusicListToAnimeMusic([music({}), music({ id: 2 })])
+  it('uses the real theme number published by MAL (OP1 before OP2)', () => {
+    const result = mapMusicListToAnimeMusic([
+      music({ id: 1, sequence: 2 }),
+      music({ id: 2, sequence: 1 }),
+    ])
+    expect(result.map((r) => r.order)).toEqual([2, 1])
+  })
+
+  it('falls back to the array position when the source has no theme number', () => {
+    const result = mapMusicListToAnimeMusic([
+      music({ sequence: null }),
+      music({ id: 2, sequence: null }),
+    ])
     expect(result.map((r) => r.order)).toEqual([1, 2])
+  })
+
+  it('exposes the episode range the theme covers', () => {
+    expect(
+      mapMusicListToAnimeMusic([music({ episodes: '1-30' })])[0].episodes
+    ).toBe('1-30')
   })
 
   it('builds the site url with a normalized slug (case preserved)', () => {

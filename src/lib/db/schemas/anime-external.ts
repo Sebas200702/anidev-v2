@@ -23,6 +23,12 @@ import { anime } from '@db/schemas/anime'
  * - `animeThemesSlug` — Slug on AnimeThemes.net when known.
  * - `kitsuId` / `tvdbId` — Numeric external catalog identifiers.
  * - `anilistId` — AniList numeric media id (sembrado del dump offline).
+ * - `annId` — Anime News Network encyclopedia id (sembrado del dump offline):
+ *   la enciclopedia de ANN publica los OP/ED con **nº de tema, artista y rango
+ *   de episodios**, el dato que ni MAL ni AnimeThemes dan de forma completa.
+ * - `tmdbId` — The Movie Database series id. Es la fuente más completa de
+ *   **backdrops** (banner) y de **stills** (miniatura de episodio con su
+ *   `episode_number`, que es la numeración estándar).
  * - `createdAt` / `updatedAt` — Row lifecycle timestamps (JS `Date` mode).
  *
  * @see {@link anime} canonical anime record
@@ -37,6 +43,8 @@ export const animeExternalIds = pgTable('anime_external_ids', {
   kitsuId: integer('kitsu_id'),
   tvdbId: integer('tvdb_id'),
   anilistId: integer('anilist_id'),
+  annId: integer('ann_id'),
+  tmdbId: integer('tmdb_id'),
 
   createdAt: timestamp('created_at')
     .notNull()

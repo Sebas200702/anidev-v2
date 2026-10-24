@@ -138,6 +138,17 @@ describe('mapErrorToHttp sentry capture', () => {
     })
   })
 
+  it('maps EPISODE_NOT_FOUND to 404', () => {
+    const error = new DomainError(
+      ErrorCodes.EPISODE_NOT_FOUND,
+      'Episode not found'
+    )
+
+    const response = mapErrorToHttp(error)
+
+    expect(response.status).toBe(404)
+  })
+
   it('reports DomainError as warning for a 400 response', () => {
     const error = new DomainError(
       ErrorCodes.INVALID_IMAGE_PATH,

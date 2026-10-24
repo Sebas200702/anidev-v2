@@ -68,6 +68,9 @@ export default defineConfig({
         '@anime': fileURLToPath(
           new URL('./src/domains/anime', import.meta.url)
         ),
+        '@manga': fileURLToPath(
+          new URL('./src/domains/manga', import.meta.url)
+        ),
         '@auth': fileURLToPath(new URL('./src/domains/auth', import.meta.url)),
         '@media': fileURLToPath(
           new URL('./src/domains/media', import.meta.url)

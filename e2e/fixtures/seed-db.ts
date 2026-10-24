@@ -16,6 +16,7 @@ import { Pool } from 'pg'
 import {
   SEED_ANIME,
   SEED_ANIME_MAL_ID,
+  SEED_EPISODES,
   SEED_GENRE_MAL_ID,
   SEED_GENRE_NAME,
   SEED_MUSIC,
@@ -66,6 +67,16 @@ export async function seedE2eDatabase(): Promise<void> {
       [SEED_ANIME_MAL_ID, SEED_GENRE_MAL_ID]
     )
 
+    for (const episode of SEED_EPISODES) {
+      await pool.query(
+        `INSERT INTO episode (anime_id, number, title, synopsis)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (anime_id, number) DO UPDATE SET
+           title = EXCLUDED.title, synopsis = EXCLUDED.synopsis`,
+        [SEED_ANIME_MAL_ID, episode.number, episode.title, episode.synopsis]
+      )
+    }
+
     for (const music of SEED_MUSIC) {
       await pool.query(
         `INSERT INTO music (id, title, type)
@@ -82,7 +93,7 @@ export async function seedE2eDatabase(): Promise<void> {
 try {
   await seedE2eDatabase()
   console.log(
-    `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_MUSIC.length} music`
+    `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_EPISODES.length} episodes, ${SEED_MUSIC.length} music`
   )
 } catch (error) {
   console.error('E2E seed failed:', error)

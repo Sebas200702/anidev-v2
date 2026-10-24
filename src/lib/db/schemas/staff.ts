@@ -18,6 +18,7 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core'
 
@@ -38,6 +39,15 @@ export const staff = pgTable('staff', {
   familyName: text('family_name'),
   birthday: text('birthday'),
   about: text('about'),
+  /** AniList staff id, para cruzar con la fuente que da los créditos. */
+  anilistId: integer('anilist_id'),
+  /** `Male` / `Female` / `Non-binary` (AniList). */
+  gender: text('gender'),
+  dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
+  /** Puestos como favorito en AniList. */
+  favorites: integer('favorites'),
+  /** Id de persona en AniList cuando el rol es de voz (distingue del actor). */
+  voiceActorMalId: integer('voice_actor_mal_id'),
 })
 
 /**

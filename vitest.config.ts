@@ -9,6 +9,7 @@ export default defineConfig({
       '@': alias('./src'),
       '@styles': alias('./src/styles'),
       '@anime': alias('./src/domains/anime'),
+      '@manga': alias('./src/domains/manga'),
       '@auth': alias('./src/domains/auth'),
       '@media': alias('./src/domains/media'),
       '@music': alias('./src/domains/music'),

@@ -5,15 +5,17 @@
 import { db } from '@db/client'
 import { animeMusic } from '@db/schemas/anime-relations'
 import { music } from '@db/schemas/music'
-import type { MusicDB } from '@music/types/music-db-types'
-import { eq } from 'drizzle-orm'
+import type { AnimeThemeDB } from '@music/types/music-db-types'
+import { asc, eq, sql } from 'drizzle-orm'
 import { dbError } from '@shared/errors/db-errors'
 
 /**
  * Reads music linked to anime records.
  *
- * @remarks Returns a partial {@link MusicDB} projection (`id`, `title`, `type`) suitable
- * for anime detail pages listing openings and endings.
+ * @remarks Returns an {@link AnimeThemeDB} projection (`id`, `title`, `type`,
+ * `sequence`, `episodes`) suitable for anime detail pages listing openings and
+ * endings, **ordered by the theme number** (`sequence NULLS LAST`) so OP1
+ * precedes OP2 instead of depending on insertion order.
  * @see {@link animeService} for anime detail orchestration that may consume these rows
  * @example
  * ```typescript
@@ -34,17 +36,22 @@ export const animeMusicRepository = {
    * const openings = musicList.filter((m) => m.type === 'OP')
    * ```
    */
-  async findMusicByAnimeId(animeId: number): Promise<MusicDB[]> {
+  async findMusicByAnimeId(animeId: number): Promise<AnimeThemeDB[]> {
     try {
       const rows = await db
         .select({
           id: music.id,
           title: music.title,
           type: music.type,
+          sequence: animeMusic.sequence,
+          episodes: animeMusic.episodes,
         })
         .from(animeMusic)
         .innerJoin(music, eq(animeMusic.musicId, music.id))
         .where(eq(animeMusic.animeId, animeId))
+        // `sequence NULLS LAST`: los temas sin número (p. ej. un AnimeThemes que
+        // MAL no lista) van al final en vez de mezclarse.
+        .orderBy(sql`${animeMusic.sequence} ASC NULLS LAST`, asc(music.id))
 
       return rows
     } catch (error) {

@@ -42,6 +42,12 @@ export enum CacheKeyPrefix {
   /** Character roster for an anime entry. Value: `'anime:characters'`. */
   AnimeCharacters = 'anime:characters',
 
+  /** Paginated episode list pages for an anime. Value: `'anime:episodes'`. */
+  AnimeEpisodes = 'anime:episodes',
+
+  /** Single episode detail for an anime. Value: `'anime:episode'`. */
+  AnimeEpisode = 'anime:episode',
+
   /** Music track detail payloads. Value: `'music:details'`. */
   MusicDetails = 'music:details',
 

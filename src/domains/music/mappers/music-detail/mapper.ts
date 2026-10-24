@@ -35,6 +35,7 @@ export const mapMusicDetail = ({
   artists,
   versions,
   resolutionsByVersionId,
+  streams,
 }: MapMusicDetailInput): MusicDetails => {
   const typeCode: MusicDetails['typeCode'] =
     music.type === 'OP' || music.type === 'ED' || music.type === 'UNK'
@@ -52,6 +53,12 @@ export const mapMusicDetail = ({
     artist: artists.map((artist) => ({
       malId: artist.malId ?? 0,
       name: artist.name ?? 'Unknown Artist',
+    })),
+    streams: streams.map((stream) => ({
+      provider: stream.provider,
+      url: stream.url,
+      externalId: stream.externalId,
+      country: stream.country,
     })),
     versions: versions.map((version) => {
       const resList = resolutionsByVersionId[version.versionId] ?? []

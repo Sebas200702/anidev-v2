@@ -44,6 +44,7 @@ describe('mapMusicDetail', () => {
       artists: [{ malId: 5, name: 'X' } as MusicArtistDB],
       versions: [],
       resolutionsByVersionId: {},
+      streams: [],
     })
     expect(d.type).toBe('ending')
     expect(d.typeCode).toBe('ED')
@@ -56,6 +57,7 @@ describe('mapMusicDetail', () => {
       artists: [{ malId: null, name: null } as unknown as MusicArtistDB],
       versions: [],
       resolutionsByVersionId: {},
+      streams: [],
     })
     expect(d.artist).toEqual([{ malId: 0, name: 'Unknown Artist' }])
   })
@@ -65,6 +67,7 @@ describe('mapMusicDetail', () => {
       music: music({}),
       artists: [],
       versions: [version({ versionId: 100 })],
+      streams: [],
       resolutionsByVersionId: { 100: [resolution({ id: 9 })] },
     })
     expect(d.versions).toHaveLength(1)
@@ -84,6 +87,7 @@ describe('mapMusicDetail', () => {
       music: music({}),
       artists: [],
       versions: [version({ versionId: 100 })],
+      streams: [],
       resolutionsByVersionId: {
         100: [resolution({ audioUrl: null, videoUrl: null })],
       },
@@ -97,6 +101,7 @@ describe('mapMusicDetail', () => {
       music: music({}),
       artists: [],
       versions: [version({ versionId: 100 })],
+      streams: [],
       resolutionsByVersionId: {},
     })
     expect(d.versions[0].resolutions).toEqual([])

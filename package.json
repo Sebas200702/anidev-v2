@@ -1,7 +1,7 @@
 {
   "name": "anidev-v2",
   "type": "module",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -16,6 +16,7 @@
     "check:write": "biome check --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:clone-prod": "bash scripts/db/clone-prod.sh",
     "db:seed:e2e": "tsx e2e/fixtures/seed-db.ts",
     "dev": "astro dev",
     "format": "biome format --write .",
@@ -57,7 +58,7 @@
     "sharp": "0.35.5",
     "tailwind-animations": "1.0.1",
     "tailwindcss": "4.2.1",
-    "zod": "4.3.6"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

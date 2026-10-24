@@ -144,4 +144,22 @@ describe('GET /media/[...path]', () => {
       expect.any(Object)
     )
   })
+
+  it('serves episode thumbnails through the image pipeline, not the stream proxy', async () => {
+    mediaServiceMock.parsePath.mockReturnValue({
+      entityType: 'episode',
+      entityId: 10,
+      mediaType: 'thumbnail',
+    })
+    mediaServiceMock.optimizeMedia.mockResolvedValue({
+      buffer: new Uint8Array([1, 2, 3]),
+      mimeType: 'image/webp',
+    })
+
+    const response = await GET(createContext('episode/10/thumbnail'))
+
+    expect(response.status).toBe(200)
+    expect(mediaServiceMock.optimizeMedia).toHaveBeenCalled()
+    expect(mediaServiceMock.fetchRawMedia).not.toHaveBeenCalled()
+  })
 })
