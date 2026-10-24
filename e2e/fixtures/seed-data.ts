@@ -127,3 +127,13 @@ export const SEED_MANGA_SYNONYM = 'E2E Printed Synonym'
  * documentation range), so it does not consume the shared `/api` budget.
  */
 export const MANGA_RATE_LIMIT_IP = '198.51.100.8'
+
+/** Seeded studio credited on {@link SEED_ANIME_MAL_ID} and {@link SEED_MANGA_MAL_ID}. */
+export const SEED_PRODUCER_MAL_ID = 999_000_201
+export const SEED_PRODUCER_NAME = 'E2E Seed Studio'
+
+/**
+ * Forwarded client IP for the SEO and producer specs' own rate-limit bucket
+ * (RFC 5737 documentation range).
+ */
+export const CATALOG_RATE_LIMIT_IP = '198.51.100.9'
