@@ -51,7 +51,9 @@
                       "@media/*",
                       "@music/*",
                       "@user/*",
-                      "@search/*"
+                      "@search/*",
+                      "@producer/*",
+                      "@seo/*"
                     ]
                   }
                 ]

@@ -8,6 +8,7 @@
  */
 import { anime, animeTitleSynonym } from '@db/schemas/anime'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
+import { animeProducer } from '@db/schemas/anime-entity-relations'
 import { ADULT_RATINGS } from '@anime/constants'
 import {
   eq,
@@ -53,6 +54,8 @@ export const buildAnimeListFilters = ({
   season,
   scoreMin,
   scoreMax,
+  producer,
+  producerRole,
   parentalVariant,
 }: AnimeListFilterParams): SQL[] => {
   const filters: SQL[] = []
@@ -99,6 +102,17 @@ export const buildAnimeListFilters = ({
 
   if (genre?.length) {
     filters.push(inArray(genreTable.name, genre))
+  }
+
+  if (producer?.length) {
+    filters.push(
+      sql`EXISTS (
+        SELECT 1 FROM ${animeProducer}
+        WHERE ${animeProducer.animeId} = ${anime.malId}
+        AND ${inArray(animeProducer.producerId, producer)}
+        ${producerRole ? sql`AND ${animeProducer.role} = ${producerRole}` : sql``}
+      )`
+    )
   }
 
   if (query?.trim()) {

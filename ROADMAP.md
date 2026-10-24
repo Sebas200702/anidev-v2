@@ -22,7 +22,7 @@ Watch2Gether.
 
 ## Estado actual (24 de octubre de 2026)
 
-Cimientos endurecidos (Fase 0 salvo SEO base); catálogo, búsqueda y obra
+Cimientos endurecidos (Fase 0 completa); catálogo, búsqueda, productoras y obra
 impresa expuestos por API; listas y progreso con API de servidor. La UI aún
 cubre solo home, búsqueda y ficha de anime básica.
 
@@ -88,7 +88,7 @@ _(Changes archivados: `platform-audit-and-stabilization` y `component-showcase`.
 - [x] **Consistencia de errores y degradación en Home (`T-04`)**: unificar el sobre de error con `createErrorResponse` en `withZodValidation` y `/media`, omitir `error.details` en respuestas 503 al cliente y añadir `try/catch` con `<ServiceUnavailable />` (503) en `src/pages/index.astro`.
 - [x] **Índices PostgreSQL, FKs y `pg.Pool` acotado (`T-05`, `T-06`)**: índices B-tree en todas las FKs de tablas `*_media`/`music_*` y columnas de filtro/sort de `anime`, índice único en `profile.user_id`, GIN `pg_trgm` en `anime_title_synonym.title`, `ON DELETE CASCADE` en uniones de catálogo, límite `max: 20` en `pg.Pool` y reubicación de `resolveMediaAssets` fuera de `src/shared/` con regla en `biome.json`.
 - [x] **Middleware transversal (`T-08`)**: `x-request-id`, rate-limiting en Dragonfly, sesión ligera (saltar DB en `/media/*`, `/api/health*`, `/showcase` y cachear sesión 60 s en Dragonfly), CSP + headers de seguridad (`nosniff`, `DENY`, `Referrer-Policy`).
-- [ ] **SEO base**: sitemaps segmentados (anime, manga, música, géneros, estáticos) + `robots.txt`. _(Único pendiente de la Fase 0.)_
+- [x] **SEO base**: sitemaps segmentados por registro (estáticos, anime, géneros; manga/música/productoras se añaden con sus páginas) + `robots.txt`. _(Change archivado: `seo-and-producer-taxonomy`.)_
 - [x] **Patrón de UI documentado y `/showcase` operativo** (living docs — change `component-showcase`, archivado 2026-10-15).
 
 **Salida:** base blindada en seguridad, memoria y latencia SQL + patrón de UI repetible.
@@ -107,7 +107,7 @@ El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
   _(Change archivado: `home-shell-and-featured-carousel`; elegibilidad set-based
   y fan-out por lotes en `platform-audit-and-stabilization`.)_
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (servicios sobre tablas relacionales existentes).
-- [ ] **Taxonomía** — por género ✅ (`/search?genre=`, change archivado `taxonomy-and-discover`); **por estudio/productora pendiente**.
+- [ ] **Taxonomía** — por género ✅ (`/search?genre=`, change archivado `taxonomy-and-discover`); por estudio/productora: API ✅ (`/api/producers`, filtro `producer` en `/api/anime`); **faltan las páginas**.
 - [x] **Control parental** — exclusión de ratings adultos embebida en las queries del catálogo (default seguro, fail-closed; variante `full` requiere opt-in, change pendiente).
 - [x] **Historial de búsqueda** — persistido por usuario autenticado (read/clear en `/api/search-history`).
 

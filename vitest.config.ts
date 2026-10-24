@@ -15,6 +15,8 @@ export default defineConfig({
       '@music': alias('./src/domains/music'),
       '@user': alias('./src/domains/user'),
       '@search': alias('./src/domains/search'),
+      '@producer': alias('./src/domains/producer'),
+      '@seo': alias('./src/domains/seo'),
       '@shared': alias('./src/shared'),
       '@lib': alias('./src/lib'),
       '@config': alias('./src/config'),

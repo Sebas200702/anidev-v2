@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.14.0...v0.15.0) (2026-10-24)
+
+
+### Features
+
+* **anime:** filtro producer/producerRole en /api/anime ([3df2766](https://github.com/Sebas200702/docs-hackathon/commit/3df2766e0bbbb12b77d86f629a0d9a68aa641954))
+* **manga:** scope interno producerId en la lista de manga ([1df7f8f](https://github.com/Sebas200702/docs-hackathon/commit/1df7f8fb8b723303713e39bec3336d4ef6f20a31))
+* **producer:** aliases @producer/[@seo](https://github.com/seo) y error PRODUCER_NOT_FOUND (404) ([30aed56](https://github.com/Sebas200702/docs-hackathon/commit/30aed568ef3d04c3689ad8cc53dd44715ee442fa))
+* **producer:** esquemas, tipos y prefijos de cache ([6de4357](https://github.com/Sebas200702/docs-hackathon/commit/6de4357bc0d74f0e1bb619b2691df966e0e3c5ee))
+* **producer:** GET /api/producers, /:malId, /:malId/anime y /:malId/manga ([bed2f06](https://github.com/Sebas200702/docs-hackathon/commit/bed2f06de855f69f131ef6327856cd2c737a68b6))
+* **producer:** repositorios de lista y detalle con conteo por rol ([0b9dda1](https://github.com/Sebas200702/docs-hackathon/commit/0b9dda159150c4936c30d8a35dcaff3b2628f96c))
+* **producer:** servicios de lista, detalle y obras con cache ([1706736](https://github.com/Sebas200702/docs-hackathon/commit/170673644a426c3cf59df51574ad4faeff5adbc5))
+* **seo:** builders puros de urlset y sitemapindex ([a81d1c8](https://github.com/Sebas200702/docs-hackathon/commit/a81d1c83e2ccfa88880540b34116727dd2d57276))
+* **seo:** GET /sitemap.xml, /sitemaps/:file y /robots.txt ([da7dbf9](https://github.com/Sebas200702/docs-hackathon/commit/da7dbf98b76788971f9389ad177d0963d3969a04))
+* **seo:** registro de segmentos y servicio de sitemap con cache ([29e4517](https://github.com/Sebas200702/docs-hackathon/commit/29e45174d838e6b5aa893f2ef921896b81645916))
+* **seo:** repositorio del sitemap con piso parental safe ([6125b06](https://github.com/Sebas200702/docs-hackathon/commit/6125b06d643426df420b0a32e87605b012722e87))
+* **seo:** sitemaps, robots.txt y /api/producers como rutas publicas ([7a8c3e0](https://github.com/Sebas200702/docs-hackathon/commit/7a8c3e00ba81c479618bbb4e6c5a08c6ecfbc3e9))
+
 ## [0.14.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.13.0...v0.14.0) (2026-10-24)
 
 

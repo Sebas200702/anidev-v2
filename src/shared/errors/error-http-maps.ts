@@ -48,6 +48,8 @@ const UNAUTHORIZED_AUTH_CODES = new Set<ErrorCode>([
 const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
   ErrorCodes.ANIME_NOT_FOUND,
   ErrorCodes.MANGA_NOT_FOUND,
+  ErrorCodes.PRODUCER_NOT_FOUND,
+  ErrorCodes.SITEMAP_NOT_FOUND,
   ErrorCodes.EPISODE_NOT_FOUND,
   ErrorCodes.MUSIC_NOT_FOUND,
   ErrorCodes.WATCH_STATE_NOT_FOUND,

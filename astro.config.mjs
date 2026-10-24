@@ -82,6 +82,10 @@ export default defineConfig({
         '@search': fileURLToPath(
           new URL('./src/domains/search', import.meta.url)
         ),
+        '@producer': fileURLToPath(
+          new URL('./src/domains/producer', import.meta.url)
+        ),
+        '@seo': fileURLToPath(new URL('./src/domains/seo', import.meta.url)),
         '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
         '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
         '@config': fileURLToPath(new URL('./src/config', import.meta.url)),

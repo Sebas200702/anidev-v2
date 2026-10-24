@@ -26,6 +26,13 @@ describe('isPublicRoute', () => {
     expect(isPublicRoute('/showcase')).toBe(true)
   })
 
+  it('exposes the SEO files and the producer API to anonymous crawlers', () => {
+    expect(isPublicRoute('/sitemap.xml')).toBe(true)
+    expect(isPublicRoute('/sitemaps/anime-1.xml')).toBe(true)
+    expect(isPublicRoute('/robots.txt')).toBe(true)
+    expect(isPublicRoute('/api/producers/1/anime')).toBe(true)
+  })
+
   it('exposes the catalog search but not the search history', () => {
     expect(isPublicRoute('/api/search')).toBe(true)
     expect(isPublicRoute('/api/search-history')).toBe(false)

@@ -86,6 +86,8 @@ export const mangaFiltersSchema = mangaFiltersParamsSchema.extend({
   theme: z.array(z.string()).optional(),
   demographic: z.array(z.string()).optional(),
   status: z.array(z.string()).optional(),
+  /** Server-derived producer scope (`/api/producers/:id/manga`; never a client query param). */
+  producerId: z.number().int().positive().optional(),
   /** Server-derived parental variant (never a client query param). */
   parentalVariant: z.enum(['safe', 'full']).optional(),
 })

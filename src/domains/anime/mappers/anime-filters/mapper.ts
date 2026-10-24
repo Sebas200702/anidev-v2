@@ -46,6 +46,8 @@ export const mapAnimeFilters = (params: AnimeFiltersParams): AnimeFilters => {
     season: params.season,
     scoreMin: params.scoreMin,
     scoreMax: params.scoreMax,
+    producer: params.producer?.split(',').map(Number),
+    producerRole: params.producerRole,
     sort: params.sort ?? 'score',
     order: params.order ?? 'desc',
     page: params.page,

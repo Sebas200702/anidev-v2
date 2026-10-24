@@ -23,6 +23,8 @@ import {
   SEED_MANGA_SYNONYM,
   SEED_MANGA_TITLE,
   SEED_MUSIC,
+  SEED_PRODUCER_MAL_ID,
+  SEED_PRODUCER_NAME,
 } from './seed-data'
 
 /**
@@ -102,6 +104,26 @@ export async function seedE2eDatabase(): Promise<void> {
       [SEED_MANGA_MAL_ID, SEED_GENRE_MAL_ID]
     )
 
+    await pool.query(
+      `INSERT INTO producer (mal_id) VALUES ($1) ON CONFLICT DO NOTHING`,
+      [SEED_PRODUCER_MAL_ID]
+    )
+    await pool.query(
+      `INSERT INTO producer_title (producer_id, type, title)
+       VALUES ($1, 'Default', $2) ON CONFLICT DO NOTHING`,
+      [SEED_PRODUCER_MAL_ID, SEED_PRODUCER_NAME]
+    )
+    await pool.query(
+      `INSERT INTO anime_producer (anime_id, producer_id, role)
+       VALUES ($1, $2, 'studio') ON CONFLICT DO NOTHING`,
+      [SEED_ANIME_MAL_ID, SEED_PRODUCER_MAL_ID]
+    )
+    await pool.query(
+      `INSERT INTO manga_producer (manga_id, producer_id, role)
+       VALUES ($1, $2, 'serialization') ON CONFLICT DO NOTHING`,
+      [SEED_MANGA_MAL_ID, SEED_PRODUCER_MAL_ID]
+    )
+
     for (const music of SEED_MUSIC) {
       await pool.query(
         `INSERT INTO music (id, title, type)
@@ -118,7 +140,7 @@ export async function seedE2eDatabase(): Promise<void> {
 try {
   await seedE2eDatabase()
   console.log(
-    `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_EPISODES.length} episodes, ${SEED_MUSIC.length} music, 1 manga`
+    `E2E seed complete: ${SEED_ANIME.length} anime, ${SEED_EPISODES.length} episodes, ${SEED_MUSIC.length} music, 1 manga, 1 producer`
   )
 } catch (error) {
   console.error('E2E seed failed:', error)
