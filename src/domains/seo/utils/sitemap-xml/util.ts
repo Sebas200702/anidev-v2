@@ -11,7 +11,9 @@
 import type { SitemapUrl } from './types'
 
 const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>'
-const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9'
+// The protocol fixes this namespace URI as `http://`; it is an identifier,
+// never fetched, so `https` would make the document invalid.
+const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9' // NOSONAR
 
 const XML_ENTITIES: Record<string, string> = {
   '&': '&amp;',
@@ -59,10 +61,10 @@ export const buildSitemapIndexXml = (
   files: string[]
 ): string => {
   const entries = files
-    .map(
-      (file) =>
-        `<sitemap><loc>${toLoc(baseUrl, `/sitemaps/${file}.xml`)}</loc></sitemap>`
-    )
+    .map((file) => {
+      const loc = toLoc(baseUrl, `/sitemaps/${file}.xml`)
+      return `<sitemap><loc>${loc}</loc></sitemap>`
+    })
     .join('')
   return `${XML_HEADER}<sitemapindex xmlns="${SITEMAP_NS}">${entries}</sitemapindex>`
 }

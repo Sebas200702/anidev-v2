@@ -32,9 +32,10 @@ export const producerListFromSql = ({
   query,
 }: Pick<ProducerListQuery, 'role' | 'query'>): SQL => {
   const byRole = role ? sql`AND COALESCE(w.works, 0) > 0` : sql``
+  const pattern = `%${query}%`
   const byQuery = query
     ? sql`AND EXISTS (SELECT 1 FROM producer_title t
-        WHERE t.producer_id = p.mal_id AND t.title ILIKE ${`%${query}%`})`
+        WHERE t.producer_id = p.mal_id AND t.title ILIKE ${pattern})`
     : sql``
   return sql`FROM producer p
     LEFT JOIN (${namesSql}) n ON n.producer_id = p.mal_id

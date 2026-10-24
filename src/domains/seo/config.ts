@@ -33,8 +33,8 @@ const toAnimePath = ({ malId, title }: { malId: number; title: string }) =>
 export const SITEMAP_SEGMENTS: SitemapSegment[] = [
   {
     name: 'static',
-    countPages: async () => 1,
-    getPage: async () => STATIC_PATHS.map((path) => ({ path })),
+    countPages: () => Promise.resolve(1),
+    getPage: () => Promise.resolve(STATIC_PATHS.map((path) => ({ path }))),
   },
   {
     name: 'anime',
@@ -53,7 +53,7 @@ export const SITEMAP_SEGMENTS: SitemapSegment[] = [
   },
   {
     name: 'genres',
-    countPages: async () => 1,
+    countPages: () => Promise.resolve(1),
     getPage: async () =>
       (await sitemapRepository.getGenreNames()).map((name) => ({
         path: `/search?genre=${encodeURIComponent(name)}`,
