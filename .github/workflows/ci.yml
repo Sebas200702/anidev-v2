@@ -153,6 +153,9 @@ jobs:
             anidev-minio:ci
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:9000/minio/health/live && break
+            if [ "$i" -eq 30 ]; then
+              echo "MinIO never became healthy"; docker logs minio; exit 1
+            fi
             sleep 1
           done
           docker run --rm --network host --entrypoint /bin/sh \

@@ -27,6 +27,24 @@ export const optionalUrl = z.preprocess(emptyAsUnset, z.url().optional())
 export const withDefault = (fallback: string) =>
   z.preprocess(emptyAsUnset, z.string().default(fallback))
 
+/**
+ * `true`/`false` (any case); unset or empty falls back to `fallback`.
+ * Anything else fails fast instead of silently picking a mode.
+ *
+ * @param fallback - Value when the variable is missing
+ */
+export const optionalBoolean = (fallback: boolean) =>
+  z.preprocess(
+    (value) =>
+      typeof value === 'string' && value.trim() !== ''
+        ? value.trim().toLowerCase()
+        : undefined,
+    z
+      .enum(['true', 'false'])
+      .optional()
+      .transform((value) => (value === undefined ? fallback : value === 'true'))
+  )
+
 /** Storage variables that must be set together (or all left empty). */
 export const STORAGE_KEYS = [
   'S3_ENDPOINT',

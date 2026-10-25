@@ -62,6 +62,23 @@ describe('env S3_*', () => {
     expect(env.S3_FORCE_PATH_STYLE).toBe(false)
   })
 
+  it('accepts TRUE/False case-insensitively', async () => {
+    const { env } = await loadEnv({
+      ...storageEnv,
+      S3_FORCE_PATH_STYLE: 'FALSE',
+    })
+    expect(env.S3_FORCE_PATH_STYLE).toBe(false)
+  })
+
+  it.each(['0', 'no', 'flase'])(
+    'fails fast on an ambiguous S3_FORCE_PATH_STYLE=%s',
+    async (value) => {
+      await expect(
+        loadEnv({ ...storageEnv, S3_FORCE_PATH_STYLE: value })
+      ).rejects.toThrow()
+    }
+  )
+
   it.each(Object.keys(storageEnv))(
     'fails fast when only %s is missing',
     async (key) => {

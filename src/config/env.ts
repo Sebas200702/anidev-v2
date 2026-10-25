@@ -22,6 +22,7 @@
 import { z } from 'zod'
 import {
   optionalSecret,
+  optionalBoolean,
   optionalUrl,
   STORAGE_KEYS,
   withDefault,
@@ -76,10 +77,7 @@ const envSchema = z
     S3_ACCESS_KEY_ID: optionalSecret,
     S3_SECRET_ACCESS_KEY: optionalSecret,
     S3_PUBLIC_URL: optionalUrl,
-    S3_FORCE_PATH_STYLE: z
-      .string()
-      .optional()
-      .transform((value) => value !== 'false'),
+    S3_FORCE_PATH_STYLE: optionalBoolean(true),
   })
   .refine(
     ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }) =>
