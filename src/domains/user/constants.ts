@@ -61,3 +61,6 @@ export const PROFILE_IMAGE_WEBP_QUALITY = 82
 
 /** MIME type of every stored profile image. */
 export const PROFILE_IMAGE_CONTENT_TYPE = 'image/webp'
+
+/** `anime_media.media_type` of the art a profile banner can be picked from. */
+export const PROFILE_BANNER_MEDIA_TYPE = 'banner'

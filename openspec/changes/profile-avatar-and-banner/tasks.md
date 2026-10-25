@@ -51,7 +51,7 @@
 
 ## 3. Services and routes
 
-- [ ] 3.1 `profileImageService`:
+- [x] 3.1 `profileImageService`:
       - upload (put, update, invalidate, delete old; rollback delete on a
         failed update);
       - gallery pick (character / anime validation);
