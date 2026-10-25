@@ -60,7 +60,11 @@ export const ErrorCodes = {
 
   /** Zod or manual request validation failed — HTTP 400. */
   VALIDATION_ERROR: 'VALIDATION_ERROR',
-  /** Request body exceeded the allowed size (1 MiB) — HTTP 413. */
+  /** Uploaded file is not an accepted image format — HTTP 415. */
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE',
+  /** Object storage is not configured on this deployment — HTTP 404. */
+  STORAGE_NOT_CONFIGURED: 'STORAGE_NOT_CONFIGURED',
+  /** Request body exceeded the allowed size — HTTP 413. */
   REQUEST_TOO_LARGE: 'REQUEST_TOO_LARGE',
   /** Too many requests — HTTP 429 with Retry-After. */
   RATE_LIMITED: 'RATE_LIMITED',
