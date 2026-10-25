@@ -53,6 +53,15 @@ const CONFLICT_DOMAIN_CODES = new Set<ErrorCode>([
 ])
 
 /**
+ * Domain error codes that map to **413 Content Too Large**.
+ *
+ * @internal
+ */
+const PAYLOAD_TOO_LARGE_DOMAIN_CODES = new Set<ErrorCode>([
+  ErrorCodes.REQUEST_TOO_LARGE,
+])
+
+/**
  * Domain error codes that map to **415 Unsupported Media Type**.
  *
  * @internal
@@ -62,7 +71,7 @@ const UNSUPPORTED_MEDIA_DOMAIN_CODES = new Set<ErrorCode>([
 ])
 
 /**
- * Maps {@link DomainError} instances to 404, 409, 415 or 400 responses.
+ * Maps {@link DomainError} instances to 404, 409, 413, 415 or 400 responses.
  *
  * @param error - Business-rule violation from domain logic
  * @returns **404** when `error.code` is in {@link NOT_FOUND_DOMAIN_CODES}; otherwise **400**
@@ -86,6 +95,14 @@ export const mapDomainErrorToHttp = (error: DomainError): HttpErrorResponse => {
     logger.warn({ err: toLoggableError(error) }, 'Domain error - conflict')
     return {
       status: 409,
+      body: buildAppErrorBody(error),
+    }
+  }
+
+  if (PAYLOAD_TOO_LARGE_DOMAIN_CODES.has(error.code)) {
+    logger.warn({ err: toLoggableError(error) }, 'Domain error - too large')
+    return {
+      status: 413,
       body: buildAppErrorBody(error),
     }
   }

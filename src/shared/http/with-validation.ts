@@ -40,6 +40,7 @@ import { ErrorCodes } from '@shared/errors/codes'
 import { ValidationError } from '@shared/errors/app-error'
 import { createErrorResponse } from '@shared/http/create-api-response-util'
 import { jsonResponse } from '@shared/http/api-response-serialize-util'
+import { readBoundedBytes } from '@shared/http/read-bounded-bytes'
 import type { APIContext } from 'astro'
 import type { ZodType } from 'zod'
 import type {
@@ -49,35 +50,20 @@ import type {
 
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024
 
+const tooLargeResponse = () =>
+  new Response(
+    JSON.stringify({
+      data: null,
+      status: 413,
+      error: 'Request too large',
+      code: ErrorCodes.REQUEST_TOO_LARGE,
+      meta: {},
+    }),
+    { status: 413, headers: { 'Content-Type': 'application/json' } }
+  )
+
 const readBoundedBody = async (request: Request): Promise<unknown> => {
-  if (!request.body) return null
-
-  const reader = request.body.getReader()
-  const chunks: Uint8Array[] = []
-  let total = 0
-
-  for (;;) {
-    const { done, value } = await reader.read()
-    if (done) break
-    if (value) {
-      total += value.byteLength
-      if (total > MAX_REQUEST_BODY_BYTES) {
-        await reader.cancel()
-        throw new Error('REQUEST_TOO_LARGE')
-      }
-      chunks.push(value)
-    }
-  }
-
-  if (total === 0) return null
-
-  const bytes = new Uint8Array(total)
-  let offset = 0
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset)
-    offset += chunk.byteLength
-  }
-
+  const bytes = await readBoundedBytes(request, MAX_REQUEST_BODY_BYTES)
   const text = new TextDecoder().decode(bytes)
   if (!text.trim()) return null
   try {
@@ -139,19 +125,7 @@ export const withZodValidation = <T>(schema: ZodType<T>) => {
             Number.isFinite(declaredSize) &&
             declaredSize > MAX_REQUEST_BODY_BYTES
           ) {
-            return new Response(
-              JSON.stringify({
-                data: null,
-                status: 413,
-                error: 'Request too large',
-                code: ErrorCodes.REQUEST_TOO_LARGE,
-                meta: {},
-              }),
-              {
-                status: 413,
-                headers: { 'Content-Type': 'application/json' },
-              }
-            )
+            return tooLargeResponse()
           }
         }
       }
@@ -161,19 +135,7 @@ export const withZodValidation = <T>(schema: ZodType<T>) => {
         try {
           body = await readBoundedBody(context.request)
         } catch {
-          return new Response(
-            JSON.stringify({
-              data: null,
-              status: 413,
-              error: 'Request too large',
-              code: ErrorCodes.REQUEST_TOO_LARGE,
-              meta: {},
-            }),
-            {
-              status: 413,
-              headers: { 'Content-Type': 'application/json' },
-            }
-          )
+          return tooLargeResponse()
         }
       }
 

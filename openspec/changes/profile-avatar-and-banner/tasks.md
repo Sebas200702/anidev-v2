@@ -40,7 +40,10 @@
       - metadata stripped.
 
       Tests with generated fixtures.
-- [ ] 2.2 `withImageUpload` wrapper:
+- [x] 2.2 `withImageUpload` wrapper — implemented as the reader
+      `readImageUpload(request)` (`@user/utils/image-upload`), called inside
+      `withErrorHandling` after the session, owner and storage checks, so a
+      rejected caller never makes the server buffer the body:
       - Content-Length and size caps (413);
       - multipart `file` plus crop schema (400 / 415).
 
