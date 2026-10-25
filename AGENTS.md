@@ -311,14 +311,14 @@ Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src
 - **Noise policy**: 4xx capture at `warning` — Rustrak `new_issue`/`regression` alerts should target `error` only (`INFRA_*`, `UNKNOWN_ERROR`) to avoid bot/scraper 400s. For full browser coverage set `PUBLIC_SENTRY_DSN` mirroring `SENTRY_DSN`, and make sure the page CSP `connect-src` allows the Rustrak host.
 
 ## Auth & Middleware
-- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/manga`, `/api/music`, `/api/search`, `/api/producers`, `/api/characters`, `/api/people`, `/api/health`, `/media`, `/showcase`, `/sitemap.xml`, `/sitemaps`, `/robots.txt`
+- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/auth/sign-in/google`, `/api/auth/callback/google`, `/api/anime`, `/api/manga`, `/api/music`, `/api/search`, `/api/producers`, `/api/characters`, `/api/people`, `/api/health`, `/media`, `/showcase`, `/sitemap.xml`, `/sitemaps`, `/robots.txt`
 - Middleware populates `locals.user` / `locals.session` via `resolveAuthActor()` (swallows errors, returns null)
 - For strict auth in API routes: `sessionService.getSession()` throws typed errors
 
 ## Environment (matches `src/config/env.ts`)
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
 - **Required**: `DATABASE_URL`, `REDIS_URL`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars)
-- **Optional**: `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
+- **Optional**: `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (both or neither; enable Google sign-in, redirect URI `${APP_BASE_URL}/api/auth/callback/google`; without them the Google routes answer `404 PROVIDER_NOT_CONFIGURED`), `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 
 ## Skills & Key Guidelines
@@ -330,7 +330,7 @@ Validated eagerly at import via Zod in `src/config/env.ts` — missing required 
 | **React Best Practices** | No barrel imports from large modules; `Promise.all()` for parallel fetches; Suspense boundaries; hoist static I/O; minimize serialization; `React.cache()` for data |
 | **Zod** | `safeParse()` for user input; `z.infer` for type inference; `z.unknown()` not `z.any()`; validate at boundary; `strict()` for incoming data |
 | **Drizzle ORM** | Schema-first with `$inferSelect`/`$inferInsert`; drizzle-kit for migrations; relations for joins |
-| **Better Auth** | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password only |
+| **Better Auth** | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password + optional Google (no implicit account linking — email is unverified; link only from a session via `/api/auth/link/google`). No Better Auth catch-all route: expose endpoints one by one |
 | **tailwind-css-patterns** | Mobile-first; component styles compose utilities directly; `@apply` is reserved for shared global utility classes in `global.css`; extract repeating patterns as components; CSS variables for themes |
 | **TypeScript** | `z.infer` over manual types; branded types for IDs; discriminated unions for states; `unknown` over `any` |
 | **JSDoc** | Follow the installed `jsdoc-typescript-docs` skill and the existing style (`@module`, `@remarks`, `@see`, `@example`, `@throws`) — codebase is heavily documented; keep it single-quote/no-semicolon |
