@@ -15,3 +15,4 @@
 export { userService } from './user'
 export { userListService } from './user-list'
 export { watchProgressService } from './watch-progress'
+export { userPreferencesService } from './user-preferences'
