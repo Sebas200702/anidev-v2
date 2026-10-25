@@ -32,6 +32,8 @@ export const publicRoutes = [
   '/',
   '/api/auth/login',
   '/api/auth/register',
+  '/api/auth/sign-in/google',
+  '/api/auth/callback/google',
   '/api/anime',
   '/api/manga',
   '/api/music',
