@@ -67,7 +67,7 @@ const envSchema = z
   })
   .refine(
     ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }) =>
-      !GOOGLE_CLIENT_ID === !GOOGLE_CLIENT_SECRET,
+      Boolean(GOOGLE_CLIENT_ID) === Boolean(GOOGLE_CLIENT_SECRET),
     {
       message: 'Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or neither',
       path: ['GOOGLE_CLIENT_ID'],

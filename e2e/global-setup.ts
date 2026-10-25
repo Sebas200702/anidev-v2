@@ -21,7 +21,15 @@
  * @see playwright.config.ts — `globalSetup` + `webServer`
  */
 import { type FullConfig, request } from '@playwright/test'
-import { EPISODES_RATE_LIMIT_IP, SEED_ANIME_MAL_ID } from './fixtures/seed-data'
+import {
+  EPISODES_RATE_LIMIT_IP,
+  SEED_ANIME_MAL_ID,
+  SEED_CHARACTER_MAL_ID,
+  SEED_MANGA_MAL_ID,
+  SEED_PERSON_MAL_ID,
+  SEED_PRODUCER_MAL_ID,
+  WARMUP_RATE_LIMIT_IP,
+} from './fixtures/seed-data'
 
 /** Resolve the configured base URL from any project's `use` block. */
 function resolveBaseURL(config: FullConfig): string {
@@ -75,6 +83,42 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
     await context.get(
       `/api/anime/${SEED_ANIME_MAL_ID}/episodes/1`,
       episodeHeaders
+    )
+
+    // Catalog families added later (manga, producers, people, search, SEO):
+    // each is a set of lazy chunks that cold-start races into transient 500s
+    // when the parallel suite hits them first. Warm one route per chunk,
+    // serially, from a dedicated rate-limit bucket so the specs keep theirs.
+    const catalogHeaders = {
+      headers: { 'x-forwarded-for': WARMUP_RATE_LIMIT_IP },
+    }
+    const catalogWarmupPaths = [
+      '/api/manga?page=1&limit=1',
+      `/api/manga/${SEED_MANGA_MAL_ID}`,
+      `/api/manga/${SEED_MANGA_MAL_ID}/full`,
+      '/api/search?q=e2e&type=manga',
+      '/api/producers?limit=1',
+      `/api/producers/${SEED_PRODUCER_MAL_ID}`,
+      `/api/producers/${SEED_PRODUCER_MAL_ID}/anime`,
+      `/api/producers/${SEED_PRODUCER_MAL_ID}/manga`,
+      '/api/characters?query=e2e',
+      `/api/characters/${SEED_CHARACTER_MAL_ID}`,
+      `/api/characters/${SEED_CHARACTER_MAL_ID}/appearances`,
+      '/api/people?query=e2e',
+      `/api/people/${SEED_PERSON_MAL_ID}`,
+      `/api/people/${SEED_PERSON_MAL_ID}/voices`,
+      `/api/people/${SEED_PERSON_MAL_ID}/credits`,
+      `/api/people/${SEED_PERSON_MAL_ID}/music`,
+      '/sitemap.xml',
+      '/sitemaps/static-1.xml',
+      '/robots.txt',
+      '/api/auth/sign-in/google',
+    ]
+    // Strictly one at a time: a chained promise, not a parallel batch.
+    await catalogWarmupPaths.reduce<Promise<unknown>>(
+      (previous, path) =>
+        previous.then(() => context.get(path, catalogHeaders)),
+      Promise.resolve()
     )
 
     // Write/auth path — prime Better Auth register (hashing + insert) and the

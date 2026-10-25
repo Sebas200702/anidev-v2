@@ -148,3 +148,10 @@ export const SEED_CHARACTER_NAME = 'E2E Seed Character'
  */
 export const SEED_PERSON_MAL_ID = 999_000_401
 export const SEED_PERSON_NAME = 'E2E Seed Person'
+
+/**
+ * Forwarded client IP of the catalog warmup in `global-setup.ts`, so priming
+ * the lazy route chunks does not spend the specs' rate-limit budget
+ * (RFC 5737 documentation range).
+ */
+export const WARMUP_RATE_LIMIT_IP = '198.51.100.10'
