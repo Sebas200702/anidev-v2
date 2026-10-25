@@ -26,7 +26,7 @@
 - [x] 1.3 Error codes `STORAGE_NOT_CONFIGURED` (404) and
       `UNSUPPORTED_MEDIA_TYPE` (415), with mapping tests. Env-driven CSP
       `img-src` origin, with a policy test.
-- [ ] 1.4 Migration: `profile.banner`, `avatar_key`, `banner_key` (local
+- [x] 1.4 Migration: `profile.banner`, `avatar_key`, `banner_key` (local
       `db:generate` / `db:migrate`). Read DTO gains `banner`, with mapper
       tests.
 
