@@ -14,8 +14,38 @@ portrait or anime banner from a gallery. But it did so with:
 - no size limit;
 - Pinata IPFS, where nothing can really be deleted.
 
-The decision recorded for Fase 2 is S3-compatible storage: R2 in production,
-MinIO in local Docker.
+The decision recorded for Fase 2 is S3-compatible storage. The storage layer
+is provider-neutral: the app only speaks the S3 API through
+`@aws-sdk/client-s3`, so any S3-compatible backend works by changing env vars.
+Two production routes are documented and neither is hard-coded:
+
+|  | Cloudflare R2 | Self-hosted MinIO |
+|---|---|---|
+| Cost | 10 GB free tier, no egress fees | Free; uses VPS disk and bandwidth |
+| Delivery | Cloudflare global CDN | From the VPS (4c/8GB), no CDN |
+| Operation | Managed | You own backups, TLS, upgrades, disk watch |
+| Dependency | Cloudflare | None |
+
+Local development and CI always run MinIO from `docker compose` (profile
+`storage`), which is also the compose file used to run the stack on the VPS.
+
+### MinIO image status (verified 2026-10-25)
+
+MinIO Community Edition is source-only since October 2025
+(minio/minio#21647) and the repository was archived in April 2026. Pulling
+the official image is not even possible anymore — `docker pull minio/minio`
+fails with *repository does not exist*, the repo was removed from Docker Hub —
+and the last published tags predate the `2025-10-15` security release. So the
+compose stack builds MinIO from pinned CE tags (`docker/minio/Dockerfile`)
+instead of pulling an image. The alternatives if building from source is not
+acceptable:
+
+- **MinIO AIStor Free** (`quay.io/minio/aistor/minio`) — actively released, but
+  under the proprietary MinIO Software License: the free tier is single-node
+  only, requires a license file and forbids encryption at rest.
+- **AGPLv3 forks and community rebuilds** — Garage,
+  `netvark/minio`, `golithus/minio-builds`, `soldevelo/minio`: third parties
+  keep the tags current, at the cost of trusting them.
 
 ## Scope
 
@@ -23,13 +53,19 @@ Backend only.
 
 1. **Optional S3-compatible storage.**
    - Env: `S3_ENDPOINT`, `S3_REGION` (default `auto`), `S3_BUCKET`,
-     `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL`. All set or
-     none.
+     `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL`,
+     `S3_FORCE_PATH_STYLE` (default `true`). All set or none, except
+     `S3_FORCE_PATH_STYLE`, which only overrides the default.
+   - The endpoint is any S3-compatible service (R2, MinIO, …); no provider
+     code paths. `S3_FORCE_PATH_STYLE` defaults to `true` (MinIO); R2 sets
+     it to `false`.
    - Without them, the upload routes answer `404 STORAGE_NOT_CONFIGURED`.
      Gallery picks still work.
    - Uses `@aws-sdk/client-s3`.
    - Docker Compose gains `minio` plus a one-shot bucket init job with a
-     public-read policy.
+     public-read policy, both behind the `storage` profile, so local dev and
+     the VPS use the same services. The image is built from the pinned CE
+     tags (see the MinIO status note above).
 2. **Uploads.**
    - `PUT /api/user/:userId/avatar` and `PUT /api/user/:userId/banner`, owner
      only, as `multipart/form-data`:
@@ -65,9 +101,12 @@ Backend only.
      the app's `/media`, `S3_PUBLIC_URL` and Google's picture host.
 6. **Serving.**
    - Uploaded files are immutable (new key per upload). They are served from
-     `S3_PUBLIC_URL`, an R2 public domain, or MinIO locally.
+     `S3_PUBLIC_URL` — the bucket's public origin, whether an R2 custom
+     domain, a `r2.dev` URL or a self-hosted MinIO behind a reverse proxy.
    - The CSP `img-src` adds that origin from env. The policy stays
      hard-coded otherwise.
+   - A self-hosted MinIO must be exposed with HTTPS on its own domain,
+     because the objects are served publicly from `S3_PUBLIC_URL`.
    - This avoids the `/media` route, whose numeric-id parser and SSRF guard
      (https only, no localhost) do not fit user files.
 7. **Rate limit.** A new `upload` bucket of 10 requests per minute per IP for

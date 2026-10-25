@@ -27,6 +27,18 @@
   is installed.
 - **Infra.** Docker Compose has postgres, dragonfly and rustrak, but no
   object storage.
+- **MinIO distribution (verified 2026-10-25).** `docker pull minio/minio`
+  now fails outright — the repo was removed from Docker Hub, not merely
+  frozen — and the upstream repo is archived (source-only since Oct 2025,
+  minio/minio#21647). So `minio/minio` and `minio/mc` images are not an
+  option; the CE must be built from source. Verified working:
+  `go install github.com/minio/minio@RELEASE.2025-10-15T17-29-55Z` on
+  `golang:1.25-alpine` produces a server that creates buckets, applies the
+  anonymous-download policy and serves objects (200, public GET).
+  `mc` works the same way at `RELEASE.2025-08-13T08-35-41Z`. Both report
+  `DEVELOPMENT.GOGET` unless the `Version`/`ReleaseTag` ldflags from
+  `buildscripts/gen-ldflags.go` are passed — cosmetic for auth (confirmed:
+  no version gating on IAM), but required to audit which build is running.
 
 ## 2. Decisions
 
@@ -34,14 +46,21 @@
    - Every upload gets a fresh key (`users/{userId}/{kind}/{uuid}.webp`), so
      objects are immutable and CDN-cacheable forever. Replacement never
      needs invalidation.
-   - `S3_PUBLIC_URL` is the R2 custom domain or `r2.dev` URL, or
+   - `S3_PUBLIC_URL` is the bucket's public origin: the R2 custom domain or
+     `r2.dev` URL in production, the self-hosted MinIO reverse-proxy URL, or
      `http://localhost:9000/<bucket>` locally.
+   - The storage client is provider-neutral (S3 API only). The one setting
+     that differs by backend is the request path style — `true` for MinIO,
+     `false` for R2 — exposed as `S3_FORCE_PATH_STYLE` defaulting to `true`,
+     so no provider branch exists in code.
    - The CSP builder adds `new URL(S3_PUBLIC_URL).origin` to `img-src` when
      set. That is the only env-driven part of the policy.
    - Gallery picks keep using `/media` (`buildMediaUrl`), which is already
      covered by `'self'`.
 2. **New domain unit `@lib/storage`** (infrastructure, like `@lib/cache`):
-   - an `S3Client` built lazily from env (`forcePathStyle: true` for MinIO);
+   - an `S3Client` built lazily from env, with `forcePathStyle` defaulting
+     to `true` and overridable per env, so MinIO (path-style) and R2
+     (virtual-hosted-style) both work with the same code;
    - `putObject(key, bytes, contentType)`, `deleteObject(key)` and
      `publicUrl(key)`;
    - `isStorageEnabled()`.
@@ -96,12 +115,25 @@
    limit of 10 per 60 s. Gallery and DELETE calls stay in the general
    bucket.
 9. **Docker Compose.**
-   - `minio` (`minio/minio`, ports 9000/9001, volume `minio_data`).
-   - `minio-init` (`minio/mc`) creates the bucket and sets `anonymous
-     download`.
-   - `.env.local.example` gets the local values; `.env.example` documents
-     R2 (endpoint `https://<account>.r2.cloudflarestorage.com`, region
-     `auto`).
+   - `minio` and `minio-init` are added behind the `storage` profile, so the
+     default `docker compose up -d` (app on the host) still skips them and
+     nothing changes for existing local work.
+   - `minio` builds from `docker/minio/Dockerfile`, which compiles the CE
+     from the pinned `MINIO_TAG` / `MC_TAG`. The same image serves both the
+     object store and the one-shot init job (`mc` is baked in).
+   - `minio-init` (`minio/mc` entrypoint on that same image) creates the
+     bucket and sets `anonymous download`.
+   - Ports 9000 (API) / 9001 (console), volume `minio_data`.
+   - `.env.local.example` gets the local values. `.env.example` documents
+     both production routes without choosing one: R2 (endpoint
+     `https://<account>.r2.cloudflarestorage.com`, region `auto`,
+     `S3_FORCE_PATH_STYLE=false`) and self-hosted MinIO (own HTTPS endpoint
+     behind Caddy/nginx, `S3_FORCE_PATH_STYLE=true`).
+   - The `app` service forwards every `S3_*` with a `:-` (empty) default, so
+     the preview profile boots with or without storage. `env.ts` must treat
+     an empty string as unset — the `optionalSecret` preprocess already used
+     for `GOOGLE_*` — otherwise the all-or-none superRefine would reject a
+     compose that simply did not configure storage.
 10. **Errors.** New codes `STORAGE_NOT_CONFIGURED` (404) and
     `UNSUPPORTED_MEDIA_TYPE` (415). The 413 path reuses the existing
     payload-too-large mapping of `withZodValidation`.
@@ -111,8 +143,26 @@
 - **sharp decode of hostile files.** This is bounded by the 5 MiB cap,
   `limitInputPixels` and `failOn`. sharp/libvips is the same surface the
   `/media` pipeline already exposes.
-- **R2 public access** must be enabled on the bucket, or served through a
-  custom domain. That is documented in the PR, together with the production
-  env checklist.
-- **E2E needs MinIO.** CI gains a MinIO service container and the bucket
-  init step, kept as small as the Postgres/Dragonfly ones.
+- **Bucket public access.** Whether R2 or MinIO, the bucket must allow
+  anonymous reads (or sit behind a public custom domain), since uploads are
+  served straight from `S3_PUBLIC_URL`. The env checklist for each route is
+  documented in the PR.
+- **MinIO has no upstream patches.** The CE is archived, so the pinned tags
+  in `docker/minio/Dockerfile` are final: any new CVE means re-evaluating
+  the route, not bumping a tag. This is the central trade-off of
+  self-hosting MinIO today and the reason R2 stays a first-class option in
+  the proposal.
+- **AGPLv3 obligations.** Running an AGPLv3 service alongside our own code
+  does not by itself relicense AniDev, but the AGPL network-use clause is
+  real: serving the app to users over a network obliges offering its
+  corresponding source. AniDev is public on GitHub, so this is satisfied;
+  it must stay that way while MinIO is self-hosted.
+- **MinIO ops land on the VPS.** Disk watch, backups of the `minio_data`
+  volume, TLS/reverse proxy and upgrades are ours. Upload traffic leaves
+  the VPS (4c/8GB) with no CDN.
+- **`minio-init` must be one invocation.** `mc` persists the alias in
+  `~/.mc`, so the bucket creation and the public-read policy have to run in
+  a single container session; split commands lose the alias and fail with
+  `403 AccessDenied`, which reads like a credential problem but is not.
+- **E2E needs MinIO.** CI gains a MinIO build plus the bucket init step,
+  kept as small as the Postgres/Dragonfly ones.

@@ -22,13 +22,14 @@ Rustrak operations live in `.opencode/skills/rustrak/`.
 
 Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invalid required var fails fast.
 
-### Local stack (PostgreSQL + Dragonfly + Rustrak)
+### Local stack (PostgreSQL + Dragonfly + Rustrak + MinIO)
 
 For development you can stand up the self-hosted target stack entirely on your
 machine (no external accounts needed):
 
 ```bash
 docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :8080
+docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
 ```
 
 - Local credentials live in `.env.local.example` (copy to `.env.local`) and
@@ -37,12 +38,18 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
   RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, …) from the project `.env`;
   copy `.env.local.example` → `.env` (or export the vars) before
   `docker compose up -d`.
+- The `storage` profile additionally needs MINIO_ROOT_USER, MINIO_ROOT_PASSWORD
+  and S3_BUCKET, and starts a one-shot `minio-init` job that creates the bucket
+  with public-read. MinIO is **built from source** (`docker/minio/Dockerfile`)
+  because upstream no longer publishes CE images, so the first `--profile
+  storage up` compiles it (a few minutes); later runs reuse the image.
 - Apply migrations against the local DB with `bun run db:migrate`.
 - Dashboard UIs: Rustrak UI is on `http://localhost:3000` (create a project there
   to get a full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`);
-  the Rustrak server API itself listens on `http://localhost:8080`.
-- Named `postgres_data` / `dragonfly_data` / `rustrak_data` volumes persist across
-  `docker compose down`; add `-v` to wipe them too.
+  the Rustrak server API itself listens on `http://localhost:8080`; the MinIO
+  console is on `http://localhost:9001`.
+- Named `postgres_data` / `dragonfly_data` / `rustrak_data` / `minio_data`
+  volumes persist across `docker compose down`; add `-v` to wipe them too.
 
 ## Commands
 

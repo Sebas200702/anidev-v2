@@ -7,8 +7,16 @@
 
 - [ ] 1.1 Env:
       - `S3_*`, all or none, plus `isStorageEnabled()` (tests first);
-      - document them in `.env.example` and `.env.local.example`;
-      - add `minio` and `minio-init` to `docker-compose.yml`.
+      - document them in `.env.example` and `.env.local.example`.
+      - add `minio` and `minio-init` to `docker-compose.yml`, behind the
+        `storage` profile.
+        **Compose and env docs done ahead of the rest of the change** (`env.ts`
+        and `isStorageEnabled()` still pending) — compose + `docker/minio/Dockerfile`
+        + env docs land with this proposal, since the storage
+        decision needed a backend that actually runs. The image is built
+        from the pinned CE tags — `minio/minio` no longer exists on Docker
+        Hub — and `minio-init` runs alias set + `mb` + `anonymous set` in a
+        single container session.
 - [ ] 1.2 `bun add @aws-sdk/client-s3`. Then `@lib/storage`:
       - lazy client;
       - `putObject`, `deleteObject`, `publicUrl`.
@@ -58,7 +66,9 @@
 
 ## 4. Verification, release & archive
 
-- [ ] 4.1 CI: MinIO service plus bucket init in the `e2e` job. E2E:
+- [ ] 4.1 CI: build the MinIO image (`docker/minio`) and run the bucket init
+      in the `e2e` job — there is no pullable upstream image, so the job
+      builds it (Go module cache makes the second run cheap). E2E:
       - upload avatar with crop (fetch the public URL: 200, `image/webp`);
       - replace (old object 404);
       - SVG → 415;
@@ -66,5 +76,6 @@
       - character pick;
       - reset.
 - [ ] 4.2 Full gate, AGENTS.md (env, storage, routes), ROADMAP (Fase 2),
-      release minor, PR with the production R2 checklist, merge, push tag,
-      archive.
+      release minor, PR with the production storage checklist (R2 **and**
+      self-hosted MinIO: endpoints, `S3_FORCE_PATH_STYLE`, public bucket
+      access, reverse proxy, backups), merge, push tag, archive.
