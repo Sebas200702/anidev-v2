@@ -17,7 +17,7 @@
         from the pinned CE tags — `minio/minio` no longer exists on Docker
         Hub — and `minio-init` runs alias set + `mb` + `anonymous set` in a
         single container session.
-- [ ] 1.2 `bun add @aws-sdk/client-s3`. Then `@lib/storage`:
+- [x] 1.2 `bun add @aws-sdk/client-s3`. Then `@lib/storage`:
       - lazy client;
       - `putObject`, `deleteObject`, `publicUrl`.
 

@@ -69,6 +69,8 @@ export const ErrorCodes = {
   DB_ERROR: 'DB_ERROR',
   /** Cache layer failure — HTTP 500, Sentry. */
   CACHE_ERROR: 'CACHE_ERROR',
+  /** Object storage (S3-compatible) operation failed — HTTP 503, Sentry. */
+  STORAGE_ERROR: 'STORAGE_ERROR',
   /** Upstream external API failure — HTTP 500, Sentry. */
   EXTERNAL_API_ERROR: 'EXTERNAL_API_ERROR',
 
