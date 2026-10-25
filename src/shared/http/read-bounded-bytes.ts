@@ -29,8 +29,8 @@ const concat = (chunks: Uint8Array[], total: number) => {
 export const readBoundedBytes = async (
   request: Request,
   maxBytes: number
-): Promise<Uint8Array> => {
-  if (!request.body) return new Uint8Array()
+): Promise<Uint8Array<ArrayBuffer>> => {
+  if (!request.body) return new Uint8Array(0)
 
   const reader = request.body.getReader()
   const chunks: Uint8Array[] = []

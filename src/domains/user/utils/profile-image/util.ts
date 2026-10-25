@@ -8,7 +8,7 @@
  * at load, and the WebP output carries no metadata (sharp drops it unless
  * `withMetadata` is called).
  */
-import sharp from 'sharp'
+import sharp, { type Sharp } from 'sharp'
 import {
   PROFILE_IMAGE_HEIF_COMPRESSION,
   PROFILE_IMAGE_INPUT_FORMATS,
@@ -31,7 +31,7 @@ const isAcceptedFormat = (format?: string, compression?: string) => {
   return format !== 'heif' || compression === PROFILE_IMAGE_HEIF_COMPRESSION
 }
 
-const readMetadata = async (image: sharp.Sharp) => {
+const readMetadata = async (image: Sharp) => {
   try {
     return await image.metadata()
   } catch {

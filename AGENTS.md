@@ -65,7 +65,7 @@ docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
 | `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
 | `bun run test` | Vitest unit suite (`vitest run`; TDD — see Testing below). DB-integration specs auto-skip (no `RUN_DB_TESTS`) |
 | `bun run test:watch` | Vitest watch mode |
-| `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`) |
+| `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`; the storage spec also needs the `storage` profile and `S3_*`) |
 | `bun run test:e2e` | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below) |
 | `bun run test:e2e:ui` | Playwright interactive UI mode |
 | `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
@@ -306,6 +306,8 @@ Two composition styles:
 1. `withZodValidation(schema)(handler)` — validates `{ params, query, body }` as single Zod object, returns 400 on failure
 2. Error handling: `withErrorHandling(handler)` (try/catch wrapper) OR manual try/catch + `mapErrorToHttp(error)`
 
+`withZodValidation` reads JSON only (1 MiB cap). File uploads skip it: profile image routes (`PUT /api/user/:userId/avatar|banner`, `multipart/form-data`) call `readImageUpload(request)` from `@user/utils/image-upload` inside `withErrorHandling`, after the session/owner/storage checks, so rejected callers never make the server buffer the body (5 MiB cap, `413 REQUEST_TOO_LARGE`, `415 UNSUPPORTED_MEDIA_TYPE`). Uploads are rate-limited separately (`rl:upload:<ip>`, 10/min). Uploaded objects live in `@lib/storage` under server-generated keys and are served from `S3_PUBLIC_URL`, not `/media`.
+
 Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`. `InfraError` maps to 503 with a `Retry-After` header and the original `code` preserved (e.g. `DB_ERROR`); stale-serve responses surface `meta.stale === true` as an `x-stale: true` header via `jsonResponse`. Dependencies are probed per-component by `GET /api/health/readiness` (200 when all up, 503 under the `/api/health` public prefix).
 
 ## Monitoring & Error Capture (Rustrak / Sentry SDK)
@@ -325,7 +327,7 @@ Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src
 ## Environment (matches `src/config/env.ts`)
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
 - **Required**: `DATABASE_URL`, `REDIS_URL`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars)
-- **Optional**: `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (both or neither; enable Google sign-in, redirect URI `${APP_BASE_URL}/api/auth/callback/google`; without them the Google routes answer `404 PROVIDER_NOT_CONFIGURED`), `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
+- **Optional**: `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (both or neither; enable Google sign-in, redirect URI `${APP_BASE_URL}/api/auth/callback/google`; without them the Google routes answer `404 PROVIDER_NOT_CONFIGURED`), `S3_ENDPOINT` + `S3_BUCKET` + `S3_ACCESS_KEY_ID` + `S3_SECRET_ACCESS_KEY` + `S3_PUBLIC_URL` (all or none; S3-compatible storage for profile avatar/banner uploads — Cloudflare R2 or self-hosted MinIO, see `.env.example`; `S3_REGION` defaults to `auto`, `S3_FORCE_PATH_STYLE` to `true` (set `false` for R2); without them the upload routes answer `404 STORAGE_NOT_CONFIGURED` and `S3_PUBLIC_URL`'s origin is not added to the CSP `img-src`), `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 
 ## Skills & Key Guidelines
