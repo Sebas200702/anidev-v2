@@ -10,6 +10,7 @@
  * @see {@link userProfileSchema}
  */
 import { z } from 'zod'
+import { FANATIC_LEVELS, WATCH_FREQUENCIES } from '@user/constants'
 
 /**
  * Optional fan engagement level for user preferences.
@@ -26,7 +27,7 @@ import { z } from 'zod'
  * fanaticLevelSchema.parse(undefined) // undefined
  * ```
  */
-export const fanaticLevelSchema = z.enum(['low', 'medium', 'high']).optional()
+export const fanaticLevelSchema = z.enum(FANATIC_LEVELS).optional()
 
 /**
  * Optional viewing frequency for user preferences.
@@ -42,7 +43,7 @@ export const fanaticLevelSchema = z.enum(['low', 'medium', 'high']).optional()
  * frequencySchema.parse('weekly') // 'weekly'
  * ```
  */
-export const frequencySchema = z.enum(['daily', 'weekly', 'monthly']).optional()
+export const frequencySchema = z.enum(WATCH_FREQUENCIES).optional()
 
 /**
  * Validates nested user preference fields.
