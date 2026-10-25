@@ -27,6 +27,13 @@ const { login, register, getSession, logout } = vi.hoisted(() => ({
   logout: vi.fn(),
 }))
 
+const { getUserProfileById } = vi.hoisted(() => ({
+  getUserProfileById: vi.fn(),
+}))
+vi.mock('@user/repositories/user', () => ({
+  userRepository: { getUserProfileById },
+}))
+
 vi.mock('@auth/services', () => ({
   credentialsService: { login, register },
   sessionService: { getSession, logout },
@@ -95,17 +102,37 @@ describe('POST /api/auth/register', () => {
 })
 
 describe('GET /api/auth/session', () => {
-  it('returns the current session', async () => {
-    getSession.mockResolvedValue({ user: { id: 1 } })
-
+  const getSessionBody = async () => {
     const res = await (sessionRoute as RouteFn)({
       request: new Request('http://localhost:4321/api/auth/session'),
       params: {},
     })
-    const body = await res.json()
-
     expect(res.status).toBe(200)
-    expect(body.data).toEqual({ user: { id: 1 } })
+    return res.json()
+  }
+
+  it('returns the session with the onboarding status', async () => {
+    getSession.mockResolvedValue({ user: { id: 'u1' } })
+    getUserProfileById.mockResolvedValue({ gender: 'female', birthday: null })
+
+    const body = await getSessionBody()
+    expect(body.data).toEqual({
+      user: { id: 'u1' },
+      profileStatus: 'incomplete',
+    })
+    expect(getUserProfileById).toHaveBeenCalledWith('u1')
+  })
+
+  it('reports missing when there is no profile row', async () => {
+    getSession.mockResolvedValue({ user: { id: 'u1' } })
+    getUserProfileById.mockResolvedValue(undefined)
+    expect((await getSessionBody()).data.profileStatus).toBe('missing')
+  })
+
+  it('returns null data without a session', async () => {
+    getSession.mockResolvedValue(null)
+    expect((await getSessionBody()).data).toBeNull()
+    expect(getUserProfileById).not.toHaveBeenCalled()
   })
 })
 
