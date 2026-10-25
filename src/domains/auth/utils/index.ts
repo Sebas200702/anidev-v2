@@ -26,3 +26,4 @@
 export { mapBetterAuthError } from './map-better-auth-error'
 export { requireAuthSession } from './require-auth'
 export type { AuthLocals } from './require-auth'
+export { sanitizeCallbackURL } from './callback-url'
