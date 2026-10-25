@@ -4,11 +4,16 @@
 #   - postgres (app database)
 #   - dragonfly (Redis-compatible cache)
 #   - rustrak (Sentry-compatible error tracking)
+#   - minio (S3-compatible object storage, profile "storage": built from the
+#     MinIO CE source — upstream no longer publishes images)
 #   - app (optional, profile "preview": the built Astro/Bun server in Docker)
 #
 # USE:
 #   Dev (default):      docker compose up -d        -> only infra services.
 #                       Then run the app on the host: bun run dev (uses localhost URLs).
+#   With object storage: docker compose --profile storage up -d --build
+#                       starts minio and creates the public-read bucket
+#                       (S3_BUCKET) via the one-shot minio-init job.
 #   Preview (Docker):   docker compose --profile preview up -d --build app
 #                       serves the app at http://localhost:4321 from a container.
 #
@@ -24,6 +29,8 @@
 # "Local stack" section of AGENTS.md): POSTGRES_USER, POSTGRES_PASSWORD,
 # POSTGRES_DB, REDIS_URL, APP_BASE_URL, BETTER_AUTH_SECRET,
 # RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, SENTRY_DSN.
+# The `storage` profile additionally requires MINIO_ROOT_USER,
+# MINIO_ROOT_PASSWORD and S3_BUCKET.
 # With `docker compose`, unset variables that are required cause configuration
 # to fail rather than falling back to insecure defaults.
 
@@ -42,6 +49,16 @@ services:
       - APP_BASE_URL=${APP_BASE_URL:?set APP_BASE_URL in .env}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
       - SENTRY_DSN=${SENTRY_DSN:?set SENTRY_DSN in .env}
+      # Object storage (optional: all S3_* or none; see `.env.example`).
+      # Inside the compose network the endpoint is the service name, so it
+      # differs from the host-dev value (http://localhost:9000).
+      - S3_ENDPOINT=${S3_ENDPOINT:-}
+      - S3_REGION=${S3_REGION:-}
+      - S3_BUCKET=${S3_BUCKET:-}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID:-}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY:-}
+      - S3_PUBLIC_URL=${S3_PUBLIC_URL:-}
+      - S3_FORCE_PATH_STYLE=${S3_FORCE_PATH_STYLE:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -108,7 +125,57 @@ services:
     depends_on:
       - rustrak
 
+  # S3-compatible object storage. Built from the MinIO CE source because
+  # upstream stopped publishing images (see docker/minio/Dockerfile).
+  minio:
+    build:
+      context: ./docker/minio
+    profiles: ['storage']
+    restart: unless-stopped
+    ports:
+      # Loopback only: the reverse proxy (prod) and the host app (dev) reach it
+      # locally; the console holds root credentials.
+      - '127.0.0.1:9000:9000'
+      - '127.0.0.1:9001:9001'
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+    healthcheck:
+      # busybox wget ships with the alpine base image; the health endpoint
+      # answers before the console is up.
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:9000/minio/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # One-shot bucket bootstrap. `mc` stores its alias in ~/.mc, so the alias
+  # set, the bucket creation and the anonymous-read policy have to run in a
+  # single container invocation — splitting them loses the alias and fails
+  # with a misleading 403.
+  minio-init:
+    build:
+      context: ./docker/minio
+    profiles: ['storage']
+    restart: 'no'
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+      - S3_BUCKET=${S3_BUCKET:?set S3_BUCKET in .env}
+    entrypoint: >
+      /bin/sh -ec "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} >/dev/null;
+      mc mb --ignore-existing local/$${S3_BUCKET};
+      mc anonymous set download local/$${S3_BUCKET};
+      echo \"bucket $${S3_BUCKET} ready\"
+      "
+
 volumes:
   postgres_data:
   dragonfly_data:
   rustrak_data:
+  minio_data:

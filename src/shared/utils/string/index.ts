@@ -12,3 +12,4 @@ export {
   type NormalizeStringOptions,
   normalizeString,
 } from './normalize-string-util'
+export { stripTrailingSlashes } from './trailing-slash-util'

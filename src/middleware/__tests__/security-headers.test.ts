@@ -3,7 +3,9 @@
  *
  * @module middleware/__tests__/security-headers
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+vi.mock('@config/env', () => ({ env: {} }))
+
 import { applySecurityHeaders } from '@middleware/security-headers'
 import { CONTENT_SECURITY_POLICY } from '@middleware/security-headers'
 

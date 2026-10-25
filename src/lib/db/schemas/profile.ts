@@ -37,6 +37,10 @@ export const profile = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     avatar: text('avatar'),
+    banner: text('banner'),
+    // Storage keys of uploaded images; null for gallery picks and defaults.
+    avatarKey: text('avatar_key'),
+    bannerKey: text('banner_key'),
     name: text('name').notNull(),
     lastName: text('last_name').notNull(),
     birthday: text('birthday'),

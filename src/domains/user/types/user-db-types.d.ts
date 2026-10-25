@@ -24,6 +24,8 @@ import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
  * | `id` | `string` | no | Primary key; public profile identifier |
  * | `userId` | `number` | no | FK to auth `user.id` |
  * | `avatar` | `string` | yes | Avatar URL or path |
+ * | `banner` | `string` | yes | Banner URL or path |
+ * | `avatarKey` / `bannerKey` | `string` | yes | Storage keys of uploaded images (server only) |
  * | `name` | `string` | no | Given name |
  * | `lastName` | `string` | no | Family name |
  * | `birthday` | `string` | yes | Birth date string |

@@ -23,6 +23,8 @@ import type { MapUserProfileInput } from './types'
  * **Field transformations:**
  *
  * - `avatar` — falls back to `'/placeholder.webp'` when null.
+ * - `banner` — `null` until the owner uploads or picks one; storage keys are
+ *   never exposed.
  * - `birthday` — mapped with `?? undefined` so a nullable DB value becomes an
  *   absent field (matches the optional schema).
  * - `gender` — cast to {@link UserProfile} gender union.
@@ -89,6 +91,7 @@ export const mapUserProfile = ({
   return {
     id: userProfile.id,
     avatar: userProfile.avatar ?? '/placeholder.webp',
+    banner: userProfile.banner,
     name: userProfile.name,
     lastName: userProfile.lastName,
     birthday: userProfile.birthday ?? undefined,

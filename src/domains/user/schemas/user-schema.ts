@@ -34,6 +34,12 @@ import {
 // `@user/schemas`. Import them from there or from
 // `@user/schemas/user-preferences-schema` directly.
 
+// Either an absolute URL (OAuth/CDN/storage) or an origin-relative media/proxy
+// path beginning with a single '/' (e.g. '/placeholder.webp'). Rejects empty,
+// arbitrary, and protocol-relative ('//host') strings. Not a plain z.string()
+// (too loose) nor z.url() (would 500 valid relative-path avatars).
+const imageUrlSchema = z.union([z.url(), z.string().regex(/^\/(?!\/)/)])
+
 /**
  * Validates the public user profile payload.
  *
@@ -60,11 +66,8 @@ import {
  */
 export const userProfileSchema = z.object({
   id: z.string(),
-  // Either an absolute URL (OAuth/CDN) or an origin-relative media/proxy path
-  // beginning with a single '/' (e.g. '/placeholder.webp'). Rejects empty,
-  // arbitrary, and protocol-relative ('//host') strings. Not a plain z.string()
-  // (too loose) nor z.url() (would 500 valid relative-path avatars).
-  avatar: z.union([z.url(), z.string().regex(/^\/(?!\/)/)]).optional(),
+  avatar: imageUrlSchema.optional(),
+  banner: imageUrlSchema.nullable().optional(),
   name: z.string().min(1),
   lastName: z.string().min(1),
   birthday: z.string().optional(),

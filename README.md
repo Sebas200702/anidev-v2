@@ -84,7 +84,9 @@ There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
 
 For local development against the full self-hosted stack (PostgreSQL +
 Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
-→ `.env.local` (local credentials, separate from production).
+→ `.env.local` (local credentials, separate from production). Object storage
+(MinIO, for profile avatar/banner uploads) is optional and lives behind the
+`storage` profile: `docker compose --profile storage up -d --build`.
 
 ## Commands
 

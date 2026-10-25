@@ -20,7 +20,7 @@ import { ErrorCodes } from '@shared/errors/codes'
  * @remarks
  * - **Code:** `ANIME_NOT_FOUND`
  * - **Details:** `{ malId: number }`
- * - **HTTP:** 404 (`DomainError` + `NOT_FOUND_DOMAIN_CODES` in {@link mapErrorToHttp})
+ * - **HTTP:** 404 (`DomainError` + `NOT_FOUND_DOMAIN_CODES` in `domain-error-http-map.ts`)
  *
  * @example
  * ```typescript

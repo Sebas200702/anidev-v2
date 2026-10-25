@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.17.0...v0.18.0) (2026-10-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **user:** PATCH/POST de perfil rechaza avatares con URL externa
+arbitraria (400 VALIDATION_ERROR).
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+
+### Features
+
+* **config:** S3_* opcionales todo-o-nada e isStorageEnabled ([131b226](https://github.com/Sebas200702/docs-hackathon/commit/131b226cd81a31599990b48f36ec61cb333f73ef))
+* **errors:** STORAGE_NOT_CONFIGURED/UNSUPPORTED_MEDIA_TYPE y CSP con origen de storage ([60a81b9](https://github.com/Sebas200702/docs-hackathon/commit/60a81b9430e8a5938b4a9f9cd86c088e4eb76ab4))
+* **storage:** cliente S3 perezoso con put, delete y URL pública ([e05dc5e](https://github.com/Sebas200702/docs-hackathon/commit/e05dc5e0e3bd5ca392ca7c858b21a543767cc09a))
+* **user:** bucket de rate limit para subidas y allowlist de avatar ([7fbff83](https://github.com/Sebas200702/docs-hackathon/commit/7fbff83c52ebbf9f9c627fb9ade23ca949aabd1b))
+* **user:** columnas banner, avatar_key y banner_key; banner en el DTO ([dc4801d](https://github.com/Sebas200702/docs-hackathon/commit/dc4801d77a97dfb45b31f9542054842aaabc412e))
+* **user:** processProfileImage con sharp (formato real, EXIF, crop, WebP) ([65ea4a9](https://github.com/Sebas200702/docs-hackathon/commit/65ea4a9dccda1c29c8b62a1d3dfddc03d08d68a3))
+* **user:** profileImageService para subida, picks de galería y reset ([35b81a4](https://github.com/Sebas200702/docs-hackathon/commit/35b81a4ef3808654f74dc95a9cfd52493b9842b0))
+* **user:** readImageUpload multipart acotado a 5 MiB con crop validado ([e4a6939](https://github.com/Sebas200702/docs-hackathon/commit/e4a6939877f12e07a243c45e31afb098c177af5b))
+* **user:** rutas PUT/DELETE de avatar y banner y picks de galería ([ac338ed](https://github.com/Sebas200702/docs-hackathon/commit/ac338ed7fe11e740a5813212322503bad0dc2860))
+
+
+### Bug Fixes
+
+* **config:** S3_FORCE_PATH_STYLE estricto y salida del wait de MinIO en CI ([20cec98](https://github.com/Sebas200702/docs-hackathon/commit/20cec988e7661fa4a5aba2733295feae41106d56))
+
 ## [0.17.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.16.0...v0.17.0) (2026-10-25)
 
 

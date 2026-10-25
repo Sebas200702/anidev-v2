@@ -26,11 +26,11 @@ import {
   ValidationError,
 } from '@shared/errors/app-error'
 import { captureError } from '@shared/errors/capture-error'
+import { mapDomainErrorToHttp } from '@shared/errors/domain-error-http-map'
 import type { HttpErrorResponse } from '@shared/errors/http-error-types'
 import {
   buildAppErrorBody,
   mapAuthErrorToHttp,
-  mapDomainErrorToHttp,
   mapInfraErrorToHttp,
   mapRateLimitedErrorToHttp,
   mapResponseValidationErrorToHttp,

@@ -119,7 +119,7 @@ El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
 _(Change semilla: `relational-lists-and-watch-progress`.)_
 
-- [ ] **Perfil completo** — avatar (subida + recorte vía dominio media/Pinata), preferencias (color de énfasis, control parental), campos extendidos para IA (géneros/estudios favoritos, nivel de fanatismo, frecuencia, formato preferido).
+- [ ] **Perfil completo** — _avatar y banner ✅ en backend (change `profile-avatar-and-banner`: subida con recorte a storage S3-compatible —R2 o MinIO auto-hospedado—, picks de galería de personaje/anime y reset; falta la UI)._ — avatar (subida + recorte), preferencias (color de énfasis, control parental), campos extendidos para IA (géneros/estudios favoritos, nivel de fanatismo, frecuencia, formato preferido).
 - [ ] **OAuth e importación externa** — _Google ✅ (change archivado `google-oauth-and-profile`: sign-in, callback, link explícito, `profileStatus`, `PATCH /api/user/:userId/preferences`); importación MAL/AniList pendiente (change 3/3)._ — flujos de proveedores además de email/password + importación/sincronización idempotente de listas con **MyAnimeList** y **AniList** aprovechando `anime.mal_id` y `anime_external_ids`.
 - [ ] **Listas de anime relacionales (`user_anime_list`)** — _API lista (change archivado `relational-lists-and-watch-progress`); falta la UI y el sync de cliente (`watch-progress-client-sync`)._ — reemplaza el CSV `profile.favorite_animes` por una tabla relacional con estados (`watching`, `completed`, `plan_to_watch`, `on_hold`, `dropped`), `is_favorite`, `score` (1–10) y add/remove **optimista + deshacer**.
 
