@@ -32,7 +32,7 @@
 
 ## 2. Images
 
-- [ ] 2.1 `processProfileImage` (pure sharp):
+- [x] 2.1 `processProfileImage` (pure sharp):
       - format detection (415 for SVG, text and others);
       - EXIF rotate;
       - crop bounds (400);
