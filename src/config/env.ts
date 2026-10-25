@@ -21,6 +21,12 @@
  */
 import { z } from 'zod'
 
+/** Optional credential: an empty string counts as unset. */
+const optionalSecret = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z.string().min(1).optional()
+)
+
 /**
  * Zod schema defining required and optional environment variables.
  *
@@ -35,23 +41,38 @@ import { z } from 'zod'
  * @property APP_BASE_URL - Public origin used as Better Auth base URL and SEO canonical.
  * @property BETTER_AUTH_SECRET - Session signing secret; minimum 32 characters.
  * @property LOG_LEVEL - Optional Pino/log level; one of trace through fatal.
+ * @property GOOGLE_CLIENT_ID - Optional Google OAuth client id; set together
+ *   with `GOOGLE_CLIENT_SECRET` to enable Google sign-in.
+ * @property GOOGLE_CLIENT_SECRET - Optional Google OAuth client secret.
  */
-const envSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'test', 'production'])
-    .default('development'),
+const envSchema = z
+  .object({
+    NODE_ENV: z
+      .enum(['development', 'test', 'production'])
+      .default('development'),
 
-  DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
-  REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
+    DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
+    REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
 
-  SENTRY_DSN: z.string().optional(),
+    SENTRY_DSN: z.string().optional(),
 
-  APP_BASE_URL: z.url(),
-  BETTER_AUTH_SECRET: z.string().min(32),
-  LOG_LEVEL: z
-    .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
-    .optional(),
-})
+    APP_BASE_URL: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(32),
+    LOG_LEVEL: z
+      .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
+      .optional(),
+
+    GOOGLE_CLIENT_ID: optionalSecret,
+    GOOGLE_CLIENT_SECRET: optionalSecret,
+  })
+  .refine(
+    ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }) =>
+      !GOOGLE_CLIENT_ID === !GOOGLE_CLIENT_SECRET,
+    {
+      message: 'Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or neither',
+      path: ['GOOGLE_CLIENT_ID'],
+    }
+  )
 
 /**
  * Parsed and validated environment configuration for the running process.
@@ -82,4 +103,6 @@ export const env = envSchema.parse({
   APP_BASE_URL: process.env.APP_BASE_URL,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   LOG_LEVEL: process.env.LOG_LEVEL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 })
