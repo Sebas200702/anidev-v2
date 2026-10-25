@@ -64,7 +64,7 @@
       - `DELETE …/avatar` and `…/banner`.
 
       Owner checks. Route tests (200, 400, 401, 403, 404, 413, 415).
-- [ ] 3.3 Upload rate-limit bucket (10/min/IP), with tests. Identity schema
+- [x] 3.3 Upload rate-limit bucket (10/min/IP), with tests. Identity schema
       avatar allowlist, with tests.
 
 ## 4. Verification, release & archive

@@ -64,3 +64,6 @@ export const PROFILE_IMAGE_CONTENT_TYPE = 'image/webp'
 
 /** `anime_media.media_type` of the art a profile banner can be picked from. */
 export const PROFILE_BANNER_MEDIA_TYPE = 'banner'
+
+/** Google profile pictures (`profile.avatar` from Google sign-in). */
+export const GOOGLE_AVATAR_URL_PREFIX = 'https://lh3.googleusercontent.com/'
