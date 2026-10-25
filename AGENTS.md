@@ -40,9 +40,13 @@ docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
   `docker compose up -d`.
 - The `storage` profile additionally needs MINIO_ROOT_USER, MINIO_ROOT_PASSWORD
   and S3_BUCKET, and starts a one-shot `minio-init` job that creates the bucket
-  with public-read. MinIO is **built from source** (`docker/minio/Dockerfile`)
-  because upstream no longer publishes CE images, so the first `--profile
-  storage up` compiles it (a few minutes); later runs reuse the image.
+  with public-read. The `minio`/`minio-init` services and the `minio_data`
+  volume live in **`docker-compose.storage.yml`**, which this file pulls in
+  through `include:` — so the same stack also deploys on its own in production
+  (see "Production storage" below). MinIO is **built from source**
+  (`docker/minio/Dockerfile`) because upstream no longer publishes CE images, so
+  the first `--profile storage up` compiles it (a few minutes); later runs reuse
+  the image.
 - Apply migrations against the local DB with `bun run db:migrate`.
 - Dashboard UIs: Rustrak UI is on `http://localhost:3000` (create a project there
   to get a full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`);
@@ -50,6 +54,61 @@ docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
   console is on `http://localhost:9001`.
 - Named `postgres_data` / `dragonfly_data` / `rustrak_data` / `minio_data`
   volumes persist across `docker compose down`; add `-v` to wipe them too.
+
+### Production storage (MinIO)
+
+**Decision: self-hosted MinIO is the production object store.** Avatar/banner
+uploads go through `@lib/storage`, which talks to any S3-compatible backend, so
+`.env.example` documents both routes and nothing is hard-coded to a vendor.
+Production runs MinIO on this repo's own VPS rather than Cloudflare R2, because
+production *is* a self-hosted stack (Dokploy + Traefik) and a managed bucket
+would add an account, a payment method and a network hop where none exists
+today — there is no R2 account to reuse. The cost of that choice: **MinIO
+Community Edition is end-of-life upstream** (images stopped being published in
+October 2025, repository archived), so the image is built from pinned source
+(`docker/minio/Dockerfile`) and both ports stay bound to `127.0.0.1`, keeping
+the store and its console unreachable from the internet.
+
+Migrating to R2 later is env-only: `S3_ENDPOINT`, `S3_REGION=auto`,
+`S3_FORCE_PATH_STYLE=false`, the credentials and `S3_PUBLIC_URL` — no code.
+
+**1. Deploy the stack** — Dokploy → Compose → add with source `github`
+(owner `Sebas200702`, repo `anidev-v2`, branch `master`, compose path
+`./docker-compose.storage.yml`) and this environment (Dokploy writes it to a
+`.env` next to the compose file):
+
+```bash
+COMPOSE_PROFILES=storage  # makes Dokploy's plain `docker compose up -d` start only these services
+MINIO_ROOT_USER=...
+MINIO_ROOT_PASSWORD=...   # >= 20 chars
+S3_BUCKET=anidev-media
+```
+
+Keep **`isolatedDeployment` off**: an isolated compose gets its own network and
+the app could not resolve `minio`. The first deploy compiles Go for a few
+minutes; later ones reuse the cached layers. The one-shot `minio-init` job
+creates the bucket with anonymous reads — and since it only bootstraps a
+bucket, the app credentials are the root pair unless you extend it with
+`mc admin add-user` plus a bucket-scoped policy.
+
+**2. Point the app at it** (`S3_ENDPOINT`/`S3_BUCKET`/`S3_ACCESS_KEY_ID`/
+`S3_SECRET_ACCESS_KEY`/`S3_PUBLIC_URL` are all-or-none in `env.ts`):
+
+```bash
+S3_ENDPOINT=http://minio:9000        # container DNS on dokploy-network
+S3_REGION=us-east-1                  # default is `auto`
+S3_BUCKET=anidev-media
+S3_ACCESS_KEY_ID=<MINIO_ROOT_USER>
+S3_SECRET_ACCESS_KEY=<MINIO_ROOT_PASSWORD>
+S3_PUBLIC_URL=https://media.anidev.app/anidev-media
+S3_FORCE_PATH_STYLE=true             # default; `false` is for R2
+```
+
+`S3_PUBLIC_URL` is loaded by the browser, so it needs a public HTTPS host:
+create the DNS record `media.anidev.app` → the VPS (Cloudflare, proxied) and
+add a Traefik domain for the storage compose (host `media.anidev.app`, service
+`minio`, port `9000`, HTTPS). No CSP edit is required — `policy.ts` adds
+`new URL(S3_PUBLIC_URL).origin` to `img-src` at runtime.
 
 ## Commands
 
