@@ -27,6 +27,7 @@ import {
   SEED_PRODUCER_NAME,
 } from './seed-data'
 import { seedPeople } from './seed-people'
+import { seedProfileImages } from './seed-profile-images'
 
 /**
  * Upserts the canonical E2E dataset into the target Postgres database.
@@ -135,6 +136,7 @@ export async function seedE2eDatabase(): Promise<void> {
     }
 
     await seedPeople(pool)
+    await seedProfileImages(pool)
   } finally {
     await pool.end()
   }

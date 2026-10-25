@@ -73,6 +73,14 @@ jobs:
       BETTER_AUTH_SECRET: e2e-secret-e2e-secret-e2e-secret-e2e!!
       # Standalone self-host artifact built by @astrojs/node.
       LOG_LEVEL: warn
+      # Object storage for profile image uploads: an ephemeral MinIO container
+      # (built from source below). S3_SECRET_ACCESS_KEY is generated per run.
+      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: anidev-media
+      S3_ACCESS_KEY_ID: anidev-ci
+      S3_PUBLIC_URL: http://127.0.0.1:9000/anidev-media
+      S3_FORCE_PATH_STYLE: 'true'
     services:
       postgres:
         image: postgres:16-alpine
@@ -102,6 +110,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Generate MinIO credentials
+        # Per-run secret for the throwaway MinIO; exported before any step that
+        # imports src/config/env.ts (the S3_* set is all-or-none).
+        run: |
+          secret="$(openssl rand -hex 24)"
+          echo "::add-mask::$secret"
+          echo "S3_SECRET_ACCESS_KEY=$secret" >> "$GITHUB_ENV"
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
         with:
@@ -112,6 +128,42 @@ jobs:
 
       - name: Install Playwright browser (chromium)
         run: bun run test:e2e:install
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+
+      - name: Build MinIO (CE from pinned source tags)
+        # Upstream no longer publishes MinIO CE images (docker/minio/Dockerfile);
+        # the GHA layer cache keeps the Go build off later runs.
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
+        with:
+          context: docker/minio
+          load: true
+          tags: anidev-minio:ci
+          cache-from: type=gha,scope=minio
+          cache-to: type=gha,scope=minio,mode=max
+
+      - name: Start MinIO and create the public-read bucket
+        # alias + mb + anonymous policy run in ONE container: `mc` keeps the
+        # alias in ~/.mc, so split runs lose it and fail with a 403.
+        run: |
+          docker run -d --name minio -p 127.0.0.1:9000:9000 \
+            -e MINIO_ROOT_USER="$S3_ACCESS_KEY_ID" \
+            -e MINIO_ROOT_PASSWORD="$S3_SECRET_ACCESS_KEY" \
+            anidev-minio:ci
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:9000/minio/health/live && break
+            sleep 1
+          done
+          docker run --rm --network host --entrypoint /bin/sh \
+            -e MINIO_ROOT_USER="$S3_ACCESS_KEY_ID" \
+            -e MINIO_ROOT_PASSWORD="$S3_SECRET_ACCESS_KEY" \
+            -e S3_BUCKET="$S3_BUCKET" \
+            anidev-minio:ci -ec '
+              mc alias set local http://127.0.0.1:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
+              mc mb --ignore-existing "local/$S3_BUCKET"
+              mc anonymous set download "local/$S3_BUCKET"
+            '
 
       - name: Wait for Postgres
         # Service-container health can flip green during the postgres image's

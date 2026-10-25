@@ -69,7 +69,7 @@
 
 ## 4. Verification, release & archive
 
-- [ ] 4.1 CI: build the MinIO image (`docker/minio`) and run the bucket init
+- [x] 4.1 CI: build the MinIO image (`docker/minio`) and run the bucket init
       in the `e2e` job — there is no pullable upstream image, so the job
       builds it (Go module cache makes the second run cheap). E2E:
       - upload avatar with crop (fetch the public URL: 200, `image/webp`);
