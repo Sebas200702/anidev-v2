@@ -4,9 +4,10 @@
 #   - postgres (app database)
 #   - dragonfly (Redis-compatible cache)
 #   - rustrak (Sentry-compatible error tracking)
-#   - minio (S3-compatible object storage, profile "storage": built from the
-#     MinIO CE source — upstream no longer publishes images)
 #   - app (optional, profile "preview": the built Astro/Bun server in Docker)
+#   - minio + minio-init (S3-compatible object storage, profile "storage"),
+#     defined in docker-compose.storage.yml and pulled in via `include` below so
+#     that one file can also be deployed on its own in production
 #
 # USE:
 #   Dev (default):      docker compose up -d        -> only infra services.
@@ -33,6 +34,12 @@
 # MINIO_ROOT_PASSWORD and S3_BUCKET.
 # With `docker compose`, unset variables that are required cause configuration
 # to fail rather than falling back to insecure defaults.
+
+# Object storage lives in its own file: production deploys it without the
+# postgres/dragonfly/rustrak services below (those already run there as
+# independent services, and starting them again would fight over their ports).
+include:
+  - ./docker-compose.storage.yml
 
 services:
   app:
@@ -125,57 +132,7 @@ services:
     depends_on:
       - rustrak
 
-  # S3-compatible object storage. Built from the MinIO CE source because
-  # upstream stopped publishing images (see docker/minio/Dockerfile).
-  minio:
-    build:
-      context: ./docker/minio
-    profiles: ['storage']
-    restart: unless-stopped
-    ports:
-      # Loopback only: the reverse proxy (prod) and the host app (dev) reach it
-      # locally; the console holds root credentials.
-      - '127.0.0.1:9000:9000'
-      - '127.0.0.1:9001:9001'
-    volumes:
-      - minio_data:/data
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
-    healthcheck:
-      # busybox wget ships with the alpine base image; the health endpoint
-      # answers before the console is up.
-      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:9000/minio/health/live']
-      interval: 5s
-      timeout: 5s
-      retries: 12
-
-  # One-shot bucket bootstrap. `mc` stores its alias in ~/.mc, so the alias
-  # set, the bucket creation and the anonymous-read policy have to run in a
-  # single container invocation — splitting them loses the alias and fails
-  # with a misleading 403.
-  minio-init:
-    build:
-      context: ./docker/minio
-    profiles: ['storage']
-    restart: 'no'
-    depends_on:
-      minio:
-        condition: service_healthy
-    environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
-      - S3_BUCKET=${S3_BUCKET:?set S3_BUCKET in .env}
-    entrypoint: >
-      /bin/sh -ec "
-      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} >/dev/null;
-      mc mb --ignore-existing local/$${S3_BUCKET};
-      mc anonymous set download local/$${S3_BUCKET};
-      echo \"bucket $${S3_BUCKET} ready\"
-      "
-
 volumes:
   postgres_data:
   dragonfly_data:
   rustrak_data:
-  minio_data:
