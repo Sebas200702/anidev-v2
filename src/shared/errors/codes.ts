@@ -53,6 +53,10 @@ export const ErrorCodes = {
   AUTH_SESSION_EXPIRED: 'AUTH_SESSION_EXPIRED',
   /** Authenticated but not allowed — HTTP 403. */
   AUTH_FORBIDDEN: 'AUTH_FORBIDDEN',
+  /** Sign-in provider is not configured on this deployment — HTTP 404. */
+  PROVIDER_NOT_CONFIGURED: 'PROVIDER_NOT_CONFIGURED',
+  /** Social sign-in email already has a password account; link instead — HTTP 409. */
+  ACCOUNT_EXISTS_USE_PASSWORD: 'ACCOUNT_EXISTS_USE_PASSWORD',
 
   /** Zod or manual request validation failed — HTTP 400. */
   VALIDATION_ERROR: 'VALIDATION_ERROR',
