@@ -5,7 +5,7 @@
 
 ## 1. Infrastructure
 
-- [ ] 1.1 Env:
+- [x] 1.1 Env:
       - `S3_*`, all or none, plus `isStorageEnabled()` (tests first);
       - document them in `.env.example` and `.env.local.example`.
       - add `minio` and `minio-init` to `docker-compose.yml`, behind the

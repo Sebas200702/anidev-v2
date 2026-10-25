@@ -20,12 +20,12 @@
  * @see {@link module:lib/auth/server} for Better Auth secret and base URL
  */
 import { z } from 'zod'
-
-/** Optional credential: an empty string counts as unset. */
-const optionalSecret = z.preprocess(
-  (value) => (value === '' ? undefined : value),
-  z.string().min(1).optional()
-)
+import {
+  optionalSecret,
+  optionalUrl,
+  STORAGE_KEYS,
+  withDefault,
+} from '@config/env-fields'
 
 /**
  * Zod schema defining required and optional environment variables.
@@ -44,6 +44,11 @@ const optionalSecret = z.preprocess(
  * @property GOOGLE_CLIENT_ID - Optional Google OAuth client id; set together
  *   with `GOOGLE_CLIENT_SECRET` to enable Google sign-in.
  * @property GOOGLE_CLIENT_SECRET - Optional Google OAuth client secret.
+ * @property S3_ENDPOINT - Optional S3-compatible endpoint (R2, MinIO); the
+ *   `S3_*` storage set is all-or-none and enables profile image uploads.
+ * @property S3_REGION - Storage region; defaults to `'auto'`.
+ * @property S3_FORCE_PATH_STYLE - Path-style requests; `true` (MinIO) unless
+ *   set to `'false'` (R2).
  */
 const envSchema = z
   .object({
@@ -64,6 +69,17 @@ const envSchema = z
 
     GOOGLE_CLIENT_ID: optionalSecret,
     GOOGLE_CLIENT_SECRET: optionalSecret,
+
+    S3_ENDPOINT: optionalUrl,
+    S3_REGION: withDefault('auto'),
+    S3_BUCKET: optionalSecret,
+    S3_ACCESS_KEY_ID: optionalSecret,
+    S3_SECRET_ACCESS_KEY: optionalSecret,
+    S3_PUBLIC_URL: optionalUrl,
+    S3_FORCE_PATH_STYLE: z
+      .string()
+      .optional()
+      .transform((value) => value !== 'false'),
   })
   .refine(
     ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }) =>
@@ -71,6 +87,14 @@ const envSchema = z
     {
       message: 'Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or neither',
       path: ['GOOGLE_CLIENT_ID'],
+    }
+  )
+  .refine(
+    (values) =>
+      new Set(STORAGE_KEYS.map((key) => Boolean(values[key]))).size === 1,
+    {
+      message: `Set all of ${STORAGE_KEYS.join(', ')}, or none`,
+      path: ['S3_ENDPOINT'],
     }
   )
 
@@ -105,4 +129,11 @@ export const env = envSchema.parse({
   LOG_LEVEL: process.env.LOG_LEVEL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  S3_ENDPOINT: process.env.S3_ENDPOINT,
+  S3_REGION: process.env.S3_REGION,
+  S3_BUCKET: process.env.S3_BUCKET,
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+  S3_PUBLIC_URL: process.env.S3_PUBLIC_URL,
+  S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE,
 })
