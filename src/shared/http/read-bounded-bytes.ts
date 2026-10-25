@@ -36,7 +36,8 @@ export const readBoundedBytes = async (
   const chunks: Uint8Array[] = []
   let total = 0
   for (;;) {
-    const { done, value } = await reader.read()
+    // Sequential by nature: each read depends on the previous chunk.
+    const { done, value } = await reader.read() // NOSONAR
     if (done) break
     total += value.byteLength
     if (total > maxBytes) {

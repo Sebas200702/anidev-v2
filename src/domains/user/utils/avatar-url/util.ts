@@ -10,8 +10,9 @@
  */
 import { env } from '@config/env'
 import { GOOGLE_AVATAR_URL_PREFIX } from '@user/constants'
+import { stripTrailingSlashes } from '@utils/string/trailing-slash-util'
 
-const withTrailingSlash = (url: string) => url.replace(/\/*$/, '/')
+const withTrailingSlash = (url: string) => `${stripTrailingSlashes(url)}/`
 
 const allowedPrefixes = () =>
   [

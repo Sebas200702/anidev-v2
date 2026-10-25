@@ -11,6 +11,7 @@ import { env } from '@config/env'
 import { getStorageClient } from '@lib/storage/client'
 import { IMMUTABLE_CACHE_CONTROL } from '@lib/storage/constants'
 import { storageError } from '@lib/storage/errors'
+import { stripTrailingSlashes } from '@utils/string/trailing-slash-util'
 
 /**
  * Uploads bytes under `key`.
@@ -63,4 +64,4 @@ export const deleteObject = async (key: string): Promise<void> => {
  * @returns Absolute URL clients can load directly
  */
 export const publicUrl = (key: string): string =>
-  `${(env.S3_PUBLIC_URL ?? '').replace(/\/+$/, '')}/${key}`
+  `${stripTrailingSlashes(env.S3_PUBLIC_URL ?? '')}/${key}`

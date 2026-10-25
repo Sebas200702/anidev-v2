@@ -48,7 +48,9 @@ const putImage = (
   request.put(path, { headers: { 'sec-fetch-site': 'same-origin' }, multipart })
 
 test.describe('profile image uploads', () => {
-  test.skip(!storageUrl, 'needs object storage (compose profile `storage`)')
+  // Skipped only without S3_PUBLIC_URL (local runs without the `storage`
+  // compose profile); CI always provides MinIO, so it runs there.
+  test.skip(!storageUrl, 'needs object storage (compose profile `storage`)') // NOSONAR
 
   test('upload with crop, replace, reset', async ({
     authedRequest,

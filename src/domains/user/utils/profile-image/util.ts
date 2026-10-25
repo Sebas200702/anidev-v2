@@ -25,7 +25,8 @@ import type {
 } from '@user/utils/profile-image/types'
 
 const isAcceptedFormat = (format?: string, compression?: string) => {
-  if (!PROFILE_IMAGE_INPUT_FORMATS.some((accepted) => accepted === format)) {
+  const accepted: readonly string[] = PROFILE_IMAGE_INPUT_FORMATS
+  if (!format || !accepted.includes(format)) {
     return false
   }
   return format !== 'heif' || compression === PROFILE_IMAGE_HEIF_COMPRESSION
