@@ -58,7 +58,7 @@
       - reset.
 
       Unit tests with mocked storage and repositories.
-- [ ] 3.2 Routes:
+- [x] 3.2 Routes:
       - `PUT /api/user/:userId/avatar` and `/banner` (upload);
       - `PUT …/avatar/character` and `…/banner/anime` (gallery);
       - `DELETE …/avatar` and `…/banner`.

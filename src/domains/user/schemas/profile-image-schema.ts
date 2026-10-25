@@ -23,3 +23,21 @@ export const profileImageCropSchema = z.object({
   width: formInteger(PROFILE_IMAGE_MIN_CROP_SIDE),
   height: formInteger(PROFILE_IMAGE_MIN_CROP_SIDE),
 })
+
+const ownerParams = z.strictObject({ userId: z.coerce.string() })
+const noQuery = z.strictObject({}).optional().default({})
+const catalogId = z.number().int().positive()
+
+/** `PUT /api/user/:userId/avatar/character` — `{ characterId }`. */
+export const pickCharacterAvatarSchema = z.strictObject({
+  params: ownerParams,
+  body: z.strictObject({ characterId: catalogId }),
+  query: noQuery,
+})
+
+/** `PUT /api/user/:userId/banner/anime` — `{ animeId }`. */
+export const pickAnimeBannerSchema = z.strictObject({
+  params: ownerParams,
+  body: z.strictObject({ animeId: catalogId }),
+  query: noQuery,
+})
