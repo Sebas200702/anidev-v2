@@ -78,7 +78,13 @@
       - other user → 403;
       - character pick;
       - reset.
-- [ ] 4.2 Full gate, AGENTS.md (env, storage, routes), ROADMAP (Fase 2),
+- [x] 4.2 Full gate, AGENTS.md (env, storage, routes), ROADMAP (Fase 2),
       release minor, PR with the production storage checklist (R2 **and**
       self-hosted MinIO: endpoints, `S3_FORCE_PATH_STYLE`, public bucket
       access, reverse proxy, backups), merge, push tag, archive.
+
+> Hallazgo de 4.1: el `url.origin` que ve Astro detrás del adapter Node es
+> `http://localhost:<port>`, no el host público. `checkOrigin` acepta igual
+> las subidas de un browser porque confía en `Sec-Fetch-Site: same-origin`
+> antes de comparar `Origin`; un cliente no-browser que mande `Origin` sin
+> `Sec-Fetch-Site` recibe `403`. El E2E simula el browser con ese header.
