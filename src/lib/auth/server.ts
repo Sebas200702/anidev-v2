@@ -20,6 +20,7 @@ import { env } from '@config/env'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@db/client'
 import { account, session, user, verification } from '@db/schemas/auth-schema'
+import { bootstrapGoogleProfile } from '@lib/auth/google-profile'
 
 /**
  * Configured Better Auth server instance backed by Drizzle and PostgreSQL.
@@ -42,6 +43,37 @@ export const auth = betterAuth({
   logger: { level: 'warn' },
   emailAndPassword: {
     enabled: true,
+  },
+  ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+    ? {
+        socialProviders: {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            scope: ['openid', 'email', 'profile'],
+          },
+        },
+      }
+    : {}),
+  account: {
+    accountLinking: {
+      enabled: true,
+      // Email ownership is never verified (no SMTP yet), so a same-email
+      // Google sign-in must not open an existing password account: whoever
+      // registered that email first could otherwise receive the victim's
+      // Google login. Linking happens only from inside a session.
+      disableImplicitLinking: true,
+      trustedProviders: [],
+    },
+  },
+  databaseHooks: {
+    account: {
+      create: {
+        after: async (account) => {
+          await bootstrapGoogleProfile(account)
+        },
+      },
+    },
   },
   database: drizzleAdapter(db, {
     provider: 'pg',

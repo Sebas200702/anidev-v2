@@ -33,6 +33,12 @@ describe('isPublicRoute', () => {
     expect(isPublicRoute('/api/producers/1/anime')).toBe(true)
   })
 
+  it('exposes the Google sign-in flow but not account linking', () => {
+    expect(isPublicRoute('/api/auth/sign-in/google')).toBe(true)
+    expect(isPublicRoute('/api/auth/callback/google')).toBe(true)
+    expect(isPublicRoute('/api/auth/link/google')).toBe(false)
+  })
+
   it('exposes the character and people API', () => {
     expect(isPublicRoute('/api/characters/1/appearances')).toBe(true)
     expect(isPublicRoute('/api/people/1/voices')).toBe(true)

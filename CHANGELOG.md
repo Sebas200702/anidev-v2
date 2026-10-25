@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.16.0...v0.17.0) (2026-10-25)
+
+
+### Features
+
+* **auth:** codigos PROVIDER_NOT_CONFIGURED (404) y ACCOUNT_EXISTS_USE_PASSWORD (409) ([de24b20](https://github.com/Sebas200702/docs-hackathon/commit/de24b2044ca662d651ad08420302f9a6bbcc26f6))
+* **auth:** credenciales opcionales de Google (ambas o ninguna) ([20feeb6](https://github.com/Sebas200702/docs-hackathon/commit/20feeb6b1222133392d0113859cbd5eb723ae546))
+* **auth:** GET /api/auth/sign-in/google, /callback/google y /link/google ([5e6a20c](https://github.com/Sebas200702/docs-hackathon/commit/5e6a20cf0985169db16c34023c3d2bf020879313))
+* **auth:** profileStatus en GET /api/auth/session para el onboarding ([76abe4c](https://github.com/Sebas200702/docs-hackathon/commit/76abe4cb465344dbf53f6536ddbaf6967c0c1278))
+* **auth:** proveedor Google condicional, sin linking implicito y perfil inicial ([f5420a8](https://github.com/Sebas200702/docs-hackathon/commit/f5420a879386a738ab0a7256a3572ea21962255f))
+* **auth:** sanitizeCallbackURL contra open redirect ([d2fa461](https://github.com/Sebas200702/docs-hackathon/commit/d2fa461658e59bbf270b4230491d8d411f1e0707))
+* **user:** esquema de escritura de preferencias del perfil ([572d27e](https://github.com/Sebas200702/docs-hackathon/commit/572d27eab9d4df75f2da0208f9572060441deeda))
+* **user:** PATCH /api/user/:userId/preferences (solo el dueno) ([346a078](https://github.com/Sebas200702/docs-hackathon/commit/346a078f128231865e3027e0175b56873bafe020))
+* **user:** repositorio de existencia de ids de catalogo para preferencias ([a27b64a](https://github.com/Sebas200702/docs-hackathon/commit/a27b64a7a916d8756c24f313c327e72b9cf89119))
+* **user:** servicio de preferencias con politica de dueno y validacion de ids ([e6c6eb9](https://github.com/Sebas200702/docs-hackathon/commit/e6c6eb99d9e97759ec71a8dbbceea41d642076e1))
+
 ## [0.16.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.15.0...v0.16.0) (2026-10-24)
 
 

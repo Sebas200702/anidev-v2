@@ -14,3 +14,4 @@
 export { userRepository } from './user'
 export { userListRepository } from './user-list'
 export { watchProgressRepository } from './watch-progress'
+export { catalogIdsRepository } from './catalog-ids'

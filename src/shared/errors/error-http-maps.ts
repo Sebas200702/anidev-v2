@@ -52,6 +52,7 @@ const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
   ErrorCodes.SITEMAP_NOT_FOUND,
   ErrorCodes.CHARACTER_NOT_FOUND,
   ErrorCodes.PERSON_NOT_FOUND,
+  ErrorCodes.PROVIDER_NOT_CONFIGURED,
   ErrorCodes.EPISODE_NOT_FOUND,
   ErrorCodes.MUSIC_NOT_FOUND,
   ErrorCodes.WATCH_STATE_NOT_FOUND,
@@ -70,6 +71,7 @@ const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
  */
 const CONFLICT_DOMAIN_CODES = new Set<ErrorCode>([
   ErrorCodes.USER_PROFILE_CONFLICT,
+  ErrorCodes.ACCOUNT_EXISTS_USE_PASSWORD,
 ])
 
 /**
