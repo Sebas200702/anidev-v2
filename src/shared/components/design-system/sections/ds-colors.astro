@@ -68,6 +68,7 @@ const groups: ReadonlyArray<{
     name: 'Editorial roles',
     swatches: [
       { token: '--color-editorial-accent', fill: 'bg-editorial-accent' },
+      { token: '--color-editorial-ink', fill: 'bg-editorial-ink' },
       { token: '--color-editorial-muted', fill: 'bg-editorial-muted' },
       { token: '--color-editorial-surface', fill: 'bg-editorial-surface' },
       { token: '--color-editorial-border', fill: 'bg-editorial-border' },
@@ -86,7 +87,7 @@ const groups: ReadonlyArray<{
   {
     groups.map((group) => (
       <div class="flex flex-col gap-3">
-        <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+        <p class="plate-label">
           {group.name}
         </p>
         <ul class="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">

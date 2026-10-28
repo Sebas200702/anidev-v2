@@ -32,25 +32,33 @@ import SectionShell from '../section-shell.astro'
   </div>
 
   <div class="flex items-center justify-between gap-4">
-    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+    <p class="plate-label">
       Fig. 01 / 00–26
     </p>
     <div class="flex-1 border-t border-neutral-800" aria-hidden="true"></div>
-    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+    <p class="plate-label">
       Plate Nº 08
     </p>
   </div>
 
   <div class="flex gap-6">
-    <p
-      class="font-label text-on-surface-subtle text-[11px] tracking-[0.3em] uppercase"
-      style="writing-mode: vertical-rl;"
-    >
-      Skills · Systems · Agents
-    </p>
+    <p class="rail-vertical">Skills · Systems · Agents</p>
     <p class="text-m text-on-surface-muted max-w-prose">
       Los rieles verticales enmarcan la página sin competir con el contenido.
       El texto va en mono, el contenido respira al lado.
     </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <p class="plate-label">Kicker</p>
+      <p class="kicker">Most trending · N° 01</p>
+    </div>
+    <div class="flex flex-col gap-2">
+      <p class="plate-label">Corner ticks</p>
+      <p class="corner-ticks text-on-surface-muted text-s px-4 py-3">
+        ID — 52991 · Season — Fall
+      </p>
+    </div>
   </div>
 </div>
