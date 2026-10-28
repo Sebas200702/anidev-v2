@@ -109,7 +109,6 @@ test.describe('profile image uploads', () => {
   test('a character pick deletes the uploaded avatar', async ({
     authedRequest,
     request,
-    baseURL,
   }) => {
     const userId = await createProfile(authedRequest)
     const upload = await putImage(authedRequest, `/api/user/${userId}/avatar`, {
@@ -124,8 +123,9 @@ test.describe('profile image uploads', () => {
       }
     )
     expect(pick.status()).toBe(200)
+    // Media URLs are origin-relative (img-src 'self').
     expect((await pick.json()).data.avatar).toBe(
-      `${baseURL}/media/character/${SEED_CHARACTER_MAL_ID}/poster/large`
+      `/media/character/${SEED_CHARACTER_MAL_ID}/poster/large`
     )
     expect((await request.get(uploadedUrl)).status()).toBe(404)
   })
@@ -142,15 +142,15 @@ test.describe('profile image ownership and gallery', () => {
 
   test('an anime banner pick sets the catalog banner', async ({
     authedRequest,
-    baseURL,
   }) => {
     const userId = await createProfile(authedRequest)
     const res = await authedRequest.put(`/api/user/${userId}/banner/anime`, {
       data: { animeId: SEED_BANNER_ANIME_MAL_ID },
     })
     expect(res.status()).toBe(200)
+    // Media URLs are origin-relative (img-src 'self').
     expect((await res.json()).data.banner).toBe(
-      `${baseURL}/media/anime/${SEED_BANNER_ANIME_MAL_ID}/banner`
+      `/media/anime/${SEED_BANNER_ANIME_MAL_ID}/banner`
     )
   })
 })

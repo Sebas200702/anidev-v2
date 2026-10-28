@@ -5,6 +5,7 @@
  */
 import { z } from 'zod'
 import { CAST_ROLES, PEOPLE_MEDIA } from '@people/constants'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import {
   malIdParamsSchema,
@@ -20,7 +21,7 @@ export const characterCardSchema = z.object({
   malId: z.number(),
   name: z.string(),
   nameKanji: z.string().nullable(),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
   favorites: z.number().nullable(),
 })
 
@@ -37,7 +38,11 @@ export const characterProfileSchema = characterCardSchema.extend({
     z.object({
       language: z.string(),
       actors: z.array(
-        z.object({ staffId: z.number(), name: z.string(), imageUrl: z.url() })
+        z.object({
+          staffId: z.number(),
+          name: z.string(),
+          imageUrl: mediaUrlSchema,
+        })
       ),
     })
   ),
@@ -49,7 +54,7 @@ export const characterAppearanceSchema = z.object({
   malId: z.number(),
   title: z.string(),
   role: z.enum(CAST_ROLES),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
 })
 
 /** **Request** — `GET /api/characters`. */

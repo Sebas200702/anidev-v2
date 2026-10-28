@@ -53,6 +53,12 @@ export default defineConfig({
   output: 'server',
   adapter,
 
+  // The dev toolbar's Vite-managed entrypoint intermittently 504s with
+  // "Outdated Optimize Dep" in long-lived daemon sessions before any fix lands
+  // in Astro. It is a dev-only overlay — disabled while that module graph keeps
+  // flaking, re-enable to inspect the toolbar.
+  devToolbar: { enabled: false },
+
   // Image stance (C.5): no `image.remotePatterns`/`image.domains` is configured
   // on purpose, so Astro's `/_image` endpoint refuses remote transforms (400)
   // and only local images are transformable. All remote media flows through

@@ -20,7 +20,7 @@ test.describe('anime detail endpoints', () => {
     const body = await res.json()
     expect(body.data.malId).toBe(SEED_ANIME_MAL_ID)
     expect(typeof body.data.title).toBe('string')
-    expect(body.data.imageUrl).toMatch(/^https?:\/\//)
+    expect(body.data.imageUrl).toMatch(/^\/media\//)
   })
 
   test('GET /api/anime/:malId/full returns the expanded payload', async ({

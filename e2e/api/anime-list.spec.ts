@@ -29,11 +29,12 @@ test.describe('GET /api/anime', () => {
     const ids = body.data.map((card: { malId: number }) => card.malId)
     expect(ids).toContain(SEED_ANIME_MAL_ID)
 
-    // Cards must satisfy the response contract (absolute image URLs, etc.).
+    // Cards must satisfy the response contract (origin-relative /media image
+    // URLs, etc.).
     const seeded = body.data.find(
       (card: { malId: number }) => card.malId === SEED_ANIME_MAL_ID
     )
-    expect(seeded.imageUrl).toMatch(/^https?:\/\//)
+    expect(seeded.imageUrl).toMatch(/^\/media\//)
     expect(typeof seeded.title).toBe('string')
   })
 

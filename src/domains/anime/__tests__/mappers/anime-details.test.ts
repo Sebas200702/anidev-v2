@@ -79,6 +79,6 @@ describe('mapAnimeDetails', () => {
 
   it('falls back to the placeholder when no trailer asset exists', () => {
     const d = mapAnimeDetails(baseInput())
-    expect(d.trailerUrl).toBe('https://anidev.test/placeholder.webp')
+    expect(d.trailerUrl).toBe('/placeholder.webp')
   })
 })

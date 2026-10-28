@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 vi.mock('@config/env', () => ({
   env: { NODE_ENV: 'test', LOG_LEVEL: 'silent' },
 }))
-vi.mock('@/config', () => ({ config: { baseUrl: 'http://app.test' } }))
 
 const m = vi.hoisted(() => ({
   getUserProfileById: vi.fn(),
@@ -171,13 +170,11 @@ describe('profileImageService gallery picks', () => {
       characterId: 417,
     })
     expect(m.updateProfile).toHaveBeenCalledWith('u1', {
-      avatar: 'http://app.test/media/character/417/poster/large',
+      avatar: '/media/character/417/poster/large',
       avatarKey: null,
     })
     expect(m.deleteObject).toHaveBeenCalledWith('users/u1/avatar/old.webp')
-    expect(profile.avatar).toBe(
-      'http://app.test/media/character/417/poster/large'
-    )
+    expect(profile.avatar).toBe('/media/character/417/poster/large')
   })
 
   it('rejects an unknown or provisional character with 400', async () => {
@@ -192,7 +189,7 @@ describe('profileImageService gallery picks', () => {
     m.hasSafeAnimeBanner.mockResolvedValue(true)
     await profileImageService.pickAnimeBanner({ ...owner, animeId: 1 })
     expect(m.updateProfile).toHaveBeenCalledWith('u1', {
-      banner: 'http://app.test/media/anime/1/banner',
+      banner: '/media/anime/1/banner',
       bannerKey: null,
     })
   })

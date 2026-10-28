@@ -4,6 +4,7 @@
  * @module domains/anime/schemas/anime-character-schema
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import { personSchema } from '@anime/schemas/anime-staff-schema'
 
@@ -30,7 +31,7 @@ export const animeCharacterSchema = z.object({
   url: z.string().nullable(),
   name: z.string().nullable(),
   role: z.string().nullable(),
-  imageUrl: z.url().nullable(),
+  imageUrl: mediaUrlSchema.nullable(),
   about: z.string().nullable(),
   nameKanji: z.string().nullable().optional(),
   voiceActors: z.array(voiceActorSchema).nullable().optional(),

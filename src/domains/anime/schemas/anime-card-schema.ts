@@ -6,6 +6,7 @@
  * **Response schema** — validates mapped list/card DTOs from {@link mapAnimeCard}.
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 
 /**
  * Validates a compact anime card shown in list and grid views.
@@ -19,8 +20,8 @@ import { z } from 'zod'
  * | `status` | `z.string()` |
  * | `score` | `z.number().nullable()` |
  * | `type` | `z.string()` |
- * | `imageUrl` | `z.url()` |
- * | `smallImageUrl` | `z.url()` |
+ * | `imageUrl` | `mediaUrlSchema` |
+ * | `smallImageUrl` | `mediaUrlSchema` |
  * | `altImageText` | `z.string()` |
  */
 export const animeCardSchema = z.object({
@@ -30,7 +31,7 @@ export const animeCardSchema = z.object({
   status: z.string(),
   score: z.number().nullable(),
   type: z.string(),
-  imageUrl: z.url(),
-  smallImageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
+  smallImageUrl: mediaUrlSchema,
   altImageText: z.string(),
 })

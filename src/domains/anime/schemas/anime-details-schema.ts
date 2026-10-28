@@ -4,6 +4,7 @@
  * @module domains/anime/schemas/anime-details-schema
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 /**
@@ -11,7 +12,16 @@ import { createApiResponseSchema } from '@shared/schemas/api-schema'
  *
  * @remarks
  * **Response DTO** from {@link mapAnimeDetails} / {@link animeService.getAnimeDetails}.
- * All URL fields use `z.url()`; taxonomy fields are string arrays (names only).
+ * Image fields (`imageUrl`, `smallImageUrl`, `bannerImageUrl`) use
+ * {@link mediaUrlSchema} (absolute or origin-relative `/media/...`); external
+ * MAL links (`trailerUrl`, `url`) stay `z.url()`. Taxonomy fields are string
+ * arrays (names only).
+ *
+ * `trailerUrl` is the one exception to "external MAL links stay absolute":
+ * when the anime has no trailer row, {@link mapAnimeDetails} falls back to
+ * `mediaServiceConfig.defaultPlaceholderUrl`, a media asset served by the
+ * `/media` proxy (origin-relative since the img-src 'self' fix) — hence
+ * `mediaUrlSchema` there too.
  */
 export const animeDetailsSchema = z.object({
   malId: z.number(),
@@ -22,10 +32,12 @@ export const animeDetailsSchema = z.object({
   themes: z.array(z.string()),
   synopsis: z.string(),
   demographics: z.array(z.string()),
-  trailerUrl: z.url(),
-  imageUrl: z.url(),
-  smallImageUrl: z.url(),
-  bannerImageUrl: z.url(),
+  // MAL trailer when present (absolute); the no-trailer fallback is the
+  // origin-relative placeholder served by /media — see schema remarks.
+  trailerUrl: mediaUrlSchema,
+  imageUrl: mediaUrlSchema,
+  smallImageUrl: mediaUrlSchema,
+  bannerImageUrl: mediaUrlSchema,
   url: z.url(),
   slug: z.string(),
   shareText: z.string(),

@@ -25,10 +25,8 @@ describe('config', () => {
 })
 
 describe('mediaServiceConfig', () => {
-  it('derives the placeholder URL from the base URL and lists supported assets', () => {
-    expect(mediaServiceConfig.defaultPlaceholderUrl).toBe(
-      'https://anidev.test/placeholder.webp'
-    )
+  it('keeps the placeholder URL origin-relative and lists supported assets', () => {
+    expect(mediaServiceConfig.defaultPlaceholderUrl).toBe('/placeholder.webp')
     expect(mediaServiceConfig.supportedEntities).toContain('anime')
     expect(mediaServiceConfig.supportedMediaTypes).toContain('poster')
     expect(mediaServiceConfig.defaultQuality).toBe(75)

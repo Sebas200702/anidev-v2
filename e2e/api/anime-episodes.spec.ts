@@ -53,7 +53,9 @@ test.describe('anime episode endpoints', () => {
       `Image for Episode 1: ${SEED_EPISODES[0].title}`
     )
 
-    const image = await request.get(new URL(episode.imageUrl).pathname)
+    // Image URLs are origin-relative `/media/...` paths — fetch them directly.
+    expect(episode.imageUrl).toMatch(/^\/media\//)
+    const image = await request.get(episode.imageUrl)
     expect(image.status()).toBe(200)
     expect(image.headers()['content-type']).toMatch(/^image\//)
   })

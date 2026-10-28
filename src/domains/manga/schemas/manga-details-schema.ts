@@ -4,6 +4,7 @@
  * @module domains/manga/schemas/manga-details-schema
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 /**
@@ -17,13 +18,13 @@ export const mangaCastMemberSchema = z.object({
   characterId: z.number(),
   name: z.string(),
   role: z.string(),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
   voiceActors: z.array(
     z.object({
       staffId: z.number(),
       name: z.string(),
       language: z.string(),
-      imageUrl: z.url(),
+      imageUrl: mediaUrlSchema,
     })
   ),
 })
@@ -55,16 +56,16 @@ export const mangaDetailsSchema = z.object({
   genres: z.array(z.string()),
   themes: z.array(z.string()),
   demographics: z.array(z.string()),
-  imageUrl: z.url(),
-  smallImageUrl: z.url(),
-  bannerImageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
+  smallImageUrl: mediaUrlSchema,
+  bannerImageUrl: mediaUrlSchema,
   characters: z.array(mangaCastMemberSchema),
   staff: z.array(
     z.object({
       staffId: z.number(),
       name: z.string(),
       role: z.string(),
-      imageUrl: z.url(),
+      imageUrl: mediaUrlSchema,
     })
   ),
   publishers: z.array(

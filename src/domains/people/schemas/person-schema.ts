@@ -5,6 +5,7 @@
  */
 import { z } from 'zod'
 import { PEOPLE_MEDIA } from '@people/constants'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import {
   malIdParamsSchema,
@@ -18,14 +19,14 @@ import {
 const workSchema = z.object({
   malId: z.number(),
   title: z.string(),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
 })
 
 /** A person in search results. */
 export const personCardSchema = z.object({
   malId: z.number(),
   name: z.string(),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
   favorites: z.number().nullable(),
 })
 
@@ -49,7 +50,7 @@ export const personVoiceSchema = z.object({
   character: z.object({
     malId: z.number(),
     name: z.string(),
-    imageUrl: z.url(),
+    imageUrl: mediaUrlSchema,
   }),
   language: z.string(),
   anime: z.array(workSchema),
