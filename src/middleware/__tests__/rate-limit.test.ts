@@ -19,9 +19,11 @@ vi.mock('@lib/cache/client', () => ({
   redis: { incr, expire, ttl, get },
 }))
 
-const { enforceRateLimit, resolveRateLimit } = await import(
-  '@middleware/rate-limit'
-)
+const { enforceRateLimit, MEDIA_RATE_LIMIT, getClientIp, resolveRateLimit } =
+  await import('@middleware/rate-limit')
+
+const requestWithHeaders = (headers: Record<string, string>): Request =>
+  new Request('https://anidev.app/media/x', { headers })
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -69,8 +71,36 @@ describe('resolveRateLimit', () => {
 
   it('resolves api, media, and auth limits', () => {
     expect(resolveRateLimit('/api/anime', '1.2.3.4')?.limit).toBe(60)
-    expect(resolveRateLimit('/media/x', '1.2.3.4')?.limit).toBe(60)
+    expect(resolveRateLimit('/media/x', '1.2.3.4')?.limit).toBe(
+      MEDIA_RATE_LIMIT
+    )
+    expect(MEDIA_RATE_LIMIT).toBe(300)
     expect(resolveRateLimit('/api/auth/login', '1.2.3.4')?.limit).toBe(10)
+  })
+})
+
+describe('getClientIp', () => {
+  it('prefers cf-connecting-ip — the authoritative visitor IP behind Cloudflare', () => {
+    const request = requestWithHeaders({
+      'cf-connecting-ip': '203.0.113.7',
+      'x-forwarded-for': '198.51.100.1, 172.71.0.5',
+      'x-real-ip': '198.51.100.2',
+    })
+    expect(getClientIp(request)).toBe('203.0.113.7')
+  })
+
+  it('uses the first x-forwarded-for entry when Cloudflare is not in front', () => {
+    const request = requestWithHeaders({
+      'x-forwarded-for': '198.51.100.1, 172.71.0.5',
+    })
+    expect(getClientIp(request)).toBe('198.51.100.1')
+  })
+
+  it('falls back to x-real-ip and then loopback', () => {
+    expect(
+      getClientIp(requestWithHeaders({ 'x-real-ip': '198.51.100.3' }))
+    ).toBe('198.51.100.3')
+    expect(getClientIp(requestWithHeaders({}))).toBe('127.0.0.1')
   })
 })
 

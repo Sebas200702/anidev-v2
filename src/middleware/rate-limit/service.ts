@@ -9,15 +9,20 @@ import { logger } from '@utils/logger-util'
 export const REQUEST_LIMIT_WINDOW_SECONDS = 60
 export const GENERAL_RATE_LIMIT = 60
 export const AUTH_RATE_LIMIT = 10
-export const MEDIA_RATE_LIMIT = 60
+export const MEDIA_RATE_LIMIT = 300
 export const UPLOAD_RATE_LIMIT = 10
 
 /** Profile image uploads: `PUT /api/user/:userId/avatar|banner`. */
 const UPLOAD_PATH = /^\/api\/user\/[^/]+\/(avatar|banner)\/?$/
 
+/**
+ * Resolves the visitor IP. `cf-connecting-ip` wins: behind Cloudflare,
+ * `x-forwarded-for` carries edge-server IPs that rotate per connection
+ * and are shared across unrelated visitors — not the end client.
+ */
 export const getClientIp = (request: Request): string =>
-  (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
   request.headers.get('cf-connecting-ip') ||
+  (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
   request.headers.get('x-real-ip') ||
   '127.0.0.1'
 
