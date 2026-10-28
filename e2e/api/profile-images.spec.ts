@@ -109,7 +109,6 @@ test.describe('profile image uploads', () => {
   test('a character pick deletes the uploaded avatar', async ({
     authedRequest,
     request,
-    baseURL,
   }) => {
     const userId = await createProfile(authedRequest)
     const upload = await putImage(authedRequest, `/api/user/${userId}/avatar`, {
@@ -124,8 +123,9 @@ test.describe('profile image uploads', () => {
       }
     )
     expect(pick.status()).toBe(200)
+    // Media URLs are origin-relative (img-src 'self').
     expect((await pick.json()).data.avatar).toBe(
-      `${baseURL}/media/character/${SEED_CHARACTER_MAL_ID}/poster/large`
+      `/media/character/${SEED_CHARACTER_MAL_ID}/poster/large`
     )
     expect((await request.get(uploadedUrl)).status()).toBe(404)
   })
