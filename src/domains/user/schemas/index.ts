@@ -46,3 +46,8 @@ export {
   watchProgressMutationResponseSchema,
 } from './watch-progress-schema'
 export type { WatchProgressEntry } from './watch-progress-schema'
+export {
+  preferencesUpdateSchema,
+  updateUserPreferencesSchema,
+} from './user-preferences-write-schema'
+export type { PreferencesUpdate } from './user-preferences-write-schema'

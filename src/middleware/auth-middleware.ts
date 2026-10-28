@@ -88,7 +88,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return applySecurityHeaders(response, requestId)
   }
 
-  const rateLimit = resolveRateLimit(pathname, getClientIp(context.request))
+  const rateLimit = resolveRateLimit(
+    pathname,
+    getClientIp(context.request),
+    context.request.method
+  )
   if (rateLimit) {
     const result = await enforceRateLimit(rateLimit.keys, rateLimit.limit)
     if (!result.allowed) {

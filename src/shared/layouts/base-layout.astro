@@ -4,6 +4,7 @@ import '@styles/global.css'
 import { ClientRouter } from 'astro:transitions'
 import { Footer, Header } from '@components/index'
 import { Toolbar } from '@components/toolbar'
+import { META_CONTENT_SECURITY_POLICY } from '@middleware/security-headers'
 
 interface Props {
   title: string
@@ -43,41 +44,16 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
     <meta name="twitter:site" content={url} />
     <meta
       http-equiv="Content-Security-Policy"
-      content="
-    default-src 'self';
-    connect-src 'self' data: blob: https://a.animethemes.moe https://v.animethemes.moe  https://i.ytimg.com https://o4510429009674240.ingest.us.sentry.io;
-    script-src
-      'self'
-      'unsafe-inline'
-      https://cdn.jsdelivr.net
-      https://www.gstatic.com
-      http://www.gstatic.com;
-    frame-src 'self' https://www.youtube.com/ https://www.youtube-nocookie.com/;
-    style-src 'self' 'unsafe-inline';
-    media-src 'self' blob: https://a.animethemes.moe https://v.animethemes.moe;
-    font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
-    img-src
-      'self'
-      data:
-      blob:
-      https://i.ytimg.com
-      https://coffee-advanced-tern-335.mypinata.cloud
-      https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev
-      https://lh3.googleusercontent.com/
-      https://anidev.app
-      https://www.anidev.app
-      https://www.youtube.com/;
-    worker-src 'self' blob:;
-  "
+      content={META_CONTENT_SECURITY_POLICY}
     />
 
     <AstroFont
       config={[
         {
           src: [],
-          name: 'Nunito',
+          name: 'Nunito Sans',
           googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap&',
+            'https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400..800&display=swap&',
           preload: true,
           display: 'swap',
           selector: 'body',
@@ -85,13 +61,13 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
         },
         {
           src: [],
-          name: 'Inter',
+          name: 'Kode Mono',
           googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap&',
-          preload: true,
+            'https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap&',
+          preload: false,
           display: 'swap',
-          selector: 'body',
-          fallback: 'sans-serif',
+          selector: '.font-heading, .font-display, .font-label',
+          fallback: 'monospace',
         },
       ]}
     />

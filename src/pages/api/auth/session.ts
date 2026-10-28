@@ -19,6 +19,8 @@
 import type { APIRoute } from 'astro'
 import { withErrorHandling } from '@http/with-error-handling'
 import { sessionService } from '@auth/services'
+import { userRepository } from '@user/repositories/user'
+import { resolveProfileStatus } from '@user/utils/profile-status'
 
 /**
  * Returns the active session and user from request cookies or headers.
@@ -65,13 +67,16 @@ import { sessionService } from '@auth/services'
  * const res = await fetch('/api/auth/session', { credentials: 'include' })
  * const { data } = await res.json()
  * // data.user: User | null, data.session: Session | null
+ * // data.profileStatus: 'missing' | 'incomplete' | 'complete' (onboarding)
  * ```
  */
 export const GET: APIRoute = withErrorHandling(async ({ request }) => {
   const session = await sessionService.getSession(request.headers)
+  if (!session) return { data: null, status: 200, meta: {} }
 
+  const profile = await userRepository.getUserProfileById(session.user.id)
   return {
-    data: session,
+    data: { ...session, profileStatus: resolveProfileStatus(profile) },
     status: 200,
     meta: {},
   }

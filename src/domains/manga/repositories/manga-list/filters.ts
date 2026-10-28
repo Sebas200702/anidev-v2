@@ -4,30 +4,20 @@
  * @module domains/manga/repositories/manga-list/filters
  */
 import { db } from '@db/client'
-import { manga } from '@db/schemas/manga'
+import { manga, mangaTitleSynonym } from '@db/schemas/manga'
 import {
   mangaGenre,
   mangaTheme,
   mangaDemographic,
+  mangaProducer,
 } from '@db/schemas/manga-relations'
-import { mangaTitleSynonym } from '@db/schemas/manga'
 import {
   demographic as demographicTable,
   genre as genreTable,
   theme as themeTable,
 } from '@db/schemas/anime-taxonomy'
 import { ADULT_MANGA_GENRES } from '@manga/constants'
-import {
-  and,
-  eq,
-  ilike,
-  inArray,
-  isNull,
-  notInArray,
-  or,
-  sql,
-  type SQL,
-} from 'drizzle-orm'
+import { eq, ilike, inArray, notInArray, or, sql, type SQL } from 'drizzle-orm'
 import type { MangaFilters } from '@manga/types'
 
 /**
@@ -52,6 +42,18 @@ export const buildMangaListConditions = (
           .from(mangaGenre)
           .innerJoin(genreTable, eq(genreTable.malId, mangaGenre.genreId))
           .where(inArray(genreTable.name, [...ADULT_MANGA_GENRES]))
+      )
+    )
+  }
+
+  if (filters.producerId) {
+    conditions.push(
+      inArray(
+        manga.malId,
+        db
+          .select({ id: mangaProducer.mangaId })
+          .from(mangaProducer)
+          .where(eq(mangaProducer.producerId, filters.producerId))
       )
     )
   }

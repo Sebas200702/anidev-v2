@@ -13,6 +13,7 @@
  * @see {@link module:lib/db/schemas/character-relations} for voice actor links
  */
 import {
+  index,
   integer,
   pgTable,
   serial,
@@ -30,25 +31,35 @@ import {
  * - `nameKanji` — Optional Japanese script name.
  * - `about` — Biography or description text.
  */
-export const character = pgTable('character', {
-  malId: integer('mal_id').primaryKey(),
-  name: text('name').notNull(),
-  nameKanji: text('name_kanji'),
-  about: text('about'),
-  /** AniList character id, para cruzar con la fuente que da el reparto. */
-  anilistId: integer('anilist_id'),
-  /** `Male` / `Female` / `Non-binary` (AniList). */
-  gender: text('gender'),
-  dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
-  bloodType: text('blood_type'),
-  /** Altura en cm y peso en kg (AniList). */
-  height: integer('height'),
-  weight: integer('weight'),
-  /** Edad declarada en la ficha de AniList (texto: "17", "23-25"). */
-  age: text('age'),
-  /** Puestos como favorito en AniList (mide popularidad del personaje). */
-  favorites: integer('favorites'),
-})
+export const character = pgTable(
+  'character',
+  {
+    malId: integer('mal_id').primaryKey(),
+    name: text('name').notNull(),
+    nameKanji: text('name_kanji'),
+    about: text('about'),
+    /** AniList character id, para cruzar con la fuente que da el reparto. */
+    anilistId: integer('anilist_id'),
+    /** `Male` / `Female` / `Non-binary` (AniList). */
+    gender: text('gender'),
+    dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
+    bloodType: text('blood_type'),
+    /** Altura en cm y peso en kg (AniList). */
+    height: integer('height'),
+    weight: integer('weight'),
+    /** Edad declarada en la ficha de AniList (texto: "17", "23-25"). */
+    age: text('age'),
+    /** Puestos como favorito en AniList (mide popularidad del personaje). */
+    favorites: integer('favorites'),
+  },
+  (t) => [
+    index('character_name_trgm_idx').using('gin', t.name.op('gin_trgm_ops')),
+    index('character_name_kanji_trgm_idx').using(
+      'gin',
+      t.nameKanji.op('gin_trgm_ops')
+    ),
+  ]
+)
 
 /**
  * Alternate nicknames (`character_nickname` table) for a character.

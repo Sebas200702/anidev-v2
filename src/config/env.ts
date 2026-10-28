@@ -20,6 +20,13 @@
  * @see {@link module:lib/auth/server} for Better Auth secret and base URL
  */
 import { z } from 'zod'
+import {
+  optionalSecret,
+  optionalBoolean,
+  optionalUrl,
+  STORAGE_KEYS,
+  withDefault,
+} from '@config/env-fields'
 
 /**
  * Zod schema defining required and optional environment variables.
@@ -35,23 +42,59 @@ import { z } from 'zod'
  * @property APP_BASE_URL - Public origin used as Better Auth base URL and SEO canonical.
  * @property BETTER_AUTH_SECRET - Session signing secret; minimum 32 characters.
  * @property LOG_LEVEL - Optional Pino/log level; one of trace through fatal.
+ * @property GOOGLE_CLIENT_ID - Optional Google OAuth client id; set together
+ *   with `GOOGLE_CLIENT_SECRET` to enable Google sign-in.
+ * @property GOOGLE_CLIENT_SECRET - Optional Google OAuth client secret.
+ * @property S3_ENDPOINT - Optional S3-compatible endpoint (R2, MinIO); the
+ *   `S3_*` storage set is all-or-none and enables profile image uploads.
+ * @property S3_REGION - Storage region; defaults to `'auto'`.
+ * @property S3_FORCE_PATH_STYLE - Path-style requests; `true` (MinIO) unless
+ *   set to `'false'` (R2).
  */
-const envSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'test', 'production'])
-    .default('development'),
+const envSchema = z
+  .object({
+    NODE_ENV: z
+      .enum(['development', 'test', 'production'])
+      .default('development'),
 
-  DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
-  REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
+    DATABASE_URL: z.url({ protocol: /^(postgres|postgresql)$/ }),
+    REDIS_URL: z.url({ protocol: /^(redis|rediss)$/ }),
 
-  SENTRY_DSN: z.string().optional(),
+    SENTRY_DSN: z.string().optional(),
 
-  APP_BASE_URL: z.url(),
-  BETTER_AUTH_SECRET: z.string().min(32),
-  LOG_LEVEL: z
-    .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
-    .optional(),
-})
+    APP_BASE_URL: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(32),
+    LOG_LEVEL: z
+      .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
+      .optional(),
+
+    GOOGLE_CLIENT_ID: optionalSecret,
+    GOOGLE_CLIENT_SECRET: optionalSecret,
+
+    S3_ENDPOINT: optionalUrl,
+    S3_REGION: withDefault('auto'),
+    S3_BUCKET: optionalSecret,
+    S3_ACCESS_KEY_ID: optionalSecret,
+    S3_SECRET_ACCESS_KEY: optionalSecret,
+    S3_PUBLIC_URL: optionalUrl,
+    S3_FORCE_PATH_STYLE: optionalBoolean(true),
+  })
+  .refine(
+    ({ GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET }) =>
+      Boolean(GOOGLE_CLIENT_ID) === Boolean(GOOGLE_CLIENT_SECRET),
+    {
+      message: 'Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or neither',
+      path: ['GOOGLE_CLIENT_ID'],
+    }
+  )
+  .refine(
+    (values) =>
+      new Set(STORAGE_KEYS.map((key) => Boolean(values[key]))).size === 1,
+    {
+      message: `Set all of ${STORAGE_KEYS.join(', ')}, or none`,
+      path: ['S3_ENDPOINT'],
+    }
+  )
 
 /**
  * Parsed and validated environment configuration for the running process.
@@ -82,4 +125,13 @@ export const env = envSchema.parse({
   APP_BASE_URL: process.env.APP_BASE_URL,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   LOG_LEVEL: process.env.LOG_LEVEL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  S3_ENDPOINT: process.env.S3_ENDPOINT,
+  S3_REGION: process.env.S3_REGION,
+  S3_BUCKET: process.env.S3_BUCKET,
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+  S3_PUBLIC_URL: process.env.S3_PUBLIC_URL,
+  S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE,
 })

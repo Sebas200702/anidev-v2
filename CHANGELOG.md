@@ -2,6 +2,95 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.17.0...v0.18.0) (2026-10-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **user:** PATCH/POST de perfil rechaza avatares con URL externa
+arbitraria (400 VALIDATION_ERROR).
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
+
+### Features
+
+* **config:** S3_* opcionales todo-o-nada e isStorageEnabled ([131b226](https://github.com/Sebas200702/docs-hackathon/commit/131b226cd81a31599990b48f36ec61cb333f73ef))
+* **errors:** STORAGE_NOT_CONFIGURED/UNSUPPORTED_MEDIA_TYPE y CSP con origen de storage ([60a81b9](https://github.com/Sebas200702/docs-hackathon/commit/60a81b9430e8a5938b4a9f9cd86c088e4eb76ab4))
+* **storage:** cliente S3 perezoso con put, delete y URL pública ([e05dc5e](https://github.com/Sebas200702/docs-hackathon/commit/e05dc5e0e3bd5ca392ca7c858b21a543767cc09a))
+* **user:** bucket de rate limit para subidas y allowlist de avatar ([7fbff83](https://github.com/Sebas200702/docs-hackathon/commit/7fbff83c52ebbf9f9c627fb9ade23ca949aabd1b))
+* **user:** columnas banner, avatar_key y banner_key; banner en el DTO ([dc4801d](https://github.com/Sebas200702/docs-hackathon/commit/dc4801d77a97dfb45b31f9542054842aaabc412e))
+* **user:** processProfileImage con sharp (formato real, EXIF, crop, WebP) ([65ea4a9](https://github.com/Sebas200702/docs-hackathon/commit/65ea4a9dccda1c29c8b62a1d3dfddc03d08d68a3))
+* **user:** profileImageService para subida, picks de galería y reset ([35b81a4](https://github.com/Sebas200702/docs-hackathon/commit/35b81a4ef3808654f74dc95a9cfd52493b9842b0))
+* **user:** readImageUpload multipart acotado a 5 MiB con crop validado ([e4a6939](https://github.com/Sebas200702/docs-hackathon/commit/e4a6939877f12e07a243c45e31afb098c177af5b))
+* **user:** rutas PUT/DELETE de avatar y banner y picks de galería ([ac338ed](https://github.com/Sebas200702/docs-hackathon/commit/ac338ed7fe11e740a5813212322503bad0dc2860))
+
+
+### Bug Fixes
+
+* **config:** S3_FORCE_PATH_STYLE estricto y salida del wait de MinIO en CI ([20cec98](https://github.com/Sebas200702/docs-hackathon/commit/20cec988e7661fa4a5aba2733295feae41106d56))
+
+## [0.17.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.16.0...v0.17.0) (2026-10-25)
+
+
+### Features
+
+* **auth:** codigos PROVIDER_NOT_CONFIGURED (404) y ACCOUNT_EXISTS_USE_PASSWORD (409) ([de24b20](https://github.com/Sebas200702/docs-hackathon/commit/de24b2044ca662d651ad08420302f9a6bbcc26f6))
+* **auth:** credenciales opcionales de Google (ambas o ninguna) ([20feeb6](https://github.com/Sebas200702/docs-hackathon/commit/20feeb6b1222133392d0113859cbd5eb723ae546))
+* **auth:** GET /api/auth/sign-in/google, /callback/google y /link/google ([5e6a20c](https://github.com/Sebas200702/docs-hackathon/commit/5e6a20cf0985169db16c34023c3d2bf020879313))
+* **auth:** profileStatus en GET /api/auth/session para el onboarding ([76abe4c](https://github.com/Sebas200702/docs-hackathon/commit/76abe4cb465344dbf53f6536ddbaf6967c0c1278))
+* **auth:** proveedor Google condicional, sin linking implicito y perfil inicial ([f5420a8](https://github.com/Sebas200702/docs-hackathon/commit/f5420a879386a738ab0a7256a3572ea21962255f))
+* **auth:** sanitizeCallbackURL contra open redirect ([d2fa461](https://github.com/Sebas200702/docs-hackathon/commit/d2fa461658e59bbf270b4230491d8d411f1e0707))
+* **user:** esquema de escritura de preferencias del perfil ([572d27e](https://github.com/Sebas200702/docs-hackathon/commit/572d27eab9d4df75f2da0208f9572060441deeda))
+* **user:** PATCH /api/user/:userId/preferences (solo el dueno) ([346a078](https://github.com/Sebas200702/docs-hackathon/commit/346a078f128231865e3027e0175b56873bafe020))
+* **user:** repositorio de existencia de ids de catalogo para preferencias ([a27b64a](https://github.com/Sebas200702/docs-hackathon/commit/a27b64a7a916d8756c24f313c327e72b9cf89119))
+* **user:** servicio de preferencias con politica de dueno y validacion de ids ([e6c6eb9](https://github.com/Sebas200702/docs-hackathon/commit/e6c6eb99d9e97759ec71a8dbbceea41d642076e1))
+
+## [0.16.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.15.0...v0.16.0) (2026-10-24)
+
+
+### Features
+
+* **db:** indices inversos de reparto/staff/voces/artistas y trigram de nombres ([b1dcf35](https://github.com/Sebas200702/docs-hackathon/commit/b1dcf356a38ae0dd4a271028fa9f9ba510ed92f2))
+* **music:** scope interno artistIds en la lista de musica ([d5e2e42](https://github.com/Sebas200702/docs-hackathon/commit/d5e2e4256c7a0e07ae84ebaaba8f1b7f507832ce))
+* **people:** alias [@people](https://github.com/people), errores 404 y rutas publicas ([f65b791](https://github.com/Sebas200702/docs-hackathon/commit/f65b7910318bd9c6267ee77ab650db4132648366))
+* **people:** esquemas, tipos y mappers de personajes y personas ([93f7d53](https://github.com/Sebas200702/docs-hackathon/commit/93f7d53bceef279458d60021e8821020957e0090))
+* **people:** GET /api/characters, /:malId y /:malId/appearances ([4ae6636](https://github.com/Sebas200702/docs-hackathon/commit/4ae663659f14ad3733012a5b7615e9461f998ad4))
+* **people:** GET /api/people, /:malId, /:malId/voices, /credits y /music ([3329da9](https://github.com/Sebas200702/docs-hackathon/commit/3329da96ff9940279f227512f1d84c2a779571ce))
+* **people:** repositorios de busqueda, perfil y apariciones de personajes ([809f594](https://github.com/Sebas200702/docs-hackathon/commit/809f594530b0e464e1853b97614dbad7ae93d6df))
+* **people:** repositorios de busqueda, perfil, voces y creditos de personas ([9b9f81c](https://github.com/Sebas200702/docs-hackathon/commit/9b9f81c57dbbfbf1654cb23b314c4cef3f52eaa5))
+
+## [0.15.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.14.0...v0.15.0) (2026-10-24)
+
+
+### Features
+
+* **anime:** filtro producer/producerRole en /api/anime ([3df2766](https://github.com/Sebas200702/docs-hackathon/commit/3df2766e0bbbb12b77d86f629a0d9a68aa641954))
+* **manga:** scope interno producerId en la lista de manga ([1df7f8f](https://github.com/Sebas200702/docs-hackathon/commit/1df7f8fb8b723303713e39bec3336d4ef6f20a31))
+* **producer:** aliases @producer/[@seo](https://github.com/seo) y error PRODUCER_NOT_FOUND (404) ([30aed56](https://github.com/Sebas200702/docs-hackathon/commit/30aed568ef3d04c3689ad8cc53dd44715ee442fa))
+* **producer:** esquemas, tipos y prefijos de cache ([6de4357](https://github.com/Sebas200702/docs-hackathon/commit/6de4357bc0d74f0e1bb619b2691df966e0e3c5ee))
+* **producer:** GET /api/producers, /:malId, /:malId/anime y /:malId/manga ([bed2f06](https://github.com/Sebas200702/docs-hackathon/commit/bed2f06de855f69f131ef6327856cd2c737a68b6))
+* **producer:** repositorios de lista y detalle con conteo por rol ([0b9dda1](https://github.com/Sebas200702/docs-hackathon/commit/0b9dda159150c4936c30d8a35dcaff3b2628f96c))
+* **producer:** servicios de lista, detalle y obras con cache ([1706736](https://github.com/Sebas200702/docs-hackathon/commit/170673644a426c3cf59df51574ad4faeff5adbc5))
+* **seo:** builders puros de urlset y sitemapindex ([a81d1c8](https://github.com/Sebas200702/docs-hackathon/commit/a81d1c83e2ccfa88880540b34116727dd2d57276))
+* **seo:** GET /sitemap.xml, /sitemaps/:file y /robots.txt ([da7dbf9](https://github.com/Sebas200702/docs-hackathon/commit/da7dbf98b76788971f9389ad177d0963d3969a04))
+* **seo:** registro de segmentos y servicio de sitemap con cache ([29e4517](https://github.com/Sebas200702/docs-hackathon/commit/29e45174d838e6b5aa893f2ef921896b81645916))
+* **seo:** repositorio del sitemap con piso parental safe ([6125b06](https://github.com/Sebas200702/docs-hackathon/commit/6125b06d643426df420b0a32e87605b012722e87))
+* **seo:** sitemaps, robots.txt y /api/producers como rutas publicas ([7a8c3e0](https://github.com/Sebas200702/docs-hackathon/commit/7a8c3e00ba81c479618bbb4e6c5a08c6ecfbc3e9))
+
+## [0.14.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.13.0...v0.14.0) (2026-10-24)
+
+
+### Features
+
+* **anime:** el reparto descarta personajes con nombre provisional ([2929507](https://github.com/Sebas200702/docs-hackathon/commit/2929507ddf0f54a81f97a9821ef66ef3208a4980))
+* **manga:** reparto con voz en el detalle y GET /api/manga/:malId/full ([fa431ba](https://github.com/Sebas200702/docs-hackathon/commit/fa431ba1d2bde173b4563ad171e87e56297c7f7b))
+* **search:** GET /api/search con type=anime|manga ([0160c89](https://github.com/Sebas200702/docs-hackathon/commit/0160c897dd75bd002cbbe8bc198382e5b0e7db2e))
+
+
+### Bug Fixes
+
+* **scripts:** clone-prod sin credencial local embebida ([13f3cec](https://github.com/Sebas200702/docs-hackathon/commit/13f3cec201f899bc1b905124bf36f04481e3b0a5))
+
 ## [0.13.0](https://github.com/Sebas200702/anidev-v2/compare/v0.12.0...v0.13.0) (2026-10-24)
 
 

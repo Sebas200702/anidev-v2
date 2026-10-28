@@ -9,6 +9,7 @@ import { characterStaffRepository } from '@anime/repositories/character-staff'
 import { animeCharacterCache } from '@anime/cache/anime-character'
 import { staffRepository } from '@anime/repositories/staff'
 import { mapAnimeCharacters } from '@anime/mappers/anime-character'
+import { PROVISIONAL_CHARACTER_NAME_PREFIX } from '@anime/constants'
 import { cacheGet, cacheSet, withStaleCache } from '@lib/cache'
 import { CacheTtl } from '@lib/cache/config'
 import type { StaleResult } from '@lib/cache/cache-store-types'
@@ -55,15 +56,28 @@ export const animeCharacterService = {
       setStaleCache: (key, value) =>
         cacheSet(key, value, { ttlSeconds: CacheTtl.Stale }),
       compute: async () => {
-        const refs =
+        const allRefs =
           await animeCharacterRepository.getCharacterRefsByAnimeId(animeId)
 
-        const characterIds = refs.map((r) => r.characterId)
-
-        const [characters, voiceRelations] = await Promise.all([
-          characterRepository.getManyByMalIds(characterIds),
-          characterStaffRepository.getVoicesByCharacterIds(characterIds),
+        const [allCharacters, voiceRelations] = await Promise.all([
+          characterRepository.getManyByMalIds(
+            allRefs.map((r) => r.characterId)
+          ),
+          characterStaffRepository.getVoicesByCharacterIds(
+            allRefs.map((r) => r.characterId)
+          ),
         ])
+
+        // Placeholder names never reach the app: drop them and their refs.
+        const provisionalIds = new Set(
+          allCharacters
+            .filter((c) => c.name.startsWith(PROVISIONAL_CHARACTER_NAME_PREFIX))
+            .map((c) => c.malId)
+        )
+        const refs = allRefs.filter((r) => !provisionalIds.has(r.characterId))
+        const characters = allCharacters.filter(
+          (c) => !provisionalIds.has(c.malId)
+        )
 
         const staffIds = [...new Set(voiceRelations.map((v) => v.staffId))]
 

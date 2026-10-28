@@ -9,7 +9,6 @@
 
 import type {
   AuthError,
-  DomainError,
   InfraError,
   RateLimitedError,
   ResponseValidationError,
@@ -35,37 +34,6 @@ const UNAUTHORIZED_AUTH_CODES = new Set<ErrorCode>([
   ErrorCodes.AUTH_REQUIRED,
   ErrorCodes.AUTH_INVALID_TOKEN,
   ErrorCodes.AUTH_SESSION_EXPIRED,
-])
-
-/**
- * Domain error codes that map to **404 Not Found**.
- *
- * @remarks
- * Any other {@link DomainError} code maps to **400 Bad Request** and is logged at `error` severity.
- *
- * @internal
- */
-const NOT_FOUND_DOMAIN_CODES = new Set<ErrorCode>([
-  ErrorCodes.ANIME_NOT_FOUND,
-  ErrorCodes.MANGA_NOT_FOUND,
-  ErrorCodes.EPISODE_NOT_FOUND,
-  ErrorCodes.MUSIC_NOT_FOUND,
-  ErrorCodes.WATCH_STATE_NOT_FOUND,
-  ErrorCodes.COLLECTION_NOT_FOUND,
-  ErrorCodes.USER_NOT_FOUND,
-  ErrorCodes.MEDIA_NOT_FOUND,
-])
-
-/**
- * Domain error codes that map to **409 Conflict**.
- *
- * @remarks
- * Any other {@link DomainError} code maps to **400 Bad Request**.
- *
- * @internal
- */
-const CONFLICT_DOMAIN_CODES = new Set<ErrorCode>([
-  ErrorCodes.USER_PROFILE_CONFLICT,
 ])
 
 /**
@@ -140,42 +108,6 @@ export const mapAuthErrorToHttp = (
   }
 
   return undefined
-}
-
-/**
- * Maps {@link DomainError} instances to 404 or 400 responses.
- *
- * @param error - Business-rule violation from domain logic
- * @returns **404** when `error.code` is in {@link NOT_FOUND_DOMAIN_CODES}; otherwise **400**
- *
- * @remarks
- * Not-found codes are logged at `warn`; other domain errors at `error`. Neither path reports
- * to Sentry here — capture happens once in the top-level mapper.
- *
- * @internal
- */
-export const mapDomainErrorToHttp = (error: DomainError): HttpErrorResponse => {
-  if (NOT_FOUND_DOMAIN_CODES.has(error.code)) {
-    logger.warn({ err: toLoggableError(error) }, 'Domain error - not found')
-    return {
-      status: 404,
-      body: buildAppErrorBody(error),
-    }
-  }
-
-  if (CONFLICT_DOMAIN_CODES.has(error.code)) {
-    logger.warn({ err: toLoggableError(error) }, 'Domain error - conflict')
-    return {
-      status: 409,
-      body: buildAppErrorBody(error),
-    }
-  }
-
-  logger.error({ err: toLoggableError(error) }, 'Domain error')
-  return {
-    status: 400,
-    body: buildAppErrorBody(error),
-  }
 }
 
 /** Seconds a client/load balancer should wait before retrying a 503 response. */

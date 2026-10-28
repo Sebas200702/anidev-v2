@@ -95,3 +95,29 @@ describe('env DATABASE_URL / REDIS_URL', () => {
     await expect(loadEnv({ BETTER_AUTH_SECRET: 'too-short' })).rejects.toThrow()
   })
 })
+
+describe('env GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET', () => {
+  it('leaves Google disabled when both are unset or empty', async () => {
+    const { env } = await loadEnv({
+      GOOGLE_CLIENT_ID: undefined,
+      GOOGLE_CLIENT_SECRET: undefined,
+    })
+    expect(env.GOOGLE_CLIENT_ID).toBeUndefined()
+    expect(env.GOOGLE_CLIENT_SECRET).toBeUndefined()
+  })
+
+  it('accepts both together', async () => {
+    const { env } = await loadEnv({
+      GOOGLE_CLIENT_ID: 'id.apps.googleusercontent.com',
+      GOOGLE_CLIENT_SECRET: 'secret',
+    })
+    expect(env.GOOGLE_CLIENT_ID).toBe('id.apps.googleusercontent.com')
+  })
+
+  it.each([
+    { GOOGLE_CLIENT_ID: 'id', GOOGLE_CLIENT_SECRET: undefined },
+    { GOOGLE_CLIENT_ID: undefined, GOOGLE_CLIENT_SECRET: 'secret' },
+  ])('fails fast when only one is set (%o)', async (google) => {
+    await expect(loadEnv(google)).rejects.toThrow()
+  })
+})

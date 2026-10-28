@@ -36,3 +36,9 @@ export {
   UserProfileConflictError,
   userProfileConflict,
 } from './user-profile-conflict-error'
+export {
+  StorageNotConfiguredError,
+  UnsupportedMediaTypeError,
+  storageNotConfigured,
+  unsupportedMediaType,
+} from './profile-image-errors'

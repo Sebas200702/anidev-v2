@@ -10,6 +10,10 @@ export const REQUEST_LIMIT_WINDOW_SECONDS = 60
 export const GENERAL_RATE_LIMIT = 60
 export const AUTH_RATE_LIMIT = 10
 export const MEDIA_RATE_LIMIT = 60
+export const UPLOAD_RATE_LIMIT = 10
+
+/** Profile image uploads: `PUT /api/user/:userId/avatar|banner`. */
+const UPLOAD_PATH = /^\/api\/user\/[^/]+\/(avatar|banner)\/?$/
 
 export const getClientIp = (request: Request): string =>
   (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
@@ -59,9 +63,18 @@ export const enforceRateLimit = async (
   return { allowed: true, retryAfter: 0 }
 }
 
+/**
+ * Picks the rate-limit bucket for a request.
+ *
+ * @param pathname - Request path
+ * @param ip - Client IP
+ * @param method - HTTP method; only `PUT` uploads use the upload bucket
+ * @returns Keys and limit, or `null` for paths that are not limited
+ */
 export const resolveRateLimit = (
   pathname: string,
-  ip: string
+  ip: string,
+  method = 'GET'
 ): { keys: string[]; limit: number } | null => {
   if (!(pathname.startsWith('/api/') || pathname.startsWith('/media/'))) {
     return null
@@ -74,6 +87,9 @@ export const resolveRateLimit = (
     pathname.startsWith('/api/auth/register')
   ) {
     return { keys: [`rl:auth:ip:${ip}`], limit: AUTH_RATE_LIMIT }
+  }
+  if (method === 'PUT' && UPLOAD_PATH.test(pathname)) {
+    return { keys: [`rl:upload:${ip}`], limit: UPLOAD_RATE_LIMIT }
   }
   return { keys: [`rl:gen:${ip}`], limit: GENERAL_RATE_LIMIT }
 }

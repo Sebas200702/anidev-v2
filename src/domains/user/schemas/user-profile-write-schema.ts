@@ -13,6 +13,7 @@
  * @see {@link userService.updateUserProfile}
  */
 import { z } from 'zod'
+import { isAllowedAvatarUrl } from '@user/utils/avatar-url'
 
 /**
  * Identity-only profile fields that callers may write through the API.
@@ -29,7 +30,12 @@ import { z } from 'zod'
 export const profileIdentitySchema = z.strictObject({
   name: z.string().min(1),
   lastName: z.string().min(1),
-  avatar: z.url().optional(),
+  avatar: z
+    .url()
+    .refine(isAllowedAvatarUrl, {
+      message: 'Avatar must be app media, an upload or a Google picture',
+    })
+    .optional(),
   birthday: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']),
 })

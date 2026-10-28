@@ -22,3 +22,4 @@ export {
 } from './user-identity'
 export { mapUserList, mapUserListEntry } from './user-list'
 export { mapWatchProgress, mapWatchProgressEntry } from './watch-progress'
+export { mapPreferencesPatchToDb } from './user-preferences'

@@ -14,6 +14,7 @@
  * @see {@link module:lib/db/schemas/anime-relations.animeStaff} for production credits
  */
 import {
+  index,
   integer,
   pgTable,
   serial,
@@ -32,23 +33,27 @@ import {
  * - `birthday` — Birth date as text from import.
  * - `about` — Biography text.
  */
-export const staff = pgTable('staff', {
-  malId: integer('mal_id').primaryKey(),
-  name: text('name').notNull(),
-  givenName: text('given_name'),
-  familyName: text('family_name'),
-  birthday: text('birthday'),
-  about: text('about'),
-  /** AniList staff id, para cruzar con la fuente que da los créditos. */
-  anilistId: integer('anilist_id'),
-  /** `Male` / `Female` / `Non-binary` (AniList). */
-  gender: text('gender'),
-  dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
-  /** Puestos como favorito en AniList. */
-  favorites: integer('favorites'),
-  /** Id de persona en AniList cuando el rol es de voz (distingue del actor). */
-  voiceActorMalId: integer('voice_actor_mal_id'),
-})
+export const staff = pgTable(
+  'staff',
+  {
+    malId: integer('mal_id').primaryKey(),
+    name: text('name').notNull(),
+    givenName: text('given_name'),
+    familyName: text('family_name'),
+    birthday: text('birthday'),
+    about: text('about'),
+    /** AniList staff id, para cruzar con la fuente que da los créditos. */
+    anilistId: integer('anilist_id'),
+    /** `Male` / `Female` / `Non-binary` (AniList). */
+    gender: text('gender'),
+    dateOfBirth: timestamp('date_of_birth', { withTimezone: true }),
+    /** Puestos como favorito en AniList. */
+    favorites: integer('favorites'),
+    /** Id de persona en AniList cuando el rol es de voz (distingue del actor). */
+    voiceActorMalId: integer('voice_actor_mal_id'),
+  },
+  (t) => [index('staff_name_trgm_idx').using('gin', t.name.op('gin_trgm_ops'))]
+)
 
 /**
  * Alternate spellings or aliases (`staff_alternative_name` table) for staff.

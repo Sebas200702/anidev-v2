@@ -1,7 +1,7 @@
 {
   "name": "anidev-v2",
   "type": "module",
-  "version": "0.13.0",
+  "version": "0.18.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -40,6 +40,7 @@
   "dependencies": {
     "@astrojs/node": "11.1.9",
     "@astrojs/react": "7.1.1",
+    "@aws-sdk/client-s3": "^3.1156.0",
     "@sentry/astro": "10.43.0",
     "@sentry/node": "10.43.0",
     "@sentry/react": "10.43.0",

@@ -20,8 +20,8 @@ import { withZodValidation } from '@http/with-validation'
 import {
   getMangaDetailsSchema,
   mangaDetailsResponseSchema,
-} from '@manga/schemas/manga-schema'
-import { mangaDetailsService } from '@manga/services/manga-service'
+} from '@manga/schemas/manga-details-schema'
+import { mangaDetailsService } from '@manga/services/manga-detail'
 
 /**
  * Returns the detail payload of a printed work.
@@ -45,7 +45,8 @@ import { mangaDetailsService } from '@manga/services/manga-service'
  *     volumes: number | null
  *     synopsis: string
  *     genres: string[]
- *     characters: Array<{ characterId: number, name: string, role: string, imageUrl: string }>
+ *     characters: Array<{ characterId: number, name: string, role: string, imageUrl: string,
+ *       voiceActors: Array<{ staffId: number, name: string, language: string, imageUrl: string }> }>
  *     staff: Array<{ staffId: number, name: string, role: string, imageUrl: string }>
  *     related: Array<{ mangaId: number, title: string, relationType: string }>
  *   }

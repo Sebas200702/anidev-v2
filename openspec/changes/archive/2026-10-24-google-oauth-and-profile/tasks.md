@@ -1,0 +1,66 @@
+# Tasks — Google sign-in and profile onboarding
+
+> TDD-first; one commit per task. Backend only. Fetch Better Auth docs
+> (Context7) before touching auth APIs.
+
+## 1. Configuration
+
+- [x] 1.1 Env:
+      - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, optional, both or
+        neither (tests first);
+      - `isGoogleEnabled()`;
+      - document both in `.env.example` and `.env.local.example`.
+- [x] 1.2 `ErrorCodes`: `PROVIDER_NOT_CONFIGURED` (404) and
+      `ACCOUNT_EXISTS_USE_PASSWORD` (409), with mapping tests.
+- [x] 1.3 `server.ts`:
+      - conditional `socialProviders.google` with `mapProfileToUser`;
+      - `accountLinking` with `disableImplicitLinking`;
+      - profile bootstrap hook.
+
+      Unit-test the bootstrap mapper (names, fallbacks, avatar) as a pure
+      function.
+
+## 2. Routes
+
+- [x] 2.1 `sanitizeCallbackURL` pure util plus tests (relative, `//`, `/\`,
+      absolute, other origin).
+- [x] 2.2 `GET /api/auth/sign-in/google`, `GET /api/auth/callback/google`
+      (including the conflict → `error=ACCOUNT_EXISTS_USE_PASSWORD`
+      redirect) and `GET /api/auth/link/google`. Add the public routes.
+      Route tests with mocked `auth.api` / `auth.handler`.
+- [x] 2.3 `profileStatus` in `GET /api/auth/session` (tests for `missing`,
+      `incomplete` and `complete`).
+
+## 3. Preferences
+
+- [x] 3.1 `preferencesUpdateSchema` plus tests.
+- [x] 3.2 Catalog id existence repository (genres, producers, anime). Unit
+      tests plus an integration spec.
+- [x] 3.3 `userService.updatePreferences`:
+      - owner policy;
+      - id check;
+      - CSV write;
+      - cache invalidation.
+
+      Unit tests.
+- [x] 3.4 `PATCH /api/user/:userId/preferences` route plus tests (200, 400,
+      401, 403).
+
+## 4. Verification, release & archive
+
+- [x] 4.1 E2E:
+      - Google routes answer `404` without env;
+      - `profileStatus` for a seeded password user;
+      - preferences owner update and the `403` for another user.
+- [ ] 4.2 Manual Google checklist with test credentials, recorded in the PR:
+      - new user;
+      - existing-email conflict;
+      - explicit link;
+      - `callbackURL` guard.
+- [x] 4.3 Full gate, AGENTS.md (env vars, public routes), ROADMAP (Fase 2),
+      release minor, PR, merge, push tag, archive.
+
+> 4.2 queda abierta a propósito: requiere credenciales reales de Google y se
+> ejecuta al activar `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`. Sin ellas la
+> funcionalidad está apagada (`404 PROVIDER_NOT_CONFIGURED`), así que mergear
+> no expone un flujo sin verificar.

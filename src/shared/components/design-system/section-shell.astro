@@ -1,0 +1,38 @@
+---
+/**
+ * Section shell for the design-system docs.
+ *
+ * @module shared/components/design-system/section-shell
+ * @remarks
+ * Private subcomponent of {@link DesignSystem}: mono plate mark, display
+ * heading and hairline rule. Never imported outside this folder.
+ *
+ * @example
+ * ```astro
+ * <SectionShell index="01" title="Type" blurb="Two voices." />
+ * ```
+ */
+interface Props {
+  index: string
+  title: string
+  blurb?: string
+}
+
+const { index, title, blurb } = Astro.props as Props
+---
+
+<section class="flex flex-col gap-6">
+  <div class="flex items-baseline justify-between gap-4">
+    <p class="font-label text-focus text-[11px] tracking-[0.2em] uppercase">
+      {index} — {title}
+    </p>
+    <p class="plate-label">
+      DS · Vol.01
+    </p>
+  </div>
+  <h2 class="font-display text-on-surface text-3xl font-black tracking-tight uppercase md:text-4xl">
+    {title}
+  </h2>
+  {blurb && <p class="text-on-surface-muted max-w-prose text-sm">{blurb}</p>}
+  <div class="border-t border-neutral-800" aria-hidden="true"></div>
+</section>

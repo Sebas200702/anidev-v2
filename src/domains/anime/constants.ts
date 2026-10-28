@@ -23,6 +23,12 @@ export const ADULT_RATINGS = ['Rx - Hentai'] as const
  */
 export const RELEVANCE_RANK_ALIAS = 'sim_rank'
 
+/** Roles a producer can be credited with on an anime (`anime_producer.role`). */
+export const ANIME_PRODUCER_ROLES = ['studio', 'producer', 'licensor'] as const
+
+/** Comma-separated list of positive MAL ids (`producer=14,43`). */
+export const PRODUCER_IDS_PATTERN = /^[1-9]\d{0,9}(,[1-9]\d{0,9})*$/
+
 /** Whitelisted sort fields for the anime list/search query. */
 export const animeSortFields = ['score', 'year', 'title', 'relevance'] as const
 
@@ -94,3 +100,13 @@ export const SHOWCASE_CARD_SEARCH_LIMIT = 24
 export const EPISODE_PAGE_DEFAULT_LIMIT = 24
 export const EPISODE_PAGE_MAX_LIMIT = 100
 export const EPISODE_MAX_PAGE = 10_000
+
+/**
+ * Prefix of the provisional character names the scraper writes while a
+ * character still lacks its real name (`Personaje <id>`).
+ *
+ * @remarks
+ * The promotion step should replace them; cast queries also drop them so a
+ * placeholder never reaches the app.
+ */
+export const PROVISIONAL_CHARACTER_NAME_PREFIX = 'Personaje '

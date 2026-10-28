@@ -19,6 +19,10 @@ const { mangaListRepository } = await import('@manga/repositories/manga-list')
 const { mangaDetailsRepository } = await import(
   '@manga/repositories/manga-details'
 )
+const { mangaCastRepository } = await import('@manga/repositories/manga-cast')
+const { mangaTaxonomyRepository } = await import(
+  '@manga/repositories/manga-taxonomy'
+)
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -74,10 +78,9 @@ describe('mangaDetailsRepository', () => {
 
   it('returns arrays for taxonomy/cast/staff/publishers/related/links', async () => {
     select.mockReturnValue(chainResolving([]))
-    expect(await mangaDetailsRepository.getGenres(1)).toEqual([])
-    expect(await mangaDetailsRepository.getThemes(1)).toEqual([])
-    expect(await mangaDetailsRepository.getDemographics(1)).toEqual([])
-    expect(await mangaDetailsRepository.getCharacters(1)).toEqual([])
+    expect(await mangaTaxonomyRepository.getGenres(1)).toEqual([])
+    expect(await mangaTaxonomyRepository.getThemes(1)).toEqual([])
+    expect(await mangaTaxonomyRepository.getDemographics(1)).toEqual([])
     expect(await mangaDetailsRepository.getStaff(1)).toEqual([])
     expect(await mangaDetailsRepository.getPublishers(1)).toEqual([])
     expect(await mangaDetailsRepository.getRelated(1)).toEqual([])
@@ -89,8 +92,41 @@ describe('mangaDetailsRepository', () => {
     await expect(mangaDetailsRepository.getManga(1)).rejects.toBeInstanceOf(
       InfraError
     )
-    await expect(mangaDetailsRepository.getGenres(1)).rejects.toBeInstanceOf(
+    await expect(mangaTaxonomyRepository.getGenres(1)).rejects.toBeInstanceOf(
       InfraError
     )
+  })
+})
+
+describe('mangaCastRepository', () => {
+  it('returns the cast rows', async () => {
+    select.mockReturnValue(
+      chainResolving([{ characterId: 7, name: 'Guts', role: 'Main' }])
+    )
+    expect(await mangaCastRepository.getCharacters(1)).toHaveLength(1)
+  })
+
+  it('skips the voice query when there are no characters', async () => {
+    expect(await mangaCastRepository.getVoiceActors([])).toEqual([])
+    expect(select).not.toHaveBeenCalled()
+  })
+
+  it('returns voice actor rows', async () => {
+    select.mockReturnValue(
+      chainResolving([
+        { characterId: 7, staffId: 9, language: 'Japanese', name: 'Iwanaga' },
+      ])
+    )
+    expect(await mangaCastRepository.getVoiceActors([7])).toHaveLength(1)
+  })
+
+  it('wraps errors', async () => {
+    select.mockImplementation(throwOnQuery)
+    await expect(mangaCastRepository.getCharacters(1)).rejects.toBeInstanceOf(
+      InfraError
+    )
+    await expect(
+      mangaCastRepository.getVoiceActors([1])
+    ).rejects.toBeInstanceOf(InfraError)
   })
 })

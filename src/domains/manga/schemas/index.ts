@@ -6,12 +6,19 @@
 
 export {
   mangaCardSchema,
-  mangaDetailsSchema,
   mangaFiltersParamsSchema,
   mangaFiltersSchema,
   mangaSortFields,
   mangaListRequestSchema,
-  getMangaDetailsSchema,
   mangaListResponseSchema,
-  mangaDetailsResponseSchema,
 } from './manga-schema'
+export {
+  mangaCastMemberSchema,
+  mangaDetailsSchema,
+  getMangaDetailsSchema,
+  mangaDetailsResponseSchema,
+} from './manga-details-schema'
+export {
+  mangaFullDetailsSchema,
+  mangaFullDetailsResponseSchema,
+} from './manga-full-schema'

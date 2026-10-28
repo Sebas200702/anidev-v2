@@ -28,6 +28,7 @@ import { z } from 'zod'
  * | -------- | ---- | -------- | ----------- |
  * | `id` | `string` | yes | Unique profile identifier (matches `profile.id`) |
  * | `avatar` | `string` (URL) | no | Profile image URL; defaults to placeholder when mapped from null DB value |
+ * | `banner` | `string` (URL) \| `null` | no | Profile banner URL; `null` until uploaded or picked |
  * | `name` | `string` | yes | User given name |
  * | `lastName` | `string` | yes | User family name |
  * | `birthday` | `string` | no | Birth date string as stored/displayed |

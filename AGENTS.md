@@ -22,13 +22,14 @@ Rustrak operations live in `.opencode/skills/rustrak/`.
 
 Env vars are validated eagerly at import (`src/config/env.ts`); a missing/invalid required var fails fast.
 
-### Local stack (PostgreSQL + Dragonfly + Rustrak)
+### Local stack (PostgreSQL + Dragonfly + Rustrak + MinIO)
 
 For development you can stand up the self-hosted target stack entirely on your
 machine (no external accounts needed):
 
 ```bash
 docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :8080
+docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
 ```
 
 - Local credentials live in `.env.local.example` (copy to `.env.local`) and
@@ -37,12 +38,77 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
   RUSTRAK_SESSION_SECRET_KEY, RUSTRAK_SUPERUSER, …) from the project `.env`;
   copy `.env.local.example` → `.env` (or export the vars) before
   `docker compose up -d`.
+- The `storage` profile additionally needs MINIO_ROOT_USER, MINIO_ROOT_PASSWORD
+  and S3_BUCKET, and starts a one-shot `minio-init` job that creates the bucket
+  with public-read. The `minio`/`minio-init` services and the `minio_data`
+  volume live in **`docker-compose.storage.yml`**, which this file pulls in
+  through `include:` — so the same stack also deploys on its own in production
+  (see "Production storage" below). MinIO is **built from source**
+  (`docker/minio/Dockerfile`) because upstream no longer publishes CE images, so
+  the first `--profile storage up` compiles it (a few minutes); later runs reuse
+  the image.
 - Apply migrations against the local DB with `bun run db:migrate`.
 - Dashboard UIs: Rustrak UI is on `http://localhost:3000` (create a project there
   to get a full `SENTRY_DSN`, swap the `1` project id / key in `.env.local`);
-  the Rustrak server API itself listens on `http://localhost:8080`.
-- Named `postgres_data` / `dragonfly_data` / `rustrak_data` volumes persist across
-  `docker compose down`; add `-v` to wipe them too.
+  the Rustrak server API itself listens on `http://localhost:8080`; the MinIO
+  console is on `http://localhost:9001`.
+- Named `postgres_data` / `dragonfly_data` / `rustrak_data` / `minio_data`
+  volumes persist across `docker compose down`; add `-v` to wipe them too.
+
+### Production storage (MinIO)
+
+**Decision: self-hosted MinIO is the production object store.** Avatar/banner
+uploads go through `@lib/storage`, which talks to any S3-compatible backend, so
+`.env.example` documents both routes and nothing is hard-coded to a vendor.
+Production runs MinIO on this repo's own VPS rather than Cloudflare R2, because
+production *is* a self-hosted stack (Dokploy + Traefik) and a managed bucket
+would add an account, a payment method and a network hop where none exists
+today — there is no R2 account to reuse. The cost of that choice: **MinIO
+Community Edition is end-of-life upstream** (images stopped being published in
+October 2025, repository archived), so the image is built from pinned source
+(`docker/minio/Dockerfile`) and both ports stay bound to `127.0.0.1`, keeping
+the store and its console unreachable from the internet.
+
+Migrating to R2 later is env-only: `S3_ENDPOINT`, `S3_REGION=auto`,
+`S3_FORCE_PATH_STYLE=false`, the credentials and `S3_PUBLIC_URL` — no code.
+
+**1. Deploy the stack** — Dokploy → Compose → add with source `github`
+(owner `Sebas200702`, repo `anidev-v2`, branch `master`, compose path
+`./docker-compose.storage.yml`) and this environment (Dokploy writes it to a
+`.env` next to the compose file):
+
+```bash
+COMPOSE_PROFILES=storage  # makes Dokploy's plain `docker compose up -d` start only these services
+MINIO_ROOT_USER=...
+MINIO_ROOT_PASSWORD=...   # >= 20 chars
+S3_BUCKET=anidev-media
+```
+
+Keep **`isolatedDeployment` off**: an isolated compose gets its own network and
+the app could not resolve `minio`. The first deploy compiles Go for a few
+minutes; later ones reuse the cached layers. The one-shot `minio-init` job
+creates the bucket with anonymous reads — and since it only bootstraps a
+bucket, the app credentials are the root pair unless you extend it with
+`mc admin add-user` plus a bucket-scoped policy.
+
+**2. Point the app at it** (`S3_ENDPOINT`/`S3_BUCKET`/`S3_ACCESS_KEY_ID`/
+`S3_SECRET_ACCESS_KEY`/`S3_PUBLIC_URL` are all-or-none in `env.ts`):
+
+```bash
+S3_ENDPOINT=http://minio:9000        # container DNS on dokploy-network
+S3_REGION=us-east-1                  # default is `auto`
+S3_BUCKET=anidev-media
+S3_ACCESS_KEY_ID=<MINIO_ROOT_USER>
+S3_SECRET_ACCESS_KEY=<MINIO_ROOT_PASSWORD>
+S3_PUBLIC_URL=https://media.anidev.app/anidev-media
+S3_FORCE_PATH_STYLE=true             # default; `false` is for R2
+```
+
+`S3_PUBLIC_URL` is loaded by the browser, so it needs a public HTTPS host:
+create the DNS record `media.anidev.app` → the VPS (Cloudflare, proxied) and
+add a Traefik domain for the storage compose (host `media.anidev.app`, service
+`minio`, port `9000`, HTTPS). No CSP edit is required — `policy.ts` adds
+`new URL(S3_PUBLIC_URL).origin` to `img-src` at runtime.
 
 ## Commands
 
@@ -58,7 +124,7 @@ docker compose up -d            # PostgreSQL :5432, Dragonfly :6379, Rustrak :80
 | `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
 | `bun run test` | Vitest unit suite (`vitest run`; TDD — see Testing below). DB-integration specs auto-skip (no `RUN_DB_TESTS`) |
 | `bun run test:watch` | Vitest watch mode |
-| `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`) |
+| `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`; the storage spec also needs the `storage` profile and `S3_*`) |
 | `bun run test:e2e` | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below) |
 | `bun run test:e2e:ui` | Playwright interactive UI mode |
 | `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
@@ -292,12 +358,14 @@ los props vive en la URL** — cada combinación es un link compartible y el bot
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
 
 ## Path Aliases (tsconfig + Vite)
-`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@search`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@media`, `@music`, `@search`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
+`@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@search`, `@producer`, `@seo`, `@people`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@manga`, `@media`, `@music`, `@people`, `@producer`, `@search`, `@seo`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
 
 ## API Route Patterns
 Two composition styles:
 1. `withZodValidation(schema)(handler)` — validates `{ params, query, body }` as single Zod object, returns 400 on failure
 2. Error handling: `withErrorHandling(handler)` (try/catch wrapper) OR manual try/catch + `mapErrorToHttp(error)`
+
+`withZodValidation` reads JSON only (1 MiB cap). File uploads skip it: profile image routes (`PUT /api/user/:userId/avatar|banner`, `multipart/form-data`) call `readImageUpload(request)` from `@user/utils/image-upload` inside `withErrorHandling`, after the session/owner/storage checks, so rejected callers never make the server buffer the body (5 MiB cap, `413 REQUEST_TOO_LARGE`, `415 UNSUPPORTED_MEDIA_TYPE`). Uploads are rate-limited separately (`rl:upload:<ip>`, 10/min). Uploaded objects live in `@lib/storage` under server-generated keys and are served from `S3_PUBLIC_URL`, not `/media`.
 
 Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src/shared/errors/codes.ts`. HTTP mapping in `src/shared/errors/map-error-to-http.ts`. `InfraError` maps to 503 with a `Retry-After` header and the original `code` preserved (e.g. `DB_ERROR`); stale-serve responses surface `meta.stale === true` as an `x-stale: true` header via `jsonResponse`. Dependencies are probed per-component by `GET /api/health/readiness` (200 when all up, 503 under the `/api/health` public prefix).
 
@@ -311,14 +379,14 @@ Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src
 - **Noise policy**: 4xx capture at `warning` — Rustrak `new_issue`/`regression` alerts should target `error` only (`INFRA_*`, `UNKNOWN_ERROR`) to avoid bot/scraper 400s. For full browser coverage set `PUBLIC_SENTRY_DSN` mirroring `SENTRY_DSN`, and make sure the page CSP `connect-src` allows the Rustrak host.
 
 ## Auth & Middleware
-- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/anime`, `/api/health`, `/api/music`, `/media`
+- **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/auth/sign-in/google`, `/api/auth/callback/google`, `/api/anime`, `/api/manga`, `/api/music`, `/api/search`, `/api/producers`, `/api/characters`, `/api/people`, `/api/health`, `/media`, `/showcase`, `/sitemap.xml`, `/sitemaps`, `/robots.txt`
 - Middleware populates `locals.user` / `locals.session` via `resolveAuthActor()` (swallows errors, returns null)
 - For strict auth in API routes: `sessionService.getSession()` throws typed errors
 
 ## Environment (matches `src/config/env.ts`)
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
 - **Required**: `DATABASE_URL`, `REDIS_URL`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars)
-- **Optional**: `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
+- **Optional**: `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (both or neither; enable Google sign-in, redirect URI `${APP_BASE_URL}/api/auth/callback/google`; without them the Google routes answer `404 PROVIDER_NOT_CONFIGURED`), `S3_ENDPOINT` + `S3_BUCKET` + `S3_ACCESS_KEY_ID` + `S3_SECRET_ACCESS_KEY` + `S3_PUBLIC_URL` (all or none; S3-compatible storage for profile avatar/banner uploads — Cloudflare R2 or self-hosted MinIO, see `.env.example`; `S3_REGION` defaults to `auto`, `S3_FORCE_PATH_STYLE` to `true` (set `false` for R2); without them the upload routes answer `404 STORAGE_NOT_CONFIGURED` and `S3_PUBLIC_URL`'s origin is not added to the CSP `img-src`), `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 
 ## Skills & Key Guidelines
@@ -330,7 +398,7 @@ Validated eagerly at import via Zod in `src/config/env.ts` — missing required 
 | **React Best Practices** | No barrel imports from large modules; `Promise.all()` for parallel fetches; Suspense boundaries; hoist static I/O; minimize serialization; `React.cache()` for data |
 | **Zod** | `safeParse()` for user input; `z.infer` for type inference; `z.unknown()` not `z.any()`; validate at boundary; `strict()` for incoming data |
 | **Drizzle ORM** | Schema-first with `$inferSelect`/`$inferInsert`; drizzle-kit for migrations; relations for joins |
-| **Better Auth** | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password only |
+| **Better Auth** | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password + optional Google (no implicit account linking — email is unverified; link only from a session via `/api/auth/link/google`). No Better Auth catch-all route: expose endpoints one by one |
 | **tailwind-css-patterns** | Mobile-first; component styles compose utilities directly; `@apply` is reserved for shared global utility classes in `global.css`; extract repeating patterns as components; CSS variables for themes |
 | **TypeScript** | `z.infer` over manual types; branded types for IDs; discriminated unions for states; `unknown` over `any` |
 | **JSDoc** | Follow the installed `jsdoc-typescript-docs` skill and the existing style (`@module`, `@remarks`, `@see`, `@example`, `@throws`) — codebase is heavily documented; keep it single-quote/no-semicolon |

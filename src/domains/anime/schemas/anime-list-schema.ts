@@ -5,7 +5,11 @@
  */
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 import { animeCardSchema } from '@anime/schemas/anime-card-schema'
-import { animeSortFields } from '@anime/constants'
+import {
+  ANIME_PRODUCER_ROLES,
+  animeSortFields,
+  PRODUCER_IDS_PATTERN,
+} from '@anime/constants'
 import { z } from 'zod'
 
 /**
@@ -56,6 +60,8 @@ export const animeFiltersParamsSchema = z.object({
   season: z.string().optional(),
   scoreMin: scoreBoundSchema.optional(),
   scoreMax: scoreBoundSchema.optional(),
+  producer: z.string().regex(PRODUCER_IDS_PATTERN).optional(),
+  producerRole: z.enum(ANIME_PRODUCER_ROLES).optional(),
   sort: z.enum(animeSortFields).optional(),
   order: z.enum(['asc', 'desc']).optional(),
 })
@@ -71,6 +77,7 @@ export const animeFiltersSchema = animeFiltersParamsSchema.extend({
   status: z.array(z.string()).optional(),
   rating: z.array(z.string()).optional(),
   type: z.array(z.string()).optional(),
+  producer: z.array(z.number().int().positive()).optional(),
   // Server-derived parental variant (not a client query param); folded into the
   // cache key so `safe` and `full` results never mix.
   parentalVariant: z.enum(['safe', 'full']).optional(),

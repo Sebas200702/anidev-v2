@@ -99,6 +99,22 @@ describe('buildMangaListConditions', () => {
   it('unset variant is fail-closed (safe)', () => {
     const unset = buildMangaListConditions({} as any)
     const safe = buildMangaListConditions({ parentalVariant: 'safe' } as any)
-    expect(unset.length).toBe(safe.length)
+    expect(unset).toHaveLength(safe.length)
+  })
+})
+
+describe('buildMangaListConditions — producer scope', () => {
+  it('restricts to works linked to the producer', () => {
+    const conditions = buildMangaListConditions({
+      producerId: 1234,
+      parentalVariant: 'full',
+    } as any)
+    const { sql, params } = db
+      .select()
+      .from(manga)
+      .where(and(...conditions))
+      .toSQL()
+    expect(sql).toContain('"manga_producer"')
+    expect(params).toContain(1234)
   })
 })

@@ -73,3 +73,26 @@ describe('resolveRateLimit', () => {
     expect(resolveRateLimit('/api/auth/login', '1.2.3.4')?.limit).toBe(10)
   })
 })
+
+describe('resolveRateLimit uploads', () => {
+  it.each(['/api/user/u1/avatar', '/api/user/u1/banner'])(
+    'puts PUT %s in the upload bucket (10/min)',
+    (pathname) => {
+      expect(resolveRateLimit(pathname, '1.2.3.4', 'PUT')).toEqual({
+        keys: ['rl:upload:1.2.3.4'],
+        limit: 10,
+      })
+    }
+  )
+
+  it.each([
+    ['/api/user/u1/avatar', 'DELETE'],
+    ['/api/user/u1/avatar/character', 'PUT'],
+    ['/api/user/u1/banner/anime', 'PUT'],
+    ['/api/user/u1', 'PUT'],
+  ])('keeps %s %s in the general bucket', (pathname, method) => {
+    expect(resolveRateLimit(pathname, '1.2.3.4', method)?.keys).toEqual([
+      'rl:gen:1.2.3.4',
+    ])
+  })
+})

@@ -105,3 +105,53 @@ export const SEED_EPISODES: SeedEpisode[] = [
   { number: 2, title: 'E2E Episode Two', synopsis: 'Second seeded episode.' },
   { number: 3, title: 'E2E Episode Three', synopsis: 'Third seeded episode.' },
 ]
+
+/**
+ * Forwarded client IP for the episode routes' own rate-limit bucket.
+ *
+ * @remarks
+ * The suite shares one egress IP and the general `/api` budget; episode
+ * requests (warmup + spec) use this bucket instead. RFC 5737 documentation
+ * range, so it never collides with a real client.
+ */
+export const EPISODES_RATE_LIMIT_IP = '198.51.100.7'
+
+/** Seeded printed work: list, detail, `/full` and `/api/search?type=manga`. */
+export const SEED_MANGA_MAL_ID = 999_000_101
+export const SEED_MANGA_TITLE = 'E2E Seed Manga'
+/** Alternative title only reachable through `manga_title_synonym`. */
+export const SEED_MANGA_SYNONYM = 'E2E Printed Synonym'
+
+/**
+ * Forwarded client IP for the manga spec's own rate-limit bucket (RFC 5737
+ * documentation range), so it does not consume the shared `/api` budget.
+ */
+export const MANGA_RATE_LIMIT_IP = '198.51.100.8'
+
+/** Seeded studio credited on {@link SEED_ANIME_MAL_ID} and {@link SEED_MANGA_MAL_ID}. */
+export const SEED_PRODUCER_MAL_ID = 999_000_201
+export const SEED_PRODUCER_NAME = 'E2E Seed Studio'
+
+/**
+ * Forwarded client IP for the SEO and producer specs' own rate-limit bucket
+ * (RFC 5737 documentation range).
+ */
+export const CATALOG_RATE_LIMIT_IP = '198.51.100.9'
+
+/** Seeded character: main cast of {@link SEED_ANIME_MAL_ID}. */
+export const SEED_CHARACTER_MAL_ID = 999_000_301
+export const SEED_CHARACTER_NAME = 'E2E Seed Character'
+
+/**
+ * Seeded person: Japanese voice of the seeded character, director of the
+ * seeded anime and artist of the first seeded theme.
+ */
+export const SEED_PERSON_MAL_ID = 999_000_401
+export const SEED_PERSON_NAME = 'E2E Seed Person'
+
+/**
+ * Forwarded client IP of the catalog warmup in `global-setup.ts`, so priming
+ * the lazy route chunks does not spend the specs' rate-limit budget
+ * (RFC 5737 documentation range).
+ */
+export const WARMUP_RATE_LIMIT_IP = '198.51.100.10'

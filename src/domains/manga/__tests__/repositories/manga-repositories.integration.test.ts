@@ -21,6 +21,7 @@ const enabled = !!process.env.RUN_DB_TESTS
 describe.skipIf(!enabled)('manga repositories (integration)', () => {
   let mangaListRepository: typeof import('@manga/repositories/manga-list')['mangaListRepository']
   let mangaDetailsRepository: typeof import('@manga/repositories/manga-details')['mangaDetailsRepository']
+  let mangaTaxonomyRepository: typeof import('@manga/repositories/manga-taxonomy')['mangaTaxonomyRepository']
   let pool: PgPool
 
   beforeAll(async () => {
@@ -29,6 +30,9 @@ describe.skipIf(!enabled)('manga repositories (integration)', () => {
     const details = await import('@manga/repositories/manga-details')
     mangaListRepository = list.mangaListRepository
     mangaDetailsRepository = details.mangaDetailsRepository
+    mangaTaxonomyRepository = (
+      await import('@manga/repositories/manga-taxonomy')
+    ).mangaTaxonomyRepository
 
     const { Pool } = await import('pg')
     pool = new Pool({ connectionString: process.env.DATABASE_URL })
@@ -77,7 +81,7 @@ describe.skipIf(!enabled)('manga repositories (integration)', () => {
     const work = await mangaDetailsRepository.getManga(PROBE_ID)
     expect(work?.title).toBe('Synonym Probe Manga')
 
-    const genres = await mangaDetailsRepository.getGenres(PROBE_ID)
+    const genres = await mangaTaxonomyRepository.getGenres(PROBE_ID)
     expect(Array.isArray(genres)).toBe(true)
 
     const links = await mangaDetailsRepository.getExternalLinks(PROBE_ID)

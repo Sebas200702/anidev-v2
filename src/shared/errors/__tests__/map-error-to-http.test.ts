@@ -149,6 +149,28 @@ describe('mapErrorToHttp sentry capture', () => {
     expect(response.status).toBe(404)
   })
 
+  it('maps PRODUCER_NOT_FOUND to 404', () => {
+    const error = new DomainError(
+      ErrorCodes.PRODUCER_NOT_FOUND,
+      'Producer not found'
+    )
+
+    expect(mapErrorToHttp(error).status).toBe(404)
+  })
+
+  it('maps ACCOUNT_EXISTS_USE_PASSWORD to 409', () => {
+    const error = new DomainError(ErrorCodes.ACCOUNT_EXISTS_USE_PASSWORD, 'x')
+    expect(mapErrorToHttp(error).status).toBe(409)
+  })
+
+  it.each([
+    ErrorCodes.CHARACTER_NOT_FOUND,
+    ErrorCodes.PERSON_NOT_FOUND,
+    ErrorCodes.PROVIDER_NOT_CONFIGURED,
+  ])('maps %s to 404', (code) => {
+    expect(mapErrorToHttp(new DomainError(code, 'Not found')).status).toBe(404)
+  })
+
   it('reports DomainError as warning for a 400 response', () => {
     const error = new DomainError(
       ErrorCodes.INVALID_IMAGE_PATH,

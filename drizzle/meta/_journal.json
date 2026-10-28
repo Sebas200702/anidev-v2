@@ -99,6 +99,20 @@
       "when": 1792857641433,
       "tag": "0013_flat_night_thrasher",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792882964045,
+      "tag": "0014_smart_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792937046932,
+      "tag": "0015_milky_bedlam",
+      "breakpoints": true
     }
   ]
 }

@@ -23,6 +23,17 @@ export const ErrorCodes = {
   /** Printed-media (manga) id does not exist — HTTP 404. */
   MANGA_NOT_FOUND: 'MANGA_NOT_FOUND',
 
+  /** Producer (studio, licensor, magazine) id does not exist — HTTP 404. */
+  PRODUCER_NOT_FOUND: 'PRODUCER_NOT_FOUND',
+
+  /** Character id does not exist (or still has a provisional name) — HTTP 404. */
+  CHARACTER_NOT_FOUND: 'CHARACTER_NOT_FOUND',
+  /** Person (staff, voice actor, author) id does not exist — HTTP 404. */
+  PERSON_NOT_FOUND: 'PERSON_NOT_FOUND',
+
+  /** Sitemap segment or page does not exist — HTTP 404. */
+  SITEMAP_NOT_FOUND: 'SITEMAP_NOT_FOUND',
+
   /** Music entity does not exist — HTTP 404. */
   MUSIC_NOT_FOUND: 'MUSIC_NOT_FOUND',
   /** Music id failed validation — HTTP 400. */
@@ -42,10 +53,18 @@ export const ErrorCodes = {
   AUTH_SESSION_EXPIRED: 'AUTH_SESSION_EXPIRED',
   /** Authenticated but not allowed — HTTP 403. */
   AUTH_FORBIDDEN: 'AUTH_FORBIDDEN',
+  /** Sign-in provider is not configured on this deployment — HTTP 404. */
+  PROVIDER_NOT_CONFIGURED: 'PROVIDER_NOT_CONFIGURED',
+  /** Social sign-in email already has a password account; link instead — HTTP 409. */
+  ACCOUNT_EXISTS_USE_PASSWORD: 'ACCOUNT_EXISTS_USE_PASSWORD',
 
   /** Zod or manual request validation failed — HTTP 400. */
   VALIDATION_ERROR: 'VALIDATION_ERROR',
-  /** Request body exceeded the allowed size (1 MiB) — HTTP 413. */
+  /** Uploaded file is not an accepted image format — HTTP 415. */
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE',
+  /** Object storage is not configured on this deployment — HTTP 404. */
+  STORAGE_NOT_CONFIGURED: 'STORAGE_NOT_CONFIGURED',
+  /** Request body exceeded the allowed size — HTTP 413. */
   REQUEST_TOO_LARGE: 'REQUEST_TOO_LARGE',
   /** Too many requests — HTTP 429 with Retry-After. */
   RATE_LIMITED: 'RATE_LIMITED',
@@ -54,6 +73,8 @@ export const ErrorCodes = {
   DB_ERROR: 'DB_ERROR',
   /** Cache layer failure — HTTP 500, Sentry. */
   CACHE_ERROR: 'CACHE_ERROR',
+  /** Object storage (S3-compatible) operation failed — HTTP 503, Sentry. */
+  STORAGE_ERROR: 'STORAGE_ERROR',
   /** Upstream external API failure — HTTP 500, Sentry. */
   EXTERNAL_API_ERROR: 'EXTERNAL_API_ERROR',
 
