@@ -8,4 +8,4 @@
  * ```
  */
 
-export { mediaRequestSchema } from './media-schema'
+export { mediaRequestSchema, mediaUrlSchema } from './media-schema'

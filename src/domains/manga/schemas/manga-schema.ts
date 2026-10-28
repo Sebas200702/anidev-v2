@@ -4,6 +4,7 @@
  * @module domains/manga/schemas
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 /** Whitelisted sort fields for the printed-media list. */
@@ -22,7 +23,7 @@ export const mangaSortFields = ['score', 'year', 'title'] as const
  * | `status` | `z.string()` |
  * | `score` | `z.number().nullable()` |
  * | `chapters` | `z.number().nullable()` |
- * | `imageUrl` / `smallImageUrl` | `z.url()` |
+ * | `imageUrl` / `smallImageUrl` | `mediaUrlSchema` |
  */
 export const mangaCardSchema = z.object({
   malId: z.number(),
@@ -32,8 +33,8 @@ export const mangaCardSchema = z.object({
   status: z.string(),
   score: z.number().nullable(),
   chapters: z.number().nullable(),
-  imageUrl: z.url(),
-  smallImageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
+  smallImageUrl: mediaUrlSchema,
   altImageText: z.string(),
 })
 
@@ -64,15 +65,15 @@ export const mangaDetailsSchema = z.object({
   genres: z.array(z.string()),
   themes: z.array(z.string()),
   demographics: z.array(z.string()),
-  imageUrl: z.url(),
-  smallImageUrl: z.url(),
-  bannerImageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
+  smallImageUrl: mediaUrlSchema,
+  bannerImageUrl: mediaUrlSchema,
   characters: z.array(
     z.object({
       characterId: z.number(),
       name: z.string(),
       role: z.string(),
-      imageUrl: z.url(),
+      imageUrl: mediaUrlSchema,
     })
   ),
   staff: z.array(
@@ -80,7 +81,7 @@ export const mangaDetailsSchema = z.object({
       staffId: z.number(),
       name: z.string(),
       role: z.string(),
-      imageUrl: z.url(),
+      imageUrl: mediaUrlSchema,
     })
   ),
   publishers: z.array(

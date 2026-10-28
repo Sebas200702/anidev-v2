@@ -4,6 +4,7 @@
  * @module domains/anime/schemas/anime-staff-schema
  */
 import { z } from 'zod'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 /**
@@ -11,14 +12,15 @@ import { createApiResponseSchema } from '@shared/schemas/api-schema'
  *
  * @remarks
  * - `malId` — staff/person MAL ID
- * - `url` — `z.url()` profile link
- * - `imageUrl` — nullable CDN poster
+ * - `url` — `z.url()` profile link (external MAL URL)
+ * - `imageUrl` — nullable poster: absolute CDN URL or origin-relative
+ *   `/media/...` path ({@link mediaUrlSchema})
  */
 export const personSchema = z.object({
   malId: z.number(),
   url: z.url(),
   name: z.string(),
-  imageUrl: z.url().nullable(),
+  imageUrl: mediaUrlSchema.nullable(),
 })
 
 /**

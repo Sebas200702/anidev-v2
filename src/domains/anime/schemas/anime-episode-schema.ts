@@ -14,6 +14,7 @@ import {
   EPISODE_PAGE_DEFAULT_LIMIT,
   EPISODE_PAGE_MAX_LIMIT,
 } from '@anime/constants'
+import { mediaUrlSchema } from '@media/schemas'
 import { createApiResponseSchema } from '@shared/schemas/api-schema'
 
 const malIdSchema = z.coerce.number().int().positive()
@@ -32,7 +33,7 @@ export const animeEpisodeItemSchema = z.object({
   title: z.string(),
   duration: z.string().nullable(),
   aired: z.string().nullable(),
-  imageUrl: z.url(),
+  imageUrl: mediaUrlSchema,
   altImageText: z.string(),
 })
 
