@@ -3,7 +3,6 @@
  * @remarks Default configuration for media resolution, placeholder fallbacks, and image
  * optimization defaults used across the media delivery pipeline.
  */
-import { config } from '@config/index'
 import {
   MediaEntity,
   MediaType,
@@ -28,7 +27,7 @@ import {
 export const mediaServiceConfig: MediaServiceConfig = {
   defaultQuality: 75,
   defaultFormat: 'webp',
-  defaultPlaceholderUrl: `${config.baseUrl}/placeholder.webp`,
+  defaultPlaceholderUrl: '/placeholder.webp',
   supportedMediaTypes: [
     MediaType.POSTER,
     MediaType.COVER,

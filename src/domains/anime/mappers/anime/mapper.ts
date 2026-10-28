@@ -6,6 +6,7 @@
 import { config } from '@/config'
 import { normalizeString } from '@utils/string/normalize-string-util'
 import type { AnimeDetails } from '@anime/types'
+import { mediaServiceConfig } from '@media/config'
 import { buildMediaUrl } from '@media/mappers/media-url'
 import type { MapAnimeDetailsInput } from './types'
 
@@ -72,7 +73,7 @@ export const mapAnimeDetails = ({
     synopsis: anime.synopsis || 'No synopsis available.',
     trailerUrl:
       media.find((m) => m.mediaType === 'trailer')?.src ||
-      `${config.baseUrl}/placeholder.webp`,
+      mediaServiceConfig.defaultPlaceholderUrl,
     slug: normalizeString({
       string: anime.title,
       separator: '-',

@@ -3,18 +3,23 @@
  * @remarks Builds semantic on-site media optimization URLs from entity metadata. Output paths
  * follow `/media/{entity}/{id}/[{slug}/]{type}/[{size}/][{index}]` with optional `w`, `q`,
  * and `source` query parameters.
+ *
+ * URLs are **origin-relative**. The absolute origin is resolved by the browser against the
+ * document it is served from, so images must always hit the same origin as the page —
+ * `img-src 'self'` covers it, an `APP_BASE_URL`-pinned origin does not (dev port bumps,
+ * preview deploys). Add the origin at the consumer if a context truly needs absolute URLs
+ * (e.g. `og:image` meta tags), never inside the markup-rendering path.
  */
 import type { BuildMediaUrlInput } from './types'
-import { config } from '@/config'
 
 /**
- * Constructs an on-site media optimization URL from entity metadata.
+ * Constructs a relative on-site media optimization URL from entity metadata.
  *
  * @remarks Entity and media type segments are lowercased and trimmed. Invalid size values are
  * omitted rather than producing malformed paths. Positive integer `index` values append a
  * 1-based asset selector segment consumed by {@link mapIndexedMediaAsset}.
  * @param input - Entity, media type, size, slug, index, and optional transform query params
- * @returns Absolute media URL with origin from {@link config.baseUrl}
+ * @returns Origin-relative media URL (served by the same origin as the document)
  * @throws Does not throw; silently drops invalid optional segments
  * @see {@link parseMediaPath} for parsing these paths back into {@link SemanticMediaPath}
  * @see {@link mediaService.optimizeMedia} for serving optimized bytes from the path
@@ -29,7 +34,7 @@ import { config } from '@/config'
  *   width: 400,
  *   quality: 75,
  * })
- * // "https://anidev.example/media/anime/5114/poster/large?w=400&q=75&source=myanimelist"
+ * // "/media/anime/5114/poster/large?w=400&q=75&source=myanimelist"
  *
  * buildMediaUrl({
  *   entity: 'anime',
@@ -37,7 +42,7 @@ import { config } from '@/config'
  *   slug: 'fullmetal-alchemist-brotherhood',
  *   type: 'banner',
  * })
- * // "https://anidev.example/media/anime/5114/fullmetal-alchemist-brotherhood/banner"
+ * // "/media/anime/5114/fullmetal-alchemist-brotherhood/banner"
  * ```
  */
 export const buildMediaUrl = ({
@@ -81,6 +86,5 @@ export const buildMediaUrl = ({
   }
 
   const query = params.toString()
-  const relative = query ? `${path}?${query}` : path
-  return `${config.baseUrl}${relative}`
+  return query ? `${path}?${query}` : path
 }
