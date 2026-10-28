@@ -37,3 +37,54 @@ jobs:
             ${{ !contains(github.ref_name, '-') && format('{0}/anidev-v2:latest', secrets.DOCKERHUB_USERNAME) }}
             ${{ secrets.DOCKERHUB_USERNAME }}/anidev-v2:${{ github.sha }}
           platforms: linux/amd64
+
+  github-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists — skipping"
+            exit 0
+          fi
+
+          version="${GITHUB_REF_NAME#v}"
+          notes_file="$RUNNER_TEMP/release-notes.md"
+          # Section header at any heading level: `#`+ (any number of hashes),
+          # optional spaces, then the literal `[<version>](` opener — `[` and
+          # `]` are regex character classes, so they (and the dots in the
+          # version) must be escaped, otherwise nothing matches. The bare form
+          # `## <version> (date)` covers pre-standard-version sections. Output
+          # stops at the next version header (bracketed or starting with a
+          # digit), never at subsections like `### Features`.
+          awk -v ver="$version" '
+            BEGIN {
+              v = ver
+              gsub(/\./, "[.]", v)
+              bracketed = "^#+ *\\[" v "\\]\\("
+              bare = "^#+ *" v " *\\("
+              version_header = "^#+ *([0-9]|\\[)"
+            }
+            $0 ~ bracketed || $0 ~ bare { found = 1; next }
+            $0 ~ version_header { if (found) exit }
+            found { print }
+          ' CHANGELOG.md > "$notes_file"
+
+          if [ -s "$notes_file" ]; then
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --notes-file "$notes_file"
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --generate-notes
+          fi
