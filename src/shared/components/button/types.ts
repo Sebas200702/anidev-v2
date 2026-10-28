@@ -5,13 +5,16 @@
  */
 import type { ComponentType } from 'react'
 
-/** The five global button variants declared in `src/styles/global.css`. */
+/** The global button variants declared in `src/styles/global.css`. */
 export type ButtonVariant =
   | 'button-primary'
   | 'button-secondary'
   | 'button-tertiary'
   | 'button-destructive'
   | 'button-ghost'
+  | 'button-terminal'
+  | 'button-rule'
+  | 'button-manifesto'
 
 /**
  * Props accepted by {@link Button}.

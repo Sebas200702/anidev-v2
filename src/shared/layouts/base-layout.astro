@@ -51,9 +51,9 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
       config={[
         {
           src: [],
-          name: 'Nunito',
+          name: 'Nunito Sans',
           googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap&',
+            'https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400..800&display=swap&',
           preload: true,
           display: 'swap',
           selector: 'body',
@@ -61,13 +61,13 @@ const { title, imageUrl, description, url, noIndex = false } = Astro.props
         },
         {
           src: [],
-          name: 'Inter',
+          name: 'Kode Mono',
           googleFontsURL:
-            'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap&',
-          preload: true,
+            'https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap&',
+          preload: false,
           display: 'swap',
-          selector: 'body',
-          fallback: 'sans-serif',
+          selector: '.font-heading, .font-display, .font-label',
+          fallback: 'monospace',
         },
       ]}
     />

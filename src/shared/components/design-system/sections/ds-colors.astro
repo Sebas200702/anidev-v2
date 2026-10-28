@@ -1,0 +1,106 @@
+---
+/**
+ * Color swatches: every fill in the system, straight from `@theme`.
+ *
+ * @module shared/components/design-system/sections/ds-colors
+ * @remarks
+ * Private section of {@link DesignSystem}. Captions name the token, never a
+ * hex value — components reference tokens, not raw color.
+ */
+import SectionShell from '../section-shell.astro'
+
+const groups: ReadonlyArray<{
+  name: string
+  swatches: ReadonlyArray<{ token: string; fill: string }>
+}> = [
+  {
+    name: 'Brand',
+    swatches: [
+      { token: '--color-brand-950', fill: 'bg-brand-950' },
+      { token: '--color-brand-900', fill: 'bg-brand-900' },
+      { token: '--color-brand-800', fill: 'bg-brand-800' },
+      { token: '--color-brand-700', fill: 'bg-brand-700' },
+      { token: '--color-brand-600', fill: 'bg-brand-600' },
+      { token: '--color-brand-500', fill: 'bg-brand-500' },
+      { token: '--color-brand-400', fill: 'bg-brand-400' },
+      { token: '--color-brand-300', fill: 'bg-brand-300' },
+      { token: '--color-brand-200', fill: 'bg-brand-200' },
+      { token: '--color-brand-100', fill: 'bg-brand-100' },
+      { token: '--color-brand-50', fill: 'bg-brand-50' },
+    ],
+  },
+  {
+    name: 'Neutral',
+    swatches: [
+      { token: '--color-neutral-950', fill: 'bg-neutral-950' },
+      { token: '--color-neutral-900', fill: 'bg-neutral-900' },
+      { token: '--color-neutral-800', fill: 'bg-neutral-800' },
+      { token: '--color-neutral-700', fill: 'bg-neutral-700' },
+      { token: '--color-neutral-600', fill: 'bg-neutral-600' },
+      { token: '--color-neutral-500', fill: 'bg-neutral-500' },
+      { token: '--color-neutral-400', fill: 'bg-neutral-400' },
+      { token: '--color-neutral-300', fill: 'bg-neutral-300' },
+      { token: '--color-neutral-200', fill: 'bg-neutral-200' },
+      { token: '--color-neutral-100', fill: 'bg-neutral-100' },
+      { token: '--color-neutral-50', fill: 'bg-neutral-50' },
+    ],
+  },
+  {
+    name: 'Semantic',
+    swatches: [
+      { token: '--color-surface', fill: 'bg-surface' },
+      { token: '--color-surface-raised', fill: 'bg-surface-raised' },
+      { token: '--color-surface-overlay', fill: 'bg-surface-overlay' },
+      { token: '--color-border', fill: 'bg-border' },
+      { token: '--color-border-strong', fill: 'bg-border-strong' },
+      { token: '--color-focus', fill: 'bg-focus' },
+    ],
+  },
+  {
+    name: 'Feedback',
+    swatches: [
+      { token: '--color-success', fill: 'bg-success' },
+      { token: '--color-warning', fill: 'bg-warning' },
+      { token: '--color-danger', fill: 'bg-danger' },
+    ],
+  },
+  {
+    name: 'Editorial roles',
+    swatches: [
+      { token: '--color-editorial-accent', fill: 'bg-editorial-accent' },
+      { token: '--color-editorial-ink', fill: 'bg-editorial-ink' },
+      { token: '--color-editorial-muted', fill: 'bg-editorial-muted' },
+      { token: '--color-editorial-surface', fill: 'bg-editorial-surface' },
+      { token: '--color-editorial-border', fill: 'bg-editorial-border' },
+    ],
+  },
+]
+---
+
+<SectionShell
+  index="02"
+  title="Color"
+  blurb="Dark catalog, brand accent. Same palette the app ships — no new hues."
+/>
+
+<div class="flex flex-col gap-8">
+  {
+    groups.map((group) => (
+      <div class="flex flex-col gap-3">
+        <p class="plate-label">
+          {group.name}
+        </p>
+        <ul class="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+          {group.swatches.map((swatch) => (
+            <li class="flex flex-col gap-2">
+              <span class={`border-border-strong h-16 w-full rounded-editorial border ${swatch.fill}`} aria-hidden="true" />
+              <span class="font-label text-on-surface-muted text-[10px] break-all">
+                {swatch.token}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

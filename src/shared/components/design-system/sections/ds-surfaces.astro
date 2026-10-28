@@ -1,0 +1,54 @@
+---
+/**
+ * Surfaces: tonal catalog card, hard-offset editorial card, manifesto.
+ *
+ * @module shared/components/design-system/sections/ds-surfaces
+ * @remarks
+ * Private section of {@link DesignSystem}. Depth stays tonal by default;
+ * the hard brand offset and the solid manifesto panel are landing-only.
+ */
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="04"
+  title="Surfaces"
+  blurb="Tonal depth for the catalog. Hard offset and manifesto for the landing."
+/>
+
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+  <article class="bg-surface-raised border-border flex flex-col gap-2 rounded-md border p-6">
+    <p class="plate-label">
+      Tonal / catalog
+    </p>
+    <h3 class="subtitle text-on-surface">Cowboy Bebop</h3>
+    <p class="text-m text-on-surface-muted">
+      Capas neutrales sobre el fondo principal. La sombra se reserva a estados
+      interactivos.
+    </p>
+  </article>
+
+  <article class="bg-surface-raised border-border-strong shadow-hard rounded-editorial flex flex-col gap-2 border-2 p-6">
+    <p class="plate-label">
+      Hard offset / landing
+    </p>
+    <h3 class="font-display text-on-surface text-2xl font-black tracking-tight uppercase">
+      Dream compiler
+    </h3>
+    <p class="text-m text-on-surface-muted">
+      Borde ink de 2px, radio editorial y bloque de acento desplazado.
+    </p>
+  </article>
+</div>
+
+<article class="bg-editorial-accent rounded-editorial flex flex-col gap-4 p-8 md:p-12">
+  <p class="font-label text-[11px] tracking-[0.2em] text-neutral-50 uppercase">
+    Manifesto
+  </p>
+  <p class="font-display text-3xl leading-tight font-black tracking-tight text-neutral-50 uppercase md:text-5xl">
+    We believe the future is something we design together.
+  </p>
+  <p class="font-label text-xs tracking-[0.2em] text-neutral-50 uppercase">
+    The AniDev manifesto →
+  </p>
+</article>

@@ -1,0 +1,34 @@
+---
+/**
+ * Design system — token documentation for the dark editorial language.
+ *
+ * @module pages/design-system
+ * @remarks
+ * Static container route: no service reads, it just renders {@link DesignSystem}.
+ * Public so it is reviewable from a deploy preview, `noindex` so it never
+ * competes with real content — same policy as `/showcase`.
+ *
+ * @see {@link DesignSystem}
+ */
+import { DesignSystem } from '@components/design-system'
+import Base from '@layouts/base-layout.astro'
+
+const metadata = {
+  title: 'Design system - AniDev',
+  description: 'Dark editorial tokens: type, color, buttons, surfaces and rules.',
+  imageUrl: '',
+  url: '/design-system',
+}
+---
+
+<Base
+  title={metadata.title}
+  description={metadata.description}
+  imageUrl={metadata.imageUrl}
+  url={Astro.url.pathname}
+  noIndex
+>
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-12 md:px-8 md:py-16">
+    <DesignSystem />
+  </div>
+</Base>

@@ -1,0 +1,46 @@
+---
+/**
+ * DesignSystem — the token docs, rendered as a page.
+ *
+ * @module shared/components/design-system
+ * @remarks
+ * Presentational assembly of the private `sections/`. Zero data-fetching:
+ * every specimen is static markup over `@theme` tokens, so the page doubles
+ * as the visual contract for the landing work ahead.
+ *
+ * @example
+ * ```astro
+ * import { DesignSystem } from '@components/design-system'
+ * <DesignSystem />
+ * ```
+ *
+ * @see {@link module:pages/design-system}
+ */
+import DsButtons from './sections/ds-buttons.astro'
+import DsColors from './sections/ds-colors.astro'
+import DsRules from './sections/ds-rules.astro'
+import DsSurfaces from './sections/ds-surfaces.astro'
+import DsType from './sections/ds-type.astro'
+---
+
+<div class="flex flex-col gap-16">
+  <header class="flex flex-col gap-4">
+    <p class="font-label text-focus text-[11px] tracking-[0.2em] uppercase">
+      DS · Vol.01 — AniDev
+    </p>
+    <h1 class="font-display text-on-surface text-5xl leading-[0.95] font-black tracking-tight uppercase md:text-8xl">
+      Dark
+      <span class="text-brand-300">Editorial</span>
+    </h1>
+    <p class="text-m text-on-surface-muted max-w-prose">
+      Misma paleta dark + brand, lenguaje de las refs: display condensado,
+      Space Mono protagonista, hairlines, sombra dura y manifiesto.
+    </p>
+  </header>
+
+  <DsType />
+  <DsColors />
+  <DsButtons />
+  <DsSurfaces />
+  <DsRules />
+</div>
