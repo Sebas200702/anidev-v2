@@ -3,6 +3,7 @@
  *
  * @module shared/components/showcase/entries
  */
+import { designSystemShowcaseEntries } from './entries-design-system'
 import { mediaShowcaseEntries } from './entries-media'
 import { primitiveShowcaseEntries } from './entries-primitives'
 import { shellShowcaseEntries } from './entries-shell'
@@ -19,6 +20,7 @@ import type { ShowcaseEntry } from './types'
  */
 export const sharedShowcaseEntries: readonly ShowcaseEntry[] = [
   ...primitiveShowcaseEntries,
+  ...designSystemShowcaseEntries,
   ...mediaShowcaseEntries,
   ...shellShowcaseEntries,
 ]

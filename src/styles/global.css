@@ -72,6 +72,8 @@
   --color-success: #7fb069;
   --color-warning: #f4d35e;
   --color-danger: #cd4631;
+  --color-on-danger: #ffffff;
+  --color-danger-deep: #7f1d1d;
 
   /* Editorial roles — intent aliases (NOT new colors). They map to brand/neutral
      so the system "knows" when it speaks editorially vs operationally. */
@@ -80,9 +82,20 @@
   --color-editorial-surface: var(--color-surface-raised);
   --color-editorial-border: var(--color-border);
 
-  /* Fonts */
-  --font-body: "Inter", sans-serif;
-  --font-heading: "Nunito", sans-serif;
+  /* Editorial — landing: misma paleta, lenguaje de las refs (type, rules,
+     hard offset). Sin colores nuevos: display en neutral-50, acento serif
+     en brand-300 (10.42:1 sobre #121212), micro-labels en neutral-400. */
+  --font-body: "Nunito Sans", sans-serif;
+  --font-heading: "Kode Mono", ui-monospace, monospace;
+  --font-display: "Kode Mono", ui-monospace, monospace;
+  --font-label: "Kode Mono", ui-monospace, monospace;
+
+  --shadow-hard-sm: 2px 2px 0 0 var(--color-brand-700);
+  --shadow-hard: 4px 4px 0 0 var(--color-brand-700);
+  --shadow-hard-danger-sm: 2px 2px 0 0 var(--color-danger-deep);
+  --shadow-hard-danger: 4px 4px 0 0 var(--color-danger-deep);
+
+  --radius-editorial: 2px;
 }
 
 :root {
@@ -134,29 +147,45 @@
   stroke-width: 1.5;
 }
 
-/* ── Component utility classes ──────────────────────────────────────────── */
+/* ── Buttons — hard language in the five semantic roles ──────────────────────
+   2px border, radius-editorial, Kode Mono uppercase, brand offset.
+   A/C/D below stay as situational extras. Contrast: primary 5.83
+   (hover brand-800 9.47), secondary 17.33, tertiary 15.77, ghost 8.64,
+   destructive 5.15 via --color-on-danger. */
 .button-primary {
-  @apply bg-editorial-accent border-editorial-accent md:hover:border-editorial-muted border active:scale-95 text-on-surface flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out md:hover:bg-editorial-muted disabled:cursor-not-allowed disabled:opacity-50;
+  @apply font-label bg-editorial-accent border-border-strong text-neutral-50 shadow-hard-sm hover:shadow-hard md:hover:bg-brand-800 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
 }
 .button-secondary {
-  @apply bg-transparent border border-on-surface-muted hover:border-on-surface active:scale-95 text-on-surface md:hover:text-on-surface md:hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out font-medium disabled:cursor-not-allowed disabled:opacity-50;
+  @apply font-label bg-transparent border-on-surface-muted text-on-surface hover:border-on-surface hover:bg-neutral-300/10 hover:shadow-hard-sm flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
 }
 .button-tertiary {
-  @apply bg-on-surface border-on-surface text-surface active:scale-95 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out border hover:border-surface-overlay font-semibold disabled:cursor-not-allowed disabled:opacity-50;
+  @apply font-label bg-on-surface border-border-strong text-surface hover:bg-neutral-100 hover:shadow-hard shadow-hard-sm flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
 }
 .button-ghost {
-  @apply bg-transparent hover:bg-transparent border-transparent text-on-surface hover:text-focus active:scale-95 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-200 ease-in-out border font-semibold disabled:cursor-not-allowed disabled:opacity-50;
+  @apply font-label bg-transparent border-border-strong text-on-surface-muted hover:text-on-surface hover:border-on-surface hover:border-solid hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 border-dashed px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
 }
 .button-destructive {
-  @apply bg-danger border-danger hover:bg-danger/90 text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-full px-4 py-2 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-50;
+  @apply font-label bg-danger border-border-strong text-on-danger shadow-hard-danger-sm hover:shadow-hard-danger md:hover:bg-danger/90 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border-2 px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+}
+
+/* ── Situational extras (mono voice, outside the five roles) ────────────────
+   terminal 17.33, rule 10.42, manifesto 17.33 (hover 5.83). */
+.button-terminal {
+  @apply font-label bg-transparent border-border-strong text-on-surface hover:bg-on-surface hover:text-surface hover:border-on-surface flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial border px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-rule {
+  @apply font-label bg-transparent border-brand-600 text-brand-300 hover:text-on-surface hover:border-on-surface hover:bg-neutral-300/10 flex gap-2 hover:cursor-pointer items-center justify-center border-b-2 px-2 py-2 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50;
+}
+.button-manifesto {
+  @apply font-label bg-on-surface text-surface hover:bg-editorial-accent hover:text-neutral-50 flex gap-2 hover:cursor-pointer items-center justify-center rounded-editorial px-5 py-2.5 text-xs tracking-[0.18em] uppercase transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 /* ── Type scale ─────────────────────────────────────────────────────────── */
 .title {
-  @apply text-[32px] font-bold md:text-start xl:text-[50px];
+  @apply font-display text-[32px] font-bold tracking-tight uppercase md:text-start xl:text-[50px];
 }
 .subtitle {
-  @apply text-[24px] font-bold md:text-[32px];
+  @apply font-display text-[24px] font-bold tracking-tight uppercase md:text-[32px];
 }
 .text-lxx {
   @apply text-[20px] font-bold xl:text-[28px];

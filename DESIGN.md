@@ -17,7 +17,13 @@ colors:
   complementary: "#1c1c1c"
 typography:
   body:
-    fontFamily: "Nunito, sans-serif"
+    fontFamily: "Nunito Sans, sans-serif"
+  heading:
+    fontFamily: "Kode Mono, ui-monospace, monospace"
+  display:
+    fontFamily: "Kode Mono, ui-monospace, monospace"
+  label:
+    fontFamily: "Kode Mono, ui-monospace, monospace"
 rounded:
   md: "0.375rem"
 spacing:
@@ -89,10 +95,13 @@ combinación que incumpla el contraste.
 
 ## Typography
 
-**Body Font:** Nunito (with sans-serif fallback)
+**Body Font:** Nunito Sans (with sans-serif fallback)
 
-**Character:** Cercana y legible, con una jerarquía compacta que favorece la
-consulta frecuente del catálogo.
+**Heading / Display / Label Font:** Kode Mono (with monospace fallback)
+
+**Character:** cercana y legible en el cuerpo; terminal y editorial en los
+titulares. Dos familias en total: la mono grita y etiqueta (700 display,
+400 labels), Nunito Sans lee.
 
 ### Hierarchy
 
@@ -124,11 +133,22 @@ flexible, evitando siluetas excesivamente rígidas.
 
 ### Buttons
 
-- **Shape:** esquinas moderadamente redondeadas (`0.375rem`).
-- **Primary:** fondo de acento personal, texto blanco y borde de 2px.
-- **Secondary:** fondo transparente, texto blanco y borde de 2px.
-- **Hover / Focus:** transición breve; el primario puede volverse transparente
-  con borde y texto de acento.
+- **Shape:** borde 2px `border-strong`, radio `2px`, mono uppercase con
+  tracking `0.18em`, sombra dura en primario/terciario/destructivo.
+- **Primary:** sólido `brand-700`, texto `neutral-50` (5.83:1); hover a
+  `brand-800` (9.47) con sombra grande. Nunca `brand-600` con texto (4.19).
+- **Secondary:** transparente con borde `on-surface-muted` (17.33:1);
+  hover a borde claro con offset.
+- **Tertiary:** sólido claro `on-surface` con texto oscuro (17.33:1);
+  hover a `neutral-100` con sombra grande. El blanco manda, como antes.
+- **Ghost:** transparente, borde 2px discontinuo, texto tenue (8.64:1);
+  en hover el borde solidifica.
+- **Destructive:** sólido `danger`, texto `on-danger` (5.15:1), offset en
+  rojo profundo `danger-deep`.
+- **Extras situacionales:** `button-terminal` (invierte en hover, 17.33),
+  `button-rule` (subrayado `brand-300`, 10.42), `button-manifesto`
+  (claro que invierte a brand, 17.33/5.83). El fix de contraste también sube la pill
+  destructive de 4.30 a 5.15.
 
 ### Navigation
 
@@ -140,6 +160,22 @@ flexible, evitando siluetas excesivamente rígidas.
 - **Background:** capas neutrales oscuras sobre el fondo principal.
 - **Shadow Strategy:** profundidad tonal; sombra solo para estados.
 - **Internal Padding:** compacto por defecto y ampliado en breakpoints grandes.
+
+## Landing editorial (misma paleta dark + brand)
+
+La landing copia el lenguaje de las refs sin importar sus colores: fondo
+`#121212`, acento `brand`, texto `neutral-50`. Alcance: solo la ruta landing.
+
+- **Type (dos familias):** display condensado mayúsculas en Kode Mono 700
+  (10–15vw) + labels en Kode Mono 400 (nav, pills, placas `FIG. 01`,
+  tickets, micro-labels 10–11px uppercase, tracking 0.18–0.2em).
+  La línea de acento va en Kode Mono brand-300. Cuerpo en Nunito Sans.
+- **Rules:** hairlines `neutral-800`, grid tenue, marcas de placa
+  (`FIG. 01`), texto vertical en rieles laterales.
+- **Shape:** tarjetas con borde 1–2px `neutral-700`, radio `2px`,
+  sombra dura `4px 4px 0 brand-700`; pills solo para CTAs.
+- **Bloque manifiesto:** panel sólido `brand-700` con display
+  `neutral-50` (5.83:1); grano sutil sobre artwork, nunca sobre texto.
 
 ## Do's and Don'ts
 

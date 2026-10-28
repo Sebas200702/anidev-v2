@@ -15,6 +15,7 @@
 
 export { default as Button } from './button/button.astro'
 export type { ButtonProps, ButtonVariant } from './button/types'
+export { default as DesignSystem } from './design-system/design-system.astro'
 export { default as Footer } from './footer/footer.astro'
 export { default as Header } from './header/header.astro'
 export { default as Isotipo } from './logos/isotipo.astro'

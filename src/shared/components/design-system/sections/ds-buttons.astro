@@ -1,0 +1,48 @@
+---
+/**
+ * Button variants: the five hard roles plus three situational extras.
+ *
+ * @module shared/components/design-system/sections/ds-buttons
+ * @remarks
+ * Private section of {@link DesignSystem}. Reuses the shared {@link Button}.
+ * The five roles wear the hard language; terminal, rule and manifesto cover
+ * one-off editorial moments.
+ */
+import Button from '../../button/button.astro'
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="03"
+  title="Buttons"
+  blurb="Hard language in the five roles, plus three situational extras."
+/>
+
+<div class="flex flex-col gap-6">
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      System / hard
+    </p>
+    <div class="flex flex-wrap items-center gap-3">
+      <Button title="Primary" variant="button-primary" />
+      <Button title="Secondary" variant="button-secondary" />
+      <Button title="Tertiary" variant="button-tertiary" />
+      <Button title="Ghost" variant="button-ghost" />
+      <Button title="Destructive" variant="button-destructive" />
+    </div>
+  </div>
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Extras / situational
+    </p>
+    <div class="flex flex-wrap items-center gap-3">
+      <Button title="Terminal" variant="button-terminal" />
+      <Button title="Rule" variant="button-rule" />
+      <Button title="Manifesto" variant="button-manifesto" />
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center gap-3">
+    <Button title="Disabled" variant="button-primary" disabled />
+    <Button title="Loading" variant="button-secondary" isLoading />
+  </div>
+</div>

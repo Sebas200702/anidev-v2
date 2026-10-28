@@ -1,0 +1,53 @@
+---
+/**
+ * Type specimens: Kode Mono over the Nunito Sans body.
+ *
+ * @module shared/components/design-system/sections/ds-type
+ * @remarks
+ * Private section of {@link DesignSystem}. Kode Mono owns display, headings
+ * and every label (700 shouts, 400 labels); body stays Nunito Sans. Accent
+ * lines go in brand-300 — mono has no italics.
+ */
+import SectionShell from '../section-shell.astro'
+---
+
+<SectionShell
+  index="01"
+  title="Type"
+  blurb="Two families. Mono shouts and labels, Nunito Sans reads."
+/>
+
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Display / Kode Mono 700
+    </p>
+    <p class="font-display text-on-surface text-4xl leading-none font-bold tracking-tight uppercase md:text-6xl">
+      Libertad de exploración
+    </p>
+    <p class="font-display text-brand-300 text-2xl leading-none font-bold tracking-tight uppercase md:text-4xl">
+      Tokyo 2042
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Labels / Kode Mono 400
+    </p>
+    <p class="font-label text-on-surface text-sm tracking-[0.18em] uppercase">
+      Fig. 01 — Get tickets · May 20–22
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <p class="font-label text-on-surface-subtle text-[11px] tracking-[0.2em] uppercase">
+      Catalog scale
+    </p>
+    <p class="title text-on-surface">Title — consulta del catálogo</p>
+    <p class="subtitle text-on-surface">Subtitle — sección o grupo</p>
+    <p class="text-l text-on-surface">Text-l — información destacada</p>
+    <p class="text-m text-on-surface-muted">Text-m — cuerpo de catálogo</p>
+    <p class="text-s text-on-surface-muted">Text-s — metadatos</p>
+    <p class="text-sx text-on-surface-subtle">Text-sx — controles densos</p>
+  </div>
+</div>
