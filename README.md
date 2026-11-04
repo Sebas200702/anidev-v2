@@ -11,7 +11,7 @@ Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · 
 
 > **Intro**: AniDev v2 re-does the original AniDev from zero on a new stack
 > (Astro SSR + Postgres + Dragonfly + Rustrak). The feature set below is the
-> **target** — v2 ships it incrementally through OpenSpec-driven changes. See
+> **target** — v2 ships it incrementally through ODD-tracked features. See
 > [Current Status](#current-status) for what exists today.
 
 ## Product vision
@@ -32,7 +32,7 @@ Astro 6 (SSR) · Drizzle ORM · Better Auth · Tailwind v4 · Zod 4 · Biome · 
 ## Current status (v2, rebuilding from scratch)
 
 Today v2 ships the **backend foundation + API + minimal shell**; product features
-arrive incrementally, each tracked as an OpenSpec change (`openspec/changes/`):
+arrive incrementally, each tracked as an ODD feature (`odd/tasks/<feature>.md`):
 
 - ✅ API routes — `auth`, `anime`, `music`, `user`, `search-history` (Zod-validated, enveloped responses, response-schema validation in the wrapper)
 - ✅ Auth (session middleware) — Better Auth email/password
@@ -41,7 +41,7 @@ arrive incrementally, each tracked as an OpenSpec change (`openspec/changes/`):
 - ✅ Self-hosted infra — PostgreSQL, Dragonfly, Rustrak (docker compose local stack)
 - ✅ Testing — Vitest unit + real-Postgres integration + Playwright E2E, CI gate, SemVer releases
 - ✅ Pages: `/` (home), `/anime/[id]`, `/anime/[id]/[slug]`
-- 🚧 Streaming, homepage/hero + carousels, taxonomies, collections, progress, schedule, profile UI — **to build** (OpenSpec changes drive them)
+- 🚧 Streaming, homepage/hero + carousels, taxonomies, collections, progress, schedule, profile UI — **to build** (ODD features drive them)
 
 ## Stack
 
@@ -109,18 +109,21 @@ Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
 | `bun run db:generate` / `db:migrate` | Drizzle migrations (PostgreSQL) |
 | `bun run release:*` | `standard-version` release — see Versioning |
 
-## Development methodology — OpenSpec (SDD)
+## Development methodology — ODD + RDD
 
-Spec-Driven Development. Every feature passes `SPECIFY → PLAN → TASKS →
-IMPLEMENT`, managed via OpenSpec (`openspec/`); the source of truth is
-`openspec/specs/` and active work lives in `openspec/changes/<change>/`
-(`proposal.md`, `design.md`, `specs/delta`, `tasks.md`). Completed changes are
-archived to `openspec/changes/archive/` with their deltas synced into
-`openspec/specs/`.
+Organic Driven Development (ODD). Every request enters ODD automatically:
+`AUTHORIZE → EXPLORE → RESOLVE UNCERTAINTY → CLASSIFY → TRACK → IMPLEMENT →
+CLOSE`. Large authorized work is tracked in `odd/tasks/<feature>.md` (header,
+`## Specs` quoting the user verbatim, `## Tasks`, `## Log`) plus a visible todo
+list and work-unit commits (~400 changed lines) on a feature branch. Committed
+behavior is documented under `docs/specs/` per capability; code + Vitest/Playwright
+tests are the executable truth.
 
 A universal lifecycle (`.opencode/skills/development-lifecycle`) applies to **all
-agents**: `READ → SPECIFY → PLAN → IMPLEMENT → DOUBT → VERIFY → RELEASE`, with
-TDD (tests first) and a mandatory doubt review. See `AGENTS.md` for the full
+agents**, with TDD (tests first) and a mandatory doubt review. **RDD**
+(Receipt-Driven Development) adds an extra outside review for high-risk changes
+via the user-owned switch (`gentle-ai review mode`); review evidence is
+review-only and never authorizes delivery. See `AGENTS.md` for the full
 contract — including the branching rule (never commit directly to `master`).
 
 ## Verification gate
@@ -228,9 +231,8 @@ Ops docs: [alert rules](docs/alerts.md) ·
 
 The product roadmap lives in [`ROADMAP.md`](./ROADMAP.md) — phases 0–7,
 Watch2Gether, and the data-platform track (Track D). The target architecture,
-technical audit findings (`T-01`–`T-14`), domain contracts, and phased OpenSpec
+technical audit findings (`T-01`–`T-14`), domain contracts, and phased
 execution plan live in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
-Each item is delivered as an OpenSpec change under `openspec/changes/`: write
-the proposal/design/spec/tasks first, then implement, verify, and release per
-the gate above.
+Each item is delivered through ODD: track it in `odd/tasks/<feature>.md` (specs +
+tasks) first, then implement, verify, and release per the gate above.

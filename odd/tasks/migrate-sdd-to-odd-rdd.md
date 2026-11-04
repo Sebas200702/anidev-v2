@@ -28,9 +28,11 @@ no runtime behavior delta.
 ## Tasks
 
 - **T1** (S2,S3) ✅ — git mv `openspec/specs/*` → `docs/specs/`; delete `openspec/changes/` + `config.yaml`. Commit `69b939d` (rename-only; 10491 lines are moves, not authored content — single atomic slice).
-- **T2** (S4) — Delete `openspec-*` skills + `opsx-*` commands. Commit `chore(tooling): remove openspec skills and opsx commands`.
-- **T3** (S1,S5) — Rewrite `development-lifecycle` SKILL + AGENTS.md methodology/lifecycle sections to ODD+RDD. Commit `docs(agents): replace SDD methodology with ODD + RDD`.
-- **T4** (S6) — Update ARCHITECTURE.md, README.md, ROADMAP.md, .atl/skill-registry.md references. Commit `docs: point architecture/readme/roadmap to ODD + docs/specs`.
+- **T2** (S4) ✅ — Delete `openspec-*` skills + `opsx-*` commands. Commit `7334a27` (deletions only).
+- **T3** (S1,S5) ✅ — Rewrite `development-lifecycle` SKILL + AGENTS.md methodology/lifecycle sections to ODD+RDD. Commit `fb75e0e`.
+- **T4** (S6) ✅ — Update ARCHITECTURE.md, README.md, ROADMAP.md + playwright.config.ts `@see`. `.atl/skill-registry.md` is untracked/auto-generated (already regenerated). Commit `docs: point architecture/readme/roadmap to ODD + docs/specs`.
+
+> Slice note: cumulative line counter is inflated by T1 renames (10491 moves) + T2 deletions; authored content per commit is small and each commit is one coherent work unit.
 
 ## Log
 

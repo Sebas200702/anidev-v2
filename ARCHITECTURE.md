@@ -6,7 +6,7 @@
 > arquitectura objetivo, los contratos TypeScript, la evolución del esquema
 > PostgreSQL (Drizzle ORM), el motor de reproducción resiliente, las salas
 > sincronizadas **Watch2Gether**, el motor híbrido de recomendaciones y la hoja
-> de ruta vinculada a los changes ejecutables en `openspec/changes/`.
+> de ruta vinculada a las features rastreadas en `odd/tasks/`.
 
 ---
 
@@ -48,9 +48,9 @@ arquitectónicas:
 6. **Lectura local en PostgreSQL vs. ingesta desacoplada (Track D):** Las rutas
    del catálogo leen exclusivamente de PostgreSQL + Dragonfly; el scraper
    actualiza PostgreSQL en segundo plano.
-7. **Spec-Driven Development (OpenSpec) + TDD:** Ningún cambio entra a código
-   sin su especificación aprobada en `openspec/changes/` y pruebas en Vitest +
-   Playwright.
+7. **Organic Driven Development (ODD) + TDD:** Toda feature grande se rastrea en
+   `odd/tasks/<feature>.md` (specs + tasks) antes del primer write, con pruebas en
+   Vitest + Playwright.
 
 ---
 
@@ -114,7 +114,7 @@ arquitectónicas:
 
 ### 3.1. Motor de reproducción resiliente (`PlaybackCoordinator` + `HlsController`)
 
-Basado en el estudio de `src/core/player/{PlaybackCoordinator,SourceAdapterRegistry,HlsAdapter,stream-resolver}.ts` de Tatakai y adaptado a la arquitectura web de AniDev v2 (`openspec/changes/resilient-playback-and-aniskip/`):
+Basado en el estudio de `src/core/player/{PlaybackCoordinator,SourceAdapterRegistry,HlsAdapter,stream-resolver}.ts` de Tatakai y adaptado a la arquitectura web de AniDev v2 (feature `resilient-playback-and-aniskip`):
 
 1. **Arrendamiento por generación (`PlaybackLease`):**
    - Cada llamada a `coordinator.begin(source, initialPosition)` hace `flush()` del progreso previo, aborta el `AbortController` anterior e incrementa `++this.generation`.
@@ -128,7 +128,7 @@ Basado en el estudio de `src/core/player/{PlaybackCoordinator,SourceAdapterRegis
 
 ### 3.2. Sincronización de progreso en 3 capas (`watch_progress` + `isNewerOrBetter`)
 
-Especificado en `openspec/changes/relational-lists-and-watch-progress/`:
+Especificado para la feature `relational-lists-and-watch-progress`:
 
 1. **Tres capas de almacenamiento:**
    - **Capa 1 (`localStorage` síncrono):** Escrito en cada tick del coordinador; sobrevive cierres abruptos de pestaña.
@@ -142,7 +142,7 @@ Especificado en `openspec/changes/relational-lists-and-watch-progress/`:
 
 ### 3.3. Watch2Gether — Salas sincronizadas en tiempo real (`watch-rooms`)
 
-Especificado en `openspec/changes/watch2gether-synchronized-rooms/`:
+Especificado para la feature `watch2gether-synchronized-rooms`:
 
 1. **Arquitectura híbrida PostgreSQL + Dragonfly Pub/Sub (optimizada para 8 GB RAM):**
    - A diferencia de Tatakai (que escribe cada segundo de reproducción en PostgreSQL y dispara invalidaciones globales por Supabase Realtime), AniDev v2 separa:
@@ -159,7 +159,7 @@ Especificado en `openspec/changes/watch2gether-synchronized-rooms/`:
 
 ### 3.4. Motor híbrido de recomendaciones en 2 niveles (`hybrid-taste-and-ai-recommendations`)
 
-Especificado en `openspec/changes/hybrid-taste-and-ai-recommendations/`:
+Especificado para la feature `hybrid-taste-and-ai-recommendations`:
 
 1. **Nivel 1 — Determinista + `pgvector` en PostgreSQL (<50 ms, coste $0):**
    - Calcula el score de engagement (`0–100`) por anime del historial combinando 5 señales:
@@ -173,7 +173,7 @@ Especificado en `openspec/changes/hybrid-taste-and-ai-recommendations/`:
 
 ## 4. Evolución del esquema PostgreSQL (Drizzle ORM)
 
-Resumen de las tablas nuevas y evolucionadas planificadas en los changes de OpenSpec:
+Resumen de las tablas nuevas y evolucionadas planificadas en las features de ODD:
 
 | Tabla (`src/lib/db/schemas/`) | Tipo de cambio | Clave primaria / Índices clave | Propósito |
 |---|---|---|---|
@@ -190,9 +190,9 @@ Resumen de las tablas nuevas y evolucionadas planificadas en los changes de Open
 
 ---
 
-## 5. Secuencia de ejecución por etapas (OpenSpec Changes)
+## 5. Secuencia de ejecución por etapas (features ODD)
 
-| Orden | Change en `openspec/changes/` | Etapa / Prioridad | Tareas incluidas |
+| Orden | Feature (`odd/tasks/`) | Etapa / Prioridad | Tareas incluidas |
 |---|---|---|---|
 | **1** | `platform-audit-and-stabilization` | **Etapas 0–2 (`P1` / `P2`)** — auditoría 2026-10-14 | Consolida `T-01`…`T-09` (privacidad en `/api/user/:userId` [reproducida en vivo], claves `buildRawMetaKey` + single JSON, streaming `Range` `206` + SSRF/timeout, sobre de error uniforme + degradación 503 en `index.astro`, índices B-tree/GIN + `pg.Pool` `max: 20` + FKs `CASCADE`, `resolveMediaAssets` fuera de `@shared` + regla en `biome.json`, caché de imágenes Sharp en disco acotado + `immutable`, middleware de headers/rate-limit/`x-request-id`/bypass de sesión, `Promise.all` + `anime_title_synonym` + envs de `ci.yml`) y añade los hallazgos nuevos: XSS de `/showcase`, rate-limit de credenciales, contrato de perfil tolerante a `NULL` + sin caché envenenada, `await` faltantes en 4 repositorios, carrusel set-based + batch, transacción de historial, observabilidad (access logs + redacción + runbooks), shell sin islas React + presupuesto de bundle, `bun audit` en CI, y cierre de changes mergeados. |
 | **2** | `relational-lists-and-watch-progress` | **Etapa 3A (`P2`)** | `T-10`: Tablas `user_anime_list` y `watch_progress`, endpoints `/api/user/lists` y `/api/user/watch-progress`, reconciliación `isNewerOrBetter` (tolerancia 1 s), completado al $\ge 90\%$, colapso por anime en *Continue Watching* y sincronización cliente con `localStorage` + `navigator.sendBeacon`. |
