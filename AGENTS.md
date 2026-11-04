@@ -139,44 +139,68 @@ add a Traefik domain for the storage compose (host `media.anidev.app`, service
 
 All verification scripts exist (`check`, `check:types`, `test`); code quality is `format` + `check` + `check:types` + `test` + `build` (see Verification below). `astro sync` is only needed after schema changes and is not part of the standard gate.
 
-## Development Methodology — OpenSpec (Spec-Driven Development)
+## Development Methodology — ODD (Organic Driven Development) + RDD
 
-This project follows **Spec-Driven Development**. Every feature passes through:
+This project runs on **Organic Driven Development (ODD)**, the el Gentleman
+orchestrator workflow. There is no separate SPECIFY/PLAN ceremony to invoke —
+every request enters ODD automatically. The parent session coordinates; real
+phase work is delegated to subagents when it pays off.
 
-```
-SPECIFY → PLAN → TASKS → IMPLEMENT
-```
+**The 7 ODD steps (run in order on every request):**
+1. **Authorize** — investigation/explanation/review requests stay read-only; a real unresolved change decision gets one clarification, then stop and wait.
+2. **Explore** — read the existing code and requirements proportionately before proposing or writing anything.
+3. **Resolve uncertainty** — one focused user question per real product decision; at most one scoped read-only assumption challenge.
+4. **Classify** — size the task **small** vs **large** by the resume test (could someone finish from the original request + `git diff` alone?). File/test/fix count never decides size.
+5. **Track before the first write** — large authorized work only: create `odd/tasks/<feature>.md` + its Engram mirror + the visible `todo` list, all before the first source write.
+6. **Implement task by task** — TDD where applicable, one task at a time, commit in reviewable work-unit slices (~400 changed lines) on a feature branch.
+7. **Close** — report the verified outcome, every skipped/pending/failed check, and the next step.
 
-Managed with **OpenSpec** (`openspec/`). The flow is driven by skills in `.opencode/skills/`:
-- `openspec-propose` — generate `proposal.md → design.md → specs/<delta> → tasks.md`
-- `openspec-apply-change` — implement each task
-- `openspec-update-change` — revise artifacts mid-change
-- `openspec-archive-change` — sync deltas into `openspec/specs/` and close it
+**Small tasks** skip all tracking: read what you change, observe RED inline, run
+the focused test + suite, report. No feature doc, no `todo`, no per-task commits
+unless the user asks.
 
-**Source of truth:**
-- `openspec/specs/` — current committed behavior per capability (applies)
-- `openspec/changes/<change>/` — active work (proposal, design, specs delta, tasks)
-- `openspec/config.yaml` — schema + optional rules
+**Feature document (`odd/tasks/<feature>.md`)** is the spec subagents read, in
+this order:
+- a 2–3 line header;
+- `## Specs` — numbered `S#` quoting the user's exact strings/errors/examples verbatim, never summarized, never adding unrequested requirements;
+- `## Tasks` — one line per task (ID, linked `S#`, route, commit);
+- `## Log` — `L1` is the user's original request verbatim; later corrections, evidence, and decisions are appended. A requirement change appends its Log entry, rewrites only the affected `S#`, and reopens only its task.
+
+**Source of truth (committed behavior):**
+- `docs/specs/` — current committed behavior per capability, as reference documentation (the former `openspec/specs/`, now plain docs — no delta/archive flow).
+- The active work's `odd/tasks/<feature>.md` + its `todo` projection — the live plan.
+- Code + Vitest/Playwright tests — the executable truth.
 
 **For every feature, agents must:**
-1. Read the OpenSpec source of truth before writing code — the active change first (proposal/design/specs/tasks), then any committed `openspec/specs/`.
-2. Follow the active change's `tasks.md` one at a time, in dependency order.
-3. Do **not** invent work not in the tasks; if a task is ambiguous, ask the user.
-4. Commit after each task with a Conventional Commit message.
+1. Read `AGENTS.md` and, if a feature is active, its `odd/tasks/<feature>.md` (through `## Log`) before writing code; then the relevant `docs/specs/`.
+2. Follow the feature document's `## Tasks` one at a time, in dependency order.
+3. Do **not** invent work outside the tasks; if a task is ambiguous, ask the user.
+4. Commit each work-unit slice with a Conventional Commit; record the commit holding each task in the feature document.
 5. Run the Verification gate (below) before opening a Pull Request.
-6. Never skip phases — no coding before the spec is approved.
+6. Never skip phases — no large-feature coding before the feature document exists.
 
-**The Lifecycle (all agents):** every task passes through `READ → SPECIFY → PLAN → IMPLEMENT → DOUBT → VERIFY → RELEASE`, codified in the `development-lifecycle` skill in `.opencode/skills/`. Key gates:
+**The Lifecycle (all agents):** every task passes through `READ → EXPLORE → DOUBT → VERIFY → RELEASE` on top of the 7 ODD steps, codified in the `development-lifecycle` skill in `.opencode/skills/`. Key gates:
 - **TDD**: logic changes are written test-first with **Vitest** (`bun run test`); a failing test precedes the fix (`test-driven-development` skill).
-- **Doubt**: before marking a task done or opening a PR, re-review the change with fresh context against the spec and this file (`doubt-driven-development` skill).
-- **Verify**: `format → astro sync → check → test → build` (below).
+- **Doubt**: before marking a task done or opening a PR, re-review the change with fresh context against the feature document and this file (`doubt-driven-development` skill).
+- **Verify**: `format → check → check:types → test → build` (below).
+
+**RDD (Receipt-Driven Development):** an extra outside review for **high-risk**
+changes, gated by the user-owned switch (`gentle-ai review mode status` reads it;
+`enable`/`disable` flip it). When enabled, after source-mutating implementation
+is complete the orchestrator asks native review to assess the candidate and only
+starts a review when the risk tier demands it. **Review evidence is review-only:
+it never authorizes delivery** — commit, push, PR, and release always follow
+ordinary repository policy regardless of RDD mode. See the
+`gentle-ai-rdd-defect-workflow` skill.
 
 **Branching:**
 - Default branch is `master`. Never commit directly to `master`.
 - Create a focused branch per concern using `type/<slug>` (e.g. `docs/agent-tooling-migration`, `chore/add-ui-ux-skill`). Merge via Pull Request.
-- Reference documents: this `AGENTS.md`, the OpenPackage change artifacts, and `.cursor/commands/commit-all.md`.
+- Reference documents: this `AGENTS.md`, the active `odd/tasks/<feature>.md`, and `.cursor/commands/commit-all.md`.
 
-**`skip_specs: true`:** For a pure docs/refactor/tooling change with no runtime behavior delta, set `skip_specs: true` in the change's `.openspec.yaml` instead of inventing a requirement (OpenSpec rejects a zero-delta change without it).
+**Pure docs/refactor/tooling changes** (no runtime behavior delta) need no
+`## Specs` requirement invented for them — the feature document's header states
+the no-behavior-delta nature and the tasks carry the work directly.
 
 ## Verification & Code Quality
 
