@@ -129,7 +129,7 @@ add a Traefik domain for the storage compose (host `media.anidev.app`, service
 | `bun run test:e2e:ui` | Playwright interactive UI mode |
 | `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
 | `bun run db:seed:e2e` | Seed the deterministic rows the E2E specs assert against |
-| `bun run check:types` | Astro typecheck (`astro check`; requires `@astrojs/check`) |
+| `bun run check:types` | Typecheck `.ts` + `.astro` (`astro sync && tsc --noEmit --runExternalCode`; TypeScript 7.1 beta + experimental `@astrojs/ts-content-mapper`) |
 | `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
 | `bun run auth:migrate` | Run Better Auth migrations |
 | `bun run db:generate` | Generate Drizzle migration (requirements) |
@@ -212,7 +212,7 @@ bun run format → bun run check → bun run check:types → bun run test → bu
 Rationale:
 - `bun run format` — enforce Biome formatting (single quotes, no semicolons, 80 col; LF enforced via `.gitattributes`).
 - `bun run check` — Biome lint (recommended rules; import sorting disabled) + format verification.
-- `bun run check:types` — Astro/TS typecheck (`astro check`); catches wrong barrel exports and `.astro` module resolution.
+- `bun run check:types` — TS 7 native typecheck of `.ts` and `.astro` files (`astro sync` first, then `tsc` with the `@astrojs/ts-content-mapper` content mapper registered in `tsconfig.json`); catches wrong barrel exports and `.astro` module resolution. `--runExternalCode` is required because the mapper runs code from `node_modules` during compilation. `astro check` is not used: it does not support TypeScript 7.
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
 - `bun run build` — catches type, config resolution, and prerender/SSR failures (env is validated at module import).
 

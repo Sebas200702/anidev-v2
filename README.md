@@ -99,7 +99,7 @@ Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
 | `bun run format:astro` | Prettier on `.astro` |
 | `bun run check` | Biome lint + format check |
 | `bun run check:write` | Biome lint + safe fixes |
-| `bun run check:types` | Astro/TS typecheck (`astro check`) |
+| `bun run check:types` | TS 7 typecheck of `.ts` + `.astro` (`tsc` + `@astrojs/ts-content-mapper`) |
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` |
 | `bun run test` / `test:watch` / `test:coverage` | Vitest |
 | `bun run test:integration` | Integration specs against a real Postgres (`RUN_DB_TESTS=1`; needs the docker stack + migrate + seed) |

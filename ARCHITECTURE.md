@@ -14,7 +14,7 @@
 
 `anidev-v2` es una plataforma full-stack de descubrimiento y streaming de anime y
 música construida sobre **Astro 6 SSR (`output: 'server'`, `@nurodev/astro-bun`)
-+ React 19 Islands + TypeScript 6 + Drizzle ORM (PostgreSQL 16) + Dragonfly
++ React 19 Islands + TypeScript 7 + Drizzle ORM (PostgreSQL 16) + Dragonfly
 (Redis-compatible) + Better Auth + Tailwind CSS v4 + Zod 4 + Rustrak (Sentry)**.
 
 Todo el sistema opera dentro del presupuesto físico de **1 VPS self-hosted (4
