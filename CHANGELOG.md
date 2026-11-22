@@ -5,16 +5,13 @@ Updated automatically on every release by `.github/workflows/deploy.yml`
 
 ## [0.19.2](https://github.com/Sebas200702/anidev-v2/compare/v0.19.1...v0.19.2) (2026-11-22)
 
-
 ### Bug Fixes
 
-* **deploy:** Align Docker Bun version with lockfile ([13f9067](https://github.com/Sebas200702/anidev-v2/commit/13f9067d6071b72cd413550c3c5cf9a7adde6dd5))
-
+- **deploy:** Align Docker Bun version with lockfile ([13f9067](https://github.com/Sebas200702/anidev-v2/commit/13f9067d6071b72cd413550c3c5cf9a7adde6dd5))
 
 ### Continuous Integration
 
-* **deps:** align Bun version with lockfile format ([d8b6801](https://github.com/Sebas200702/anidev-v2/commit/d8b680163afb173085e2f9d22bb8bb6441a0c5e3))
-
+- **deps:** align Bun version with lockfile format ([d8b6801](https://github.com/Sebas200702/anidev-v2/commit/d8b680163afb173085e2f9d22bb8bb6441a0c5e3))
 
 ## [0.19.1](https://github.com/Sebas200702/anidev-v2/compare/v0.19.0...v0.19.1) (2026-11-22)
 
