@@ -1,10 +1,14 @@
 /**
  * @module lib/db/schemas/character
  *
- * Character entity tables: core profile fields keyed by MyAnimeList ID and
- * nickname aliases for search matching and display variants.
+ * Character entity tables: core profile fields keyed by an internal character
+ * id and nickname aliases for search matching and display variants.
  *
  * @remarks
+ * `character.mal_id` is the opaque internal key (URLs, cascading FKs and the
+ * public `malId` field depend on it). It equals the MyAnimeList id only for
+ * MAL-sourced rows; external ids live in
+ * {@link module:lib/db/schemas/character-external}.
  * Characters link to anime via {@link module:lib/db/schemas/anime-relations.animeCharacter}
  * and to voice actors via {@link module:lib/db/schemas/character-relations}.
  * Nicknames cascade-delete with the parent character.
@@ -23,10 +27,11 @@ import {
 } from 'drizzle-orm/pg-core'
 
 /**
- * Character profile (`character` table) keyed by MyAnimeList ID.
+ * Character profile (`character` table) keyed by the internal character id.
  *
  * **Key columns:**
- * - `malId` — Primary key; MAL character id.
+ * - `malId` — Primary key; internal character id. Holds the MAL character id
+ *   for MAL-sourced rows only; read external ids from `character_external`.
  * - `name` — Primary display name (required).
  * - `nameKanji` — Optional Japanese script name.
  * - `about` — Biography or description text.
@@ -38,7 +43,11 @@ export const character = pgTable(
     name: text('name').notNull(),
     nameKanji: text('name_kanji'),
     about: text('about'),
-    /** AniList character id, para cruzar con la fuente que da el reparto. */
+    /**
+     * @deprecated Use `character_external.anilist_id`
+     * ({@link module:lib/db/schemas/character-external}); dropped in a later
+     * migration.
+     */
     anilistId: integer('anilist_id'),
     /** `Male` / `Female` / `Non-binary` (AniList). */
     gender: text('gender'),
