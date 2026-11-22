@@ -19,7 +19,7 @@
  * Readiness is gated on `GET /api/health/readiness` (probes DB + cache), so the
  * suite starts only once dependencies are actually reachable.
  *
- * @see openspec/changes/e2e-testing-methodology/design.md
+ * @see e2e/README.md
  */
 import { defineConfig, devices } from '@playwright/test'
 

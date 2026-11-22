@@ -1,10 +1,10 @@
 # AniDev v2 — Roadmap
 
 > Estado: vivo. Este documento define **qué** se construye y **en qué orden**.
-> El **cómo** de cada feature vive en su change de OpenSpec (`openspec/changes/`),
-> que es la fuente de verdad ejecutable, y en la arquitectura objetivo detallada
-> en [`ARCHITECTURE.md`](./ARCHITECTURE.md). Este roadmap es la vista de producto;
-> los specs son el contrato.
+> El **cómo** de cada feature se rastrea en su documento ODD
+> (`odd/tasks/<feature>.md`), que es el plan vivo, y en la arquitectura objetivo
+> detallada en [`ARCHITECTURE.md`](./ARCHITECTURE.md). Este roadmap es la vista de
+> producto; el comportamiento comprometido se documenta en `docs/specs/`.
 
 ## Contexto
 
@@ -37,17 +37,17 @@ cubre solo home, búsqueda y ficha de anime básica.
 | **auth** | Login/register/logout/session (Better Auth). |
 | **user** | Perfil (read con privacidad owner-only + writes de identidad), listas relacionales (`/api/user/lists`) y progreso de visionado con *Continue Watching* (`/api/user/watch-progress`). Sin UI. |
 
-**Archivados (OpenSpec):** migración provider stack (Turso→Postgres, Upstash→
+**Entregados:** migración provider stack (Turso→Postgres, Upstash→
 Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
 `standardize-frontend-flow`, user writes, `advanced-anime-search`,
 `e2e-testing-methodology` + `expand-test-coverage-and-fix-e2e-bugs`,
 `platform-audit-and-stabilization`, `component-showcase`,
 `home-shell-and-featured-carousel`, `catalog-coverage-fields`,
 `episode-catalog-api`, `taxonomy-and-discover`,
-`relational-lists-and-watch-progress` y `printed-media-domain`. Sus deltas
-están sincronizados en `openspec/specs/`.
+`relational-lists-and-watch-progress` y `printed-media-domain`. Su comportamiento
+está documentado en `docs/specs/`.
 
-**Changes planificados listos para ejecutar (`openspec/changes/`):**
+**Features planificadas (ODD, `odd/tasks/<feature>.md`):**
 - `resilient-playback-and-aniskip` _(en curso)_ — Motor `PlaybackCoordinator` (leases por generación + `AbortController` + continuidad de segundo exacto), `HlsController` con *fast-probe* paralelo (1.5 s) y failover automático, esquema `episode_source` enriquecido e integración con **AniSkip** + catálogo musical OP/ED.
 - `watch2gether-synchronized-rooms` — Salas sincronizadas **Watch2Gether** para anime y música (`public`, `invite`, `password` con `password_hash` server-only), reloj en tiempo real y Pub/Sub en Dragonfly + SSE, corrección de deriva en 3 niveles ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`), cola compartida, chat, reacciones y encuestas.
 - `watch-progress-client-sync` — Seguimiento de las listas: sync de progreso en el cliente (`localStorage` + `sendBeacon` + merge al iniciar sesión) y e2e de listas/progreso. Depende del player de `resilient-playback-and-aniskip`.
@@ -65,7 +65,7 @@ repository → service → mapper → cache → schema (Zod) → API → isla/p�
 
 Reglas transversales en **todas** las fases:
 
-- **OpenSpec obligatorio**: `SPECIFY → PLAN → TASKS → IMPLEMENT`. Nada se codea sin spec aprobado.
+- **ODD obligatorio**: toda feature grande se rastrea en `odd/tasks/<feature>.md` (specs + tasks) antes del primer write; nada grande se codea sin su documento.
 - **TDD** con Vitest: test que falla antes del fix.
 - **Accesibilidad**: contraste ≥ 4.5:1, navegación por teclado, `focus-visible`, `prefers-reduced-motion`.
 - **Diseño dark-only**, tokens de Tailwind v4, sin colores hardcodeados.
