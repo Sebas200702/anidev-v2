@@ -6,10 +6,8 @@
 import type { AnimeExternalIds, AnimeFullDetails } from '@anime/types'
 import { mapMusicListToAnimeMusic } from '@anime/mappers/anime-music'
 import { mapExternalIds } from '@anime/mappers/anime-external'
+import { mapAnimeMediaItems } from '@anime/mappers/anime-media'
 import { buildAnimeTitles, groupAnimeRelations } from './helpers'
-import { buildMediaUrl } from '@media/mappers/media-url'
-import { detectMediaSource } from '@media/mappers/media-assets'
-import type { MediaAsset } from '@media/types/media-types'
 import type { MapAnimeToFullDetailsInput } from './types'
 
 /**
@@ -24,6 +22,10 @@ import type { MapAnimeToFullDetailsInput } from './types'
  *
  * **Relations:** Grouped by `relationType` via {@link groupAnimeRelations}; related titles
  * resolved from `relationData` (empty string if related anime row missing).
+ *
+ * **Media:** Proxy URLs come from {@link mapAnimeMediaItems}, so each index is
+ * counted inside the same (type, normalized size, source) group the `/media`
+ * resolver uses and every URL serves the asset it was built from.
  *
  * **Music:** Filtered `OP` / `ED` from {@link MusicDB} via {@link mapMusicListToAnimeMusic}.
  *
@@ -57,23 +59,7 @@ export const mapAnimeToFullDetails = ({
 
   const relationsGrouped = groupAnimeRelations(relations, relationData)
 
-  const mediaGroups = new Map<string, MediaAsset[]>()
-  for (const asset of media) {
-    const key = `${asset.mediaType}:${asset.size ?? 'default'}`
-    const group = mediaGroups.get(key)
-    if (group) {
-      group.push(asset)
-    } else {
-      mediaGroups.set(key, [asset])
-    }
-  }
-
-  const assetIndices = new Map<number, number>()
-  for (const [, group] of mediaGroups) {
-    group.forEach((asset, idx) => {
-      assetIndices.set(asset.id, idx + 1)
-    })
-  }
+  const mediaItems = mapAnimeMediaItems(anime.malId, media)
 
   const external: AnimeExternalIds[] = mapExternalIds(externalIds)
 
@@ -96,16 +82,9 @@ export const mapAnimeToFullDetails = ({
     themes: themes.map((t) => ({ name: t.name, malId: t.malId })),
     demographics: demographics.map((d) => ({ name: d.name, malId: d.malId })),
     synopsis: anime.synopsis ?? 'No synopsis available.',
-    media: media.map((m) => ({
+    media: media.map((m, position) => ({
       mediaType: m.mediaType,
-      src: buildMediaUrl({
-        entity: 'anime',
-        entity_id: anime.malId,
-        type: m.mediaType,
-        size: (m.size ?? 'default') as 'default' | 'small' | 'large',
-        index: assetIndices.get(m.id) ?? 1,
-        source: detectMediaSource(m.src),
-      }),
+      src: mediaItems[position].url,
       size: m.size ?? 'default',
     })),
     relations: relationsGrouped,
