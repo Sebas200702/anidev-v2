@@ -36,7 +36,7 @@ test('paginates until hasNextPage is false and keeps every edge', async () => {
 test('queries by AniList id when the map supplies one', async () => {
   const { client, requests } = harness([page([1], false)])
   await client.fetchCast(21, 9021)
-  assert.equal(requests[0].body.variables.id, 9021)
+  assert.equal(requests[0]?.body?.variables?.id, 9021)
   assert.match(requests[0].body.query, /Media\(id: \$id, type: ANIME\)/)
 })
 
