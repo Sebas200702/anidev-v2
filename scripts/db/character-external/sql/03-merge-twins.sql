@@ -1,5 +1,6 @@
 -- merge-twins: merges each synthetic character (1e9 + AniList id X) into the only real
--- character whose anilist_id is X, in ONE transaction. Its anime_character,
+-- character whose character_external.anilist_id is X (from character.anilist_id or the
+-- anime casts, see 02-backfill.sql), in ONE transaction. Its anime_character,
 -- manga_character, character_voice_actor, character_nickname and character_media rows move
 -- to the real character; a row whose key the real character already holds is skipped and
 -- deleted; then the synthetic "character" (and its character_external row) is deleted.
@@ -16,13 +17,13 @@ END $$;
 \else
 BEGIN;
 
+-- anilist_id is unique in character_external, so a twin has one real candidate at most.
 INSERT INTO merge_pairs (synthetic_id, real_id)
-SELECT s.mal_id, min(r.mal_id)
+SELECT s.mal_id, e.character_id
 FROM "character" s
-JOIN "character" r ON r.mal_id < 1000000000 AND r.anilist_id = s.mal_id - 1000000000
-WHERE s.mal_id >= 1000000000
-GROUP BY s.mal_id
-HAVING count(*) = 1;
+JOIN character_external e
+  ON e.anilist_id = s.mal_id - 1000000000 AND e.character_id < 1000000000
+WHERE s.mal_id >= 1000000000;
 
 \ir 03-merge-moves.sql
 

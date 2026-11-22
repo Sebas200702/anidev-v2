@@ -36,6 +36,24 @@ BEGIN
   ASSERT all_same('before_'), 'a refused merge writes nothing';
 END $$;
 
+-- Without the cast_relink staging the backfill is refused and writes nothing.
+\set saved_cast_schema :cast_schema
+\set cast_schema no_such_cast_schema
+\echo '(expected: one character-external staging error below)'
+\set ON_ERROR_STOP 0
+\ir ../sql/02-backfill.sql
+\set ON_ERROR_STOP 1
+\set cast_schema :saved_cast_schema
+SELECT set_config('character_external.guard', :'LAST_ERROR_MESSAGE', false) \g /dev/null
+DO $$
+BEGIN
+  ASSERT current_setting('character_external.guard')
+    LIKE 'character-external: cast_relink staging is absent%',
+    current_setting('character_external.guard');
+  ASSERT all_same('before_') AND NOT EXISTS (SELECT 1 FROM backfilled)
+    AND NOT EXISTS (SELECT 1 FROM conflicts), 'a refused backfill writes nothing';
+END $$;
+
 -- The guards are released: both commands apply again with the same result (timestamps
 -- aside), and a rollback of a backfill-only batch is exact too.
 \ir ../sql/02-backfill.sql

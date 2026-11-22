@@ -4,10 +4,13 @@
 
 CREATE TEMP TABLE expected_anime (anime_id integer, character_id integer, role text);
 INSERT INTO expected_anime VALUES (10, 1, 'Main'), (10, 1, 'MAIN'), (20, 1, 'SUPPORTING'),
-  (10, 1000000700, 'MAIN'), (40, 1000000800, 'MAIN'), (40, 2, 'Main');
+  (10, 1000000700, 'MAIN'), (40, 1000000800, 'MAIN'), (40, 2, 'Main'),
+  (50, 7, 'Main'), (51, 7, 'Supporting'), (50, 7, 'MAIN'), (50, 8, 'Supporting'),
+  (52, 8, 'Main'), (50, 9, 'Supporting'), (50, 10, 'MAIN'), (53, 11, 'Main'),
+  (54, 12, 'Main'), (55, 13, 'Main'), (50, 5, 'Main'), (10, 1, 'Supporting');
 CREATE TEMP TABLE expected_manga (manga_id integer, character_id integer, role text);
 INSERT INTO expected_manga VALUES (30, 1, 'MAIN'), (31, 1, 'MAIN'), (32, 6, 'SUPPORTING'),
-  (33, 3, 'MAIN');
+  (33, 3, 'MAIN'), (34, 7, 'MAIN');
 CREATE TEMP TABLE expected_voice (character_id integer, staff_id integer, language text);
 INSERT INTO expected_voice VALUES (1, 900, 'Japanese'), (1, 901, 'English'),
   (6, 902, 'Japanese');
@@ -20,8 +23,8 @@ INSERT INTO expected_media VALUES (1, 1, 'a.jpg'), (3, 1, 'b.jpg'), (4, 6, 'd.jp
 DO $$
 BEGIN
   ASSERT (SELECT array_agg((synthetic_id, real_id)::text ORDER BY synthetic_id)
-          FROM merge_pairs) = ARRAY['(1000000501,1)', '(1000000502,6)'],
-    'only unambiguous twins are merged (1000000700 has two real candidates)';
+          FROM merge_pairs) = ARRAY['(1000000501,1)', '(1000000502,6)', '(1000000950,7)'],
+    'unambiguous twins (cast-derived 950 included) are merged; 1000000700 is not';
   ASSERT same_rows('anime_character', 'expected_anime'), format('anime_character: %s',
     (SELECT string_agg(format('(%s,%s,%s)', anime_id, character_id, role), ' ')
      FROM anime_character));
@@ -33,17 +36,19 @@ BEGIN
     AND (SELECT count(*) FROM character_media) = 3, 'media moved, ids kept';
   ASSERT (SELECT (media_type, size, source, priority)::text FROM character_media
           WHERE id = 4) = '(poster,large,anilist,30)', 'moved media keeps its columns';
-  ASSERT NOT EXISTS (SELECT 1 FROM "character" WHERE mal_id IN (1000000501, 1000000502))
-    AND (SELECT count(*) FROM "character") = 8, 'synthetic twins are deleted';
+  ASSERT NOT EXISTS (SELECT 1 FROM "character"
+                     WHERE mal_id IN (1000000501, 1000000502, 1000000950))
+    AND (SELECT count(*) FROM "character") = 16, 'synthetic twins are deleted';
   ASSERT (SELECT about FROM "character" WHERE mal_id = 1) = 'MAL bio',
     'the real character row is not changed';
   ASSERT (SELECT count(*) FROM character_external) = (SELECT count(*) FROM "character")
     AND (SELECT anilist_id FROM character_external WHERE character_id = 1) = 501
-    AND (SELECT anilist_id FROM character_external WHERE character_id = 6) = 502,
+    AND (SELECT anilist_id FROM character_external WHERE character_id = 6) = 502
+    AND (SELECT anilist_id FROM character_external WHERE character_id = 7) = 950,
     'the real twin keeps the AniList id; the synthetic external row is gone';
-  ASSERT (SELECT count(*) FROM moved_anime_character) = 2
+  ASSERT (SELECT count(*) FROM moved_anime_character) = 3
     AND (SELECT count(*) FROM skipped_anime_character) = 1
-    AND (SELECT count(*) FROM moved_manga_character) = 2
+    AND (SELECT count(*) FROM moved_manga_character) = 3
     AND (SELECT count(*) FROM skipped_manga_character) = 1
     AND (SELECT count(*) FROM moved_character_voice_actor) = 2
     AND (SELECT count(*) FROM skipped_character_voice_actor) = 1
@@ -51,8 +56,8 @@ BEGIN
     AND (SELECT count(*) FROM skipped_character_nickname) = 1
     AND (SELECT count(*) FROM moved_character_media) = 2
     AND (SELECT count(*) FROM skipped_character_media) = 1
-    AND (SELECT count(*) FROM deleted_characters) = 2
-    AND (SELECT count(*) FROM deleted_externals) = 2,
+    AND (SELECT count(*) FROM deleted_characters) = 3
+    AND (SELECT count(*) FROM deleted_externals) = 3,
     'every moved, skipped and deleted row is logged';
   ASSERT (SELECT (anime_id, character_id, role)::text FROM skipped_anime_character)
     = '(10,1000000501,Main)', 'the duplicate link is logged with the synthetic id';
@@ -74,5 +79,5 @@ BEGIN
     current_setting('character_external.guard');
   ASSERT same_rows('character', 'merged_character')
     AND same_rows('anime_character', 'merged_anime_character')
-    AND (SELECT count(*) FROM merge_pairs) = 2, 'a refused merge writes nothing';
+    AND (SELECT count(*) FROM merge_pairs) = 3, 'a refused merge writes nothing';
 END $$;

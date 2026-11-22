@@ -2,7 +2,7 @@
 
 Fills `character_external` (migration `0016_character-external`) and merges the synthetic
 characters (`1000000000 + AniList id`) into their real MyAnimeList twin. Plan and design:
-`odd/tasks/catalog-rebuild.md` (T1, S3, Log L3).
+`odd/tasks/catalog-rebuild.md` (T1, S3, Log L3 and L7).
 
 **Local database only.** `run.sh` refuses any host other than `localhost`, `127.0.0.1` or
 `[::1]`; production is applied manually by the maintainer.
@@ -20,25 +20,33 @@ Each command prints its counts. Logs live in the `character_external_ops` schema
 
 ## backfill
 
-One `character_external` row per `"character"` row (`backfilled` logs the inserted ids):
+One `character_external` row per `"character"` row (`backfilled` logs the inserted ids and
+`id_source` of the stored AniList id: `character`, `cast` or `synthetic`):
 
 | Row | `mal_id` | `anilist_id` |
 |---|---|---|
-| real (`mal_id < 1e9`) | `character.mal_id` | `character.anilist_id` |
+| real (`mal_id < 1e9`) | `character.mal_id` | `character.anilist_id`, else the cast-derived id |
 | synthetic (`>= 1e9`) | `NULL` | `mal_id - 1e9` |
+
+Cast-derived id (`sql/02-cast-ids.sql`, needs the `cast_relink` staging of
+`scripts/db/cast-relink`, otherwise the backfill is refused): for each Jikan-cast link of a
+real character R (`anime_character.role` not UPPERCASE), the only `cast_relink.anilist_cast`
+entry X of the same anime whose `name_keys` hold `cast_relink.norm_name(R.name)` is a
+candidate; R gets X when all its candidates agree. `character.anilist_id` wins.
 
 Exceptions, logged in `conflicts` (`character_id`, `anilist_id`, `reason`):
 
 | Reason | Meaning | `anilist_id` stored |
 |---|---|---|
-| `shared-anilist` | several real characters claim the AniList id | `NULL` for all of them |
+| `shared-anilist` | several real characters claim the AniList id (either source) | `NULL` for all of them |
+| `cast-disagrees` | the cast derives another id (logged) than `character.anilist_id` | `character.anilist_id` |
 | `twin-pending-merge` | synthetic twin of exactly one real character | `NULL` (the real row holds it) |
 | `ambiguous-twin` | synthetic whose AniList id several real characters claim | kept; never merged |
 
 ## merge-twins
 
-A twin is a synthetic `1e9 + X` with exactly one real character whose `anilist_id` is
-`X` (`merge_pairs`). For each twin, rows of `anime_character`, `manga_character`,
+A twin is a synthetic `1e9 + X` whose `X` is held by a real character's
+`character_external.anilist_id` (`merge_pairs`; the id is unique there). For each twin, rows of `anime_character`, `manga_character`,
 `character_voice_actor`, `character_nickname` and `character_media` move from the
 synthetic id to the real one (`moved_*`; nickname and media keep their `id`). A row whose
 key (PK or unique index) the real character already holds is deleted instead

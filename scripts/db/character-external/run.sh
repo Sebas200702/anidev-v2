@@ -78,7 +78,7 @@ run_tests() {
   trap 'sql -c "DROP SCHEMA IF EXISTS character_external_test CASCADE" || true' EXIT
   local file
   for file in "$HERE"/test/*.test.sql; do
-    sql -f "$file"
+    sql -v cast_schema="${SCHEMA}" -f "$file"
     echo "ok - $(basename "$file")"
   done
 }

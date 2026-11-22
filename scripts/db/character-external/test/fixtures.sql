@@ -45,6 +45,8 @@ INSERT INTO character_media (id, character_id, media_type, src, size, source, pr
   (3, 1000000501, 'poster', 'b.jpg', NULL, 'anilist', 30),  -- moved
   (4, 1000000502, 'poster', 'd.jpg', 'large', 'anilist', 30); -- moved
 
+\ir cast-fixtures.sql
+
 -- Snapshots of the state before any command, for the exact-rollback checks.
 CREATE TABLE before_character AS TABLE "character";
 CREATE TABLE before_character_external AS TABLE character_external;
