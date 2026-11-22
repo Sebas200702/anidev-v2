@@ -5,21 +5,17 @@ Updated automatically on every release by `.github/workflows/deploy.yml`
 
 ## [0.20.0](https://github.com/Sebas200702/anidev-v2/compare/v0.19.2...v0.20.0) (2026-11-22)
 
-
 ### Features
 
-* **db:** add character_external table for real character ids ([01f35c1](https://github.com/Sebas200702/anidev-v2/commit/01f35c15e06ab4fb28191c481c336e83865063b1))
-
+- **db:** add character_external table for real character ids ([01f35c1](https://github.com/Sebas200702/anidev-v2/commit/01f35c15e06ab4fb28191c481c336e83865063b1))
 
 ### Continuous Integration
 
-* re-run checks after merging master ([1c0d443](https://github.com/Sebas200702/anidev-v2/commit/1c0d44311298b62cdcce767622650d530e4fec15))
-
+- re-run checks after merging master ([1c0d443](https://github.com/Sebas200702/anidev-v2/commit/1c0d44311298b62cdcce767622650d530e4fec15))
 
 ### Styles
 
-* **changelog:** format release notes for Biome 2.6 ([e1cb983](https://github.com/Sebas200702/anidev-v2/commit/e1cb983b11b41ef70100a7b792d9d495df8778b9))
-
+- **changelog:** format release notes for Biome 2.6 ([e1cb983](https://github.com/Sebas200702/anidev-v2/commit/e1cb983b11b41ef70100a7b792d9d495df8778b9))
 
 ## [0.19.2](https://github.com/Sebas200702/anidev-v2/compare/v0.19.1...v0.19.2) (2026-11-22)
 
