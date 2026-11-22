@@ -3,6 +3,8 @@
 # LOCAL DATABASE ONLY. Usage:
 #   bash scripts/db/cast-relink/run.sh stage --anilist-csv PATH --offline-db PATH
 #   bash scripts/db/cast-relink/run.sh audit   (dry run: rebuilds cast_relink.audit only)
+#   bash scripts/db/cast-relink/run.sh fetch-list --out-dir DIR   (pending-api ids + map)
+#   bash scripts/db/cast-relink/run.sh merge-api --api-jsonl PATH (then re-run audit)
 #   bash scripts/db/cast-relink/run.sh test
 #   LOCAL_DATABASE_URL falls back to DATABASE_URL, then to POSTGRES_* on localhost.
 set -euo pipefail
@@ -11,6 +13,8 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCHEMA='cast_relink'
 ANILIST_CSV=''
 OFFLINE_DB=''
+API_JSONL=''
+OUT_DIR=''
 
 build_local_url() {
   if [[ -z "${POSTGRES_USER:-}" || -z "${POSTGRES_PASSWORD:-}" || -z "${POSTGRES_DB:-}" ]]; then
@@ -63,6 +67,33 @@ audit() {
         WHERE a.anime_id = 57810 ORDER BY a.decision, a.character_id'
 }
 
+# Writes DIR/pending-ids.txt (anime ids of pending-api audit rows) and DIR/anilist-map.tsv
+# (mal_id<TAB>anilist_id for those ids) for fetch-anilist.ts.
+fetch_list() {
+  [[ -n "$OUT_DIR" ]] || die 'missing --out-dir DIR'
+  mkdir -p "$OUT_DIR"
+  local pending="SELECT DISTINCT anime_id FROM audit WHERE decision = 'pending-api'"
+  sql -A -t -c "${pending} ORDER BY 1" >"$OUT_DIR/pending-ids.txt"
+  sql -A -t -F $'\t' -c "SELECT mal_id, anilist_id FROM anime_anilist_map
+    WHERE mal_id IN (${pending}) ORDER BY 1" >"$OUT_DIR/anilist-map.tsv"
+  echo "cast-relink: $(wc -l <"$OUT_DIR/pending-ids.txt") ids, $(wc -l <"$OUT_DIR/anilist-map.tsv") mapped"
+}
+
+# JSONL lines are loaded whole: \x01/\x02 never occur in JSON, so no CSV quoting applies.
+load_api_raw() {
+  [[ -f "$API_JSONL" ]] || die "missing --api-jsonl file: '$API_JSONL'"
+  sql -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA}" -f "$HERE/sql/01-staging.sql"
+  sql -c 'TRUNCATE anilist_api_raw RESTART IDENTITY' \
+    -c "COPY anilist_api_raw (line) FROM STDIN WITH (FORMAT csv, QUOTE E'\\x01', DELIMITER E'\\x02')" <"$API_JSONL"
+}
+
+merge_api() {
+  load_api_raw
+  sql -f "$HERE/sql/04-merge-api.sql"
+  sql -c "SELECT source, count(*) AS animes, sum(cast_size) AS characters
+          FROM anilist_cast_source GROUP BY 1 ORDER BY 1"
+}
+
 run_tests() {
   SCHEMA='cast_relink_test'
   sql -c "DROP SCHEMA IF EXISTS ${SCHEMA} CASCADE"
@@ -70,6 +101,8 @@ run_tests() {
   ANILIST_CSV="$HERE/test/fixtures/anilist.csv"
   OFFLINE_DB="$HERE/test/fixtures/offline-db.jsonl"
   stage >/dev/null
+  API_JSONL="$HERE/test/fixtures/anilist-api.jsonl"
+  load_api_raw # merged by test/03-merge-api.test.sql
   local file
   for file in "$HERE"/test/*.test.sql; do
     sql -f "$file"
@@ -83,6 +116,8 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --anilist-csv) ANILIST_CSV="$2"; shift 2 ;;
     --offline-db) OFFLINE_DB="$2"; shift 2 ;;
+    --api-jsonl) API_JSONL="$2"; shift 2 ;;
+    --out-dir) OUT_DIR="$2"; shift 2 ;;
     *) die "unknown arg: $1" ;;
   esac
 done
@@ -91,6 +126,9 @@ assert_local
 case "$COMMAND" in
   stage) stage ;;
   audit) audit ;;
+  fetch-list) fetch_list ;;
+  merge-api) merge_api ;;
   test) run_tests ;;
-  *) die 'usage: run.sh <stage|audit|test> [--anilist-csv PATH] [--offline-db PATH]' ;;
+  *) die 'usage: run.sh <stage|audit|fetch-list|merge-api|test> [--anilist-csv PATH]
+  [--offline-db PATH] [--out-dir DIR] [--api-jsonl PATH]' ;;
 esac

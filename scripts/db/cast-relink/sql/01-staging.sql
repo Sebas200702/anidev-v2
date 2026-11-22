@@ -59,3 +59,7 @@ CREATE TABLE IF NOT EXISTS anime_anilist_map (
   mal_id integer PRIMARY KEY,
   anilist_id integer NOT NULL
 );
+
+-- Raw AniList API casts from fetch-anilist.ts (JSONL), in file order: an anime may appear
+-- twice when an errored fetch was retried on resume, so the latest found line wins.
+CREATE TABLE IF NOT EXISTS anilist_api_raw (seq bigserial PRIMARY KEY, line text);

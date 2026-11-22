@@ -34,7 +34,8 @@ by the maintainer. Phase 1 of a wider DB recomposition (phase 2: rest of the cat
 
 - **T1** (S3,S4) — Load sources into staging (`cast_relink` schema): AniList CSV cast, offline-db mapping; SQL name normalizer. Route: inline. Commit: `19802a4` ✅ (staged 143,100 cast rows, 19,408 animes, 1,940 truncated, 18,863 MAL→AniList maps)
 - **T2** (S1,S2,S4,S5) — Classify into `cast_relink.audit` (dry run) + summary report; user checkpoint. Route: gentle-ai-worker + inline fix. Commit: see git log ✅ (220,429 pairs: dedupe 104,653 · repoint 54,764 · pending-api 38,492 · keep 19,834 · quarantine 2,686)
-- **T3** (S3) — AniList API fallback for missing/truncated casts → same staging. Route: inline. Commit: —
+- **T3** (S3) — AniList API fallback for missing/truncated casts → same staging. Route: gentle-ai-worker. Commit: see git log ✅ (2,458 pending animes)
+- **T3b** (S3) — AniDB tie-break, last resort: only quarantine rows still unresolved after T3; cached, ≤1 req/2s, registered client. Route: pending decision after T3 numbers. Commit: —
 - **T4** (S1,S4,S5) — Apply transaction + quarantine + rollback script. Route: inline. Commit: —
 - **T5** (S2,S5) — Verify (Shoushimin, Narrator, no Main/MAIN pairs), docs, independent verify (Risk item 1). Route: inline + gentle-ai-verify. Commit: —
 
@@ -57,3 +58,4 @@ by the maintainer. Phase 1 of a wider DB recomposition (phase 2: rest of the cat
   `pending-api` when the anime's cast is truncated (≥25) or absent from the CSV, else
   `quarantine`. More than one candidate → `quarantine` (reason `ambiguous`).
 - **L9** — Decision (parent, S1 "sin perder"): a pair whose anime has an empty CSV cast (594) is `pending-api`/`cast-empty`, not quarantine — an empty cast is missing data, not proof. T4 must collapse repoints whose target pair already exists (39,527) or shares a target, and set `anilist_id` on real MAL targets.
+- **L10** — User on AniDB: "y si usamos anidb como catalizador par mejorar y reconstruir la base de datos ?" → then "listo continuemos con la estrategia entonces y solo como ultimo recurso". AniDB = last resort for unresolved quarantine (T3b); phase 2 to consider AniDB as per-field source and a `character_external` id table replacing synthetic ids.

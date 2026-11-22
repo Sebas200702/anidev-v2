@@ -22,6 +22,12 @@ missing from a 25-character cast is not proof that the link is wrong.
 bash scripts/db/cast-relink/run.sh test     # fixtures in a throwaway cast_relink_test schema
 bash scripts/db/cast-relink/run.sh stage --anilist-csv PATH --offline-db PATH
 bash scripts/db/cast-relink/run.sh audit    # dry run: rebuilds cast_relink.audit + summary
+bash scripts/db/cast-relink/run.sh fetch-list --out-dir DIR      # ids to ask AniList for
+bun scripts/db/cast-relink/fetch-anilist.ts DIR/pending-ids.txt --out DIR/anilist-api.jsonl \
+  --map DIR/anilist-map.tsv [--rpm 30]
+bash scripts/db/cast-relink/run.sh merge-api --api-jsonl DIR/anilist-api.jsonl
+bash scripts/db/cast-relink/run.sh audit    # re-classifies with the API casts
+bun test scripts/db/cast-relink/test        # offline checks of the AniList client
 ```
 
 `stage` writes only to the `cast_relink` schema: `anilist_cast` (cast per MAL anime id),
@@ -41,6 +47,31 @@ counts by decision/reason and the rows of anime 57810.
 | `repoint` | `real-to-synthetic` | unconfirmed MAL id → `1e9 + AniList id` (`creates_character` when missing) |
 | `quarantine` | `ambiguous` | more than one AniList or Jikan candidate |
 | `quarantine` | `no-anilist-match` | complete cast (< 25) without the character |
-| `pending-api` | `cast-truncated` / `cast-empty` / `cast-missing` | cast cut at 25, empty in the CSV, or anime absent from the CSV (T3) |
+| `pending-api` | `cast-truncated` / `cast-empty` / `cast-missing` | CSV cast cut at 25, empty cast, or anime with no cast source (T3) |
+
+## AniList API fallback (T3)
+
+`fetch-list` writes `DIR/pending-ids.txt` (distinct anime ids of the `pending-api` audit
+rows) and `DIR/anilist-map.tsv` (`mal_id<TAB>anilist_id` for those ids, from
+`anime_anilist_map`).
+
+`fetch-anilist.ts` (Bun, no dependencies) asks `https://graphql.anilist.co` for the full
+cast of each id — `Media(id:)` when the map has the AniList id, else `Media(idMal:)` —
+paging `characters(perPage: 25)` until `hasNextPage` is false. It appends one line per
+anime: `{"anime_id", "found", "edges"}` (plus `"error"` when the fetch failed).
+
+- **Rate limit:** at most `--rpm` requests per minute (default 30, one per page). HTTP
+  429 waits `Retry-After` (+1 s); 5xx and network errors are retried 3 times with
+  backoff, then the line is written with `found: false` and `error`.
+- **Resumable:** ids already in the output without `error` are skipped, so the command
+  can be stopped and re-run; errored ids are fetched again on the next run.
+- Sends only a generic `User-Agent` (`cast-relink/1.0`) and no credentials.
+
+`merge-api` loads the JSONL into `anilist_api_raw` and runs `sql/04-merge-api.sql`: for
+every found anime (latest found line wins) its `anilist_cast` rows are replaced and
+`anilist_cast_source` becomes (real cast size, `anilist-api`); not-found and errored
+animes keep their staging. Re-running it is idempotent. An `anilist-api` cast is complete,
+so the audit no longer treats it as truncated at 25. `stage` truncates staging, so run
+`merge-api` again after any re-stage.
 
 The database URL comes from `LOCAL_DATABASE_URL`, then `DATABASE_URL`, then `POSTGRES_*`.

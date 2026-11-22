@@ -42,6 +42,8 @@ SELECT
   ) AS is_jikan_pair,
   src.anime_id IS NOT NULL AS has_source,
   coalesce(src.cast_size, 0) AS cast_size,
+  -- only a CSV cast is cut at 25; an API cast (T3) is the full cast
+  coalesce(src.cast_size >= 25 AND src.source <> 'anilist-api', false) AS is_truncated,
   CASE WHEN p.character_id >= 1000000000 THEN ARRAY(
     SELECT DISTINCT k.anilist_character_id FROM cast_key k
     WHERE k.anime_id = p.anime_id
@@ -96,7 +98,7 @@ CROSS JOIN LATERAL (
       WHEN cardinality(m.anilist_ids) > 1 OR cardinality(m.jikan_ids) > 1 THEN 'quarantine'
       -- an empty or truncated CSV cast proves nothing: ask the API (T3)
       WHEN cardinality(m.anilist_ids) = 0
-        AND (NOT m.has_source OR m.cast_size = 0 OR m.cast_size >= 25)
+        AND (NOT m.has_source OR m.cast_size = 0 OR m.is_truncated)
         THEN 'pending-api'
       WHEN cardinality(m.anilist_ids) = 0 THEN 'quarantine'
       WHEN m.is_synthetic AND cardinality(m.jikan_ids) = 0 THEN 'keep'
@@ -107,7 +109,7 @@ CROSS JOIN LATERAL (
       WHEN cardinality(m.anilist_ids) > 1 OR cardinality(m.jikan_ids) > 1 THEN 'ambiguous'
       WHEN cardinality(m.anilist_ids) = 0 AND NOT m.has_source THEN 'cast-missing'
       WHEN cardinality(m.anilist_ids) = 0 AND m.cast_size = 0 THEN 'cast-empty'
-      WHEN cardinality(m.anilist_ids) = 0 AND m.cast_size >= 25 THEN 'cast-truncated'
+      WHEN cardinality(m.anilist_ids) = 0 AND m.is_truncated THEN 'cast-truncated'
       WHEN cardinality(m.anilist_ids) = 0 THEN 'no-anilist-match'
       WHEN m.is_synthetic AND cardinality(m.jikan_ids) = 0 THEN 'synthetic-in-anilist-cast'
       WHEN m.is_synthetic THEN 'synthetic-to-jikan'
