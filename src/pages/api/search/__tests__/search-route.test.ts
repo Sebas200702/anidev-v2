@@ -74,12 +74,28 @@ describe('GET /api/search', () => {
     )
   })
 
-  it.each(['', '?q=', '?q=x&type=novel', '?q=x&page=0'])(
-    'rejects invalid input %s',
-    async (qs) => {
-      const response = await call(qs)
-      expect(response.status).toBe(400)
-      expect(search).not.toHaveBeenCalled()
-    }
-  )
+  it.each([
+    ['music', { type: 'music', list: [] as unknown[], total: 0 }],
+    ['characters', { type: 'characters', list: [] as unknown[], total: 0 }],
+  ])('accepts type=%s', async (type, value) => {
+    search.mockResolvedValue({ value, isStale: false })
+    const response = await call(`?q=spike&type=${type}`)
+
+    expect(response.status).toBe(200)
+    const body = await response.json()
+    expect(body.meta).toMatchObject({ type, total: 0 })
+    expect(search).toHaveBeenCalledWith(expect.objectContaining({ type }))
+  })
+
+  it.each([
+    '',
+    '?q=',
+    '?q=x&type=novel',
+    '?q=x&page=0',
+    '?q=x&type=characters',
+  ])('rejects invalid input %s', async (qs) => {
+    const response = await call(qs)
+    expect(response.status).toBe(400)
+    expect(search).not.toHaveBeenCalled()
+  })
 })
