@@ -3,6 +3,19 @@
 Updated automatically on every release by `.github/workflows/deploy.yml`
 (`chore(release): vX.Y.Z` commit on `master`). Do not edit by hand.
 
+## [0.19.1](https://github.com/Sebas200702/anidev-v2/compare/v0.19.0...v0.19.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* **ci:** correct release tag probe, serialize :latest, scope deploy key ([4cea640](https://github.com/Sebas200702/anidev-v2/commit/4cea64008541a51c1c8ea4622bc650cd529b6bec))
+
+
+### Continuous Integration
+
+* **release:** write CHANGELOG and version back to master ([eee59d1](https://github.com/Sebas200702/anidev-v2/commit/eee59d112c3db75855049362ce74816a55eec2f5))
+
+
 ## [0.19.0](https://github.com/Sebas200702/anidev-v2/compare/v0.18.0...v0.19.0) (2026-11-22)
 
 
