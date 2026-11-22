@@ -22,10 +22,11 @@ SELECT anilist_character_id, name_native, image_url, 2, manga_id FROM :manga_tab
 \endif
 
 -- Distinct non-empty (trimmed) natives per AniList id; more than one is a conflict.
+-- An ASCII-only native ("JUN", "A37") is romaji, not a kanji, so it is ignored.
 CREATE TEMP TABLE source_native AS
 SELECT anilist_id, array_agg(DISTINCT native ORDER BY native) AS natives
 FROM (SELECT anilist_id, btrim(name_native) AS native FROM fill_source) s
-WHERE native <> ''
+WHERE native <> '' AND native ~ '[^\x01-\x7F]'
 GROUP BY anilist_id;
 
 -- One portrait per AniList id: anime cast first, then the lowest anime / manga id.

@@ -25,11 +25,13 @@ CREATE TABLE manga_cast (
 -- 5: NULL kanji, only empty natives → untouched; anime default.png, manga real → inserted.
 -- 6: placeholder whose native equals it → untouched; no image → no poster.
 -- 7: no AniList id → untouched.
+-- 8: NULL kanji, ASCII-only native ("JUN") → untouched: an ASCII native is no kanji.
 INSERT INTO "character" (mal_id, name, name_kanji) VALUES
   (1, 'Light Yagami', NULL), (2, 'Ryuk', 'Ryuk'), (3, 'Misa Amane', '弥海砂'),
-  (4, 'Near', 'Near'), (5, 'Mello', NULL), (6, 'L', 'L'), (7, 'Watari', NULL);
+  (4, 'Near', 'Near'), (5, 'Mello', NULL), (6, 'L', 'L'), (7, 'Watari', NULL),
+  (8, 'Jun', NULL);
 INSERT INTO character_external (character_id, mal_id, anilist_id, created_at, updated_at)
-SELECT mal_id, mal_id, CASE WHEN mal_id < 7 THEN 100 + mal_id END, now(), now()
+SELECT mal_id, mal_id, CASE WHEN mal_id <> 7 THEN 100 + mal_id END, now(), now()
 FROM "character";
 INSERT INTO character_media (id, character_id, media_type, src, size, source, priority) VALUES
   (1, 2, 'poster', 'mal-2.jpg', NULL, 'mal', 20),
@@ -41,7 +43,8 @@ INSERT INTO anilist_cast VALUES
   (10, 103, 'ミサ', 'https://s4.anilist.co/c/large/b103.jpg'),
   (10, 104, 'ニア', 'https://s4.anilist.co/c/large/default.jpg'),
   (10, 105, '', 'https://s4.anilist.co/c/large/default.png'),
-  (10, 106, 'L', NULL);
+  (10, 106, 'L', NULL),
+  (10, 108, 'JUN', NULL);
 INSERT INTO manga_cast VALUES
   (20, 101, ' 夜神月 ', 'https://s4.anilist.co/c/large/b101-m.jpg'),
   (20, 102, 'リューク', 'https://s4.anilist.co/c/large/b102.jpg'),

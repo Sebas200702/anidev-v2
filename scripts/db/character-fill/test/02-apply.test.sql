@@ -4,13 +4,13 @@
 
 CREATE TEMP TABLE expected_character (mal_id integer, name_kanji text);
 INSERT INTO expected_character VALUES (1, '夜神月'), (2, 'リューク'), (3, '弥海砂'),
-  (4, 'Near'), (5, NULL), (6, 'L'), (7, NULL);
+  (4, 'Near'), (5, NULL), (6, 'L'), (7, NULL), (8, NULL);
 
 DO $$
 BEGIN
   ASSERT NOT EXISTS (SELECT * FROM expected_character
                      EXCEPT SELECT mal_id, name_kanji FROM "character")
-    AND (SELECT count(*) FROM "character") = 7,
+    AND (SELECT count(*) FROM "character") = 8,
     format('name_kanji after apply: %s', (SELECT string_agg((mal_id, name_kanji)::text, ' '
       ORDER BY mal_id) FROM "character"));
   ASSERT (SELECT array_agg((character_id, anilist_id, previous_kanji, new_kanji)::text
@@ -28,7 +28,7 @@ BEGIN
             (5, 'poster', 'https://s4.anilist.co/c/large/b105.jpg', NULL, 'anilist', 30)::text],
     format('inserted posters: %s', (SELECT string_agg((character_id, src)::text, ' ')
       FROM character_media WHERE id NOT IN (1, 2)));
-  ASSERT NOT EXISTS (SELECT 1 FROM character_media WHERE character_id IN (4, 6, 7)),
+  ASSERT NOT EXISTS (SELECT 1 FROM character_media WHERE character_id IN (4, 6, 7, 8)),
     'default.jpg placeholders and missing images insert nothing';
   ASSERT (SELECT array_agg((id, character_id, src)::text ORDER BY id) FROM character_media
           WHERE id IN (1, 2)) = ARRAY['(1,2,mal-2.jpg)', '(2,3,mal-3-small.jpg)'],

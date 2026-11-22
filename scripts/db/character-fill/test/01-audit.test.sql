@@ -12,8 +12,7 @@ BEGIN
                            ORDER BY character_id) FROM kanji_plan)
     = ARRAY[(1, 101, NULL, '{夜神月}', 'fill')::text,
             (2, 102, 'Ryuk', '{リューク}', 'fill')::text,
-            (4, 104, 'Near', '{ニア,ネア}', 'conflict')::text,
-            (6, 106, 'L', '{L}', 'same')::text],
+            (4, 104, 'Near', '{ニア,ネア}', 'conflict')::text],
     format('kanji_plan: %s', (SELECT string_agg((character_id, natives, decision)::text, ' '
       ORDER BY character_id) FROM kanji_plan));
   ASSERT (SELECT array_agg((character_id, image_url)::text ORDER BY character_id)
@@ -38,7 +37,7 @@ DO $$
 BEGIN
   ASSERT (SELECT array_agg((character_id, decision)::text ORDER BY character_id)
           FROM kanji_plan)
-    = ARRAY['(1,fill)', '(4,fill)', '(6,same)'],
+    = ARRAY['(1,fill)', '(4,fill)'],
     format('kanji_plan without manga: %s', (SELECT string_agg((character_id, decision)::text,
       ' ' ORDER BY character_id) FROM kanji_plan));
   ASSERT (SELECT array_agg(character_id ORDER BY character_id) FROM poster_plan)
