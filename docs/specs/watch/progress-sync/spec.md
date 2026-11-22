@@ -31,9 +31,9 @@ When `duration_seconds > 0` and `progress_seconds / duration_seconds >= 0.90`, t
 
 ### Requirement: Continue Watching returns at most one active episode per anime
 
-The *Continue Watching* query MUST exclude episodes with `completed = true`, order remaining records by `watched_at DESC`, and return at most one entry per `anime_id` corresponding to the most recently watched incomplete episode.
+The _Continue Watching_ query MUST exclude episodes with `completed = true`, order remaining records by `watched_at DESC`, and return at most one entry per `anime_id` corresponding to the most recently watched incomplete episode.
 
 #### Scenario: User has multiple incomplete episodes of the same anime
 
 - **WHEN** a user has incomplete progress rows for episodes 3, 4, and 5 of the same anime where episode 5 has the latest `watched_at`
-- **THEN** the *Continue Watching* response includes only episode 5 for that anime
+- **THEN** the _Continue Watching_ response includes only episode 5 for that anime

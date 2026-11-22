@@ -41,7 +41,8 @@ container-to-container). Override host connections with `E2E_DATABASE_URL` /
 `E2E_REDIS_URL`.
 
 In CI, the `e2e` job (`.github/workflows/ci.yml`) runs this suite against Postgres
-+ Dragonfly service containers and blocks merge.
+
+- Dragonfly service containers and blocks merge.
 
 Useful:
 

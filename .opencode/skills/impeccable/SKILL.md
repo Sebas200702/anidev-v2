@@ -1,4 +1,5 @@
 ---
+
 name: impeccable
 description: Design craft authority for AniDev — north star, tokens, type, layout and component rules. Use when any UI work touches visual design, layout, color, typography, motion or UX copy in Astro components, pages, layouts or styles.
 lifecycle-phase: PLAN / IMPLEMENT

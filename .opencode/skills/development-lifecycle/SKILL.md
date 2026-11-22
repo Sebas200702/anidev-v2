@@ -1,4 +1,5 @@
 ---
+
 name: development-lifecycle
 description: The mandatory lifecycle every agent follows for any task in this repo. Use when starting any work — feature, bugfix, refactor, or tooling. Routes every phase of Organic Driven Development (ODD): authorize, explore, classify, track-before-first-write, task-by-task implementation with TDD (Vitest), adversarial doubt review, verify gate, and the RDD review switch. When unsure which skill or phase applies on a task, use this one as the compass.
 ---
@@ -24,4 +25,5 @@ AUTHORIZE → EXPLORE → RESOLVE UNCERTAINTY → CLASSIFY → TRACK → IMPLEME
 - **9 · RDD / RELEASE.** When the review switch is enabled (`gentle-ai review mode status`), high-risk candidates get an extra native review after implementation — **review evidence is review-only and never authorizes delivery** (`gentle-ai-rdd-defect-workflow`). Merge via PR; releases are automatic — on merge to `master`, `deploy.yml` computes the SemVer bump from Conventional Commits, creates the `vX.Y.Z` tag and GitHub Release, tags the image `:vX.Y.Z`, and commits the updated `CHANGELOG.md`/`package.json` version back as `chore(release): vX.Y.Z`. Never tag or bump the version by hand.
 
 ## When in doubt
+
 - Which phase? This router. Which rule? `AGENTS.md`. Which doc? `context7` / `find-docs`. Which test? `test-driven-development`. Is it done? `doubt-driven-development` says no until reviewed — then the gate above decides.

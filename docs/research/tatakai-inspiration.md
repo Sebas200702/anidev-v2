@@ -28,6 +28,7 @@ entre AniList/MAL.
 paralelo (1.5 s) y failover automático, `episode_source` enriquecido, AniSkip.
 
 **Adoptamos:**
+
 - **Recuperación por swap de codec de audio** como escalón extra de failover
   antes de descartar una fuente (hoy el spec solo contempla avanzar de
   candidato) — barato y salva streams con audio roto.
@@ -61,6 +62,7 @@ para converger en segundos si se pierde un evento.
 server-only, cola/chat/reacciones/encuestas.
 
 **Adoptamos:**
+
 - **`ReadinessBarrier`**: gate de "todos listos" antes de reproducir tras un
   seek/cambio de fuente — evita que el host corra solo. Falta en nuestro spec.
 - **`host_epoch` monotónico** para invalidar comandos tras transferencia/caída
@@ -78,15 +80,17 @@ server-only, cola/chat/reacciones/encuestas.
 **Tatakai:** React 19 SPA + `shadcn/ui` (Radix) + Tailwind + TanStack Query
 (server state) + Zustand (client state, con `persist`). "Rails" (carruseles) con
 `TVRail`/`TVContentCard`; theming por CSS vars (`theme.css` + `applyThemeVariables`
-+ `useThemeStore`); reduced-motion (`0.01ms`); **TV mode** con navegación
-espacial por D-Pad (`installSpatialNavigation`, foco restaurado con `data-tv-key`
-+ `MutationObserver`) y hero cinemático.
+
+- `useThemeStore`); reduced-motion (`0.01ms`); **TV mode** con navegación
+  espacial por D-Pad (`installSpatialNavigation`, foco restaurado con `data-tv-key`
+- `MutationObserver`) y hero cinemático.
 
 **No copiamos:** el modelo SPA + TanStack Query + providers globales es lo
 opuesto a nuestro zero-JS + islands on demand. Nuestra verdad de datos vive en
 services de page routes, no en un `QueryClient` de cliente.
 
 **Adoptamos:**
+
 - **Theming por CSS variables con switch runtime** (`applyThemeVariables`) — ya
   somos dark-only con tokens `@theme`; el patrón habilita variantes/temas a
   futuro sin reescribir componentes.
@@ -116,6 +120,7 @@ rate-limit (`rl:` buckets), Range streaming + SSRF/timeout (platform-audit), CSP
 en `policy.ts`, Rustrak (Sentry-compatible), envelope + degradación 503.
 
 **Adoptamos:**
+
 - **Cache middleware por-ruta con TTL declarativo** (hoy el TTL es por-call);
   centralizarlo reduce olvidos y cachea GETs upstream de forma uniforme.
 - **Script `check-security-baseline` en CI**: un gate que verifique invariantes
@@ -129,12 +134,14 @@ en `policy.ts`, Rustrak (Sentry-compatible), envelope + degradación 503.
   sumamos analytics de producto (Rustrak ya cubre errores).
 
 ## 5. Qué NO tomar
+
 - P2P WebRTC para watch party (mantener server-authoritative SSE).
 - Modelo SPA + TanStack Query + Zustand global (rompe zero-JS).
 - Supabase/RLS (corremos Postgres propio con Drizzle + Better Auth).
 - Electron / móvil nativo / Rust translate engine (fuera de alcance).
 
 ## 6. Próximos pasos sugeridos (features ODD candidatas)
+
 1. Enriquecer el spec `resilient-playback-and-aniskip`: codec-swap recovery +
    `SourceResult` canónico + normalizador tipo content-graph.
 2. Enriquecer `watch2gether-synchronized-rooms`: `ReadinessBarrier`, `host_epoch`,

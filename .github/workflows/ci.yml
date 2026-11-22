@@ -80,7 +80,7 @@ jobs:
       S3_BUCKET: anidev-media
       S3_ACCESS_KEY_ID: anidev-ci
       S3_PUBLIC_URL: http://127.0.0.1:9000/anidev-media
-      S3_FORCE_PATH_STYLE: 'true'
+      S3_FORCE_PATH_STYLE: "true"
     services:
       postgres:
         image: postgres:18-alpine

@@ -1,4 +1,5 @@
 ---
+
 name: presentational-container
 description: The Presentational-Container pattern for this repo. Use when building or editing any Astro component, page, layout or client island to enforce the separation — containers in pages fetch from domain services, presentational components render props and do zero data-fetching. Also governs barrel exports, props contracts, and directory layout for components.
 lifecycle-phase: IMPLEMENT
@@ -6,8 +7,8 @@ lifecycle-phase: IMPLEMENT
 
 # Presentational-Container in this repo
 
-The rule in one line — *"Data is supplied by domain services in page routes,
-not fetched inside components"* (AGENTS.md). A component that imports a
+The rule in one line — _"Data is supplied by domain services in page routes,
+not fetched inside components"_ (AGENTS.md). A component that imports a
 service, client or repository is broken container logic; move the fetch to the
 page route and pass the result as props.
 
@@ -26,11 +27,13 @@ page route and pass the result as props.
 - **Receives everything it needs as props.** No `Astro.fetch`, no service import,
   no `import.meta.env` reads inside the SFC.
 - **Directory convention**: one per component.
+
   ```text
   Name/
     Name.astro      # the SFC
     index.ts        # barrel: export { default as Name } from '@anime/components/name/name.astro'
   ```
+
   Add `@module Name` JSDoc in the barrel. Export PascalCase names; import via
   the domain/shared barrel (`@anime/components`, `@shared/components`) or the
   deep-path only where the barrel does not reach.
@@ -38,6 +41,7 @@ page route and pass the result as props.
   fixture, or a hook/store used **only** by this component lives **inside** the
   component folder — same unit-folder rule as the logic layers (AGENTS.md →
   "Module unit folders").
+
   ```text
   anime-player/
     index.ts
@@ -50,6 +54,7 @@ page route and pass the result as props.
   folder when it has companions. `use`+PascalCase hooks, `use[Name]Store` stores.
   Never pre-create empty `hooks/`/`stores/` directories.
 - **Props**: `interface Props` in the frontmatter, destructure right away.
+
   ```astro
   interface Props {
     animeDetails: AnimeDetails
@@ -73,6 +78,7 @@ page route and pass the result as props.
 - Keep the SFC ≤ 150 lines; break into sibling components per responsibility.
 
 ## Sources
+
 - `AGENTS.md` — "Architecture · Presentational-Container", "Data flow",
   "Max file size".
 - Reference: `src/domains/anime/components/anime-details/`,

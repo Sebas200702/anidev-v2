@@ -5,515 +5,467 @@ Updated automatically on every release by `.github/workflows/deploy.yml`
 
 ## [0.19.1](https://github.com/Sebas200702/anidev-v2/compare/v0.19.0...v0.19.1) (2026-11-22)
 
-
 ### Bug Fixes
 
-* **ci:** correct release tag probe, serialize :latest, scope deploy key ([4cea640](https://github.com/Sebas200702/anidev-v2/commit/4cea64008541a51c1c8ea4622bc650cd529b6bec))
-
+- **ci:** correct release tag probe, serialize :latest, scope deploy key ([4cea640](https://github.com/Sebas200702/anidev-v2/commit/4cea64008541a51c1c8ea4622bc650cd529b6bec))
 
 ### Continuous Integration
 
-* **release:** write CHANGELOG and version back to master ([eee59d1](https://github.com/Sebas200702/anidev-v2/commit/eee59d112c3db75855049362ce74816a55eec2f5))
-
+- **release:** write CHANGELOG and version back to master ([eee59d1](https://github.com/Sebas200702/anidev-v2/commit/eee59d112c3db75855049362ce74816a55eec2f5))
 
 ## [0.19.0](https://github.com/Sebas200702/anidev-v2/compare/v0.18.0...v0.19.0) (2026-11-22)
 
-
 ### Features
 
-* **anime:** add media list and detail endpoints ([8764b14](https://github.com/Sebas200702/anidev-v2/commit/8764b14b9b0374935462de7087c2ed01a44e41c2))
-* **anime:** add music list and detail endpoints ([4f5be80](https://github.com/Sebas200702/anidev-v2/commit/4f5be800a01b490aba5f44003db28f745ca06224))
-* **design-tokens:** dark editorial system with Kode Mono, Nunito Sans and hard buttons ([b3f2361](https://github.com/Sebas200702/anidev-v2/commit/b3f2361ea678ebc5c55c2ba6e726cc02b857d03e))
-* **search:** add music and characters catalogs ([9afaae8](https://github.com/Sebas200702/anidev-v2/commit/9afaae8bf3ac3004b0c1b4d349e308a2afe4249a))
-* **search:** match music and characters by anime title ([e26bb07](https://github.com/Sebas200702/anidev-v2/commit/e26bb079b36e51ea839e10e0c7dcfb4cf198cea5))
-
+- **anime:** add media list and detail endpoints ([8764b14](https://github.com/Sebas200702/anidev-v2/commit/8764b14b9b0374935462de7087c2ed01a44e41c2))
+- **anime:** add music list and detail endpoints ([4f5be80](https://github.com/Sebas200702/anidev-v2/commit/4f5be800a01b490aba5f44003db28f745ca06224))
+- **design-tokens:** dark editorial system with Kode Mono, Nunito Sans and hard buttons ([b3f2361](https://github.com/Sebas200702/anidev-v2/commit/b3f2361ea678ebc5c55c2ba6e726cc02b857d03e))
+- **search:** add music and characters catalogs ([9afaae8](https://github.com/Sebas200702/anidev-v2/commit/9afaae8bf3ac3004b0c1b4d349e308a2afe4249a))
+- **search:** match music and characters by anime title ([e26bb07](https://github.com/Sebas200702/anidev-v2/commit/e26bb079b36e51ea839e10e0c7dcfb4cf198cea5))
 
 ### Bug Fixes
 
-* **anime:** align /full media proxy index with /media resolver ([9ad120c](https://github.com/Sebas200702/anidev-v2/commit/9ad120c3056654ddee515df957bf869df9dff6ca)), closes [#135](https://github.com/Sebas200702/anidev-v2/issues/135)
-* **anime:** sort anime list with nulls last ([e47141b](https://github.com/Sebas200702/anidev-v2/commit/e47141bdab64dd4cd66f5d79ec76520482e842fd))
-* **deps:** alinea astro con master (7.3.8) para el deploy de Vercel ([5b9944c](https://github.com/Sebas200702/anidev-v2/commit/5b9944cd238fe9c4ff8866000bb18e9647d69f95))
-* **deps:** better-auth 1.7.14 y undici 8.12.3 para el gate de audit ([92eedbb](https://github.com/Sebas200702/anidev-v2/commit/92eedbbb14522dbb599aca4a585ac645cf7601ad))
-* **design-tokens:** accent text uses editorial-ink and the light accent passes contrast ([2152cba](https://github.com/Sebas200702/anidev-v2/commit/2152cba363ec77eb5e7cfa421564406366cb7eda))
-* **media:** schemas de imagen aceptan rutas origin-relative ([c7232d5](https://github.com/Sebas200702/anidev-v2/commit/c7232d56a4049120a08a7940886604d3f50b0eba))
-* **media:** Serve image URLs origin-relative to satisfy img-src 'self' ([6be6f1a](https://github.com/Sebas200702/anidev-v2/commit/6be6f1a8558aa07d8206b5d57ad60e47365af2b5))
-* **middleware:** key rate limit on visitor IP and raise media bucket to 300/min ([f975239](https://github.com/Sebas200702/anidev-v2/commit/f975239b29217d4b8c29544d45eff12b58f4dc54))
-
+- **anime:** align /full media proxy index with /media resolver ([9ad120c](https://github.com/Sebas200702/anidev-v2/commit/9ad120c3056654ddee515df957bf869df9dff6ca)), closes [#135](https://github.com/Sebas200702/anidev-v2/issues/135)
+- **anime:** sort anime list with nulls last ([e47141b](https://github.com/Sebas200702/anidev-v2/commit/e47141bdab64dd4cd66f5d79ec76520482e842fd))
+- **deps:** alinea astro con master (7.3.8) para el deploy de Vercel ([5b9944c](https://github.com/Sebas200702/anidev-v2/commit/5b9944cd238fe9c4ff8866000bb18e9647d69f95))
+- **deps:** better-auth 1.7.14 y undici 8.12.3 para el gate de audit ([92eedbb](https://github.com/Sebas200702/anidev-v2/commit/92eedbbb14522dbb599aca4a585ac645cf7601ad))
+- **design-tokens:** accent text uses editorial-ink and the light accent passes contrast ([2152cba](https://github.com/Sebas200702/anidev-v2/commit/2152cba363ec77eb5e7cfa421564406366cb7eda))
+- **media:** schemas de imagen aceptan rutas origin-relative ([c7232d5](https://github.com/Sebas200702/anidev-v2/commit/c7232d56a4049120a08a7940886604d3f50b0eba))
+- **media:** Serve image URLs origin-relative to satisfy img-src 'self' ([6be6f1a](https://github.com/Sebas200702/anidev-v2/commit/6be6f1a8558aa07d8206b5d57ad60e47365af2b5))
+- **middleware:** key rate limit on visitor IP and raise media bucket to 300/min ([f975239](https://github.com/Sebas200702/anidev-v2/commit/f975239b29217d4b8c29544d45eff12b58f4dc54))
 
 ### Code Refactoring
 
-* **docs:** move openspec specs to docs/specs, drop openspec changes ([69b939d](https://github.com/Sebas200702/anidev-v2/commit/69b939d82acd95c246b43e95c3b57438037b417a))
-
+- **docs:** move openspec specs to docs/specs, drop openspec changes ([69b939d](https://github.com/Sebas200702/anidev-v2/commit/69b939d82acd95c246b43e95c3b57438037b417a))
 
 ### Continuous Integration
 
-* **release:** crea la GitHub Release automatica al hacer push de tag v* ([906909d](https://github.com/Sebas200702/anidev-v2/commit/906909d05e6673093f97e320a943b3d5643ac7ab))
-* **release:** cut releases automatically on merge to master ([3ca82c7](https://github.com/Sebas200702/anidev-v2/commit/3ca82c78fdb97fbdd8d9a3e75e272bcf04711da2))
-
+- **release:** crea la GitHub Release automatica al hacer push de tag v* ([906909d](https://github.com/Sebas200702/anidev-v2/commit/906909d05e6673093f97e320a943b3d5643ac7ab))
+- **release:** cut releases automatically on merge to master ([3ca82c7](https://github.com/Sebas200702/anidev-v2/commit/3ca82c78fdb97fbdd8d9a3e75e272bcf04711da2))
 
 ### Tests
 
-* **e2e:** character pick espera avatar relativo /media/ ([5767b36](https://github.com/Sebas200702/anidev-v2/commit/5767b36aae1ac5ce7bf903f849387a6ba20add08))
-
+- **e2e:** character pick espera avatar relativo /media/ ([5767b36](https://github.com/Sebas200702/anidev-v2/commit/5767b36aae1ac5ce7bf903f849387a6ba20add08))
 
 ### Documentation
 
-* **agents:** replace SDD methodology with ODD + RDD ([fb75e0e](https://github.com/Sebas200702/anidev-v2/commit/fb75e0ea162346d9633fbad385c9207007f63c52))
-* **openspec:** propose design-system-editorial change ([54da662](https://github.com/Sebas200702/anidev-v2/commit/54da66220d607a34fdb8f1d8888e6d14541a7888))
-* **research:** add Tatakai reference study for AniDev evolution ([d3fd5f6](https://github.com/Sebas200702/anidev-v2/commit/d3fd5f619b596b421ecc62743837688dadee9467))
-* **storage:** MinIO como backend de producción y su ruta de despliegue ([1abfe07](https://github.com/Sebas200702/anidev-v2/commit/1abfe0711975b0f92ada8647602586416cdd7ec2))
-* point architecture/readme/roadmap to ODD + docs/specs ([01e584b](https://github.com/Sebas200702/anidev-v2/commit/01e584ba4470a6bfbfe4388a64098c34c19da55e))
-
+- **agents:** replace SDD methodology with ODD + RDD ([fb75e0e](https://github.com/Sebas200702/anidev-v2/commit/fb75e0ea162346d9633fbad385c9207007f63c52))
+- **openspec:** propose design-system-editorial change ([54da662](https://github.com/Sebas200702/anidev-v2/commit/54da66220d607a34fdb8f1d8888e6d14541a7888))
+- **research:** add Tatakai reference study for AniDev evolution ([d3fd5f6](https://github.com/Sebas200702/anidev-v2/commit/d3fd5f619b596b421ecc62743837688dadee9467))
+- **storage:** MinIO como backend de producción y su ruta de despliegue ([1abfe07](https://github.com/Sebas200702/anidev-v2/commit/1abfe0711975b0f92ada8647602586416cdd7ec2))
+- point architecture/readme/roadmap to ODD + docs/specs ([01e584b](https://github.com/Sebas200702/anidev-v2/commit/01e584ba4470a6bfbfe4388a64098c34c19da55e))
 
 ## [0.18.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.17.0...v0.18.0) (2026-10-25)
 
-
 ### ⚠ BREAKING CHANGES
 
-* **user:** PATCH/POST de perfil rechaza avatares con URL externa
-arbitraria (400 VALIDATION_ERROR).
+- **user:** PATCH/POST de perfil rechaza avatares con URL externa
+  arbitraria (400 VALIDATION_ERROR).
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>
 
 ### Features
 
-* **config:** S3_* opcionales todo-o-nada e isStorageEnabled ([131b226](https://github.com/Sebas200702/docs-hackathon/commit/131b226cd81a31599990b48f36ec61cb333f73ef))
-* **errors:** STORAGE_NOT_CONFIGURED/UNSUPPORTED_MEDIA_TYPE y CSP con origen de storage ([60a81b9](https://github.com/Sebas200702/docs-hackathon/commit/60a81b9430e8a5938b4a9f9cd86c088e4eb76ab4))
-* **storage:** cliente S3 perezoso con put, delete y URL pública ([e05dc5e](https://github.com/Sebas200702/docs-hackathon/commit/e05dc5e0e3bd5ca392ca7c858b21a543767cc09a))
-* **user:** bucket de rate limit para subidas y allowlist de avatar ([7fbff83](https://github.com/Sebas200702/docs-hackathon/commit/7fbff83c52ebbf9f9c627fb9ade23ca949aabd1b))
-* **user:** columnas banner, avatar_key y banner_key; banner en el DTO ([dc4801d](https://github.com/Sebas200702/docs-hackathon/commit/dc4801d77a97dfb45b31f9542054842aaabc412e))
-* **user:** processProfileImage con sharp (formato real, EXIF, crop, WebP) ([65ea4a9](https://github.com/Sebas200702/docs-hackathon/commit/65ea4a9dccda1c29c8b62a1d3dfddc03d08d68a3))
-* **user:** profileImageService para subida, picks de galería y reset ([35b81a4](https://github.com/Sebas200702/docs-hackathon/commit/35b81a4ef3808654f74dc95a9cfd52493b9842b0))
-* **user:** readImageUpload multipart acotado a 5 MiB con crop validado ([e4a6939](https://github.com/Sebas200702/docs-hackathon/commit/e4a6939877f12e07a243c45e31afb098c177af5b))
-* **user:** rutas PUT/DELETE de avatar y banner y picks de galería ([ac338ed](https://github.com/Sebas200702/docs-hackathon/commit/ac338ed7fe11e740a5813212322503bad0dc2860))
-
+- **config:** S3_* opcionales todo-o-nada e isStorageEnabled ([131b226](https://github.com/Sebas200702/docs-hackathon/commit/131b226cd81a31599990b48f36ec61cb333f73ef))
+- **errors:** STORAGE_NOT_CONFIGURED/UNSUPPORTED_MEDIA_TYPE y CSP con origen de storage ([60a81b9](https://github.com/Sebas200702/docs-hackathon/commit/60a81b9430e8a5938b4a9f9cd86c088e4eb76ab4))
+- **storage:** cliente S3 perezoso con put, delete y URL pública ([e05dc5e](https://github.com/Sebas200702/docs-hackathon/commit/e05dc5e0e3bd5ca392ca7c858b21a543767cc09a))
+- **user:** bucket de rate limit para subidas y allowlist de avatar ([7fbff83](https://github.com/Sebas200702/docs-hackathon/commit/7fbff83c52ebbf9f9c627fb9ade23ca949aabd1b))
+- **user:** columnas banner, avatar_key y banner_key; banner en el DTO ([dc4801d](https://github.com/Sebas200702/docs-hackathon/commit/dc4801d77a97dfb45b31f9542054842aaabc412e))
+- **user:** processProfileImage con sharp (formato real, EXIF, crop, WebP) ([65ea4a9](https://github.com/Sebas200702/docs-hackathon/commit/65ea4a9dccda1c29c8b62a1d3dfddc03d08d68a3))
+- **user:** profileImageService para subida, picks de galería y reset ([35b81a4](https://github.com/Sebas200702/docs-hackathon/commit/35b81a4ef3808654f74dc95a9cfd52493b9842b0))
+- **user:** readImageUpload multipart acotado a 5 MiB con crop validado ([e4a6939](https://github.com/Sebas200702/docs-hackathon/commit/e4a6939877f12e07a243c45e31afb098c177af5b))
+- **user:** rutas PUT/DELETE de avatar y banner y picks de galería ([ac338ed](https://github.com/Sebas200702/docs-hackathon/commit/ac338ed7fe11e740a5813212322503bad0dc2860))
 
 ### Bug Fixes
 
-* **config:** S3_FORCE_PATH_STYLE estricto y salida del wait de MinIO en CI ([20cec98](https://github.com/Sebas200702/docs-hackathon/commit/20cec988e7661fa4a5aba2733295feae41106d56))
+- **config:** S3_FORCE_PATH_STYLE estricto y salida del wait de MinIO en CI ([20cec98](https://github.com/Sebas200702/docs-hackathon/commit/20cec988e7661fa4a5aba2733295feae41106d56))
 
 ## [0.17.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.16.0...v0.17.0) (2026-10-25)
 
-
 ### Features
 
-* **auth:** codigos PROVIDER_NOT_CONFIGURED (404) y ACCOUNT_EXISTS_USE_PASSWORD (409) ([de24b20](https://github.com/Sebas200702/docs-hackathon/commit/de24b2044ca662d651ad08420302f9a6bbcc26f6))
-* **auth:** credenciales opcionales de Google (ambas o ninguna) ([20feeb6](https://github.com/Sebas200702/docs-hackathon/commit/20feeb6b1222133392d0113859cbd5eb723ae546))
-* **auth:** GET /api/auth/sign-in/google, /callback/google y /link/google ([5e6a20c](https://github.com/Sebas200702/docs-hackathon/commit/5e6a20cf0985169db16c34023c3d2bf020879313))
-* **auth:** profileStatus en GET /api/auth/session para el onboarding ([76abe4c](https://github.com/Sebas200702/docs-hackathon/commit/76abe4cb465344dbf53f6536ddbaf6967c0c1278))
-* **auth:** proveedor Google condicional, sin linking implicito y perfil inicial ([f5420a8](https://github.com/Sebas200702/docs-hackathon/commit/f5420a879386a738ab0a7256a3572ea21962255f))
-* **auth:** sanitizeCallbackURL contra open redirect ([d2fa461](https://github.com/Sebas200702/docs-hackathon/commit/d2fa461658e59bbf270b4230491d8d411f1e0707))
-* **user:** esquema de escritura de preferencias del perfil ([572d27e](https://github.com/Sebas200702/docs-hackathon/commit/572d27eab9d4df75f2da0208f9572060441deeda))
-* **user:** PATCH /api/user/:userId/preferences (solo el dueno) ([346a078](https://github.com/Sebas200702/docs-hackathon/commit/346a078f128231865e3027e0175b56873bafe020))
-* **user:** repositorio de existencia de ids de catalogo para preferencias ([a27b64a](https://github.com/Sebas200702/docs-hackathon/commit/a27b64a7a916d8756c24f313c327e72b9cf89119))
-* **user:** servicio de preferencias con politica de dueno y validacion de ids ([e6c6eb9](https://github.com/Sebas200702/docs-hackathon/commit/e6c6eb99d9e97759ec71a8dbbceea41d642076e1))
+- **auth:** codigos PROVIDER_NOT_CONFIGURED (404) y ACCOUNT_EXISTS_USE_PASSWORD (409) ([de24b20](https://github.com/Sebas200702/docs-hackathon/commit/de24b2044ca662d651ad08420302f9a6bbcc26f6))
+- **auth:** credenciales opcionales de Google (ambas o ninguna) ([20feeb6](https://github.com/Sebas200702/docs-hackathon/commit/20feeb6b1222133392d0113859cbd5eb723ae546))
+- **auth:** GET /api/auth/sign-in/google, /callback/google y /link/google ([5e6a20c](https://github.com/Sebas200702/docs-hackathon/commit/5e6a20cf0985169db16c34023c3d2bf020879313))
+- **auth:** profileStatus en GET /api/auth/session para el onboarding ([76abe4c](https://github.com/Sebas200702/docs-hackathon/commit/76abe4cb465344dbf53f6536ddbaf6967c0c1278))
+- **auth:** proveedor Google condicional, sin linking implicito y perfil inicial ([f5420a8](https://github.com/Sebas200702/docs-hackathon/commit/f5420a879386a738ab0a7256a3572ea21962255f))
+- **auth:** sanitizeCallbackURL contra open redirect ([d2fa461](https://github.com/Sebas200702/docs-hackathon/commit/d2fa461658e59bbf270b4230491d8d411f1e0707))
+- **user:** esquema de escritura de preferencias del perfil ([572d27e](https://github.com/Sebas200702/docs-hackathon/commit/572d27eab9d4df75f2da0208f9572060441deeda))
+- **user:** PATCH /api/user/:userId/preferences (solo el dueno) ([346a078](https://github.com/Sebas200702/docs-hackathon/commit/346a078f128231865e3027e0175b56873bafe020))
+- **user:** repositorio de existencia de ids de catalogo para preferencias ([a27b64a](https://github.com/Sebas200702/docs-hackathon/commit/a27b64a7a916d8756c24f313c327e72b9cf89119))
+- **user:** servicio de preferencias con politica de dueno y validacion de ids ([e6c6eb9](https://github.com/Sebas200702/docs-hackathon/commit/e6c6eb99d9e97759ec71a8dbbceea41d642076e1))
 
 ## [0.16.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.15.0...v0.16.0) (2026-10-24)
 
-
 ### Features
 
-* **db:** indices inversos de reparto/staff/voces/artistas y trigram de nombres ([b1dcf35](https://github.com/Sebas200702/docs-hackathon/commit/b1dcf356a38ae0dd4a271028fa9f9ba510ed92f2))
-* **music:** scope interno artistIds en la lista de musica ([d5e2e42](https://github.com/Sebas200702/docs-hackathon/commit/d5e2e4256c7a0e07ae84ebaaba8f1b7f507832ce))
-* **people:** alias [@people](https://github.com/people), errores 404 y rutas publicas ([f65b791](https://github.com/Sebas200702/docs-hackathon/commit/f65b7910318bd9c6267ee77ab650db4132648366))
-* **people:** esquemas, tipos y mappers de personajes y personas ([93f7d53](https://github.com/Sebas200702/docs-hackathon/commit/93f7d53bceef279458d60021e8821020957e0090))
-* **people:** GET /api/characters, /:malId y /:malId/appearances ([4ae6636](https://github.com/Sebas200702/docs-hackathon/commit/4ae663659f14ad3733012a5b7615e9461f998ad4))
-* **people:** GET /api/people, /:malId, /:malId/voices, /credits y /music ([3329da9](https://github.com/Sebas200702/docs-hackathon/commit/3329da96ff9940279f227512f1d84c2a779571ce))
-* **people:** repositorios de busqueda, perfil y apariciones de personajes ([809f594](https://github.com/Sebas200702/docs-hackathon/commit/809f594530b0e464e1853b97614dbad7ae93d6df))
-* **people:** repositorios de busqueda, perfil, voces y creditos de personas ([9b9f81c](https://github.com/Sebas200702/docs-hackathon/commit/9b9f81c57dbbfbf1654cb23b314c4cef3f52eaa5))
+- **db:** indices inversos de reparto/staff/voces/artistas y trigram de nombres ([b1dcf35](https://github.com/Sebas200702/docs-hackathon/commit/b1dcf356a38ae0dd4a271028fa9f9ba510ed92f2))
+- **music:** scope interno artistIds en la lista de musica ([d5e2e42](https://github.com/Sebas200702/docs-hackathon/commit/d5e2e4256c7a0e07ae84ebaaba8f1b7f507832ce))
+- **people:** alias [@people](https://github.com/people), errores 404 y rutas publicas ([f65b791](https://github.com/Sebas200702/docs-hackathon/commit/f65b7910318bd9c6267ee77ab650db4132648366))
+- **people:** esquemas, tipos y mappers de personajes y personas ([93f7d53](https://github.com/Sebas200702/docs-hackathon/commit/93f7d53bceef279458d60021e8821020957e0090))
+- **people:** GET /api/characters, /:malId y /:malId/appearances ([4ae6636](https://github.com/Sebas200702/docs-hackathon/commit/4ae663659f14ad3733012a5b7615e9461f998ad4))
+- **people:** GET /api/people, /:malId, /:malId/voices, /credits y /music ([3329da9](https://github.com/Sebas200702/docs-hackathon/commit/3329da96ff9940279f227512f1d84c2a779571ce))
+- **people:** repositorios de busqueda, perfil y apariciones de personajes ([809f594](https://github.com/Sebas200702/docs-hackathon/commit/809f594530b0e464e1853b97614dbad7ae93d6df))
+- **people:** repositorios de busqueda, perfil, voces y creditos de personas ([9b9f81c](https://github.com/Sebas200702/docs-hackathon/commit/9b9f81c57dbbfbf1654cb23b314c4cef3f52eaa5))
 
 ## [0.15.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.14.0...v0.15.0) (2026-10-24)
 
-
 ### Features
 
-* **anime:** filtro producer/producerRole en /api/anime ([3df2766](https://github.com/Sebas200702/docs-hackathon/commit/3df2766e0bbbb12b77d86f629a0d9a68aa641954))
-* **manga:** scope interno producerId en la lista de manga ([1df7f8f](https://github.com/Sebas200702/docs-hackathon/commit/1df7f8fb8b723303713e39bec3336d4ef6f20a31))
-* **producer:** aliases @producer/[@seo](https://github.com/seo) y error PRODUCER_NOT_FOUND (404) ([30aed56](https://github.com/Sebas200702/docs-hackathon/commit/30aed568ef3d04c3689ad8cc53dd44715ee442fa))
-* **producer:** esquemas, tipos y prefijos de cache ([6de4357](https://github.com/Sebas200702/docs-hackathon/commit/6de4357bc0d74f0e1bb619b2691df966e0e3c5ee))
-* **producer:** GET /api/producers, /:malId, /:malId/anime y /:malId/manga ([bed2f06](https://github.com/Sebas200702/docs-hackathon/commit/bed2f06de855f69f131ef6327856cd2c737a68b6))
-* **producer:** repositorios de lista y detalle con conteo por rol ([0b9dda1](https://github.com/Sebas200702/docs-hackathon/commit/0b9dda159150c4936c30d8a35dcaff3b2628f96c))
-* **producer:** servicios de lista, detalle y obras con cache ([1706736](https://github.com/Sebas200702/docs-hackathon/commit/170673644a426c3cf59df51574ad4faeff5adbc5))
-* **seo:** builders puros de urlset y sitemapindex ([a81d1c8](https://github.com/Sebas200702/docs-hackathon/commit/a81d1c83e2ccfa88880540b34116727dd2d57276))
-* **seo:** GET /sitemap.xml, /sitemaps/:file y /robots.txt ([da7dbf9](https://github.com/Sebas200702/docs-hackathon/commit/da7dbf98b76788971f9389ad177d0963d3969a04))
-* **seo:** registro de segmentos y servicio de sitemap con cache ([29e4517](https://github.com/Sebas200702/docs-hackathon/commit/29e45174d838e6b5aa893f2ef921896b81645916))
-* **seo:** repositorio del sitemap con piso parental safe ([6125b06](https://github.com/Sebas200702/docs-hackathon/commit/6125b06d643426df420b0a32e87605b012722e87))
-* **seo:** sitemaps, robots.txt y /api/producers como rutas publicas ([7a8c3e0](https://github.com/Sebas200702/docs-hackathon/commit/7a8c3e00ba81c479618bbb4e6c5a08c6ecfbc3e9))
+- **anime:** filtro producer/producerRole en /api/anime ([3df2766](https://github.com/Sebas200702/docs-hackathon/commit/3df2766e0bbbb12b77d86f629a0d9a68aa641954))
+- **manga:** scope interno producerId en la lista de manga ([1df7f8f](https://github.com/Sebas200702/docs-hackathon/commit/1df7f8fb8b723303713e39bec3336d4ef6f20a31))
+- **producer:** aliases @producer/[@seo](https://github.com/seo) y error PRODUCER_NOT_FOUND (404) ([30aed56](https://github.com/Sebas200702/docs-hackathon/commit/30aed568ef3d04c3689ad8cc53dd44715ee442fa))
+- **producer:** esquemas, tipos y prefijos de cache ([6de4357](https://github.com/Sebas200702/docs-hackathon/commit/6de4357bc0d74f0e1bb619b2691df966e0e3c5ee))
+- **producer:** GET /api/producers, /:malId, /:malId/anime y /:malId/manga ([bed2f06](https://github.com/Sebas200702/docs-hackathon/commit/bed2f06de855f69f131ef6327856cd2c737a68b6))
+- **producer:** repositorios de lista y detalle con conteo por rol ([0b9dda1](https://github.com/Sebas200702/docs-hackathon/commit/0b9dda159150c4936c30d8a35dcaff3b2628f96c))
+- **producer:** servicios de lista, detalle y obras con cache ([1706736](https://github.com/Sebas200702/docs-hackathon/commit/170673644a426c3cf59df51574ad4faeff5adbc5))
+- **seo:** builders puros de urlset y sitemapindex ([a81d1c8](https://github.com/Sebas200702/docs-hackathon/commit/a81d1c83e2ccfa88880540b34116727dd2d57276))
+- **seo:** GET /sitemap.xml, /sitemaps/:file y /robots.txt ([da7dbf9](https://github.com/Sebas200702/docs-hackathon/commit/da7dbf98b76788971f9389ad177d0963d3969a04))
+- **seo:** registro de segmentos y servicio de sitemap con cache ([29e4517](https://github.com/Sebas200702/docs-hackathon/commit/29e45174d838e6b5aa893f2ef921896b81645916))
+- **seo:** repositorio del sitemap con piso parental safe ([6125b06](https://github.com/Sebas200702/docs-hackathon/commit/6125b06d643426df420b0a32e87605b012722e87))
+- **seo:** sitemaps, robots.txt y /api/producers como rutas publicas ([7a8c3e0](https://github.com/Sebas200702/docs-hackathon/commit/7a8c3e00ba81c479618bbb4e6c5a08c6ecfbc3e9))
 
 ## [0.14.0](https://github.com/Sebas200702/docs-hackathon/compare/v0.13.0...v0.14.0) (2026-10-24)
 
-
 ### Features
 
-* **anime:** el reparto descarta personajes con nombre provisional ([2929507](https://github.com/Sebas200702/docs-hackathon/commit/2929507ddf0f54a81f97a9821ef66ef3208a4980))
-* **manga:** reparto con voz en el detalle y GET /api/manga/:malId/full ([fa431ba](https://github.com/Sebas200702/docs-hackathon/commit/fa431ba1d2bde173b4563ad171e87e56297c7f7b))
-* **search:** GET /api/search con type=anime|manga ([0160c89](https://github.com/Sebas200702/docs-hackathon/commit/0160c897dd75bd002cbbe8bc198382e5b0e7db2e))
-
+- **anime:** el reparto descarta personajes con nombre provisional ([2929507](https://github.com/Sebas200702/docs-hackathon/commit/2929507ddf0f54a81f97a9821ef66ef3208a4980))
+- **manga:** reparto con voz en el detalle y GET /api/manga/:malId/full ([fa431ba](https://github.com/Sebas200702/docs-hackathon/commit/fa431ba1d2bde173b4563ad171e87e56297c7f7b))
+- **search:** GET /api/search con type=anime|manga ([0160c89](https://github.com/Sebas200702/docs-hackathon/commit/0160c897dd75bd002cbbe8bc198382e5b0e7db2e))
 
 ### Bug Fixes
 
-* **scripts:** clone-prod sin credencial local embebida ([13f3cec](https://github.com/Sebas200702/docs-hackathon/commit/13f3cec201f899bc1b905124bf36f04481e3b0a5))
+- **scripts:** clone-prod sin credencial local embebida ([13f3cec](https://github.com/Sebas200702/docs-hackathon/commit/13f3cec201f899bc1b905124bf36f04481e3b0a5))
 
 ## [0.13.0](https://github.com/Sebas200702/anidev-v2/compare/v0.12.0...v0.13.0) (2026-10-24)
 
-
 ### Features
 
-* **user:** relational lists and watch progress (Etapa 3A) ([af2fc5f](https://github.com/Sebas200702/anidev-v2/commit/af2fc5f5698b37fb7c7e89471728858ec03eee51))
+- **user:** relational lists and watch progress (Etapa 3A) ([af2fc5f](https://github.com/Sebas200702/anidev-v2/commit/af2fc5f5698b37fb7c7e89471728858ec03eee51))
 
 ## [0.12.0](https://github.com/Sebas200702/anidev-v2/compare/v0.11.0...v0.12.0) (2026-10-22)
 
-
 ### Features
 
-* **anime:** expone los ids de AniList y ANN en los external ids ([25db332](https://github.com/Sebas200702/anidev-v2/commit/25db332c80653fc53086acf47cba1b7466c46ae1))
-* **anime:** favoritos, miembros y companias con rol en el detalle ([b215363](https://github.com/Sebas200702/anidev-v2/commit/b21536388a1ce9957dd0cbd89c64a03bd9ac0ca2))
-* **anime:** id de TMDB en los external ids ([6a7825f](https://github.com/Sebas200702/anidev-v2/commit/6a7825fbfaffa7eb48f67636787d837b07d39abf))
-* **manga:** busqueda por sinonimos, test de integracion y arquitectura ([d94e3f7](https://github.com/Sebas200702/anidev-v2/commit/d94e3f71cfe2e381015b185eaf11990049b59ce6))
-* **manga:** dominio de obra impresa (manga, novela, one-shot) con API ([ca06b37](https://github.com/Sebas200702/anidev-v2/commit/ca06b379c1e15ae45ef9e1aa0c0b503c186253ae))
-* **music:** expose store links (externals) in the music detail ([1fee688](https://github.com/Sebas200702/anidev-v2/commit/1fee688e2c9d4cb2d5fc9659a6cfaf4c33e0ac7b))
-* **music:** theme number and episode range in the anime detail ([75c0f0d](https://github.com/Sebas200702/anidev-v2/commit/75c0f0dccaa281481034743f2d66a5e3ce56dbe0))
-
+- **anime:** expone los ids de AniList y ANN en los external ids ([25db332](https://github.com/Sebas200702/anidev-v2/commit/25db332c80653fc53086acf47cba1b7466c46ae1))
+- **anime:** favoritos, miembros y companias con rol en el detalle ([b215363](https://github.com/Sebas200702/anidev-v2/commit/b21536388a1ce9957dd0cbd89c64a03bd9ac0ca2))
+- **anime:** id de TMDB en los external ids ([6a7825f](https://github.com/Sebas200702/anidev-v2/commit/6a7825fbfaffa7eb48f67636787d837b07d39abf))
+- **manga:** busqueda por sinonimos, test de integracion y arquitectura ([d94e3f7](https://github.com/Sebas200702/anidev-v2/commit/d94e3f71cfe2e381015b185eaf11990049b59ce6))
+- **manga:** dominio de obra impresa (manga, novela, one-shot) con API ([ca06b37](https://github.com/Sebas200702/anidev-v2/commit/ca06b379c1e15ae45ef9e1aa0c0b503c186253ae))
+- **music:** expose store links (externals) in the music detail ([1fee688](https://github.com/Sebas200702/anidev-v2/commit/1fee688e2c9d4cb2d5fc9659a6cfaf4c33e0ac7b))
+- **music:** theme number and episode range in the anime detail ([75c0f0d](https://github.com/Sebas200702/anidev-v2/commit/75c0f0dccaa281481034743f2d66a5e3ce56dbe0))
 
 ### Bug Fixes
 
-* **media:** episode media reads episode_media, not episode_source ([0557637](https://github.com/Sebas200702/anidev-v2/commit/0557637568cb8e95ac20cd92771510649e546e08))
+- **media:** episode media reads episode_media, not episode_source ([0557637](https://github.com/Sebas200702/anidev-v2/commit/0557637568cb8e95ac20cd92771510649e546e08))
 
 ## [0.11.0](https://github.com/Sebas200702/anidev-v2/compare/v0.10.0...v0.11.0) (2026-10-18)
 
-
 ### Features
 
-* **anime:** episode item and detail mappers ([ba8727e](https://github.com/Sebas200702/anidev-v2/commit/ba8727e725724bef5537b3ec14c2a4262f62f8bb))
-* **anime:** episode list and detail schemas and types ([edba2ce](https://github.com/Sebas200702/anidev-v2/commit/edba2cedd53dc78f9fb8824d22b6f672d931f9f3))
-* **anime:** episode thumbnail link and alt text on every item ([22ccf40](https://github.com/Sebas200702/anidev-v2/commit/22ccf401782647a2a4e06eb2a5a87bafbb2ea189))
-* **anime:** EPISODE_NOT_FOUND domain error mapped to 404 ([20f418d](https://github.com/Sebas200702/anidev-v2/commit/20f418de49bf68652282cb599b1791a150071337))
-* **anime:** episodes cache keyed by page and episode number ([a4ab0a3](https://github.com/Sebas200702/anidev-v2/commit/a4ab0a3432c7e635121d91eec4401bb6be161a8a))
-* **anime:** episodes repository with page, count and detail ([5cad3dd](https://github.com/Sebas200702/anidev-v2/commit/5cad3dd803994b0f8135e4b1e0dd793dd44b8202))
-* **anime:** episodes service with stale cache and not-found checks ([33dde37](https://github.com/Sebas200702/anidev-v2/commit/33dde376e23f7544c6dfd28fcee5be12dad727ae))
-* **anime:** GET /api/anime/:malId/episodes list and detail routes ([c9e1a15](https://github.com/Sebas200702/anidev-v2/commit/c9e1a1507485a5bfe99359bd7f7f58d7acbdfa84))
-
+- **anime:** episode item and detail mappers ([ba8727e](https://github.com/Sebas200702/anidev-v2/commit/ba8727e725724bef5537b3ec14c2a4262f62f8bb))
+- **anime:** episode list and detail schemas and types ([edba2ce](https://github.com/Sebas200702/anidev-v2/commit/edba2cedd53dc78f9fb8824d22b6f672d931f9f3))
+- **anime:** episode thumbnail link and alt text on every item ([22ccf40](https://github.com/Sebas200702/anidev-v2/commit/22ccf401782647a2a4e06eb2a5a87bafbb2ea189))
+- **anime:** EPISODE_NOT_FOUND domain error mapped to 404 ([20f418d](https://github.com/Sebas200702/anidev-v2/commit/20f418de49bf68652282cb599b1791a150071337))
+- **anime:** episodes cache keyed by page and episode number ([a4ab0a3](https://github.com/Sebas200702/anidev-v2/commit/a4ab0a3432c7e635121d91eec4401bb6be161a8a))
+- **anime:** episodes repository with page, count and detail ([5cad3dd](https://github.com/Sebas200702/anidev-v2/commit/5cad3dd803994b0f8135e4b1e0dd793dd44b8202))
+- **anime:** episodes service with stale cache and not-found checks ([33dde37](https://github.com/Sebas200702/anidev-v2/commit/33dde376e23f7544c6dfd28fcee5be12dad727ae))
+- **anime:** GET /api/anime/:malId/episodes list and detail routes ([c9e1a15](https://github.com/Sebas200702/anidev-v2/commit/c9e1a1507485a5bfe99359bd7f7f58d7acbdfa84))
 
 ### Bug Fixes
 
-* **media:** serve episode thumbnails through the image pipeline ([92bf6e6](https://github.com/Sebas200702/anidev-v2/commit/92bf6e601e0c1d6470aa2e913d24c0eeed6f7967))
+- **media:** serve episode thumbnails through the image pipeline ([92bf6e6](https://github.com/Sebas200702/anidev-v2/commit/92bf6e601e0c1d6470aa2e913d24c0eeed6f7967))
 
 ## [0.10.0](https://github.com/Sebas200702/anidev-v2/compare/v0.9.0...v0.10.0) (2026-10-18)
 
-
 ### Features
 
-* **catalog:** coverage columns on anime plus anilist_id ([8e3fcd0](https://github.com/Sebas200702/anidev-v2/commit/8e3fcd0ec2f629cdd92409b2f2f02477009cdc71))
-* **catalog:** role discriminator on anime_producer (studio|licensor|producer) ([a459de9](https://github.com/Sebas200702/anidev-v2/commit/a459de9f24fab4254a56afaad1804c8db1c3ec4a))
-* **media:** source and priority columns so variants can be ordered ([6631148](https://github.com/Sebas200702/anidev-v2/commit/663114805ed458fee18dc6d848071c0f41acbb00))
-
+- **catalog:** coverage columns on anime plus anilist_id ([8e3fcd0](https://github.com/Sebas200702/anidev-v2/commit/8e3fcd0ec2f629cdd92409b2f2f02477009cdc71))
+- **catalog:** role discriminator on anime_producer (studio|licensor|producer) ([a459de9](https://github.com/Sebas200702/anidev-v2/commit/a459de9f24fab4254a56afaad1804c8db1c3ec4a))
+- **media:** source and priority columns so variants can be ordered ([6631148](https://github.com/Sebas200702/anidev-v2/commit/663114805ed458fee18dc6d848071c0f41acbb00))
 
 ### Bug Fixes
 
-* **anime:** related-anime projection selects coverage columns ([2755d6d](https://github.com/Sebas200702/anidev-v2/commit/2755d6d6e9ab878eece85852199837c6647e8110))
-* **media:** restore uniqueness as (entity, media_type, src) ([7ab6ed6](https://github.com/Sebas200702/anidev-v2/commit/7ab6ed68015e4fd9dc468c0d3df5737e4422f70c))
-* **media:** size and source fallback so real assets beat the placeholder ([a928558](https://github.com/Sebas200702/anidev-v2/commit/a928558a54a8595cb1803280f0a4bd00b7d5b17f))
+- **anime:** related-anime projection selects coverage columns ([2755d6d](https://github.com/Sebas200702/anidev-v2/commit/2755d6d6e9ab878eece85852199837c6647e8110))
+- **media:** restore uniqueness as (entity, media_type, src) ([7ab6ed6](https://github.com/Sebas200702/anidev-v2/commit/7ab6ed68015e4fd9dc468c0d3df5737e4422f70c))
+- **media:** size and source fallback so real assets beat the placeholder ([a928558](https://github.com/Sebas200702/anidev-v2/commit/a928558a54a8595cb1803280f0a4bd00b7d5b17f))
 
 ## [0.9.0](https://github.com/Sebas200702/anidev-v2/compare/v0.8.0...v0.9.0) (2026-10-15)
 
-
 ### Features
 
-* **search:** unified results route with genre and keyword search ([426f0f7](https://github.com/Sebas200702/anidev-v2/commit/426f0f705d547e39b188220e3cfe02f6557880c2))
-
+- **search:** unified results route with genre and keyword search ([426f0f7](https://github.com/Sebas200702/anidev-v2/commit/426f0f705d547e39b188220e3cfe02f6557880c2))
 
 ### Bug Fixes
 
-* **ci:** environment-stable client budget gate and DSN build-arg ([b01f7d2](https://github.com/Sebas200702/anidev-v2/commit/b01f7d23545db742cb0619bbf929fe883f69ffef))
-* **e2e:** drop forced Origin/Sec-Fetch-Site headers breaking subresources ([7a92571](https://github.com/Sebas200702/anidev-v2/commit/7a9257160f4585363a230662e67ae4f4333c3382))
-* **e2e:** never bake a Sentry DSN into e2e builds ([e98b12c](https://github.com/Sebas200702/anidev-v2/commit/e98b12c5b84c87e8c0ba060ff0baa97aaaa57c85))
-* **lint:** apply formatter to namespaced key assertions ([7694107](https://github.com/Sebas200702/anidev-v2/commit/76941071cacbc66ca8aa1cc24a0bdef04d361a2d))
-* **tests:** namespace-aware redis key assertions in stale-serve suites ([844ea36](https://github.com/Sebas200702/anidev-v2/commit/844ea3614225eb91566d31737382054915115ed1))
+- **ci:** environment-stable client budget gate and DSN build-arg ([b01f7d2](https://github.com/Sebas200702/anidev-v2/commit/b01f7d23545db742cb0619bbf929fe883f69ffef))
+- **e2e:** drop forced Origin/Sec-Fetch-Site headers breaking subresources ([7a92571](https://github.com/Sebas200702/anidev-v2/commit/7a9257160f4585363a230662e67ae4f4333c3382))
+- **e2e:** never bake a Sentry DSN into e2e builds ([e98b12c](https://github.com/Sebas200702/anidev-v2/commit/e98b12c5b84c87e8c0ba060ff0baa97aaaa57c85))
+- **lint:** apply formatter to namespaced key assertions ([7694107](https://github.com/Sebas200702/anidev-v2/commit/76941071cacbc66ca8aa1cc24a0bdef04d361a2d))
+- **tests:** namespace-aware redis key assertions in stale-serve suites ([844ea36](https://github.com/Sebas200702/anidev-v2/commit/844ea3614225eb91566d31737382054915115ed1))
 
 ## [0.8.0](https://github.com/Sebas200702/anidev-v2/compare/v0.7.0...v0.8.0) (2026-10-15)
 
-
 ### Features
 
-* **a11y:** single-h1 contract on home, showcase and anime pages ([3344192](https://github.com/Sebas200702/anidev-v2/commit/334419246c335ad0bff18282e442d4eca642f571))
-* **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
-* **anime:** concurrent list+count and synonym EXISTS search ([ff1555e](https://github.com/Sebas200702/anidev-v2/commit/ff1555e8a712f85e0cf42895beebebd28767d463))
-* **anime:** persist full-details degraded provenance across cache hits ([cfb988e](https://github.com/Sebas200702/anidev-v2/commit/cfb988eb40998226886616045622d74523d427f0))
-* **anime:** set-based carousel eligibility and batched fan-out ([e684ac4](https://github.com/Sebas200702/anidev-v2/commit/e684ac49c4dc33a448a0e1a0304a306277a3d793))
-* **cache:** canonical list-cache keys via stable stringify ([d2d9863](https://github.com/Sebas200702/anidev-v2/commit/d2d9863e5b5e6078cda89b9ec6c18d5fd8539620))
-* **db:** add D.2 indexes, profile uniqueness and junction cascades ([8a3ce38](https://github.com/Sebas200702/anidev-v2/commit/8a3ce38a248f33d540c721ff1ae6a34b7d3a1328))
-* **deploy:** packaging cleanup and production-only runtime image ([b952766](https://github.com/Sebas200702/anidev-v2/commit/b952766efc2746fff447325cebfe330de5bf36aa))
-* **deps:** drizzle 0.45.4, vitest 4.1.12, better-auth 1.6.33 ([29c97b8](https://github.com/Sebas200702/anidev-v2/commit/29c97b84724fb3c96fbaeac2183d1b6b6620be0b))
-* **e2e:** harden harness and expand coverage ([f53eac8](https://github.com/Sebas200702/anidev-v2/commit/f53eac8a0f6087bf41c01be6077314ffa1c5237e))
-* **media:** cache optimized images on bounded disk LRU ([70c160f](https://github.com/Sebas200702/anidev-v2/commit/70c160f379467cbaa468165521cd4fbc4f65b58b))
-* **media:** stream raw media with Range/206 and no tmpdir cache ([1fbffe4](https://github.com/Sebas200702/anidev-v2/commit/1fbffe462e45f1dd6ef367fa7924e1a48571bcab))
-* **obs:** request-scoped access logs and PII redaction ([a31eee5](https://github.com/Sebas200702/anidev-v2/commit/a31eee5131dca1bb0efcd4789a0ebbe94af765c6))
-* **platform:** decouple media image utils and close hardening pass ([8c678ee](https://github.com/Sebas200702/anidev-v2/commit/8c678ee1341883035d221cb8146d11c551f4f0b8))
-* **platform:** harden auth/media/user paths and normalize error handling ([100c48b](https://github.com/Sebas200702/anidev-v2/commit/100c48ba598e1ee9f6e63e20998c73dcbd7792f6))
-* **quality:** coverage thresholds and navigable-url/sentry branch tests ([159c7d6](https://github.com/Sebas200702/anidev-v2/commit/159c7d64e22e98c5d3c93a824929352cd689bb08))
-* **search:** atomic search-history record with per-user lock ([e934b4a](https://github.com/Sebas200702/anidev-v2/commit/e934b4af40de63cddd630d575b22754fac44d2c4))
-* **security:** audit gate with reviewed allowlist and renovate policy ([2d220e5](https://github.com/Sebas200702/anidev-v2/commit/2d220e58b66af1b16546e2ab5085993b96e235bc))
-* **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
-* **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
-* **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
-* **ui:** replace Toolbar island with vanilla controller ([ddf01db](https://github.com/Sebas200702/anidev-v2/commit/ddf01db8d70126d33d1ea88a15fa91faf262ce8a))
-
+- **a11y:** single-h1 contract on home, showcase and anime pages ([3344192](https://github.com/Sebas200702/anidev-v2/commit/334419246c335ad0bff18282e442d4eca642f571))
+- **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
+- **anime:** concurrent list+count and synonym EXISTS search ([ff1555e](https://github.com/Sebas200702/anidev-v2/commit/ff1555e8a712f85e0cf42895beebebd28767d463))
+- **anime:** persist full-details degraded provenance across cache hits ([cfb988e](https://github.com/Sebas200702/anidev-v2/commit/cfb988eb40998226886616045622d74523d427f0))
+- **anime:** set-based carousel eligibility and batched fan-out ([e684ac4](https://github.com/Sebas200702/anidev-v2/commit/e684ac49c4dc33a448a0e1a0304a306277a3d793))
+- **cache:** canonical list-cache keys via stable stringify ([d2d9863](https://github.com/Sebas200702/anidev-v2/commit/d2d9863e5b5e6078cda89b9ec6c18d5fd8539620))
+- **db:** add D.2 indexes, profile uniqueness and junction cascades ([8a3ce38](https://github.com/Sebas200702/anidev-v2/commit/8a3ce38a248f33d540c721ff1ae6a34b7d3a1328))
+- **deploy:** packaging cleanup and production-only runtime image ([b952766](https://github.com/Sebas200702/anidev-v2/commit/b952766efc2746fff447325cebfe330de5bf36aa))
+- **deps:** drizzle 0.45.4, vitest 4.1.12, better-auth 1.6.33 ([29c97b8](https://github.com/Sebas200702/anidev-v2/commit/29c97b84724fb3c96fbaeac2183d1b6b6620be0b))
+- **e2e:** harden harness and expand coverage ([f53eac8](https://github.com/Sebas200702/anidev-v2/commit/f53eac8a0f6087bf41c01be6077314ffa1c5237e))
+- **media:** cache optimized images on bounded disk LRU ([70c160f](https://github.com/Sebas200702/anidev-v2/commit/70c160f379467cbaa468165521cd4fbc4f65b58b))
+- **media:** stream raw media with Range/206 and no tmpdir cache ([1fbffe4](https://github.com/Sebas200702/anidev-v2/commit/1fbffe462e45f1dd6ef367fa7924e1a48571bcab))
+- **obs:** request-scoped access logs and PII redaction ([a31eee5](https://github.com/Sebas200702/anidev-v2/commit/a31eee5131dca1bb0efcd4789a0ebbe94af765c6))
+- **platform:** decouple media image utils and close hardening pass ([8c678ee](https://github.com/Sebas200702/anidev-v2/commit/8c678ee1341883035d221cb8146d11c551f4f0b8))
+- **platform:** harden auth/media/user paths and normalize error handling ([100c48b](https://github.com/Sebas200702/anidev-v2/commit/100c48ba598e1ee9f6e63e20998c73dcbd7792f6))
+- **quality:** coverage thresholds and navigable-url/sentry branch tests ([159c7d6](https://github.com/Sebas200702/anidev-v2/commit/159c7d64e22e98c5d3c93a824929352cd689bb08))
+- **search:** atomic search-history record with per-user lock ([e934b4a](https://github.com/Sebas200702/anidev-v2/commit/e934b4af40de63cddd630d575b22754fac44d2c4))
+- **security:** audit gate with reviewed allowlist and renovate policy ([2d220e5](https://github.com/Sebas200702/anidev-v2/commit/2d220e58b66af1b16546e2ab5085993b96e235bc))
+- **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
+- **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
+- **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
+- **ui:** replace Toolbar island with vanilla controller ([ddf01db](https://github.com/Sebas200702/anidev-v2/commit/ddf01db8d70126d33d1ea88a15fa91faf262ce8a))
 
 ### Bug Fixes
 
-* **lint:** expand compound assignment flagged by noAssignInExpressions ([5569882](https://github.com/Sebas200702/anidev-v2/commit/55698826fc46dc01b217ae2e5cea50c57ca41966))
+- **lint:** expand compound assignment flagged by noAssignInExpressions ([5569882](https://github.com/Sebas200702/anidev-v2/commit/55698826fc46dc01b217ae2e5cea50c57ca41966))
 
 ## [0.7.0](https://github.com/Sebas200702/anidev-v2/compare/v0.6.0...v0.7.0) (2026-08-19)
 
-
 ### Features
 
-* **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
-* **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
-* **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
-* **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
+- **anime:** add showcase entries and fixtures ([f34003e](https://github.com/Sebas200702/anidev-v2/commit/f34003e228488200056526ef2b8561526d1fcea4))
+- **showcase:** add the /showcase route and drop card-preview ([76cee18](https://github.com/Sebas200702/anidev-v2/commit/76cee18535de632ee9e5c3c6b593e1c4542d0bfb))
+- **showcase:** add the playground UI and the shared entries ([dfaece9](https://github.com/Sebas200702/anidev-v2/commit/dfaece986ef83fead9419dcc0572bd5ec9898917))
+- **showcase:** add the registry contract and prop resolution ([f35cdec](https://github.com/Sebas200702/anidev-v2/commit/f35cdecf05e9fe1f3d6de3fa911270c9a7d3f1cb))
 
 ## [0.6.0](https://github.com/Sebas200702/anidev-v2/compare/v0.5.0...v0.6.0) (2026-08-19)
 
-
 ### Features
 
-* **anime:** add carousel, anime card and the home page container ([9400ff6](https://github.com/Sebas200702/anidev-v2/commit/9400ff6a9e1eb7fbea47be78d06a72029c3e1a12))
-* **anime:** add featured carousel data slice ([e930adb](https://github.com/Sebas200702/anidev-v2/commit/e930adb47e8f3bec2848f27b99605170cffa78df))
-* **shared:** add app shell with header, footer and toolbar island ([e1c98c9](https://github.com/Sebas200702/anidev-v2/commit/e1c98c992461c9cf419c6bb93dabb46603e1fcde))
-* **styles:** add editorial token layer and five button variants ([f85cc55](https://github.com/Sebas200702/anidev-v2/commit/f85cc55ebda312fa266dbe7c45d811fe97caf96a))
-
+- **anime:** add carousel, anime card and the home page container ([9400ff6](https://github.com/Sebas200702/anidev-v2/commit/9400ff6a9e1eb7fbea47be78d06a72029c3e1a12))
+- **anime:** add featured carousel data slice ([e930adb](https://github.com/Sebas200702/anidev-v2/commit/e930adb47e8f3bec2848f27b99605170cffa78df))
+- **shared:** add app shell with header, footer and toolbar island ([e1c98c9](https://github.com/Sebas200702/anidev-v2/commit/e1c98c992461c9cf419c6bb93dabb46603e1fcde))
+- **styles:** add editorial token layer and five button variants ([f85cc55](https://github.com/Sebas200702/anidev-v2/commit/f85cc55ebda312fa266dbe7c45d811fe97caf96a))
 
 ### Bug Fixes
 
-* **docker:** pin dragonfly threads and memory for local dev ([3d3b976](https://github.com/Sebas200702/anidev-v2/commit/3d3b976fa25c40f7e100e0ca0fd0d9a1cc9202ca))
+- **docker:** pin dragonfly threads and memory for local dev ([3d3b976](https://github.com/Sebas200702/anidev-v2/commit/3d3b976fa25c40f7e100e0ca0fd0d9a1cc9202ca))
 
 ## [0.5.0](https://github.com/Sebas200702/anidev-v2/compare/v0.4.0...v0.5.0) (2026-08-17)
 
-
 ### Features
 
-* **anime:** add fail-closed safe parental floor to catalog search ([4459cf0](https://github.com/Sebas200702/anidev-v2/commit/4459cf0c130a156506a320a516c8b2626b790aea))
-* **anime:** add season/score filters and deterministic sort to list query ([4d508fb](https://github.com/Sebas200702/anidev-v2/commit/4d508fbafdbbb1942f386fdc45acae9172bd5869))
-* **anime:** extend search filters schema with season, score range, sort ([4db3507](https://github.com/Sebas200702/anidev-v2/commit/4db3507a6a821a76cf80bb1896d6703addf5c2a7))
-* **anime:** index-backed pg_trgm free-text search and relevance sort ([357b608](https://github.com/Sebas200702/anidev-v2/commit/357b608b0cf0a38c8ffafb15131b13f78de79d6c))
-* **anime:** map advanced filters and default sort in anime-filters mapper ([8efb329](https://github.com/Sebas200702/anidev-v2/commit/8efb329b4d623d3b3409cec2416b344a1f0f7137))
-* **db:** add db:migrate:prod to target environments via env files ([2ea7419](https://github.com/Sebas200702/anidev-v2/commit/2ea7419e6b1c29cf16ae8b838f7c905605a3b32a))
-* **http:** add responseSchema validation to withErrorHandling ([ea631a5](https://github.com/Sebas200702/anidev-v2/commit/ea631a59a22ed28d00c12d777c06be400db04c5a))
-* **search:** add search-history routes and wire recording on anime list ([c93daec](https://github.com/Sebas200702/anidev-v2/commit/c93daecfca2cbd49147782858b3385f34f5982ee))
-* **search:** cross-domain per-user search history unit ([bcc72cd](https://github.com/Sebas200702/anidev-v2/commit/bcc72cd29bb48a5e761bf0716839e749a70703fc))
-
+- **anime:** add fail-closed safe parental floor to catalog search ([4459cf0](https://github.com/Sebas200702/anidev-v2/commit/4459cf0c130a156506a320a516c8b2626b790aea))
+- **anime:** add season/score filters and deterministic sort to list query ([4d508fb](https://github.com/Sebas200702/anidev-v2/commit/4d508fbafdbbb1942f386fdc45acae9172bd5869))
+- **anime:** extend search filters schema with season, score range, sort ([4db3507](https://github.com/Sebas200702/anidev-v2/commit/4db3507a6a821a76cf80bb1896d6703addf5c2a7))
+- **anime:** index-backed pg_trgm free-text search and relevance sort ([357b608](https://github.com/Sebas200702/anidev-v2/commit/357b608b0cf0a38c8ffafb15131b13f78de79d6c))
+- **anime:** map advanced filters and default sort in anime-filters mapper ([8efb329](https://github.com/Sebas200702/anidev-v2/commit/8efb329b4d623d3b3409cec2416b344a1f0f7137))
+- **db:** add db:migrate:prod to target environments via env files ([2ea7419](https://github.com/Sebas200702/anidev-v2/commit/2ea7419e6b1c29cf16ae8b838f7c905605a3b32a))
+- **http:** add responseSchema validation to withErrorHandling ([ea631a5](https://github.com/Sebas200702/anidev-v2/commit/ea631a59a22ed28d00c12d777c06be400db04c5a))
+- **search:** add search-history routes and wire recording on anime list ([c93daec](https://github.com/Sebas200702/anidev-v2/commit/c93daecfca2cbd49147782858b3385f34f5982ee))
+- **search:** cross-domain per-user search history unit ([bcc72cd](https://github.com/Sebas200702/anidev-v2/commit/bcc72cd29bb48a5e761bf0716839e749a70703fc))
 
 ### Bug Fixes
 
-* **anime:** guard mapExternalIds against a missing external-ids row ([5eef34c](https://github.com/Sebas200702/anidev-v2/commit/5eef34c30153d565ccba292adb8d9fce71588595))
-* apply CodeRabbit auto-fixes ([fd8a094](https://github.com/Sebas200702/anidev-v2/commit/fd8a094f4332798ac6dd5c77759c50db735239a6))
-* **ci:** reference Postgres password from CI secret instead of hardcoding ([a7ce6ed](https://github.com/Sebas200702/anidev-v2/commit/a7ce6ed870ec5bfe54d70c291ec4fdb0fe26bc7a))
-* **db:** rebaseline migrations so a fresh database migrates cleanly ([8a76193](https://github.com/Sebas200702/anidev-v2/commit/8a7619313cf9d34b86aed707240f6b70556d5b96))
-* **music:** validate id param in getMusicSchema ([01c9843](https://github.com/Sebas200702/anidev-v2/commit/01c98437f155ec6b72be30b79ed6197604efe533))
-* **user:** apply valid write-endpoint review findings ([de3ae9e](https://github.com/Sebas200702/anidev-v2/commit/de3ae9e1a29a3e9c6f863e8338465fce4e3f04b8))
-* **user:** tighten avatar response schema and document wrapper 500 ([495b469](https://github.com/Sebas200702/anidev-v2/commit/495b469c5bd58d79cee86fffe30bdff7b14e5f55))
+- **anime:** guard mapExternalIds against a missing external-ids row ([5eef34c](https://github.com/Sebas200702/anidev-v2/commit/5eef34c30153d565ccba292adb8d9fce71588595))
+- apply CodeRabbit auto-fixes ([fd8a094](https://github.com/Sebas200702/anidev-v2/commit/fd8a094f4332798ac6dd5c77759c50db735239a6))
+- **ci:** reference Postgres password from CI secret instead of hardcoding ([a7ce6ed](https://github.com/Sebas200702/anidev-v2/commit/a7ce6ed870ec5bfe54d70c291ec4fdb0fe26bc7a))
+- **db:** rebaseline migrations so a fresh database migrates cleanly ([8a76193](https://github.com/Sebas200702/anidev-v2/commit/8a7619313cf9d34b86aed707240f6b70556d5b96))
+- **music:** validate id param in getMusicSchema ([01c9843](https://github.com/Sebas200702/anidev-v2/commit/01c98437f155ec6b72be30b79ed6197604efe533))
+- **user:** apply valid write-endpoint review findings ([de3ae9e](https://github.com/Sebas200702/anidev-v2/commit/de3ae9e1a29a3e9c6f863e8338465fce4e3f04b8))
+- **user:** tighten avatar response schema and document wrapper 500 ([495b469](https://github.com/Sebas200702/anidev-v2/commit/495b469c5bd58d79cee86fffe30bdff7b14e5f55))
 
 ## [0.5.0](https://github.com/Sebas200702/anidev-v2/compare/v0.4.0...v0.5.0) (2026-08-16)
 
-
 ### Features
 
-* **anime:** extend search filters schema with season, score range, sort ([4db3507](https://github.com/Sebas200702/anidev-v2/commit/4db3507fee63af84c5c574d1ff8acf7d3dc4b5b2))
-* **anime:** map advanced filters and default sort in anime-filters mapper ([8efb329](https://github.com/Sebas200702/anidev-v2/commit/8efb329cf1f30e51c866ac8d33b87cb0d4b9d6d5))
-* **anime:** add season/score filters and deterministic sort to list query ([4d508fb](https://github.com/Sebas200702/anidev-v2/commit/4d508fb1b0d18a40cb25bc4bcbf8e7bda99e0f17))
-* **anime:** add fail-closed safe parental floor to catalog search ([4459cf0](https://github.com/Sebas200702/anidev-v2/commit/4459cf02a4a5c0eebcb13d8a12f0d7e8910a4f76))
-* **anime:** index-backed pg_trgm free-text search and relevance sort ([357b608](https://github.com/Sebas200702/anidev-v2/commit/357b6084ba2d3b2e4b1b5ae0d99c2f739b221bbf))
-* **anime:** prove list cache isolates parental variants, never per-user ([5d3c51c](https://github.com/Sebas200702/anidev-v2/commit/5d3c51c0b3f7b6cec36e4e1d4020d112e2e8e54b))
-* **search:** cross-domain per-user search history unit ([bcc72cd](https://github.com/Sebas200702/anidev-v2/commit/bcc72cdca0c12a2e1d0947db58eac9f1d8f9c3b6))
-* **search:** add search-history routes and wire recording on anime list ([c93daec](https://github.com/Sebas200702/anidev-v2/commit/c93daecdfa0a1b0d4e5b1e9d4485eb1f5d27a1c6))
-* **http:** add responseSchema validation to withErrorHandling ([ea631a5](https://github.com/Sebas200702/anidev-v2/commit/ea631a5c2b2ae2f76bf8a5fcd67c9d25d2d2d2f5))
-* **db:** add db:migrate:prod to target environments via env files ([2ea7419](https://github.com/Sebas200702/anidev-v2/commit/2ea7419d5f5f04a4ef0c8eb0e30d4e77e7e76b11))
-
+- **anime:** extend search filters schema with season, score range, sort ([4db3507](https://github.com/Sebas200702/anidev-v2/commit/4db3507fee63af84c5c574d1ff8acf7d3dc4b5b2))
+- **anime:** map advanced filters and default sort in anime-filters mapper ([8efb329](https://github.com/Sebas200702/anidev-v2/commit/8efb329cf1f30e51c866ac8d33b87cb0d4b9d6d5))
+- **anime:** add season/score filters and deterministic sort to list query ([4d508fb](https://github.com/Sebas200702/anidev-v2/commit/4d508fb1b0d18a40cb25bc4bcbf8e7bda99e0f17))
+- **anime:** add fail-closed safe parental floor to catalog search ([4459cf0](https://github.com/Sebas200702/anidev-v2/commit/4459cf02a4a5c0eebcb13d8a12f0d7e8910a4f76))
+- **anime:** index-backed pg_trgm free-text search and relevance sort ([357b608](https://github.com/Sebas200702/anidev-v2/commit/357b6084ba2d3b2e4b1b5ae0d99c2f739b221bbf))
+- **anime:** prove list cache isolates parental variants, never per-user ([5d3c51c](https://github.com/Sebas200702/anidev-v2/commit/5d3c51c0b3f7b6cec36e4e1d4020d112e2e8e54b))
+- **search:** cross-domain per-user search history unit ([bcc72cd](https://github.com/Sebas200702/anidev-v2/commit/bcc72cdca0c12a2e1d0947db58eac9f1d8f9c3b6))
+- **search:** add search-history routes and wire recording on anime list ([c93daec](https://github.com/Sebas200702/anidev-v2/commit/c93daecdfa0a1b0d4e5b1e9d4485eb1f5d27a1c6))
+- **http:** add responseSchema validation to withErrorHandling ([ea631a5](https://github.com/Sebas200702/anidev-v2/commit/ea631a5c2b2ae2f76bf8a5fcd67c9d25d2d2d2f5))
+- **db:** add db:migrate:prod to target environments via env files ([2ea7419](https://github.com/Sebas200702/anidev-v2/commit/2ea7419d5f5f04a4ef0c8eb0e30d4e77e7e76b11))
 
 ### Bug Fixes
 
-* **anime:** guard mapExternalIds against a missing external-ids row ([5eef34c](https://github.com/Sebas200702/anidev-v2/commit/5eef34c8b6de418b1e5b98d42fbe58e2a5c75e6f))
-* **db:** rebaseline migrations so a fresh database migrates cleanly ([8a76193](https://github.com/Sebas200702/anidev-v2/commit/8a7619357cbf2a7c115556abfbc88b2e2c93f534))
-* **music:** validate id param in getMusicSchema ([01c9843](https://github.com/Sebas200702/anidev-v2/commit/01c9843f33c1566e41ab35a213466b038d7a7f42))
-* **user:** tighten avatar response schema and document wrapper 500 ([495b469](https://github.com/Sebas200702/anidev-v2/commit/495b46957a29c393b183d1d915fbf66a4e6e53f1))
-* **ci:** reference Postgres password from CI secret instead of hardcoding ([a7ce6ed](https://github.com/Sebas200702/anidev-v2/commit/a7ce6edc7d49e64b9e463d423e5aafbd10d8748a))
+- **anime:** guard mapExternalIds against a missing external-ids row ([5eef34c](https://github.com/Sebas200702/anidev-v2/commit/5eef34c8b6de418b1e5b98d42fbe58e2a5c75e6f))
+- **db:** rebaseline migrations so a fresh database migrates cleanly ([8a76193](https://github.com/Sebas200702/anidev-v2/commit/8a7619357cbf2a7c115556abfbc88b2e2c93f534))
+- **music:** validate id param in getMusicSchema ([01c9843](https://github.com/Sebas200702/anidev-v2/commit/01c9843f33c1566e41ab35a213466b038d7a7f42))
+- **user:** tighten avatar response schema and document wrapper 500 ([495b469](https://github.com/Sebas200702/anidev-v2/commit/495b46957a29c393b183d1d915fbf66a4e6e53f1))
+- **ci:** reference Postgres password from CI secret instead of hardcoding ([a7ce6ed](https://github.com/Sebas200702/anidev-v2/commit/a7ce6edc7d49e64b9e463d423e5aafbd10d8748a))
 
 ## [0.4.0](https://github.com/Sebas200702/anidev-v2/compare/v0.3.0...v0.4.0) (2026-08-10)
 
-
 ### Features
 
-* implement type-safe environment variable validation using Zod and update .env.local.example ([f4e3d38](https://github.com/Sebas200702/anidev-v2/commit/f4e3d38729c982ebc1cb5ebd53d91792983dd4db))
-* **user:** add identity reverse mappers for create and patch ([1a6bf61](https://github.com/Sebas200702/anidev-v2/commit/1a6bf61e0f8c67f82c9163d8f125a32f8ffbb778))
-* **user:** add POST /api/user and PATCH /api/user/:userId with auth gate ([3d665a1](https://github.com/Sebas200702/anidev-v2/commit/3d665a165e22e9080d85abc1d34d0d1877056d5e))
-* **user:** add profile repository create and update methods ([bdbcf64](https://github.com/Sebas200702/anidev-v2/commit/bdbcf6470094c8be031cf94287ff6a43b8b8a10b))
-* **user:** add profile write schemas and service param types ([e6b2de9](https://github.com/Sebas200702/anidev-v2/commit/e6b2de9b95a9a1626e3edd073d10665781cb0585))
-* **user:** add profile write service methods and conflict error ([feb5229](https://github.com/Sebas200702/anidev-v2/commit/feb522917d9c26745b999d4cb194fcfa67e3c03a))
-* **user:** add userProfileCache.invalidate for write paths ([c3c6e6f](https://github.com/Sebas200702/anidev-v2/commit/c3c6e6f3f8ef55a05aa59a8b0f3d94777c3fff68))
-
+- implement type-safe environment variable validation using Zod and update .env.local.example ([f4e3d38](https://github.com/Sebas200702/anidev-v2/commit/f4e3d38729c982ebc1cb5ebd53d91792983dd4db))
+- **user:** add identity reverse mappers for create and patch ([1a6bf61](https://github.com/Sebas200702/anidev-v2/commit/1a6bf61e0f8c67f82c9163d8f125a32f8ffbb778))
+- **user:** add POST /api/user and PATCH /api/user/:userId with auth gate ([3d665a1](https://github.com/Sebas200702/anidev-v2/commit/3d665a165e22e9080d85abc1d34d0d1877056d5e))
+- **user:** add profile repository create and update methods ([bdbcf64](https://github.com/Sebas200702/anidev-v2/commit/bdbcf6470094c8be031cf94287ff6a43b8b8a10b))
+- **user:** add profile write schemas and service param types ([e6b2de9](https://github.com/Sebas200702/anidev-v2/commit/e6b2de9b95a9a1626e3edd073d10665781cb0585))
+- **user:** add profile write service methods and conflict error ([feb5229](https://github.com/Sebas200702/anidev-v2/commit/feb522917d9c26745b999d4cb194fcfa67e3c03a))
+- **user:** add userProfileCache.invalidate for write paths ([c3c6e6f](https://github.com/Sebas200702/anidev-v2/commit/c3c6e6f3f8ef55a05aa59a8b0f3d94777c3fff68))
 
 ### Bug Fixes
 
-* **user:** apply valid write-endpoint review findings ([4c1174a](https://github.com/Sebas200702/anidev-v2/commit/4c1174a62718097741835d73442be96362b48d51))
+- **user:** apply valid write-endpoint review findings ([4c1174a](https://github.com/Sebas200702/anidev-v2/commit/4c1174a62718097741835d73442be96362b48d51))
 
 ## [0.3.0](https://github.com/Sebas200702/anidev-v2/compare/v0.2.4...v0.3.0) (2026-08-09)
 
-
 ### Features
 
-* **api:** public readiness endpoint probing db and cache ([3397453](https://github.com/Sebas200702/anidev-v2/commit/3397453d7b0dfe430f74f9e2843059452b069c28))
-* **api:** surface stale reads via x-stale header ([c352714](https://github.com/Sebas200702/anidev-v2/commit/c3527142ef76d1670693ad2709deed417c257a1b))
-* **cache:** add stale-serve fallback with withStaleCache ([22f15cc](https://github.com/Sebas200702/anidev-v2/commit/22f15cce5355ecc846efdd6a964d80ee85402d4b))
-* **domains:** adopt stale-serve in cache-first services ([bb57e8d](https://github.com/Sebas200702/anidev-v2/commit/bb57e8da117e7ed5270c2dbcb36d46aebb02e96b))
-* **monitoring:** capture browser errors via client Sentry SDK ([448ea5e](https://github.com/Sebas200702/anidev-v2/commit/448ea5ee1ff4d16450781e1901d5d6d8ad3b20c0))
-* **ui:** render service-unavailable view on infra errors ([1f5f059](https://github.com/Sebas200702/anidev-v2/commit/1f5f059ca506701c0db34fe43ccac0ce3174e2d6))
-
+- **api:** public readiness endpoint probing db and cache ([3397453](https://github.com/Sebas200702/anidev-v2/commit/3397453d7b0dfe430f74f9e2843059452b069c28))
+- **api:** surface stale reads via x-stale header ([c352714](https://github.com/Sebas200702/anidev-v2/commit/c3527142ef76d1670693ad2709deed417c257a1b))
+- **cache:** add stale-serve fallback with withStaleCache ([22f15cc](https://github.com/Sebas200702/anidev-v2/commit/22f15cce5355ecc846efdd6a964d80ee85402d4b))
+- **domains:** adopt stale-serve in cache-first services ([bb57e8d](https://github.com/Sebas200702/anidev-v2/commit/bb57e8da117e7ed5270c2dbcb36d46aebb02e96b))
+- **monitoring:** capture browser errors via client Sentry SDK ([448ea5e](https://github.com/Sebas200702/anidev-v2/commit/448ea5ee1ff4d16450781e1901d5d6d8ad3b20c0))
+- **ui:** render service-unavailable view on infra errors ([1f5f059](https://github.com/Sebas200702/anidev-v2/commit/1f5f059ca506701c0db34fe43ccac0ce3174e2d6))
 
 ### Bug Fixes
 
-* **errors:** report every handled error to monitoring with status-based severity ([23f3f8b](https://github.com/Sebas200702/anidev-v2/commit/23f3f8be674b46b460ca1670af603603fed885dd))
-* **http:** attach validated without spreading route context ([c4a90d7](https://github.com/Sebas200702/anidev-v2/commit/c4a90d7abf8dd0d697758daceb9a853340245156))
-* **http:** pipe API route errors through the app logger ([0af61a6](https://github.com/Sebas200702/anidev-v2/commit/0af61a6a9f7417a34d53cc1f5225854c06c06c46))
-* **media:** respond 400 for malformed media paths ([dad4a17](https://github.com/Sebas200702/anidev-v2/commit/dad4a17c621744bec93dd88251cc6c1f1d6b931c))
-* **shared:** map infra errors to 503 and expose code in envelope ([7335173](https://github.com/Sebas200702/anidev-v2/commit/7335173315be6f001786a0c67fd0983ef2d9c927))
-* **tests:** update mock paths after module-unit-folder merge ([cf19b2d](https://github.com/Sebas200702/anidev-v2/commit/cf19b2d643100a4941621c4af929b85550e58761))
+- **errors:** report every handled error to monitoring with status-based severity ([23f3f8b](https://github.com/Sebas200702/anidev-v2/commit/23f3f8be674b46b460ca1670af603603fed885dd))
+- **http:** attach validated without spreading route context ([c4a90d7](https://github.com/Sebas200702/anidev-v2/commit/c4a90d7abf8dd0d697758daceb9a853340245156))
+- **http:** pipe API route errors through the app logger ([0af61a6](https://github.com/Sebas200702/anidev-v2/commit/0af61a6a9f7417a34d53cc1f5225854c06c06c46))
+- **media:** respond 400 for malformed media paths ([dad4a17](https://github.com/Sebas200702/anidev-v2/commit/dad4a17c621744bec93dd88251cc6c1f1d6b931c))
+- **shared:** map infra errors to 503 and expose code in envelope ([7335173](https://github.com/Sebas200702/anidev-v2/commit/7335173315be6f001786a0c67fd0983ef2d9c927))
+- **tests:** update mock paths after module-unit-folder merge ([cf19b2d](https://github.com/Sebas200702/anidev-v2/commit/cf19b2d643100a4941621c4af929b85550e58761))
 
 ### [0.2.4](https://github.com/Sebas200702/anidev-v2/compare/v0.2.3...v0.2.4) (2026-08-09)
 
-
 ### Features
 
-* implement runtime environment variable validation using Zod schema ([cb7c36b](https://github.com/Sebas200702/anidev-v2/commit/cb7c36bd8fc66b014c4a7886b326d72b99c26124))
-* implement Zod-based environment variable validation and document design system accessibility requirements ([e96f975](https://github.com/Sebas200702/anidev-v2/commit/e96f975b8d303b9d087f23b68168ace64984efae))
+- implement runtime environment variable validation using Zod schema ([cb7c36b](https://github.com/Sebas200702/anidev-v2/commit/cb7c36bd8fc66b014c4a7886b326d72b99c26124))
+- implement Zod-based environment variable validation and document design system accessibility requirements ([e96f975](https://github.com/Sebas200702/anidev-v2/commit/e96f975b8d303b9d087f23b68168ace64984efae))
 
 ## [0.2.3](https://github.com/Sebas200702/anidev-v2/compare/v0.2.2...v0.2.3) (2026-08-09)
 
 ### [0.2.2](https://github.com/Sebas200702/anidev-v2/compare/v0.2.1...v0.2.2) (2026-08-08)
 
-
 ### Bug Fixes
 
-* **monitoring:** Emit explicit Sentry event from health check endpoint ([9b40265](https://github.com/Sebas200702/anidev-v2/commit/9b402659eb234f468fcec715f98d48d797759723))
+- **monitoring:** Emit explicit Sentry event from health check endpoint ([9b40265](https://github.com/Sebas200702/anidev-v2/commit/9b402659eb234f468fcec715f98d48d797759723))
 
 ### [0.2.1](https://github.com/Sebas200702/anidev-v2/compare/v0.2.0...v0.2.1) (2026-08-08)
 
-
 ### Bug Fixes
 
-* **monitoring:** Initialize Sentry before API requests via middleware ([1ea8567](https://github.com/Sebas200702/anidev-v2/commit/1ea856737b31d296b475bda0c3bcc54178d2d541))
+- **monitoring:** Initialize Sentry before API requests via middleware ([1ea8567](https://github.com/Sebas200702/anidev-v2/commit/1ea856737b31d296b475bda0c3bcc54178d2d541))
 
 ## [0.2.0](https://github.com/Sebas200702/anidev-v2/compare/v0.1.3...v0.2.0) (2026-08-08)
 
-
 ### Features
 
-* **api:** Add public health check endpoint with info logging ([7a81bf2](https://github.com/Sebas200702/anidev-v2/commit/7a81bf29898502613f5c54a5797f6f21385daef7))
+- **api:** Add public health check endpoint with info logging ([7a81bf2](https://github.com/Sebas200702/anidev-v2/commit/7a81bf29898502613f5c54a5797f6f21385daef7))
 
 ### [0.1.3](https://github.com/Sebas200702/anidev-v2/compare/v0.1.2...v0.1.3) (2026-08-07)
 
-
 ### Bug Fixes
 
-* **db:** Break circular import between auth-schema and auth-relations ([735e0fc](https://github.com/Sebas200702/anidev-v2/commit/735e0fc41671b821a3aaf9a8ee43862d782dbbbc))
+- **db:** Break circular import between auth-schema and auth-relations ([735e0fc](https://github.com/Sebas200702/anidev-v2/commit/735e0fc41671b821a3aaf9a8ee43862d782dbbbc))
 
 ### [0.1.2](https://github.com/Sebas200702/anidev-v2/compare/v0.1.1...v0.1.2) (2026-08-07)
 
-
 ### Bug Fixes
 
-* **ci:** Pass ASTRO_ADAPTER=bun build-arg to Docker workflows ([6619c8b](https://github.com/Sebas200702/anidev-v2/commit/6619c8b7bde21b8c780b7860d7664c16faf04684))
+- **ci:** Pass ASTRO_ADAPTER=bun build-arg to Docker workflows ([6619c8b](https://github.com/Sebas200702/anidev-v2/commit/6619c8b7bde21b8c780b7860d7664c16faf04684))
 
 ### [0.1.1](https://github.com/Sebas200702/anidev-v2/compare/v0.1.0...v0.1.1) (2026-08-07)
 
-
 ### Bug Fixes
 
-* **anime:** Annotate explicit return types on cached queries ([181a7cb](https://github.com/Sebas200702/anidev-v2/commit/181a7cbaf863a7b268be76275ddbe4db3ad294a4))
-* **auth:** Use Zod 4 top-level z.email validator ([6d86427](https://github.com/Sebas200702/anidev-v2/commit/6d864273cf728bef3f8b567ed91b82562b712e51))
-* **media:** Add typed EmptyImageError for empty buffers ([e7c3379](https://github.com/Sebas200702/anidev-v2/commit/e7c33791f8b73e0ded8e7fe1bdefed38e489a553))
-* **media:** Drop non-null assertion in music media mapping ([594004d](https://github.com/Sebas200702/anidev-v2/commit/594004da80a979ad6ae38f1ed3f1f4f721d89867))
-* **media:** Type the resolved media variable explicitly ([7aba7f3](https://github.com/Sebas200702/anidev-v2/commit/7aba7f3e477bbebecf96a625fcc53bf919f7230e))
-* **user:** Parse favorite/watch list ids with explicit radix ([2beace5](https://github.com/Sebas200702/anidev-v2/commit/2beace5b76a9d2bb9ebb051e79831c6718e8f4da))
+- **anime:** Annotate explicit return types on cached queries ([181a7cb](https://github.com/Sebas200702/anidev-v2/commit/181a7cbaf863a7b268be76275ddbe4db3ad294a4))
+- **auth:** Use Zod 4 top-level z.email validator ([6d86427](https://github.com/Sebas200702/anidev-v2/commit/6d864273cf728bef3f8b567ed91b82562b712e51))
+- **media:** Add typed EmptyImageError for empty buffers ([e7c3379](https://github.com/Sebas200702/anidev-v2/commit/e7c33791f8b73e0ded8e7fe1bdefed38e489a553))
+- **media:** Drop non-null assertion in music media mapping ([594004d](https://github.com/Sebas200702/anidev-v2/commit/594004da80a979ad6ae38f1ed3f1f4f721d89867))
+- **media:** Type the resolved media variable explicitly ([7aba7f3](https://github.com/Sebas200702/anidev-v2/commit/7aba7f3e477bbebecf96a625fcc53bf919f7230e))
+- **user:** Parse favorite/watch list ids with explicit radix ([2beace5](https://github.com/Sebas200702/anidev-v2/commit/2beace5b76a9d2bb9ebb051e79831c6718e8f4da))
 
 ## 0.1.0 (2026-08-07)
 
-
 ### Features
 
-* add profile schema to define user profile structure ([77055ca](https://github.com/Sebas200702/anidev-v2/commit/77055cac23c35dc5c8decbcfcac7f9aade0f580c))
-* **anime:** add anime filters and response schema ([8bb2a13](https://github.com/Sebas200702/anidev-v2/commit/8bb2a132c5439500ff0407e67c72ba7b7911b681))
-* **anime:** add anime list repository with filtering and counting functionality ([3400958](https://github.com/Sebas200702/anidev-v2/commit/3400958ed32e8cf0059eb5127f8854c697642eb9))
-* **anime:** add getMediaByAnimeIds function to retrieve media by multiple anime IDs ([4ec52b5](https://github.com/Sebas200702/anidev-v2/commit/4ec52b526fbf8deff8ed91b7b09758e59828220a))
-* **anime:** add mapper function for anime card data ([ce72add](https://github.com/Sebas200702/anidev-v2/commit/ce72addefc9ac010278d67c5fe23574fa6511fd1))
-* **anime:** add mapper function for anime filters ([8d1f73b](https://github.com/Sebas200702/anidev-v2/commit/8d1f73b891bca104c963c75c1f54f4d993e53da5))
-* **anime:** add mapping function for anime list to card conversion ([234e717](https://github.com/Sebas200702/anidev-v2/commit/234e71705dd32d7137401cdf3c3b01b43bcbe223))
-* **anime:** define types for anime filters and list response ([6732cda](https://github.com/Sebas200702/anidev-v2/commit/6732cdac025b32a2496cf70997a8ed30a3c9277d))
-* **anime:** Enhance media handling in anime mapping ([33e27da](https://github.com/Sebas200702/anidev-v2/commit/33e27dade68a4db093d84e7de4d9d37c4a815d58))
-* **anime:** implement anime list caching functionality ([56175f8](https://github.com/Sebas200702/anidev-v2/commit/56175f85f42200297d47c85b43c5ae63fa185ec0))
-* **anime:** implement anime list service with caching and media retrieval ([d3f8206](https://github.com/Sebas200702/anidev-v2/commit/d3f8206506779d2b82c87f9e67e99f58e04af482))
-* **anime:** implement domain repositories services and schemas ([5268c6b](https://github.com/Sebas200702/anidev-v2/commit/5268c6b3d1d97b1f36224379175eea97ba4ab9a5))
-* **anime:** implement GET endpoint for anime list with validation and error handling ([335bc00](https://github.com/Sebas200702/anidev-v2/commit/335bc00ebaba6b08d4834655aea8484189272213))
-* **anime:** update anime card schema to include genres and fix alt text property ([21750c4](https://github.com/Sebas200702/anidev-v2/commit/21750c4fc8b7cb46a21a429564c4fc11b3bd5c31))
-* **anime:** update anime mapper for new fields ([df8801f](https://github.com/Sebas200702/anidev-v2/commit/df8801f192b87b69a03a8d5fc1d03b9f42ed5651))
-* **api:** add anime music auth and proxy endpoints ([fc3286b](https://github.com/Sebas200702/anidev-v2/commit/fc3286b795d66d7f15a489844103a41088eeba65))
-* **auth:** Add auth domain with explicit session routes ([d590de4](https://github.com/Sebas200702/anidev-v2/commit/d590de43c761982d56e5a58b5e25c8ceaec505f2))
-* **auth:** add session middleware ([0554157](https://github.com/Sebas200702/anidev-v2/commit/0554157b5a8b31860bb2578596bf2701d8e89468))
-* **auth:** switch Better Auth adapter to pg provider ([20c9b17](https://github.com/Sebas200702/anidev-v2/commit/20c9b17e3e73045b924d0898552a4e27d3339d6f))
-* **cache:** add AnimeList key prefix to cache configuration ([3b22567](https://github.com/Sebas200702/anidev-v2/commit/3b225670ca5338eae482d3782e2f8ce7733eb8df))
-* **cache:** move to ioredis with graceful degradation ([017aa7c](https://github.com/Sebas200702/anidev-v2/commit/017aa7c943b48b62693b9661a2781746d70626ba))
-* **config:** use dynamic baseUrl for configuration ([e6b90d9](https://github.com/Sebas200702/anidev-v2/commit/e6b90d954320b2d0427cf9b3189f0274ac3a2787))
-* **core:** add shared auth db cache and error infrastructure ([ac0c944](https://github.com/Sebas200702/anidev-v2/commit/ac0c944e522c6cca88a31477f0351aa0f83e2c59))
-* **db:** degrade repositories to mappable AppError ([3a0773c](https://github.com/Sebas200702/anidev-v2/commit/3a0773cd1bb27502d70f2daa6fa7b120474398b8))
-* **db:** migrate schemas to PostgreSQL pg-core ([5f17a79](https://github.com/Sebas200702/anidev-v2/commit/5f17a79f5a902e4ef3959544040d7d66aad58e88))
-* **env:** add APP_BASE_URL to environment configuration and update README ([8d8a0ed](https://github.com/Sebas200702/anidev-v2/commit/8d8a0ed837883d389b96871fdddade5730a6743f))
-* **image:** add source option to OptimizeOptions and normalizeOptimizeOptions function ([580e6cf](https://github.com/Sebas200702/anidev-v2/commit/580e6cf84bb4830c83b65b6a86067cf0df77ba36))
-* **infra:** add rustrak-ui dashboard service ([5c8b2c2](https://github.com/Sebas200702/anidev-v2/commit/5c8b2c285675c565e1963e621e447d38daa1db45))
-* **infra:** run the app in Docker under a preview profile ([d96adac](https://github.com/Sebas200702/anidev-v2/commit/d96adac30861379e029788e318a5c9df6f0a4e79))
-* **infra:** support standalone Bun adapter for Docker preview ([30d732b](https://github.com/Sebas200702/anidev-v2/commit/30d732b0fb25440e1b940f8dee8fd594d9c7bfaa))
-* **media:** Cache resolved raw media src ([98dbe01](https://github.com/Sebas200702/anidev-v2/commit/98dbe01ffa576b8f5da1a72a9606d1ba58d5489d))
-* **media:** introduce media domain and route ([6b568da](https://github.com/Sebas200702/anidev-v2/commit/6b568dabcfd501a1ceae1895537faf72f1968013))
-* **monitoring:** store pino logs in rustrak via enableLogs ([1cb86ab](https://github.com/Sebas200702/anidev-v2/commit/1cb86ab7d78596ddd33939872b9f0fad581fd6e4))
-* **monitoring:** wire Sentry SDK at runtime via Astro integration ([ab5b7b7](https://github.com/Sebas200702/anidev-v2/commit/ab5b7b7ec8bf258a549e3d8fea3b9001ae7f77e5))
-* **music:** Add GET /api/music paginated list endpoint ([c39360b](https://github.com/Sebas200702/anidev-v2/commit/c39360bb1b0d71cb79fbcf64ce1212ef6802c39f))
-* **music:** Add list repository and batch artist lookup ([cd084b8](https://github.com/Sebas200702/anidev-v2/commit/cd084b8a068b2dcdffdfe56d8928f7d99ffd78bc))
-* **music:** Add list schemas, mappers, and cache layer ([77e1bd2](https://github.com/Sebas200702/anidev-v2/commit/77e1bd26ccaa0610eb9f800f2c0e84e90af2a010))
-* **music:** implement domain repositories services and schemas ([150bbfb](https://github.com/Sebas200702/anidev-v2/commit/150bbfbb0324c8064c7373855a45333e39fd406d))
-* **music:** update music API schema ([de9c712](https://github.com/Sebas200702/anidev-v2/commit/de9c7122ebbbe9157ad150db6aa7c05a440c0cd9))
-* **skills:** Add UI/UX Pro Max skill and update barrel best practices ([4db6e10](https://github.com/Sebas200702/anidev-v2/commit/4db6e10c8c1b54d1f98d4b6bda5bb497eaaa16fd))
-* **tooling:** Harden agent lifecycle with Vitest/TDD, CI gate, and SemVer releases ([b6ad9ae](https://github.com/Sebas200702/anidev-v2/commit/b6ad9aecf6e0a47713d4e7715adc42fecfe90be0))
-* **ui:** add app layout media components and anime pages ([01c30e7](https://github.com/Sebas200702/anidev-v2/commit/01c30e7a2920a56d268814e687c1ef15e051380a))
-* **user:** add user domain and API endpoints ([f80ec08](https://github.com/Sebas200702/anidev-v2/commit/f80ec08bfed8c71d00daccebe6ed16150271e3ba))
-
+- add profile schema to define user profile structure ([77055ca](https://github.com/Sebas200702/anidev-v2/commit/77055cac23c35dc5c8decbcfcac7f9aade0f580c))
+- **anime:** add anime filters and response schema ([8bb2a13](https://github.com/Sebas200702/anidev-v2/commit/8bb2a132c5439500ff0407e67c72ba7b7911b681))
+- **anime:** add anime list repository with filtering and counting functionality ([3400958](https://github.com/Sebas200702/anidev-v2/commit/3400958ed32e8cf0059eb5127f8854c697642eb9))
+- **anime:** add getMediaByAnimeIds function to retrieve media by multiple anime IDs ([4ec52b5](https://github.com/Sebas200702/anidev-v2/commit/4ec52b526fbf8deff8ed91b7b09758e59828220a))
+- **anime:** add mapper function for anime card data ([ce72add](https://github.com/Sebas200702/anidev-v2/commit/ce72addefc9ac010278d67c5fe23574fa6511fd1))
+- **anime:** add mapper function for anime filters ([8d1f73b](https://github.com/Sebas200702/anidev-v2/commit/8d1f73b891bca104c963c75c1f54f4d993e53da5))
+- **anime:** add mapping function for anime list to card conversion ([234e717](https://github.com/Sebas200702/anidev-v2/commit/234e71705dd32d7137401cdf3c3b01b43bcbe223))
+- **anime:** define types for anime filters and list response ([6732cda](https://github.com/Sebas200702/anidev-v2/commit/6732cdac025b32a2496cf70997a8ed30a3c9277d))
+- **anime:** Enhance media handling in anime mapping ([33e27da](https://github.com/Sebas200702/anidev-v2/commit/33e27dade68a4db093d84e7de4d9d37c4a815d58))
+- **anime:** implement anime list caching functionality ([56175f8](https://github.com/Sebas200702/anidev-v2/commit/56175f85f42200297d47c85b43c5ae63fa185ec0))
+- **anime:** implement anime list service with caching and media retrieval ([d3f8206](https://github.com/Sebas200702/anidev-v2/commit/d3f8206506779d2b82c87f9e67e99f58e04af482))
+- **anime:** implement domain repositories services and schemas ([5268c6b](https://github.com/Sebas200702/anidev-v2/commit/5268c6b3d1d97b1f36224379175eea97ba4ab9a5))
+- **anime:** implement GET endpoint for anime list with validation and error handling ([335bc00](https://github.com/Sebas200702/anidev-v2/commit/335bc00ebaba6b08d4834655aea8484189272213))
+- **anime:** update anime card schema to include genres and fix alt text property ([21750c4](https://github.com/Sebas200702/anidev-v2/commit/21750c4fc8b7cb46a21a429564c4fc11b3bd5c31))
+- **anime:** update anime mapper for new fields ([df8801f](https://github.com/Sebas200702/anidev-v2/commit/df8801f192b87b69a03a8d5fc1d03b9f42ed5651))
+- **api:** add anime music auth and proxy endpoints ([fc3286b](https://github.com/Sebas200702/anidev-v2/commit/fc3286b795d66d7f15a489844103a41088eeba65))
+- **auth:** Add auth domain with explicit session routes ([d590de4](https://github.com/Sebas200702/anidev-v2/commit/d590de43c761982d56e5a58b5e25c8ceaec505f2))
+- **auth:** add session middleware ([0554157](https://github.com/Sebas200702/anidev-v2/commit/0554157b5a8b31860bb2578596bf2701d8e89468))
+- **auth:** switch Better Auth adapter to pg provider ([20c9b17](https://github.com/Sebas200702/anidev-v2/commit/20c9b17e3e73045b924d0898552a4e27d3339d6f))
+- **cache:** add AnimeList key prefix to cache configuration ([3b22567](https://github.com/Sebas200702/anidev-v2/commit/3b225670ca5338eae482d3782e2f8ce7733eb8df))
+- **cache:** move to ioredis with graceful degradation ([017aa7c](https://github.com/Sebas200702/anidev-v2/commit/017aa7c943b48b62693b9661a2781746d70626ba))
+- **config:** use dynamic baseUrl for configuration ([e6b90d9](https://github.com/Sebas200702/anidev-v2/commit/e6b90d954320b2d0427cf9b3189f0274ac3a2787))
+- **core:** add shared auth db cache and error infrastructure ([ac0c944](https://github.com/Sebas200702/anidev-v2/commit/ac0c944e522c6cca88a31477f0351aa0f83e2c59))
+- **db:** degrade repositories to mappable AppError ([3a0773c](https://github.com/Sebas200702/anidev-v2/commit/3a0773cd1bb27502d70f2daa6fa7b120474398b8))
+- **db:** migrate schemas to PostgreSQL pg-core ([5f17a79](https://github.com/Sebas200702/anidev-v2/commit/5f17a79f5a902e4ef3959544040d7d66aad58e88))
+- **env:** add APP_BASE_URL to environment configuration and update README ([8d8a0ed](https://github.com/Sebas200702/anidev-v2/commit/8d8a0ed837883d389b96871fdddade5730a6743f))
+- **image:** add source option to OptimizeOptions and normalizeOptimizeOptions function ([580e6cf](https://github.com/Sebas200702/anidev-v2/commit/580e6cf84bb4830c83b65b6a86067cf0df77ba36))
+- **infra:** add rustrak-ui dashboard service ([5c8b2c2](https://github.com/Sebas200702/anidev-v2/commit/5c8b2c285675c565e1963e621e447d38daa1db45))
+- **infra:** run the app in Docker under a preview profile ([d96adac](https://github.com/Sebas200702/anidev-v2/commit/d96adac30861379e029788e318a5c9df6f0a4e79))
+- **infra:** support standalone Bun adapter for Docker preview ([30d732b](https://github.com/Sebas200702/anidev-v2/commit/30d732b0fb25440e1b940f8dee8fd594d9c7bfaa))
+- **media:** Cache resolved raw media src ([98dbe01](https://github.com/Sebas200702/anidev-v2/commit/98dbe01ffa576b8f5da1a72a9606d1ba58d5489d))
+- **media:** introduce media domain and route ([6b568da](https://github.com/Sebas200702/anidev-v2/commit/6b568dabcfd501a1ceae1895537faf72f1968013))
+- **monitoring:** store pino logs in rustrak via enableLogs ([1cb86ab](https://github.com/Sebas200702/anidev-v2/commit/1cb86ab7d78596ddd33939872b9f0fad581fd6e4))
+- **monitoring:** wire Sentry SDK at runtime via Astro integration ([ab5b7b7](https://github.com/Sebas200702/anidev-v2/commit/ab5b7b7ec8bf258a549e3d8fea3b9001ae7f77e5))
+- **music:** Add GET /api/music paginated list endpoint ([c39360b](https://github.com/Sebas200702/anidev-v2/commit/c39360bb1b0d71cb79fbcf64ce1212ef6802c39f))
+- **music:** Add list repository and batch artist lookup ([cd084b8](https://github.com/Sebas200702/anidev-v2/commit/cd084b8a068b2dcdffdfe56d8928f7d99ffd78bc))
+- **music:** Add list schemas, mappers, and cache layer ([77e1bd2](https://github.com/Sebas200702/anidev-v2/commit/77e1bd26ccaa0610eb9f800f2c0e84e90af2a010))
+- **music:** implement domain repositories services and schemas ([150bbfb](https://github.com/Sebas200702/anidev-v2/commit/150bbfbb0324c8064c7373855a45333e39fd406d))
+- **music:** update music API schema ([de9c712](https://github.com/Sebas200702/anidev-v2/commit/de9c7122ebbbe9157ad150db6aa7c05a440c0cd9))
+- **skills:** Add UI/UX Pro Max skill and update barrel best practices ([4db6e10](https://github.com/Sebas200702/anidev-v2/commit/4db6e10c8c1b54d1f98d4b6bda5bb497eaaa16fd))
+- **tooling:** Harden agent lifecycle with Vitest/TDD, CI gate, and SemVer releases ([b6ad9ae](https://github.com/Sebas200702/anidev-v2/commit/b6ad9aecf6e0a47713d4e7715adc42fecfe90be0))
+- **ui:** add app layout media components and anime pages ([01c30e7](https://github.com/Sebas200702/anidev-v2/commit/01c30e7a2920a56d268814e687c1ef15e051380a))
+- **user:** add user domain and API endpoints ([f80ec08](https://github.com/Sebas200702/anidev-v2/commit/f80ec08bfed8c71d00daccebe6ed16150271e3ba))
 
 ### Bug Fixes
 
-* **anime-list:** normalize query string to lowercase for consistent filtering, fixes _⚠️ Potential issue_ | _🟡 Minor_ ([6deaa6b](https://github.com/Sebas200702/anidev-v2/commit/6deaa6bae21bbd705f5102c004e7040f97564563)), closes [#14](https://github.com/Sebas200702/anidev-v2/issues/14)
-* **anime/mappers:** include optional query in mapAnimeFilters output, fixes [#3](https://github.com/Sebas200702/anidev-v2/issues/3) ([c28d653](https://github.com/Sebas200702/anidev-v2/commit/c28d653b9c9591de377296287f91b531c752c3a1))
-* **anime/repositories:** preserve genreless anime using leftJoin , fixes [#4](https://github.com/Sebas200702/anidev-v2/issues/4) ([5d7e0f6](https://github.com/Sebas200702/anidev-v2/commit/5d7e0f6423415a59319e0e5d9816b4d73c50be47))
-* **anime/repositories:** use selectDistinc to retain anime without genres, fixes [#5](https://github.com/Sebas200702/anidev-v2/issues/5) ([b453ae0](https://github.com/Sebas200702/anidev-v2/commit/b453ae0a1afca0d914156ac00d293efd2dcfa370))
-* **anime/schemas:** enforce integer constraints on pagination and year fields in animeFiltersParamsSchema, fixes [#11](https://github.com/Sebas200702/anidev-v2/issues/11) ([2f8c340](https://github.com/Sebas200702/anidev-v2/commit/2f8c340b42eed8e3d191778fbefa20d685b6231e))
-* **anime/schemas:** update animeFiltersParamsSchema to use z.coerce for number fields ([f536a8a](https://github.com/Sebas200702/anidev-v2/commit/f536a8ac160d264cdf7c5653aff2c8543171d3b8))
-* **api:** handle zod validation errors in middleware, fixes [#6](https://github.com/Sebas200702/anidev-v2/issues/6) ([96179ee](https://github.com/Sebas200702/anidev-v2/commit/96179eeef3611c78622dbb4e21ee01f34d01d2d5))
-* **api:** refactor anime list filter logic to use buildAnimeListFilters for cleaner query handling ([40c3e1e](https://github.com/Sebas200702/anidev-v2/commit/40c3e1e27e411aeacdc95cc40335c3678ec3de17))
-* **api:** update GET handler to use animeListRequestSchema and correct query parameter access ([cac08b3](https://github.com/Sebas200702/anidev-v2/commit/cac08b315f8a23d1c9d4cb8c918ba2cb86fde1f2))
-* **cache:** connect at bootstrap and handle client errors ([035d7ba](https://github.com/Sebas200702/anidev-v2/commit/035d7ba48cbbcc206e48101ac6a76ecc4455943d))
-* **cache:** handle initial connect rejection gracefully ([52b2228](https://github.com/Sebas200702/anidev-v2/commit/52b2228cb75123943036f289fdfaaaaa35de9cba))
-* **character-media:** add missing await for database query in getMediaByCharacterIds, fixes _⚠️ Potential issue_ | _🔴 Critical_ ([03f0d43](https://github.com/Sebas200702/anidev-v2/commit/03f0d437a7f30c75014060779de57d7a13755c00)), closes [#16](https://github.com/Sebas200702/anidev-v2/issues/16)
-* **config:** read env vars from process.env at runtime ([e8a3537](https://github.com/Sebas200702/anidev-v2/commit/e8a3537add4983edbf16f2d0b24a89528b2eded6))
-* **config:** Update APP_BASE_URL to be required and adjust baseUrl logic ([d1446d9](https://github.com/Sebas200702/anidev-v2/commit/d1446d92926ce1027b680b8764fc3a74614a59ed))
-* **core/errors:** update error codes and handler behavior ([f420d4f](https://github.com/Sebas200702/anidev-v2/commit/f420d4ffc33e5093981445370860c9dd67c6afaf))
-* **core:** adjust cache configuration ([1687036](https://github.com/Sebas200702/anidev-v2/commit/16870366ae0b892a1925dc7d2aa863753d917bae))
-* **db:** handle idle-client pool errors without crashing ([00b99fb](https://github.com/Sebas200702/anidev-v2/commit/00b99fb4f0e85a825b09ba41a3a7aa57e0795779))
-* **db:** make music version_id globally unique for Postgres FK ([3e8da18](https://github.com/Sebas200702/anidev-v2/commit/3e8da18ea272dfe411002eadffbb6c27526c0f1b))
-* **db:** mark integer primary keys non-null ([5061ef9](https://github.com/Sebas200702/anidev-v2/commit/5061ef9548c0a36f1a608c9d95c410f28e45c730))
-* **deploy:** externalize compose credentials and secret defaults ([1f1d85f](https://github.com/Sebas200702/anidev-v2/commit/1f1d85f63effeaf2fb83800ae8e8962dbe2f38f2))
-* **media-cache:** add missing colon in source token of buildKey cache keys, fixes [#15](https://github.com/Sebas200702/anidev-v2/issues/15) ([157c238](https://github.com/Sebas200702/anidev-v2/commit/157c238f20fb03287c4db300bb56032b55a41546))
-* **media-cache:** correct formatting in buildKey function for URL generation, fixes _⚠️ Potential issue_ | _🟠 Major_ ([e7c9c67](https://github.com/Sebas200702/anidev-v2/commit/e7c9c679ccd53624eece9ee865c1b5553df5e5a0)), closes [#15](https://github.com/Sebas200702/anidev-v2/issues/15)
-* **media-fetch:** improve error handling and response validation,  fixes [#17](https://github.com/Sebas200702/anidev-v2/issues/17) ([2128f5b](https://github.com/Sebas200702/anidev-v2/commit/2128f5b185d01856cf73cd09d2951850360ec892))
-* **media:** Update caching logic to handle placeholder images correctly ([081e020](https://github.com/Sebas200702/anidev-v2/commit/081e02083006560d1d48e9ffcc8a11b7a5955cb4))
-* **music:** wrap version/resolution queries in dbError ([267713e](https://github.com/Sebas200702/anidev-v2/commit/267713e1156f3d913c025ae875c69c5e2f90068e))
-* resolve 500 error on /api/anime/:id/characters ([83e2f07](https://github.com/Sebas200702/anidev-v2/commit/83e2f077c23fc06210d41123b04e10efb0b5178c))
+- **anime-list:** normalize query string to lowercase for consistent filtering, fixes _⚠️ Potential issue_ | _🟡 Minor_ ([6deaa6b](https://github.com/Sebas200702/anidev-v2/commit/6deaa6bae21bbd705f5102c004e7040f97564563)), closes [#14](https://github.com/Sebas200702/anidev-v2/issues/14)
+- **anime/mappers:** include optional query in mapAnimeFilters output, fixes [#3](https://github.com/Sebas200702/anidev-v2/issues/3) ([c28d653](https://github.com/Sebas200702/anidev-v2/commit/c28d653b9c9591de377296287f91b531c752c3a1))
+- **anime/repositories:** preserve genreless anime using leftJoin , fixes [#4](https://github.com/Sebas200702/anidev-v2/issues/4) ([5d7e0f6](https://github.com/Sebas200702/anidev-v2/commit/5d7e0f6423415a59319e0e5d9816b4d73c50be47))
+- **anime/repositories:** use selectDistinc to retain anime without genres, fixes [#5](https://github.com/Sebas200702/anidev-v2/issues/5) ([b453ae0](https://github.com/Sebas200702/anidev-v2/commit/b453ae0a1afca0d914156ac00d293efd2dcfa370))
+- **anime/schemas:** enforce integer constraints on pagination and year fields in animeFiltersParamsSchema, fixes [#11](https://github.com/Sebas200702/anidev-v2/issues/11) ([2f8c340](https://github.com/Sebas200702/anidev-v2/commit/2f8c340b42eed8e3d191778fbefa20d685b6231e))
+- **anime/schemas:** update animeFiltersParamsSchema to use z.coerce for number fields ([f536a8a](https://github.com/Sebas200702/anidev-v2/commit/f536a8ac160d264cdf7c5653aff2c8543171d3b8))
+- **api:** handle zod validation errors in middleware, fixes [#6](https://github.com/Sebas200702/anidev-v2/issues/6) ([96179ee](https://github.com/Sebas200702/anidev-v2/commit/96179eeef3611c78622dbb4e21ee01f34d01d2d5))
+- **api:** refactor anime list filter logic to use buildAnimeListFilters for cleaner query handling ([40c3e1e](https://github.com/Sebas200702/anidev-v2/commit/40c3e1e27e411aeacdc95cc40335c3678ec3de17))
+- **api:** update GET handler to use animeListRequestSchema and correct query parameter access ([cac08b3](https://github.com/Sebas200702/anidev-v2/commit/cac08b315f8a23d1c9d4cb8c918ba2cb86fde1f2))
+- **cache:** connect at bootstrap and handle client errors ([035d7ba](https://github.com/Sebas200702/anidev-v2/commit/035d7ba48cbbcc206e48101ac6a76ecc4455943d))
+- **cache:** handle initial connect rejection gracefully ([52b2228](https://github.com/Sebas200702/anidev-v2/commit/52b2228cb75123943036f289fdfaaaaa35de9cba))
+- **character-media:** add missing await for database query in getMediaByCharacterIds, fixes _⚠️ Potential issue_ | _🔴 Critical_ ([03f0d43](https://github.com/Sebas200702/anidev-v2/commit/03f0d437a7f30c75014060779de57d7a13755c00)), closes [#16](https://github.com/Sebas200702/anidev-v2/issues/16)
+- **config:** read env vars from process.env at runtime ([e8a3537](https://github.com/Sebas200702/anidev-v2/commit/e8a3537add4983edbf16f2d0b24a89528b2eded6))
+- **config:** Update APP_BASE_URL to be required and adjust baseUrl logic ([d1446d9](https://github.com/Sebas200702/anidev-v2/commit/d1446d92926ce1027b680b8764fc3a74614a59ed))
+- **core/errors:** update error codes and handler behavior ([f420d4f](https://github.com/Sebas200702/anidev-v2/commit/f420d4ffc33e5093981445370860c9dd67c6afaf))
+- **core:** adjust cache configuration ([1687036](https://github.com/Sebas200702/anidev-v2/commit/16870366ae0b892a1925dc7d2aa863753d917bae))
+- **db:** handle idle-client pool errors without crashing ([00b99fb](https://github.com/Sebas200702/anidev-v2/commit/00b99fb4f0e85a825b09ba41a3a7aa57e0795779))
+- **db:** make music version_id globally unique for Postgres FK ([3e8da18](https://github.com/Sebas200702/anidev-v2/commit/3e8da18ea272dfe411002eadffbb6c27526c0f1b))
+- **db:** mark integer primary keys non-null ([5061ef9](https://github.com/Sebas200702/anidev-v2/commit/5061ef9548c0a36f1a608c9d95c410f28e45c730))
+- **deploy:** externalize compose credentials and secret defaults ([1f1d85f](https://github.com/Sebas200702/anidev-v2/commit/1f1d85f63effeaf2fb83800ae8e8962dbe2f38f2))
+- **media-cache:** add missing colon in source token of buildKey cache keys, fixes [#15](https://github.com/Sebas200702/anidev-v2/issues/15) ([157c238](https://github.com/Sebas200702/anidev-v2/commit/157c238f20fb03287c4db300bb56032b55a41546))
+- **media-cache:** correct formatting in buildKey function for URL generation, fixes _⚠️ Potential issue_ | _🟠 Major_ ([e7c9c67](https://github.com/Sebas200702/anidev-v2/commit/e7c9c679ccd53624eece9ee865c1b5553df5e5a0)), closes [#15](https://github.com/Sebas200702/anidev-v2/issues/15)
+- **media-fetch:** improve error handling and response validation, fixes [#17](https://github.com/Sebas200702/anidev-v2/issues/17) ([2128f5b](https://github.com/Sebas200702/anidev-v2/commit/2128f5b185d01856cf73cd09d2951850360ec892))
+- **media:** Update caching logic to handle placeholder images correctly ([081e020](https://github.com/Sebas200702/anidev-v2/commit/081e02083006560d1d48e9ffcc8a11b7a5955cb4))
+- **music:** wrap version/resolution queries in dbError ([267713e](https://github.com/Sebas200702/anidev-v2/commit/267713e1156f3d913c025ae875c69c5e2f90068e))
+- resolve 500 error on /api/anime/:id/characters ([83e2f07](https://github.com/Sebas200702/anidev-v2/commit/83e2f077c23fc06210d41123b04e10efb0b5178c))
 
 ## [0.0.1] - 2026-03-12
 

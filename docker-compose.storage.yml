@@ -26,13 +26,13 @@ services:
   minio:
     build:
       context: ./docker/minio
-    profiles: ['storage']
+    profiles: ["storage"]
     restart: unless-stopped
     ports:
       # Loopback only: the reverse proxy (prod) and the host app (dev) reach it
       # locally; the console holds root credentials.
-      - '127.0.0.1:9000:9000'
-      - '127.0.0.1:9001:9001'
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     volumes:
       - minio_data:/data
     environment:
@@ -41,7 +41,14 @@ services:
     healthcheck:
       # busybox wget ships with the alpine base image; the health endpoint
       # answers before the console is up.
-      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:9000/minio/health/live']
+      test:
+        [
+          "CMD",
+          "wget",
+          "-q",
+          "--spider",
+          "http://localhost:9000/minio/health/live",
+        ]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -53,8 +60,8 @@ services:
   minio-init:
     build:
       context: ./docker/minio
-    profiles: ['storage']
-    restart: 'no'
+    profiles: ["storage"]
+    restart: "no"
     depends_on:
       minio:
         condition: service_healthy
