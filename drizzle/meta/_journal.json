@@ -113,6 +113,13 @@
       "when": 1792937046932,
       "tag": "0015_milky_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795365374255,
+      "tag": "0016_character-external",
+      "breakpoints": true
     }
   ]
 }
