@@ -32,8 +32,8 @@ by the maintainer. Phase 1 of a wider DB recomposition (phase 2: rest of the cat
 
 ## Tasks
 
-- **T1** (S3,S4) — Load sources into staging (`cast_relink` schema): AniList CSV cast, offline-db mapping; SQL name normalizer. Route: inline. Commit: —
-- **T2** (S1,S2,S4,S5) — Classify into `cast_relink.audit` (dry run) + summary report; user checkpoint. Route: inline. Commit: —
+- **T1** (S3,S4) — Load sources into staging (`cast_relink` schema): AniList CSV cast, offline-db mapping; SQL name normalizer. Route: inline. Commit: `19802a4` ✅ (staged 143,100 cast rows, 19,408 animes, 1,940 truncated, 18,863 MAL→AniList maps)
+- **T2** (S1,S2,S4,S5) — Classify into `cast_relink.audit` (dry run) + summary report; user checkpoint. Route: gentle-ai-worker + inline fix. Commit: see git log ✅ (220,429 pairs: dedupe 104,653 · repoint 54,764 · pending-api 38,492 · keep 19,834 · quarantine 2,686)
 - **T3** (S3) — AniList API fallback for missing/truncated casts → same staging. Route: inline. Commit: —
 - **T4** (S1,S4,S5) — Apply transaction + quarantine + rollback script. Route: inline. Commit: —
 - **T5** (S2,S5) — Verify (Shoushimin, Narrator, no Main/MAIN pairs), docs, independent verify (Risk item 1). Route: inline + gentle-ai-verify. Commit: —
@@ -47,3 +47,13 @@ by the maintainer. Phase 1 of a wider DB recomposition (phase 2: rest of the cat
 - **L5** — Sample validation (140 links vs MAL character pages / AniList API): bucket 1 20/20 correct; 2a 3/20; 2b-real 1/20; 2b-syn 18/20; 3a 0/20; 3b 19/20; 3c 0/20. AniList CSV covers 12,764/13,517 affected animes (1,939 casts truncated at 25); synthetic id = 1e9 + AniList id confirmed 33/33. Name match inside the AniList cast does not validate the MAL id (42/42 wrong).
 - **L6** — User approved the strategy ("si"). offline-db maps 638 of 753 missing animes to AniList ids (none present in the CSV → API fallback).
 - **L7** — User: "vamos primero con los personages y luego con la recomposicion del resto de la db"
+- **L8** — T2 decision rules (from S4), per distinct UPPERCASE pair `(anime_id, character_id)`:
+  `dedupe` when Jikan (Title-case) has the same pair; synthetic id with its AniList id in
+  that anime's `anilist_cast` → `keep`, or `repoint` to the Jikan-cast MAL character of the
+  same anime whose normalized name is one of that AniList character's `name_keys`; real MAL
+  id not confirmed by Jikan → find the AniList character of that anime whose `name_keys`
+  contain the local name: `repoint` to the same-name Jikan-cast MAL character, else to
+  `1e9 + AniList id` (`creates_character` when that row is missing); no AniList match →
+  `pending-api` when the anime's cast is truncated (≥25) or absent from the CSV, else
+  `quarantine`. More than one candidate → `quarantine` (reason `ambiguous`).
+- **L9** — Decision (parent, S1 "sin perder"): a pair whose anime has an empty CSV cast (594) is `pending-api`/`cast-empty`, not quarantine — an empty cast is missing data, not proof. T4 must collapse repoints whose target pair already exists (39,527) or shares a target, and set `anilist_id` on real MAL targets.

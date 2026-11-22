@@ -2,6 +2,7 @@
 # Cast relink: re-resolve UPPERCASE-role anime_character links (see README.md).
 # LOCAL DATABASE ONLY. Usage:
 #   bash scripts/db/cast-relink/run.sh stage --anilist-csv PATH --offline-db PATH
+#   bash scripts/db/cast-relink/run.sh audit   (dry run: rebuilds cast_relink.audit only)
 #   bash scripts/db/cast-relink/run.sh test
 #   LOCAL_DATABASE_URL falls back to DATABASE_URL, then to POSTGRES_* on localhost.
 set -euo pipefail
@@ -49,6 +50,19 @@ stage() {
   echo "cast-relink: staged sources into schema ${SCHEMA}"
 }
 
+# Dry run: (re)builds the audit table and prints the summary; no public table is written.
+audit() {
+  sql -f "$HERE/sql/03-audit.sql"
+  sql -c 'SELECT decision, count(*) AS pairs FROM audit GROUP BY 1 ORDER BY 2 DESC' \
+    -c 'SELECT decision, reason, count(*) AS pairs,
+               count(*) FILTER (WHERE creates_character) AS creates_character
+        FROM audit GROUP BY 1, 2 ORDER BY 1, 3 DESC' \
+    -c 'SELECT a.character_id, c.name, a.roles, a.decision, a.reason,
+               a.anilist_character_id, a.target_character_id, a.creates_character
+        FROM audit a LEFT JOIN "character" c ON c.mal_id = a.character_id
+        WHERE a.anime_id = 57810 ORDER BY a.decision, a.character_id'
+}
+
 run_tests() {
   SCHEMA='cast_relink_test'
   sql -c "DROP SCHEMA IF EXISTS ${SCHEMA} CASCADE"
@@ -76,6 +90,7 @@ done
 assert_local
 case "$COMMAND" in
   stage) stage ;;
+  audit) audit ;;
   test) run_tests ;;
-  *) die 'usage: run.sh <stage|test> [--anilist-csv PATH] [--offline-db PATH]' ;;
+  *) die 'usage: run.sh <stage|audit|test> [--anilist-csv PATH] [--offline-db PATH]' ;;
 esac
