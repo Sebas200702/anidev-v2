@@ -20,5 +20,6 @@ export {
 } from './anime-full'
 export { mapAnimeDetails } from './anime'
 export { mapMusicListToAnimeMusic } from './anime-music'
+export { mapAnimeMusicItems } from './anime-music-item'
 export { mapAnimeEpisodeDetail, mapAnimeEpisodeItems } from './anime-episode'
 export { mapAnimeStaff } from './anime-staff'
