@@ -1,45 +1,46 @@
 ---
+
 name: AniDev
 description: Catálogo oscuro y flexible para descubrir anime y contenido relacionado.
 colors:
-  brand-accent: "var(--brand-500)"
-  neutral-950: "#121212"
-  neutral-900: "#3d3d3d"
-  neutral-800: "#454545"
-  neutral-700: "#4f4f4f"
-  neutral-600: "#5d5d5d"
-  neutral-500: "#6d6d6d"
-  neutral-400: "#888888"
-  neutral-300: "#b0b0b0"
-  neutral-200: "#d1d1d1"
-  neutral-100: "#e7e7e7"
-  neutral-50: "#f6f6f6"
-  complementary: "#1c1c1c"
+brand-accent: "var(--brand-500)"
+neutral-950: "#121212"
+neutral-900: "#3d3d3d"
+neutral-800: "#454545"
+neutral-700: "#4f4f4f"
+neutral-600: "#5d5d5d"
+neutral-500: "#6d6d6d"
+neutral-400: "#888888"
+neutral-300: "#b0b0b0"
+neutral-200: "#d1d1d1"
+neutral-100: "#e7e7e7"
+neutral-50: "#f6f6f6"
+complementary: "#1c1c1c"
 typography:
-  body:
-    fontFamily: "Nunito Sans, sans-serif"
-  heading:
-    fontFamily: "Kode Mono, ui-monospace, monospace"
-  display:
-    fontFamily: "Kode Mono, ui-monospace, monospace"
-  label:
-    fontFamily: "Kode Mono, ui-monospace, monospace"
+body:
+fontFamily: "Nunito Sans, sans-serif"
+heading:
+fontFamily: "Kode Mono, ui-monospace, monospace"
+display:
+fontFamily: "Kode Mono, ui-monospace, monospace"
+label:
+fontFamily: "Kode Mono, ui-monospace, monospace"
 rounded:
-  md: "0.375rem"
+md: "0.375rem"
 spacing:
-  xs: "0.25rem"
-  sm: "0.5rem"
+xs: "0.25rem"
+sm: "0.5rem"
 components:
-  button-primary:
-    backgroundColor: "{colors.brand-accent}"
-    textColor: "#ffffff"
-    rounded: "{rounded.md}"
-    padding: "{spacing.xs}"
-  button-secondary:
-    backgroundColor: "transparent"
-    textColor: "#ffffff"
-    rounded: "{rounded.md}"
-    padding: "{spacing.xs}"
+button-primary:
+backgroundColor: "{colors.brand-accent}"
+textColor: "#ffffff"
+rounded: "{rounded.md}"
+padding: "{spacing.xs}"
+button-secondary:
+backgroundColor: "transparent"
+textColor: "#ffffff"
+rounded: "{rounded.md}"
+padding: "{spacing.xs}"
 ---
 
 # Design System: AniDev

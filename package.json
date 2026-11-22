@@ -12,7 +12,7 @@
     "auth:migrate": "bunx @better-auth/cli@latest migrate --config src/lib/auth/server.ts",
     "build": "astro build",
     "check": "biome check .",
-    "check:types": "astro check",
+    "check:types": "astro sync && tsc --noEmit --runExternalCode",
     "check:write": "biome check --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -55,7 +55,7 @@
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.12",
+    "@astrojs/ts-content-mapper": "0.2.0",
     "@biomejs/biome": "^2.5.7",
     "@playwright/test": "^1.62.1",
     "@types/pg": "^8.11.10",
@@ -69,7 +69,7 @@
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.6.12",
     "tsx": "4.21.0",
-    "typescript": "6",
+    "typescript": "7.1.0-beta",
     "vitest": "4.1.12"
   },
   "overrides": {

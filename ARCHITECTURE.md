@@ -14,8 +14,9 @@
 
 `anidev-v2` es una plataforma full-stack de descubrimiento y streaming de anime y
 música construida sobre **Astro 6 SSR (`output: 'server'`, `@nurodev/astro-bun`)
-+ React 19 Islands + TypeScript 6 + Drizzle ORM (PostgreSQL 16) + Dragonfly
-(Redis-compatible) + Better Auth + Tailwind CSS v4 + Zod 4 + Rustrak (Sentry)**.
+
+- React 19 Islands + TypeScript 7 + Drizzle ORM (PostgreSQL 16) + Dragonfly
+  (Redis-compatible) + Better Auth + Tailwind CSS v4 + Zod 4 + Rustrak (Sentry)**.
 
 Todo el sistema opera dentro del presupuesto físico de **1 VPS self-hosted (4
 vCPU / 8 GB RAM / 100 GB SSD)** (`ROADMAP.md` §D8), guiado por siete reglas
@@ -23,7 +24,7 @@ arquitectónicas:
 
 1. **Tipado estricto y validación en la frontera:** Todo endpoint valida entrada
    y salida con Zod 4 (`withZodValidation` + `withErrorHandling(..., { responseSchema })`).
-2. **Slices verticales cohesivos (`src/domains/*`) y *unit folders*:** Cada
+2. **Slices verticales cohesivos (`src/domains/*`) y _unit folders_:** Cada
    unidad funcional encapsula su `service.ts`, `repository.ts`, `mapper.ts`,
    `cache.ts`, `types.ts` e `index.ts` con un límite de **$\le 150$ líneas por
    archivo**.
@@ -38,7 +39,7 @@ arquitectónicas:
 5. **Eficiencia de memoria en el VPS de 8 GB:**
    - **Dragonfly (`512 MB`)** almacena exclusivamente JSON estructurado,
      instantáneas `:stale`, sesiones efímeras (`60 s`), contadores de
-     *rate-limiting* y estado en tiempo real de salas **Watch2Gether**
+     _rate-limiting_ y estado en tiempo real de salas **Watch2Gether**
      (`watch:room:{id}:clock` + Pub/Sub).
    - **Los binarios** (imágenes optimizadas con Sharp y streams de audio/vídeo)
      nunca se guardan en base64 en Dragonfly ni se cargan completos en un
@@ -122,7 +123,7 @@ Basado en el estudio de `src/core/player/{PlaybackCoordinator,SourceAdapterRegis
    - **Throttling de progreso:** Emite actualizaciones al sink de persistencia como máximo cada `5000 ms` durante reproducción continua, y de forma inmediata en `pause`, `completed` o `dispose()`.
 2. **Cola serializada de adaptadores (`SourceAdapterRegistry`):**
    - Encadena `currentAdapter.unload()` $\to$ `nextAdapter.load()` en una promesa `this.pending`, verificando `signal.aborted || generation !== this.generation` en cada paso asíncrono para impedir que dos instancias de `hls.js` compitan por el mismo `<video>`.
-3. **Sondeo rápido en paralelo (*Fast-Probe* de `1500 ms`) y failover escalonado:**
+3. **Sondeo rápido en paralelo (_Fast-Probe_ de `1500 ms`) y failover escalonado:**
    - Antes de montar `hls.js` cuando existen múltiples fuentes candidatas, lanza sondas `fetch` en paralelo con `AbortSignal.timeout(1500)` y selecciona la primera que responde `200`/`206` (`firstFulfilled`).
    - En `HlsController`: `startLevel: 0` (arranque rápido del primer fotograma), `abrEwmaDefaultEstimate: 4_000_000`, `MAX_NETWORK_RETRIES = 2`, `MAX_MEDIA_RETRIES = 2` (con `hls.swapAudioCodec?.()` en el segundo intento y reseteo de contadores al recibir `FRAG_BUFFERED`). Al agotar los reintentos de una URL, salta automáticamente al siguiente candidato (`advanceCandidate()`).
 
@@ -138,7 +139,7 @@ Especificado para la feature `relational-lists-and-watch-progress`:
    - Ventana de tolerancia `NEWEST_WINS_TOLERANCE_MS = 1000`. Si dos escrituras tienen marcas de tiempo a menos de 1 segundo de distancia, gana la que tenga **mayor `progress_seconds`**, impidiendo que una carga recién abierta en otro dispositivo (`progress_seconds = 0`) sobrescriba el progreso real.
 3. **Completado estilo Netflix ($\ge 90\%$) y colapso por serie:**
    - Cuando `durationSeconds > 0 && progressSeconds / durationSeconds >= 0.90`, el episodio se marca automáticamente como `completed = true`.
-   - El carrusel *Continue Watching* filtra `completed = false`, ordena por `watched_at DESC` y devuelve **una única tarjeta por `anime_id`** correspondiente al episodio tocado más recientemente.
+   - El carrusel _Continue Watching_ filtra `completed = false`, ordena por `watched_at DESC` y devuelve **una única tarjeta por `anime_id`** correspondiente al episodio tocado más recientemente.
 
 ### 3.3. Watch2Gether — Salas sincronizadas en tiempo real (`watch-rooms`)
 
@@ -150,7 +151,7 @@ Especificado para la feature `watch2gether-synchronized-rooms`:
      - **Reloj de reproducción en vivo y eventos en Dragonfly:** El hash `watch:room:{roomId}:clock` almacena `{ isPlaying, positionSeconds, updatedAtMs, animeId, episodeId, musicId, category }` y el canal Pub/Sub `watch:room:{roomId}:events` difunde instantáneamente cambios de estado, mensajes de chat, reacciones y votos a los clientes conectados por **Server-Sent Events (`GET /api/watch-rooms/:roomId/events`)**.
 2. **Algoritmo de corrección de deriva en 3 niveles (`computeDriftCorrection`):**
    - Cada participante calcula `liveHostTime = clock.positionSeconds + (clock.isPlaying ? (nowMs - clock.updatedAtMs) / 1000 : 0)` y la deriva $\Delta t = \text{liveHostTime} - \text{participantTime}$:
-     - **Deriva grande ($|\Delta t| > 2.5\text{ s}$):** *Hard seek* inmediato a `liveHostTime` y `playbackRate = 1.0`.
+     - **Deriva grande ($|\Delta t| > 2.5\text{ s}$):** _Hard seek_ inmediato a `liveHostTime` y `playbackRate = 1.0`.
      - **Deriva media ($0.35\text{ s} < |\Delta t| \le 2.5\text{ s}$):** Ajuste proporcional suave de `playbackRate` ($\pm 0.08$, acotado a `[0.92, 1.08]`) para alcanzar o esperar al host sin cortes de audio ni saltos bruscos de imagen.
      - **Deriva pequeña ($|\Delta t| \le 0.35\text{ s}$):** Sincronizado (`playbackRate = 1.0`).
 3. **Ciclo de vida de la sala y resiliencia:**
@@ -167,7 +168,7 @@ Especificado para la feature `hybrid-taste-and-ai-recommendations`:
    - Aplica `dedupeFranchiseSignals` sobre el grafo `anime_relation` (`Sequel`/`Prequel`) para colapsar múltiples temporadas de una misma franquicia en una única semilla.
    - Recupera y puntúa candidatos en PostgreSQL mediante similitud vectorial (`pgvector`) + afinidad de géneros/estudios, excluyendo todo `mal_id` ya visto o listado y aplicando el floor parental (`safe`/`full`).
 2. **Nivel 2 — Curador Contextual con Google Gemini (`fetch_recommendations`):**
-   - Para modos semánticos (*mood*, *maratón*, *quick watch*, *asistente*), envía los 40 mejores candidatos del Nivel 1 + el `UserTasteProfile` a Gemini con validación Zod, caché en Dragonfly (`TTL: 6 h`), rate-limit por usuario y **fallback automático al Nivel 1** si Gemini falla o excede el timeout (`6 s`).
+   - Para modos semánticos (_mood_, _maratón_, _quick watch_, _asistente_), envía los 40 mejores candidatos del Nivel 1 + el `UserTasteProfile` a Gemini con validación Zod, caché en Dragonfly (`TTL: 6 h`), rate-limit por usuario y **fallback automático al Nivel 1** si Gemini falla o excede el timeout (`6 s`).
 
 ---
 
@@ -175,27 +176,27 @@ Especificado para la feature `hybrid-taste-and-ai-recommendations`:
 
 Resumen de las tablas nuevas y evolucionadas planificadas en las features de ODD:
 
-| Tabla (`src/lib/db/schemas/`) | Tipo de cambio | Clave primaria / Índices clave | Propósito |
-|---|---|---|---|
-| `profile` | Modificada (`T-05`) | PK `id`, `UNIQUE(user_id)` | Garantizar 1 perfil por cuenta de usuario en BD. |
-| `episode_source` | Evolucionada (`T-11`) | PK `id`, `UNIQUE(episode_id, src)`, `INDEX(episode_id, priority)` | Añadir `provider`, `server_name`, `format`, `quality`, `audio`, `headers` (JSONB) y `priority`. |
-| `episode_subtitle` | Evolucionada (`T-11`) | PK `id`, `UNIQUE(episode_id, language, src)` | Añadir `label`, `format` (`vtt`/`ass`/`srt`) e `is_default`. |
-| `user_anime_list` | Nueva (`T-10`) | PK `(user_id, anime_id)`, `INDEX(user_id, status, updated_at DESC)` | Listas relacionales por estado (`watching`, `completed`, `plan_to_watch`, `on_hold`, `dropped`), `is_favorite` y `score`. |
-| `watch_progress` | Nueva (`T-10`) | PK `(user_id, episode_id)`, `INDEX(user_id, watched_at DESC)` | Progreso por segundo (`progress_seconds`, `duration_seconds`, `completed`, `watched_at`) para *Continue Watching*. |
-| `watch_room` | Nueva (`Watch2Gether`) | PK `id`, `INDEX(is_active, access_type, created_at DESC)` | Salas sincronizadas (`public`, `invite`, `password` con `password_hash` server-only) para anime y música. |
-| `watch_room_participant` | Nueva (`Watch2Gether`) | PK `id`, `UNIQUE(room_id, user_id)` | Participantes activos en la sala, rol `is_host`, estado `is_ready` y `last_seen_at`. |
-| `watch_room_queue` | Nueva (`Watch2Gether`) | PK `id`, `INDEX(room_id, position ASC)` | Cola compartida de episodios o temas musicales en la sala. |
-| `watch_room_message` | Nueva (`Watch2Gether`) | PK `id`, `INDEX(room_id, created_at DESC)` | Historial de chat, mensajes de sistema y reacciones en la sala. |
-| `watch_room_poll` & `watch_room_poll_vote` | Nuevas (`Watch2Gether`) | PK `id`, `UNIQUE(poll_id, user_id)` | Encuestas en vivo dentro de la sala Watch2Gether. |
+| Tabla (`src/lib/db/schemas/`)              | Tipo de cambio          | Clave primaria / Índices clave                                      | Propósito                                                                                                                 |
+| ------------------------------------------ | ----------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `profile`                                  | Modificada (`T-05`)     | PK `id`, `UNIQUE(user_id)`                                          | Garantizar 1 perfil por cuenta de usuario en BD.                                                                          |
+| `episode_source`                           | Evolucionada (`T-11`)   | PK `id`, `UNIQUE(episode_id, src)`, `INDEX(episode_id, priority)`   | Añadir `provider`, `server_name`, `format`, `quality`, `audio`, `headers` (JSONB) y `priority`.                           |
+| `episode_subtitle`                         | Evolucionada (`T-11`)   | PK `id`, `UNIQUE(episode_id, language, src)`                        | Añadir `label`, `format` (`vtt`/`ass`/`srt`) e `is_default`.                                                              |
+| `user_anime_list`                          | Nueva (`T-10`)          | PK `(user_id, anime_id)`, `INDEX(user_id, status, updated_at DESC)` | Listas relacionales por estado (`watching`, `completed`, `plan_to_watch`, `on_hold`, `dropped`), `is_favorite` y `score`. |
+| `watch_progress`                           | Nueva (`T-10`)          | PK `(user_id, episode_id)`, `INDEX(user_id, watched_at DESC)`       | Progreso por segundo (`progress_seconds`, `duration_seconds`, `completed`, `watched_at`) para _Continue Watching_.        |
+| `watch_room`                               | Nueva (`Watch2Gether`)  | PK `id`, `INDEX(is_active, access_type, created_at DESC)`           | Salas sincronizadas (`public`, `invite`, `password` con `password_hash` server-only) para anime y música.                 |
+| `watch_room_participant`                   | Nueva (`Watch2Gether`)  | PK `id`, `UNIQUE(room_id, user_id)`                                 | Participantes activos en la sala, rol `is_host`, estado `is_ready` y `last_seen_at`.                                      |
+| `watch_room_queue`                         | Nueva (`Watch2Gether`)  | PK `id`, `INDEX(room_id, position ASC)`                             | Cola compartida de episodios o temas musicales en la sala.                                                                |
+| `watch_room_message`                       | Nueva (`Watch2Gether`)  | PK `id`, `INDEX(room_id, created_at DESC)`                          | Historial de chat, mensajes de sistema y reacciones en la sala.                                                           |
+| `watch_room_poll` & `watch_room_poll_vote` | Nuevas (`Watch2Gether`) | PK `id`, `UNIQUE(poll_id, user_id)`                                 | Encuestas en vivo dentro de la sala Watch2Gether.                                                                         |
 
 ---
 
 ## 5. Secuencia de ejecución por etapas (features ODD)
 
-| Orden | Feature (`odd/tasks/`) | Etapa / Prioridad | Tareas incluidas |
-|---|---|---|---|
-| **1** | `platform-audit-and-stabilization` | **Etapas 0–2 (`P1` / `P2`)** — auditoría 2026-10-14 | Consolida `T-01`…`T-09` (privacidad en `/api/user/:userId` [reproducida en vivo], claves `buildRawMetaKey` + single JSON, streaming `Range` `206` + SSRF/timeout, sobre de error uniforme + degradación 503 en `index.astro`, índices B-tree/GIN + `pg.Pool` `max: 20` + FKs `CASCADE`, `resolveMediaAssets` fuera de `@shared` + regla en `biome.json`, caché de imágenes Sharp en disco acotado + `immutable`, middleware de headers/rate-limit/`x-request-id`/bypass de sesión, `Promise.all` + `anime_title_synonym` + envs de `ci.yml`) y añade los hallazgos nuevos: XSS de `/showcase`, rate-limit de credenciales, contrato de perfil tolerante a `NULL` + sin caché envenenada, `await` faltantes en 4 repositorios, carrusel set-based + batch, transacción de historial, observabilidad (access logs + redacción + runbooks), shell sin islas React + presupuesto de bundle, `bun audit` en CI, y cierre de changes mergeados. |
-| **2** | `relational-lists-and-watch-progress` | **Etapa 3A (`P2`)** | `T-10`: Tablas `user_anime_list` y `watch_progress`, endpoints `/api/user/lists` y `/api/user/watch-progress`, reconciliación `isNewerOrBetter` (tolerancia 1 s), completado al $\ge 90\%$, colapso por anime en *Continue Watching* y sincronización cliente con `localStorage` + `navigator.sendBeacon`. |
-| **3** | `resilient-playback-and-aniskip` | **Etapa 3B (`P2`)** | `T-11` y `T-12`: Evolución de `episode_source`/`episode_subtitle`, `PlaybackCoordinator` (leases por generación + continuidad de segundo exacto), `SourceAdapterRegistry`, `HlsController` (*fast-probe* paralelo de 1.5 s + retries acotados + `swapAudioCodec`) e integración de **AniSkip** cruzada con el catálogo musical OP/ED. |
-| **4** | `watch2gether-synchronized-rooms` | **Etapa 3C (`P2`)** | Salas sincronizadas **Watch2Gether** para anime y música: tablas `watch_room*`, reloj en tiempo real y Pub/Sub en Dragonfly + SSE, algoritmo `computeDriftCorrection` en 3 niveles, cola compartida, chat, reacciones, encuestas y UI de teatro. |
-| **5** | `hybrid-taste-and-ai-recommendations` | **Etapa 4 (`P2` / `P3`)** | `T-13`: Motor híbrido en 2 niveles: Nivel 1 (`UserTasteProfile` de 5 factores + deduplicación de franquicias + `pgvector` en PostgreSQL) y Nivel 2 (curador contextual con Gemini cacheado en Dragonfly con rate-limit y fallback automático al Nivel 1). |
+| Orden | Feature (`odd/tasks/`)                | Etapa / Prioridad                                   | Tareas incluidas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----- | ------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1** | `platform-audit-and-stabilization`    | **Etapas 0–2 (`P1` / `P2`)** — auditoría 2026-10-14 | Consolida `T-01`…`T-09` (privacidad en `/api/user/:userId` [reproducida en vivo], claves `buildRawMetaKey` + single JSON, streaming `Range` `206` + SSRF/timeout, sobre de error uniforme + degradación 503 en `index.astro`, índices B-tree/GIN + `pg.Pool` `max: 20` + FKs `CASCADE`, `resolveMediaAssets` fuera de `@shared` + regla en `biome.json`, caché de imágenes Sharp en disco acotado + `immutable`, middleware de headers/rate-limit/`x-request-id`/bypass de sesión, `Promise.all` + `anime_title_synonym` + envs de `ci.yml`) y añade los hallazgos nuevos: XSS de `/showcase`, rate-limit de credenciales, contrato de perfil tolerante a `NULL` + sin caché envenenada, `await` faltantes en 4 repositorios, carrusel set-based + batch, transacción de historial, observabilidad (access logs + redacción + runbooks), shell sin islas React + presupuesto de bundle, `bun audit` en CI, y cierre de changes mergeados. |
+| **2** | `relational-lists-and-watch-progress` | **Etapa 3A (`P2`)**                                 | `T-10`: Tablas `user_anime_list` y `watch_progress`, endpoints `/api/user/lists` y `/api/user/watch-progress`, reconciliación `isNewerOrBetter` (tolerancia 1 s), completado al $\ge 90\%$, colapso por anime en _Continue Watching_ y sincronización cliente con `localStorage` + `navigator.sendBeacon`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| **3** | `resilient-playback-and-aniskip`      | **Etapa 3B (`P2`)**                                 | `T-11` y `T-12`: Evolución de `episode_source`/`episode_subtitle`, `PlaybackCoordinator` (leases por generación + continuidad de segundo exacto), `SourceAdapterRegistry`, `HlsController` (_fast-probe_ paralelo de 1.5 s + retries acotados + `swapAudioCodec`) e integración de **AniSkip** cruzada con el catálogo musical OP/ED.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **4** | `watch2gether-synchronized-rooms`     | **Etapa 3C (`P2`)**                                 | Salas sincronizadas **Watch2Gether** para anime y música: tablas `watch_room*`, reloj en tiempo real y Pub/Sub en Dragonfly + SSE, algoritmo `computeDriftCorrection` en 3 niveles, cola compartida, chat, reacciones, encuestas y UI de teatro.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **5** | `hybrid-taste-and-ai-recommendations` | **Etapa 4 (`P2` / `P3`)**                           | `T-13`: Motor híbrido en 2 niveles: Nivel 1 (`UserTasteProfile` de 5 factores + deduplicación de franquicias + `pgvector` en PostgreSQL) y Nivel 2 (curador contextual con Gemini cacheado en Dragonfly con rate-limit y fallback automático al Nivel 1).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
