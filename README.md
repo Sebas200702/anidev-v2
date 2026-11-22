@@ -210,16 +210,20 @@ Ops docs: [alert rules](docs/alerts.md) ·
 
 **SemVer**, computed automatically from Conventional Commits on every merge
 to `master`. Git tags and GitHub Releases are the source of truth for the
-version (`package.json`/`CHANGELOG.md` are frozen at `0.18.0`).
+version; `package.json` and `CHANGELOG.md` follow them through a
+`chore(release): vX.Y.Z` bot commit pushed to `master` after each release.
 
 - `fix`/`perf`/`revert` → **patch** · `feat` → **minor** ·
   `BREAKING CHANGE:`/`!` → **major** · nothing releasable → no release.
 
 **Release flow (automatic, `.github/workflows/deploy.yml`):**
 1. Merge the PR to `master`.
-2. If there is a releasable commit since the last tag, CI computes `vX.Y.Z`.
-3. The Docker image is built once and pushed as `:latest` + `:<sha>` (+ `:vX.Y.Z` on a release).
-4. After the image is pushed, the tag and its GitHub Release (generated changelog) are created.
+2. The Docker image is always built once and pushed as `:latest` + `:<sha>`.
+3. Then the release job computes `vX.Y.Z` if there is a releasable commit since the last tag.
+4. It creates the tag and its GitHub Release, and retags the image as `:vX.Y.Z`.
+5. It commits the updated `CHANGELOG.md` and `package.json` version back to
+   `master` with the `RELEASE_DEPLOY_KEY` deploy key (the `master` ruleset's
+   only bypass actor).
 
 Never tag or bump the version by hand.
 
