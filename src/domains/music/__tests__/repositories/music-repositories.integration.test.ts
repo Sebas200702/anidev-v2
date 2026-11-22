@@ -18,6 +18,8 @@ const ANIME = 999_002_101
 const MUSIC = 999_002_501
 const VERSION_ID = 999_002_601
 const ARTIST = 999_002_701
+const ADULT_ANIME = 999_002_102
+const ADULT_MUSIC = 999_002_502
 
 describe.skipIf(!enabled)('music repositories (integration)', () => {
   let pool: PgPool
@@ -65,6 +67,20 @@ describe.skipIf(!enabled)('music repositories (integration)', () => {
       [ANIME, MUSIC]
     )
 
+    await pool.query(
+      `INSERT INTO anime (mal_id, title, type, rating)
+       VALUES ($1,'E2E Adult Music Anime','TV','Rx - Hentai') ON CONFLICT (mal_id) DO NOTHING`,
+      [ADULT_ANIME]
+    )
+    await pool.query(
+      `INSERT INTO music (id, title, type) VALUES ($1,'E2E Hidden Song','OP') ON CONFLICT (id) DO NOTHING`,
+      [ADULT_MUSIC]
+    )
+    await pool.query(
+      `INSERT INTO anime_music (anime_id, music_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`,
+      [ADULT_ANIME, ADULT_MUSIC]
+    )
+
     const mod = await Promise.all([
       import('@music/repositories/music'),
       import('@music/repositories/music-list'),
@@ -83,7 +99,9 @@ describe.skipIf(!enabled)('music repositories (integration)', () => {
 
   afterAll(async () => {
     if (!pool) return
-    await pool.query('DELETE FROM anime_music WHERE music_id = $1', [MUSIC])
+    await pool.query('DELETE FROM anime_music WHERE music_id = ANY($1)', [
+      [MUSIC, ADULT_MUSIC],
+    ])
     await pool.query(
       'DELETE FROM music_resolution WHERE music_version_id = $1',
       [VERSION_ID]
@@ -91,8 +109,12 @@ describe.skipIf(!enabled)('music repositories (integration)', () => {
     await pool.query('DELETE FROM music_version WHERE music_id = $1', [MUSIC])
     await pool.query('DELETE FROM music_artist WHERE music_id = $1', [MUSIC])
     await pool.query('DELETE FROM artist WHERE id = $1', [ARTIST])
-    await pool.query('DELETE FROM music WHERE id = $1', [MUSIC])
-    await pool.query('DELETE FROM anime WHERE mal_id = $1', [ANIME])
+    await pool.query('DELETE FROM music WHERE id = ANY($1)', [
+      [MUSIC, ADULT_MUSIC],
+    ])
+    await pool.query('DELETE FROM anime WHERE mal_id = ANY($1)', [
+      [ANIME, ADULT_ANIME],
+    ])
     await pool.end()
   })
 
@@ -119,6 +141,27 @@ describe.skipIf(!enabled)('music repositories (integration)', () => {
       query: 'E2E Music Song',
     })
     expect(count).toBeGreaterThanOrEqual(1)
+  })
+
+  it('matches themes by the title of their anime', async () => {
+    const rows = await repos.list.getMusicList({
+      page: 1,
+      limit: 50,
+      query: 'e2e music anime',
+    })
+    expect(rows.map((m) => m.id)).toContain(MUSIC)
+    expect(
+      await repos.list.getMusicListCount({ query: 'e2e music anime' })
+    ).toBeGreaterThanOrEqual(1)
+  })
+
+  it('never exposes themes through an adult anime title', async () => {
+    const rows = await repos.list.getMusicList({
+      page: 1,
+      limit: 50,
+      query: 'E2E Adult Music Anime',
+    })
+    expect(rows.map((m) => m.id)).not.toContain(ADULT_MUSIC)
   })
 
   it('resolves artists by single and multiple ids', async () => {

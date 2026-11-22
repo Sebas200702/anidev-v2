@@ -13,6 +13,11 @@ Documents the shipped music catalog read surface (public list and detail endpoin
 - **WHEN** a client requests `GET /api/music?limit=20`
 - **THEN** the response is `200` with the envelope validated by the response schema and cached for the configured TTL
 
+#### Scenario: Search by theme or anime title
+
+- **WHEN** a client requests `GET /api/music?query=bebop`
+- **THEN** the list holds the themes whose title matches and the themes of every non-adult anime whose title (canonical, English, Japanese or synonym) matches
+
 #### Scenario: Out-of-range limit is rejected
 
 - **WHEN** a client requests `GET /api/music?limit=100000`
