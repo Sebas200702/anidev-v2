@@ -1,0 +1,4 @@
+{"$schema":"https://example.invalid/schema.json","license":{"name":"ODbL"}}
+{"sources":["https://anilist.co/anime/9300","https://myanimelist.net/anime/300","https://kitsu.app/anime/1"],"title":"Mapped \"quoted\" \\u00e9"}
+{"sources":["https://myanimelist.net/anime/700"],"title":"No AniList"}
+{"sources":["https://anilist.co/anime/9800","https://myanimelist.net/anime/800","https://myanimelist.net/anime/801"],"title":"Two MAL"}
