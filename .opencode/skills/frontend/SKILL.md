@@ -1,4 +1,5 @@
 ---
+
 name: frontend
 description: The global frontend workflow for this repo — rendering strategy (zero-JS + islands on demand), component composition, data flow from services to pages, styling conventions, accessibility, and living component documentation. Use for ANY UI work: building or editing Astro components, pages, layouts, styles, or client islands. Routes you to the right sub-skill per phase (impeccable for design craft, presentational-container for component structure, web-quality-audit / webapp-testing for verification).
 lifecycle-phase: PLAN / IMPLEMENT / DOUBT
@@ -72,7 +73,7 @@ responses. Page route pattern (see `src/pages/anime/[malId]/[slug].astro`):
 
 ## 5. Living documentation — `/showcase`
 
-Components are not only JSDoc-commented — they are *driven*. `/showcase` is a
+Components are not only JSDoc-commented — they are _driven_. `/showcase` is a
 props playground: `?component=<slug>` renders one component isolated, next to a
 control for every prop its entry declares, and the prop state lives in the URL
 (shareable link, back button as undo).
@@ -104,5 +105,6 @@ control for every prop its entry declares, and the prop state lives in the URL
 - [ ] Gate: `bun run format → bun run check → bun run check:types → bun run test → bun run build`; `web-quality-audit` on new pages.
 
 ## When in doubt
+
 Design craft: **impeccable**. Component structure: **presentational-container**.
 Page quality: **web-quality-audit** / **webapp-testing**. Router: this skill.

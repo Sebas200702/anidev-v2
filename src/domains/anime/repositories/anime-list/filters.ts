@@ -6,7 +6,8 @@
  * Pure builder translating normalized {@link AnimeFilters} (minus pagination) into Drizzle `SQL`
  * fragments combined with `AND` by {@link animeListRepository}.
  */
-import { anime, animeTitleSynonym } from '@db/schemas/anime'
+import { anime } from '@db/schemas/anime'
+import { animeTitleMatch } from '@anime/repositories/anime-title-match'
 import { genre as genreTable } from '@db/schemas/anime-taxonomy'
 import { animeProducer } from '@db/schemas/anime-entity-relations'
 import { ADULT_RATINGS } from '@anime/constants'
@@ -116,24 +117,8 @@ export const buildAnimeListFilters = ({
   }
 
   if (query?.trim()) {
-    // Index-backed substring match: the GIN pg_trgm indexes on these columns
-    // (plus `anime_title_synonym.title`) accelerate `ILIKE '%q%'`, so this is
-    // not a sequential scan. Ranking by similarity happens in the sort
-    // builder (relevance sort).
-    const pattern = `%${query.trim()}%`
-
-    filters.push(
-      sql`(
-        ${anime.title} ILIKE ${pattern}
-        OR ${anime.titleEnglish} ILIKE ${pattern}
-        OR ${anime.titleJapanese} ILIKE ${pattern}
-        OR EXISTS (
-          SELECT 1 FROM ${animeTitleSynonym}
-          WHERE ${animeTitleSynonym.animeId} = ${anime.malId}
-          AND ${animeTitleSynonym.title} ILIKE ${pattern}
-        )
-      )`
-    )
+    // Ranking by similarity happens in the sort builder (relevance sort).
+    filters.push(animeTitleMatch(query))
   }
 
   return filters

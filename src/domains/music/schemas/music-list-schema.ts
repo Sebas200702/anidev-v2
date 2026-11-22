@@ -16,7 +16,7 @@ import { z } from 'zod'
  * | `page` | `z.coerce.number().int().min(1).default(1)` |
  * | `limit` | `z.coerce.number().int().min(1).max(100).default(10)` |
  * | `type` | optional string — `OP`, `ED`, `UNK`, or labels `opening` / `ending` (normalized in mapper) |
- * | `query` | optional search string (title substring) |
+ * | `query` | optional search string (theme title or title of its anime) |
  */
 export const musicListFiltersParamsSchema = z.object({
   page: z.coerce.number().int().min(1).max(10_000).default(1),

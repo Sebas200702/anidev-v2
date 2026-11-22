@@ -26,16 +26,16 @@ Cimientos endurecidos (Fase 0 completa); catálogo, búsqueda, productoras y obr
 impresa expuestos por API; listas y progreso con API de servidor. La UI aún
 cubre solo home, búsqueda y ficha de anime básica.
 
-| Dominio | Estado |
-|---|---|
-| **infra** | Health, error-handling, monitoring (Rustrak), resilience/degradación, cache multicapa (Dragonfly), response-schema validation en el wrapper, request-id, rate-limiting, CSP y cabeceras de seguridad, `pg.Pool` acotado. |
-| **anime** | Read: lista/detalle/`full`/characters/staff/episodios (`/api/anime/:malId/episodes`)/media (`/api/anime/:malId/media`, `/:mediaId`)/music (`/api/anime/:malId/music`, `/:musicId`). **Búsqueda avanzada**: filtros (season/score), sort whitelist, free-text indexado (`pg_trgm`, también sinónimos), floor parental safe-only. Páginas `/anime/[malId]/[slug]` y `/search?genre=` (taxonomía por género). El reparto omite personajes con nombre provisional. |
-| **search** | Historial por usuario (record best-effort + read/clear authed) y búsqueda de catálogo pública `GET /api/search?q=&type=anime\|manga`. |
-| **manga** | Obra impresa (manga, novela, one-shot): `/api/manga` (filtros, safe), `/api/manga/:malId` (reparto con voz) y `/full`. Sin páginas. |
-| **music** | Read: lista + detalle, nº de tema, rango de episodios y enlaces de tienda. Sin player. |
-| **media** | Optimización de imágenes (Sharp), proxy con guarda SSRF, streaming `Range` `206`, caché de imágenes en disco acotado. |
-| **auth** | Login/register/logout/session (Better Auth). |
-| **user** | Perfil (read con privacidad owner-only + writes de identidad), listas relacionales (`/api/user/lists`) y progreso de visionado con *Continue Watching* (`/api/user/watch-progress`). Sin UI. |
+| Dominio    | Estado                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **infra**  | Health, error-handling, monitoring (Rustrak), resilience/degradación, cache multicapa (Dragonfly), response-schema validation en el wrapper, request-id, rate-limiting, CSP y cabeceras de seguridad, `pg.Pool` acotado.                                                                                                                                                                                                                                       |
+| **anime**  | Read: lista/detalle/`full`/characters/staff/episodios (`/api/anime/:malId/episodes`)/media (`/api/anime/:malId/media`, `/:mediaId`)/music (`/api/anime/:malId/music`, `/:musicId`). **Búsqueda avanzada**: filtros (season/score), sort whitelist, free-text indexado (`pg_trgm`, también sinónimos), floor parental safe-only. Páginas `/anime/[malId]/[slug]` y `/search?genre=` (taxonomía por género). El reparto omite personajes con nombre provisional. |
+| **search** | Historial por usuario (record best-effort + read/clear authed) y búsqueda de catálogo pública `GET /api/search?q=&type=anime\|manga`.                                                                                                                                                                                                                                                                                                                          |
+| **manga**  | Obra impresa (manga, novela, one-shot): `/api/manga` (filtros, safe), `/api/manga/:malId` (reparto con voz) y `/full`. Sin páginas.                                                                                                                                                                                                                                                                                                                            |
+| **music**  | Read: lista + detalle, nº de tema, rango de episodios y enlaces de tienda. Sin player.                                                                                                                                                                                                                                                                                                                                                                         |
+| **media**  | Optimización de imágenes (Sharp), proxy con guarda SSRF, streaming `Range` `206`, caché de imágenes en disco acotado.                                                                                                                                                                                                                                                                                                                                          |
+| **auth**   | Login/register/logout/session (Better Auth).                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **user**   | Perfil (read con privacidad owner-only + writes de identidad), listas relacionales (`/api/user/lists`) y progreso de visionado con _Continue Watching_ (`/api/user/watch-progress`). Sin UI.                                                                                                                                                                                                                                                                   |
 
 **Entregados:** migración provider stack (Turso→Postgres, Upstash→
 Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
@@ -48,7 +48,8 @@ Dragonfly, Sentry→Rustrak), `api-response-schema-in-wrapper`, unit folders,
 está documentado en `docs/specs/`.
 
 **Features planificadas (ODD, `odd/tasks/<feature>.md`):**
-- `resilient-playback-and-aniskip` _(en curso)_ — Motor `PlaybackCoordinator` (leases por generación + `AbortController` + continuidad de segundo exacto), `HlsController` con *fast-probe* paralelo (1.5 s) y failover automático, esquema `episode_source` enriquecido e integración con **AniSkip** + catálogo musical OP/ED.
+
+- `resilient-playback-and-aniskip` _(en curso)_ — Motor `PlaybackCoordinator` (leases por generación + `AbortController` + continuidad de segundo exacto), `HlsController` con _fast-probe_ paralelo (1.5 s) y failover automático, esquema `episode_source` enriquecido e integración con **AniSkip** + catálogo musical OP/ED.
 - `watch2gether-synchronized-rooms` — Salas sincronizadas **Watch2Gether** para anime y música (`public`, `invite`, `password` con `password_hash` server-only), reloj en tiempo real y Pub/Sub en Dragonfly + SSE, corrección de deriva en 3 niveles ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`), cola compartida, chat, reacciones y encuestas.
 - `watch-progress-client-sync` — Seguimiento de las listas: sync de progreso en el cliente (`localStorage` + `sendBeacon` + merge al iniciar sesión) y e2e de listas/progreso. Depende del player de `resilient-playback-and-aniskip`.
 - `ingest-queue-postgres` / `isolated-provider-service` — Track D: cola de ingesta del scraper sobre Postgres y servicio de proveedores aislado del VPS.
@@ -83,7 +84,7 @@ la auditoría técnica antes de escalar las fases de producto.
 _(Changes archivados: `platform-audit-and-stabilization` y `component-showcase`.)_
 
 - [x] Terminar changes abiertos: provider stack, response-schema wrapper, unit folders, frontend-flow, user writes (todos archivados).
-- [x] **Privacidad en perfiles (`T-01`)**: proyectar `preferences` e `history.watchedAnimes` como `owner-only` en `GET /api/user/:userId` (incluso en *cache hit*).
+- [x] **Privacidad en perfiles (`T-01`)**: proyectar `preferences` e `history.watchedAnimes` como `owner-only` en `GET /api/user/:userId` (incluso en _cache hit_).
 - [x] **Streaming HTTP `Range` (`206`) y caché de medios (`T-02`, `T-03`, `T-07`)**: incluir `version`/`resolution` en `buildRawMetaKey`, eliminar doble `JSON.stringify`, servir audio/vídeo en `ReadableStream` con soporte `Range` (`206 Partial Content`) sin cargar archivos completos en `Buffer` de RAM, añadir timeout (`8 s`) + guarda anti-SSRF en `fetchMediaAsset`, y mover las imágenes optimizadas (Sharp) de base64 en Dragonfly a caché en disco acotado con `Cache-Control: public, max-age=31536000, immutable`.
 - [x] **Consistencia de errores y degradación en Home (`T-04`)**: unificar el sobre de error con `createErrorResponse` en `withZodValidation` y `/media`, omitir `error.details` en respuestas 503 al cliente y añadir `try/catch` con `<ServiceUnavailable />` (503) en `src/pages/index.astro`.
 - [x] **Índices PostgreSQL, FKs y `pg.Pool` acotado (`T-05`, `T-06`)**: índices B-tree en todas las FKs de tablas `*_media`/`music_*` y columnas de filtro/sort de `anime`, índice único en `profile.user_id`, GIN `pg_trgm` en `anime_title_synonym.title`, `ON DELETE CASCADE` en uniones de catálogo, límite `max: 20` en `pg.Pool` y reubicación de `resolveMediaAssets` fuera de `src/shared/` con regla en `biome.json`.
@@ -101,10 +102,10 @@ El corazón del producto. Convierte la v2 en un catálogo explorable de verdad.
 
 - [x] **Búsqueda avanzada** — filtros: género, tipo, score (rango), estado, año, rating, temporada + `search_query`; orden configurable; paginación. **Estudio/productora y día de emisión quedan diferidos** hasta el backfill del Track D. _(Change archivado: `advanced-anime-search`; optimización `Promise.all` + búsqueda en `anime_title_synonym` en `platform-audit-and-stabilization`.)_
 - [x] **Homepage** — héroe SSR (carrusel de destacados: los más populares con
-  banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
-  el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
-  (por temporada, por género) quedan pendientes.
-  _(Change archivado: `home-shell-and-featured-carousel`; elegibilidad set-based
+      banner + clearlogo, cacheado como un solo payload) + grilla top-rated, sobre
+      el nuevo app shell y la capa de tokens. **Rails temáticos adicionales**
+      (por temporada, por género) quedan pendientes.
+      _(Change archivado: `home-shell-and-featured-carousel`; elegibilidad set-based
   y fan-out por lotes en `platform-audit-and-stabilization`.)_
 - [ ] **Ficha de anime completa** — sinopsis, géneros, personajes, relacionados, banners (servicios sobre tablas relacionales existentes).
 - [ ] **Taxonomía** — por género ✅ (`/search?genre=`, change archivado `taxonomy-and-discover`); por estudio/productora: API ✅ (`/api/producers`, filtro `producer` en `/api/anime`); **faltan las páginas**.
@@ -159,7 +160,7 @@ _(Change: `hybrid-taste-and-ai-recommendations`.)_
   - **Deduplicación de franquicias (`dedupeFranchiseSignals`)** mediante relaciones `Sequel`/`Prequel` en `anime_relation` para que múltiples temporadas de una misma serie no saturen las semillas ni los resultados.
   - Similitud vectorial con `pgvector` + afinidad de géneros/estudios + exclusión estricta de títulos ya vistos/listados y respeto del floor parental (`safe`/`full`), devolviendo `reasons` explicables por tarjeta.
 - [ ] **Nivel 2 — Curador Contextual Gemini (`fetch_recommendations`)**:
-  - Re-ranking y justificación sin spoilers sobre los 40 mejores candidatos prefiltrados por el Nivel 1 para contextos en lenguaje natural (*búsqueda actual, viendo, mood, similar-a, estacional, maratón, quick watch, asistente conversacional*).
+  - Re-ranking y justificación sin spoilers sobre los 40 mejores candidatos prefiltrados por el Nivel 1 para contextos en lenguaje natural (_búsqueda actual, viendo, mood, similar-a, estacional, maratón, quick watch, asistente conversacional_).
   - **Cache-first en Dragonfly + rate-limit por usuario + fallback automático al Nivel 1** cuando Gemini devuelve vacío, supera el timeout (`6 s`) o no está disponible.
 
 **Salida:** descubrimiento personalizado instantáneo, explicable y con coste de API acotado.
@@ -179,7 +180,7 @@ _(Changes: `resilient-playback-and-aniskip`, `relational-lists-and-watch-progres
 - [ ] **Continuar viendo (`watch_progress`)** — sincronización en 3 capas (`localStorage` síncrono + `navigator.sendBeacon` + PostgreSQL `watch_progress`) con resolución de conflictos `isNewerOrBetter` (ventana de tolerancia de `1000 ms` desempatando por mayor `progress_seconds`), completado automático al $\ge 90\%$ y colapso a 1 tarjeta por anime.
 - [ ] **Watch2Gether / Salas Sincronizadas (`watch-rooms`)** — salas de visualización y escucha en grupo (`public`, `invite`, `password` con `password_hash` verificado en servidor) para episodios de anime y playlists de música OP/ED:
   - Reloj en tiempo real y difusión de eventos en **Dragonfly (`watch:room:{id}:clock` + Pub/Sub) vía SSE** (cero escrituras en PostgreSQL por cada tick de reproducción).
-  - **Corrección de deriva en 3 niveles (`computeDriftCorrection`)**: $|\Delta t| > 2.5\text{ s}$ → *hard seek*; $0.35\text{ s} < |\Delta t| \le 2.5\text{ s}$ → ajuste suave de `playbackRate` ($\pm 0.08$, rango `[0.92, 1.08]`); $|\Delta t| \le 0.35\text{ s}$ → `1.0x`.
+  - **Corrección de deriva en 3 niveles (`computeDriftCorrection`)**: $|\Delta t| > 2.5\text{ s}$ → _hard seek_; $0.35\text{ s} < |\Delta t| \le 2.5\text{ s}$ → ajuste suave de `playbackRate` ($\pm 0.08$, rango `[0.92, 1.08]`); $|\Delta t| \le 0.35\text{ s}$ → `1.0x`.
   - Cola compartida de episodios/temas (`watch_room_queue`), chat en vivo con reacciones (`watch_room_message`), encuestas en tiempo real (`watch_room_poll`), transferencia automática de host al salir y cierre de salas inactivas ($>5\text{ min}$ sin heartbeat).
 
 **Salida:** streaming resiliente individual y grupal (Watch2Gether) con sincronización de nivel producción.
@@ -189,17 +190,17 @@ _(Changes: `resilient-playback-and-aniskip`, `relational-lists-and-watch-progres
 ### Fase 6 — Contenido enriquecido
 
 - [ ] **Personajes / artistas / seiyuu** — páginas dedicadas (`/character`, `/artist`, `/voice-actor`) + **backfill** de enlaces voice-actor (v1: ~4.2k de 217k).
-  _API ✅ (change archivado `characters-and-people-api`): `/api/characters` (búsqueda, perfil con voces, apariciones) y `/api/people` (búsqueda, perfil, voces, créditos, música); faltan las páginas._
-  _Datos listos (2026-10-19): el reparto completo por anime (la ficha HTML de
+      _API ✅ (change archivado `characters-and-people-api`): `/api/characters` (búsqueda, perfil con voces, apariciones) y `/api/people` (búsqueda, perfil, voces, créditos, música); faltan las páginas._
+      _Datos listos (2026-10-19): el reparto completo por anime (la ficha HTML de
   MAL corta en 10; la API v2 da la lista entera), con rol fino de AniList,
   voz, biografía y retrato de cada personaje._
-- [ ] **Schedule** — calendario semanal de estrenos/emisiones con filtro personalizado *"Mis series en emisión"* (cruzado con `user_anime_list.status = 'watching'`).
+- [ ] **Schedule** — calendario semanal de estrenos/emisiones con filtro personalizado _"Mis series en emisión"_ (cruzado con `user_anime_list.status = 'watching'`).
 - [ ] **Colecciones** — `/collection/[slug]` con gestión personal.
 - [ ] **Obra impresa: manga y novela** — _API completa (lista, detalle con voces, `/full`, búsqueda por tipo); faltan las páginas `/manga`._ — dominio nuevo (migración `0010`):
-  70.958 obras (57.867 manga, 6.991 novelas, 6.000 one-shots) con sinopsis,
-  capítulos, serialización, editorial, relaciones, enlaces y portada; reparto
-  y staff propios; búsqueda con filtro por tipo.
-  _(Change archivado: `printed-media-domain`; API `/api/manga`, `/api/manga/:malId`,
+      70.958 obras (57.867 manga, 6.991 novelas, 6.000 one-shots) con sinopsis,
+      capítulos, serialización, editorial, relaciones, enlaces y portada; reparto
+      y staff propios; búsqueda con filtro por tipo.
+      _(Change archivado: `printed-media-domain`; API `/api/manga`, `/api/manga/:malId`,
   `/api/manga/:malId/full` y `/api/search?type=manga`.)_
 
 **Salida:** fichas ricas y conexiones cruzadas música ↔ artista ↔ seiyuu ↔ obra impresa.
@@ -264,11 +265,11 @@ Kitsu/TVDB/AniZip (IDs cruzados). Video de episodios: sin fuente legal → muro 
 
 ### Backfills mapeados a features
 
-| Backfill | Desbloquea |
-|---|---|
-| studios/licensors split + broadcast | Filtros de **estudio** y **día** (Fase 1), Schedule (Fase 6) |
-| voice-actor links (~4.2k de 217k en v1) | Fichas de seiyuu (Fase 6) |
-| episode `video_url` / `episode_source` | **Muro de Fase 5** — requiere decisión de fuente, no backfill |
+| Backfill                                | Desbloquea                                                    |
+| --------------------------------------- | ------------------------------------------------------------- |
+| studios/licensors split + broadcast     | Filtros de **estudio** y **día** (Fase 1), Schedule (Fase 6)  |
+| voice-actor links (~4.2k de 217k en v1) | Fichas de seiyuu (Fase 6)                                     |
+| episode `video_url` / `episode_source`  | **Muro de Fase 5** — requiere decisión de fuente, no backfill |
 
 **Estado (2026-10-18) — mitad esquema del backfill hecha** (change
 `catalog-coverage-fields`): `anime` ya tiene `broadcast_day/time/timezone`
@@ -289,9 +290,10 @@ archivado `standardize-frontend-flow` fija zero-JS + islas on-demand, one-way y
 presentational/container.
 
 **Árbol de estado (usa el nivel más bajo que resuelva):**
+
 1. Sin JS (`.astro`) → 2. `<form>`+API → 3. `useState` local (una isla) →
-4. **Nano Stores** (estado compartido entre islas) → 5. `transition:persist` +
-nanostore + `PlaybackCoordinator` (sobrevive navegación → **player**).
+2. **Nano Stores** (estado compartido entre islas) → 5. `transition:persist` +
+   nanostore + `PlaybackCoordinator` (sobrevive navegación → **player**).
 
 **Personalización vs caché (regla en una línea):** _la URL es el estado; el
 shell es anónimo y cacheable; la personalización son islas client-side sobre
@@ -327,14 +329,14 @@ Supabase). Servicios desplegados: **Postgres** (`database`), **Dragonfly**
 
 ## Decisiones de arquitectura (log)
 
-| # | Decisión | Estado |
-|---|---|---|
-| D1 | Scraper en **dos modos/entornos**: (A) **backfill+reconciliación** one-off en entorno aislado NO-prod → **promoción a prod = diff-upsert**; (B) **update incremental** en prod, ligero, vía `pg_cron` | ✅ decidido |
-| D2 | Cola de ingesta = **Postgres-nativo** (`FOR UPDATE SKIP LOCKED` + `pg_cron`); rate-bucket en memoria | ✅ decidido |
-| D3 | Búsqueda = **Postgres-only por etapas**: `pg_trgm`/tsvector + sinónimos (Stage 1) → **ParadeDB `pg_search`** BM25 (Stage 2) → **pgvector** (Stage 3, recs híbridas) | ✅ decidido |
-| D4 | Estado entre islas: árbol de 5 niveles; **Nano Stores** primitivo único; **URL = estado** en descubrimiento; `transition:persist` + `PlaybackCoordinator` para el player | ✅ decidido |
-| D5 | Personalización vs caché: **shell anónimo cacheable + islas personalizadas** sobre API `no-store`; control parental = variante de cache-key (`safe`/`full`); middleware `pre` salta `/media/*` y cachea sesión 60 s; binarios de imagen fuera de Dragonfly (en disco LRU + `immutable`) | ✅ decidido |
-| D6 | Docs: **`/showcase`** (UI) + **Starlight** sitio estático separado + **referencia API generada** desde Zod→OpenAPI y JSDoc en CI + [`ARCHITECTURE.md`](./ARCHITECTURE.md) | ✅ decidido |
-| D7 | Testing y costos: pirámide unit→integración→E2E→**a11y axe** en CI; **Recomendaciones en 2 niveles** (Nivel 1 `TasteProfile`+`pgvector` coste $0 / <50 ms; Nivel 2 Gemini cacheado con rate-limit y fallback al Nivel 1); **Fase 5 video = go/no-go con estimación de egress** | ✅ decidido |
-| D8 | **Presupuesto de recursos**: todo en 1 VPS 4c/8GB/100GB. `pg.Pool` acotado (`max: 20`); streaming multimedia por `ReadableStream` + `Range` (`206`) sin buffers completos en RAM; media de video **fuera** del VPS | ✅ restricción fijada |
-| D9 | **Watch2Gether (`watch-rooms`) híbrido PostgreSQL + Dragonfly Pub/Sub**: metadatos de sala (`password_hash` server-only), participantes, cola, mensajes y encuestas en PostgreSQL; reloj de reproducción en vivo (`watch:room:{id}:clock`) y eventos en tiempo real sobre **Dragonfly Pub/Sub + SSE**, con **corrección de deriva en 3 niveles** ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`) compartida para anime y música | ✅ decidido |
+| #   | Decisión                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Estado                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| D1  | Scraper en **dos modos/entornos**: (A) **backfill+reconciliación** one-off en entorno aislado NO-prod → **promoción a prod = diff-upsert**; (B) **update incremental** en prod, ligero, vía `pg_cron`                                                                                                                                                                                                                                                                                    | ✅ decidido           |
+| D2  | Cola de ingesta = **Postgres-nativo** (`FOR UPDATE SKIP LOCKED` + `pg_cron`); rate-bucket en memoria                                                                                                                                                                                                                                                                                                                                                                                     | ✅ decidido           |
+| D3  | Búsqueda = **Postgres-only por etapas**: `pg_trgm`/tsvector + sinónimos (Stage 1) → **ParadeDB `pg_search`** BM25 (Stage 2) → **pgvector** (Stage 3, recs híbridas)                                                                                                                                                                                                                                                                                                                      | ✅ decidido           |
+| D4  | Estado entre islas: árbol de 5 niveles; **Nano Stores** primitivo único; **URL = estado** en descubrimiento; `transition:persist` + `PlaybackCoordinator` para el player                                                                                                                                                                                                                                                                                                                 | ✅ decidido           |
+| D5  | Personalización vs caché: **shell anónimo cacheable + islas personalizadas** sobre API `no-store`; control parental = variante de cache-key (`safe`/`full`); middleware `pre` salta `/media/*` y cachea sesión 60 s; binarios de imagen fuera de Dragonfly (en disco LRU + `immutable`)                                                                                                                                                                                                  | ✅ decidido           |
+| D6  | Docs: **`/showcase`** (UI) + **Starlight** sitio estático separado + **referencia API generada** desde Zod→OpenAPI y JSDoc en CI + [`ARCHITECTURE.md`](./ARCHITECTURE.md)                                                                                                                                                                                                                                                                                                                | ✅ decidido           |
+| D7  | Testing y costos: pirámide unit→integración→E2E→**a11y axe** en CI; **Recomendaciones en 2 niveles** (Nivel 1 `TasteProfile`+`pgvector` coste $0 / <50 ms; Nivel 2 Gemini cacheado con rate-limit y fallback al Nivel 1); **Fase 5 video = go/no-go con estimación de egress**                                                                                                                                                                                                           | ✅ decidido           |
+| D8  | **Presupuesto de recursos**: todo en 1 VPS 4c/8GB/100GB. `pg.Pool` acotado (`max: 20`); streaming multimedia por `ReadableStream` + `Range` (`206`) sin buffers completos en RAM; media de video **fuera** del VPS                                                                                                                                                                                                                                                                       | ✅ restricción fijada |
+| D9  | **Watch2Gether (`watch-rooms`) híbrido PostgreSQL + Dragonfly Pub/Sub**: metadatos de sala (`password_hash` server-only), participantes, cola, mensajes y encuestas en PostgreSQL; reloj de reproducción en vivo (`watch:room:{id}:clock`) y eventos en tiempo real sobre **Dragonfly Pub/Sub + SSE**, con **corrección de deriva en 3 niveles** ($>2.5\text{ s}$ seek, $0.35\text{–}2.5\text{ s}$ `playbackRate` $\pm 0.08$, $\le 0.35\text{ s}$ `1.0x`) compartida para anime y música | ✅ decidido           |

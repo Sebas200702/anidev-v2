@@ -1,6 +1,7 @@
 # AniDev v2 — Agent Guide
 
 ## Stack
+
 - **Runtime**: Bun (primary), Node.js >=22.12.0
 - **Framework**: Astro 6 SSR with `@astrojs/vercel` adapter (`output: 'server'`)
 - **Database**: Supabase (PostgreSQL) via Drizzle ORM (`pg` dialect)
@@ -61,7 +62,7 @@ docker compose --profile storage up -d --build   # + MinIO :9000 (console :9001)
 uploads go through `@lib/storage`, which talks to any S3-compatible backend, so
 `.env.example` documents both routes and nothing is hard-coded to a vendor.
 Production runs MinIO on this repo's own VPS rather than Cloudflare R2, because
-production *is* a self-hosted stack (Dokploy + Traefik) and a managed bucket
+production _is_ a self-hosted stack (Dokploy + Traefik) and a managed bucket
 would add an account, a payment method and a network hop where none exists
 today — there is no R2 account to reuse. The cost of that choice: **MinIO
 Community Edition is end-of-life upstream** (images stopped being published in
@@ -112,30 +113,29 @@ add a Traefik domain for the storage compose (host `media.anidev.app`, service
 
 ## Commands
 
-| Script | Purpose |
-|--------|---------|
-| `bun install` | Install dependencies (Bun only — never npm/yarn/npx) |
-| `bun run dev` | Astro dev server |
-| `bun run build` | Production build (Vercel output) |
-| `bun run preview` | Run the built output locally |
-| `bun run format` | Biome formatter (`biome format --write .`; excludes `.astro`; LF line endings) |
-| `bun run check` | Biome lint + format check (exit non-zero on errors) |
-| `bun run check:write` | Biome lint, applying safe fixes |
-| `bun run format:astro` | Prettier on `.astro` files (Biome doesn't support Astro) |
-| `bun run test` | Vitest unit suite (`vitest run`; TDD — see Testing below). DB-integration specs auto-skip (no `RUN_DB_TESTS`) |
-| `bun run test:watch` | Vitest watch mode |
+| Script                     | Purpose                                                                                                                                                                                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun install`              | Install dependencies (Bun only — never npm/yarn/npx)                                                                                                                                                            |
+| `bun run dev`              | Astro dev server                                                                                                                                                                                                |
+| `bun run build`            | Production build (Vercel output)                                                                                                                                                                                |
+| `bun run preview`          | Run the built output locally                                                                                                                                                                                    |
+| `bun run format`           | Biome formatter (`biome format --write .`; excludes `.astro`; LF line endings)                                                                                                                                  |
+| `bun run check`            | Biome lint + format check (exit non-zero on errors)                                                                                                                                                             |
+| `bun run check:write`      | Biome lint, applying safe fixes                                                                                                                                                                                 |
+| `bun run format:astro`     | Prettier on `.astro` files (Biome doesn't support Astro)                                                                                                                                                        |
+| `bun run test`             | Vitest unit suite (`vitest run`; TDD — see Testing below). DB-integration specs auto-skip (no `RUN_DB_TESTS`)                                                                                                   |
+| `bun run test:watch`       | Vitest watch mode                                                                                                                                                                                               |
 | `bun run test:integration` | Integration specs (`*.integration.test.ts`) against a **real Postgres** (`RUN_DB_TESTS=1`; needs the docker stack + `db:migrate` + `db:seed:e2e`; the storage spec also needs the `storage` profile and `S3_*`) |
-| `bun run test:e2e` | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below) |
-| `bun run test:e2e:ui` | Playwright interactive UI mode |
-| `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project |
-| `bun run db:seed:e2e` | Seed the deterministic rows the E2E specs assert against |
-| `bun run check:types` | Astro typecheck (`astro check`; requires `@astrojs/check`) |
-| `bun run auth:generate` | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`) |
-| `bun run auth:migrate` | Run Better Auth migrations |
-| `bun run db:generate` | Generate Drizzle migration (requirements) |
-| `bun run db:migrate` | Apply Drizzle migrations |
-| `bun run astro sync` | Regenerate `.astro/types.d.ts` (needed after schema changes) |
-| `bun run release:*` | `standard-version` (patch/minor/major/prerelease) |
+| `bun run test:e2e`         | Playwright E2E — builds + boots the Bun artifact, runs `e2e/` against real Postgres + Dragonfly (see Testing below)                                                                                             |
+| `bun run test:e2e:ui`      | Playwright interactive UI mode                                                                                                                                                                                  |
+| `bun run test:e2e:install` | One-time: install the chromium browser for the `ui` project                                                                                                                                                     |
+| `bun run db:seed:e2e`      | Seed the deterministic rows the E2E specs assert against                                                                                                                                                        |
+| `bun run check:types`      | Typecheck `.ts` + `.astro` (`astro sync && tsc --noEmit --runExternalCode`; TypeScript 7.1 beta + experimental `@astrojs/ts-content-mapper`)                                                                    |
+| `bun run auth:generate`    | Regenerate Better Auth schema (`--config src/lib/auth/server.ts`)                                                                                                                                               |
+| `bun run auth:migrate`     | Run Better Auth migrations                                                                                                                                                                                      |
+| `bun run db:generate`      | Generate Drizzle migration (requirements)                                                                                                                                                                       |
+| `bun run db:migrate`       | Apply Drizzle migrations                                                                                                                                                                                        |
+| `bun run astro sync`       | Regenerate `.astro/types.d.ts` (needed after schema changes)                                                                                                                                                    |
 
 All verification scripts exist (`check`, `check:types`, `test`); code quality is `format` + `check` + `check:types` + `test` + `build` (see Verification below). `astro sync` is only needed after schema changes and is not part of the standard gate.
 
@@ -147,6 +147,7 @@ every request enters ODD automatically. The parent session coordinates; real
 phase work is delegated to subagents when it pays off.
 
 **The 7 ODD steps (run in order on every request):**
+
 1. **Authorize** — investigation/explanation/review requests stay read-only; a real unresolved change decision gets one clarification, then stop and wait.
 2. **Explore** — read the existing code and requirements proportionately before proposing or writing anything.
 3. **Resolve uncertainty** — one focused user question per real product decision; at most one scoped read-only assumption challenge.
@@ -161,17 +162,20 @@ unless the user asks.
 
 **Feature document (`odd/tasks/<feature>.md`)** is the spec subagents read, in
 this order:
+
 - a 2–3 line header;
 - `## Specs` — numbered `S#` quoting the user's exact strings/errors/examples verbatim, never summarized, never adding unrequested requirements;
 - `## Tasks` — one line per task (ID, linked `S#`, route, commit);
 - `## Log` — `L1` is the user's original request verbatim; later corrections, evidence, and decisions are appended. A requirement change appends its Log entry, rewrites only the affected `S#`, and reopens only its task.
 
 **Source of truth (committed behavior):**
+
 - `docs/specs/` — current committed behavior per capability, as reference documentation (the former `openspec/specs/`, now plain docs — no delta/archive flow).
 - The active work's `odd/tasks/<feature>.md` + its `todo` projection — the live plan.
 - Code + Vitest/Playwright tests — the executable truth.
 
 **For every feature, agents must:**
+
 1. Read `AGENTS.md` and, if a feature is active, its `odd/tasks/<feature>.md` (through `## Log`) before writing code; then the relevant `docs/specs/`.
 2. Follow the feature document's `## Tasks` one at a time, in dependency order.
 3. Do **not** invent work outside the tasks; if a task is ambiguous, ask the user.
@@ -180,6 +184,7 @@ this order:
 6. Never skip phases — no large-feature coding before the feature document exists.
 
 **The Lifecycle (all agents):** every task passes through `READ → EXPLORE → DOUBT → VERIFY → RELEASE` on top of the 7 ODD steps, codified in the `development-lifecycle` skill in `.opencode/skills/`. Key gates:
+
 - **TDD**: logic changes are written test-first with **Vitest** (`bun run test`); a failing test precedes the fix (`test-driven-development` skill).
 - **Doubt**: before marking a task done or opening a PR, re-review the change with fresh context against the feature document and this file (`doubt-driven-development` skill).
 - **Verify**: `format → check → check:types → test → build` (below).
@@ -194,6 +199,7 @@ ordinary repository policy regardless of RDD mode. See the
 `gentle-ai-rdd-defect-workflow` skill.
 
 **Branching:**
+
 - Default branch is `master`. Never commit directly to `master`.
 - Create a focused branch per concern using `type/<slug>` (e.g. `docs/agent-tooling-migration`, `chore/add-ui-ux-skill`). Merge via Pull Request.
 - Reference documents: this `AGENTS.md`, the active `odd/tasks/<feature>.md`, and `.cursor/commands/commit-all.md`.
@@ -205,14 +211,16 @@ the no-behavior-delta nature and the tasks carry the work directly.
 ## Verification & Code Quality
 
 **Gate before opening a PR (run in order):**
+
 ```
 bun run format → bun run check → bun run check:types → bun run test → bun run build
 ```
 
 Rationale:
+
 - `bun run format` — enforce Biome formatting (single quotes, no semicolons, 80 col; LF enforced via `.gitattributes`).
 - `bun run check` — Biome lint (recommended rules; import sorting disabled) + format verification.
-- `bun run check:types` — Astro/TS typecheck (`astro check`); catches wrong barrel exports and `.astro` module resolution.
+- `bun run check:types` — TS 7 native typecheck of `.ts` and `.astro` files (`astro sync` first, then `tsc` with the `@astrojs/ts-content-mapper` content mapper registered in `tsconfig.json`); catches wrong barrel exports and `.astro` module resolution. `--runExternalCode` is required because the mapper runs code from `node_modules` during compilation. `astro check` is not used: it does not support TypeScript 7.
 - `bun run test` — Vitest (TDD). Logical changes must carry tests.
 - `bun run build` — catches type, config resolution, and prerender/SSR failures (env is validated at module import).
 
@@ -220,11 +228,11 @@ The gate above is the code-quality contract. **E2E (`bun run test:e2e`) is the b
 
 **Test pyramid — three layers, each with a home in the flow:**
 
-| Layer | Command | What it proves | Where it runs |
-|-------|---------|----------------|---------------|
-| **Unit** | `bun run test` | Logic in isolation (deps mocked via `vi.mock`) | `gate` job — every push/PR |
-| **Integration** | `bun run test:integration` | Repositories against a **real Postgres** (`pg_trgm`, cascades, row caps) | `e2e` job — real stack |
-| **E2E** | `bun run test:e2e` | The built server *actually runs* over HTTP + browser | `e2e` job — real stack |
+| Layer           | Command                    | What it proves                                                           | Where it runs              |
+| --------------- | -------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| **Unit**        | `bun run test`             | Logic in isolation (deps mocked via `vi.mock`)                           | `gate` job — every push/PR |
+| **Integration** | `bun run test:integration` | Repositories against a **real Postgres** (`pg_trgm`, cascades, row caps) | `e2e` job — real stack     |
+| **E2E**         | `bun run test:e2e`         | The built server _actually runs_ over HTTP + browser                     | `e2e` job — real stack     |
 
 Pick the lowest layer that proves the behavior: default to unit; reach for integration only for SQL/index/persistence semantics a mock can't express; reserve E2E for cross-layer wiring (middleware, auth cookies, the response wrapper, CSRF). Full local run: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test` → `bun run test:integration` → `bun run test:e2e`.
 
@@ -232,7 +240,7 @@ Pick the lowest layer that proves the behavior: default to unit; reach for integ
 
 **Integration (Vitest + real Postgres):** repository specs named `*.integration.test.ts` live beside their unit siblings but are gated by `describe.skipIf(!process.env.RUN_DB_TESTS)`, so the unit `gate` (no DB) auto-skips them and they never need a mock. `bun run test:integration` sets `RUN_DB_TESTS=1` and runs only those files (`vitest run integration`) against the live `DATABASE_URL` — so the docker stack must be up and `db:migrate` + `db:seed:e2e` applied first (the anime-search spec asserts against seeded rows like "Cowboy Bebop" / an `Rx - Hentai` row; the search-history spec manages its own throwaway user). Add one only when the value is genuinely in the SQL/index/persistence behavior; otherwise prefer a unit test.
 
-**E2E (Playwright):** a separate layer that proves the app *actually runs*, not just that the logic is correct. Playwright boots the real self-host artifact (Bun standalone, `ASTRO_ADAPTER=bun` → `dist/server/entry.mjs`) against a real Postgres + Dragonfly stack and asserts over HTTP (`api` project) and a browser (`ui` project) — the wiring Vitest skips: middleware, auth cookies, the response wrapper, Astro's CSRF `checkOrigin`, real DB/cache effects. Layout: `e2e/{api,ui,fixtures}`, config in `playwright.config.ts` (dedicated port `4331`; `webServer` builds+serves locally and readiness-gates on `/api/health/readiness`; `e2e/global-setup.ts` serially warms the server to avoid cold-start races). `REDIS_URL` is pinned to `localhost:6379` (the `.env` `dragonfly` hostname is Docker-network only). Run locally: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test:e2e:install` (once) → `bun run test:e2e`. **Scope guard:** E2E covers critical paths and cross-layer wiring, not exhaustive inputs — prefer a Vitest unit test unless the value is specifically the *integration of running parts*. Keep this layer lean. See `e2e/README.md`.
+**E2E (Playwright):** a separate layer that proves the app _actually runs_, not just that the logic is correct. Playwright boots the real self-host artifact (Bun standalone, `ASTRO_ADAPTER=bun` → `dist/server/entry.mjs`) against a real Postgres + Dragonfly stack and asserts over HTTP (`api` project) and a browser (`ui` project) — the wiring Vitest skips: middleware, auth cookies, the response wrapper, Astro's CSRF `checkOrigin`, real DB/cache effects. Layout: `e2e/{api,ui,fixtures}`, config in `playwright.config.ts` (dedicated port `4331`; `webServer` builds+serves locally and readiness-gates on `/api/health/readiness`; `e2e/global-setup.ts` serially warms the server to avoid cold-start races). `REDIS_URL` is pinned to `localhost:6379` (the `.env` `dragonfly` hostname is Docker-network only). Run locally: `docker compose up -d` → `bun run db:migrate` → `bun run db:seed:e2e` → `bun run test:e2e:install` (once) → `bun run test:e2e`. **Scope guard:** E2E covers critical paths and cross-layer wiring, not exhaustive inputs — prefer a Vitest unit test unless the value is specifically the _integration of running parts_. Keep this layer lean. See `e2e/README.md`.
 
 **CI/CD:** Two workflows. `.github/workflows/ci.yml` runs two blocking jobs on PRs and pushes to `master`: `gate` (code quality — `check`, `check:types`, `test`, `test:coverage`, `build`; see Verification gate for the local sequence) and `e2e` (real-stack layers against Postgres + Dragonfly service containers — migrates, builds the Bun artifact, seeds, then runs `test:integration` followed by `test:e2e`, uploading the HTML report). Both must pass to merge. CI does not run `format` or `astro sync` directly, so `bun run format` must be run locally before pushing to keep CI green. `.github/workflows/deploy.yml` is CD-only — builds the Docker image and pushes it to Docker Hub on pushes to `master`. Secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`. Vercel adapter handles the serverless build.
 
@@ -241,6 +249,7 @@ Pick the lowest layer that proves the behavior: default to unit; reach for integ
 ## Architecture (Domain-Driven + Presentational-Container)
 
 ### Layered structure
+
 ```
 src/config/     → env validation (Zod, eager at import), site config, public routes
 src/lib/        → infrastructure: auth, db, cache, monitoring
@@ -251,7 +260,9 @@ src/shared/     → cross-cutting: http/ errors/ schemas/ layouts/ components/ u
 ```
 
 ### Domain vertical slice
+
 Each domain has: `cache/ components/ errors/ mappers/ repositories/ schemas/ services/ types/` (optional: `middleware/`, `policies/`, `utils/`, `config.ts`). Goals:
+
 - `anime` — anime data APIs, mapping from MAL
 - `music` — music data APIs
 - `media` — image proxy/optimization (`sharp`) + Redis cache
@@ -261,6 +272,7 @@ Each domain has: `cache/ components/ errors/ mappers/ repositories/ schemas/ ser
 Strict barrel exports at every level.
 
 ### Module unit folders (co-location)
+
 Inside each **logic** layer (`cache/ mappers/ repositories/ services/ policies/ middleware/`)
 every element lives in its **own folder** with its logic + type/helper companions
 co-located behind a barrel — never as loose `*-types.ts` siblings next to the logic:
@@ -283,9 +295,10 @@ mappers/anime-card/
   no artificial scaffolding, no empty barrels-for-symmetry.
 - Pure-type layers (`types/`), single-file `schemas/`, and `errors/` stay flat; the
   cross-cutting `*DB` row types remain shared in the domain `types/` barrel.
-- A type file exists because *these types belong to this module*, not because *it is a type*.
+- A type file exists because _these types belong to this module_, not because _it is a type_.
 
 **UI layers (`components/ hooks/ stores/`)** follow the same rule, with two nuances:
+
 - A component is **already** a unit folder — `Name/Name.astro` + `index.ts` barrel.
   UI keeps the **named** file (`AnimeDetails.astro`), not a generic `component.astro`.
   Its `Props`/`interface`, subcomponents, local fixture, and any component-only
@@ -299,14 +312,16 @@ mappers/anime-card/
   real hook/store — never pre-create empty directories.
 
 ### Data flow
+
 ```
 DB schema (lib/db/schemas/) → Repository → Mapper → Service → Page/API route
 ```
 
 ### Presentational-Container pattern
+
 - **Containers** = Astro page routes (`src/pages/`): fetch data from services, handle errors/redirects, pass data down
 - **Presentational** = Astro SFCs in `src/domains/*/components/`: receive props only, render markup, zero data-fetching
-- **Rule**: *"Data is supplied by domain services in page routes, not fetched inside components"*
+- **Rule**: _"Data is supplied by domain services in page routes, not fetched inside components"_
 - Each component lives in its own directory: `Name/Name.astro` + `index.ts` barrel
 
 ### Frontend & UI — estilos, render, composición
@@ -344,7 +359,7 @@ flujo completo está en la skill `frontend`; aquí están las reglas vinculantes
 ### Living documentation — component showcase (`/showcase`)
 
 Cada componente presentacional es **visible y manipulable**, no solo documentado
-con JSDoc. `/showcase` es un *props playground*: `?component=<slug>` renderiza un
+con JSDoc. `/showcase` es un _props playground_: `?component=<slug>` renderiza un
 componente aislado junto a un control por cada prop declarada, y **el estado de
 los props vive en la URL** — cada combinación es un link compartible y el botón
 "atrás" es undo.
@@ -379,13 +394,17 @@ los props vive en la URL** — cada combinación es un link compartible y el bot
   públicos, e `interface Props` tipada que auto-documenta la API.
 
 ### Max file size
+
 **≤150 lines per file.** When touching a file near/over that limit, refactor by responsibility. Do not rely on an exact count of offenders — it changes.
 
 ## Path Aliases (tsconfig + Vite)
+
 `@`, `@styles`, `@anime`, `@auth`, `@media`, `@music`, `@search`, `@producer`, `@seo`, `@people`, `@user`, `@shared`, `@lib`, `@config`, `@middleware`, `@layouts`, `@http`, `@components`, `@hooks`, `@stores`, `@utils`, `@db` — all map to `src/` subdirectories (confirmed in `tsconfig.json`, `astro.config.mjs`, and `vitest.config.ts`). Use these instead of relative imports. Each domain has its own alias (`@anime`, `@auth`, `@manga`, `@media`, `@music`, `@people`, `@producer`, `@search`, `@seo`, `@user` → `src/domains/*`); the old generic `@domains/*` is removed and blocked by Biome's `noRestrictedImports` (along with `@/shared/*`, `@/domains/*`, `@/lib/*`). `@hooks` (`src/shared/hooks/`) and `@stores` (`src/shared/stores/`) are reserved for client-side React hooks and Zustand stores — the directories do not exist yet; create them with the first feature that needs them.
 
 ## API Route Patterns
+
 Two composition styles:
+
 1. `withZodValidation(schema)(handler)` — validates `{ params, query, body }` as single Zod object, returns 400 on failure
 2. Error handling: `withErrorHandling(handler)` (try/catch wrapper) OR manual try/catch + `mapErrorToHttp(error)`
 
@@ -403,38 +422,41 @@ Response envelope: `{ data, status, error?, code?, meta? }`. Error codes in `src
 - **Noise policy**: 4xx capture at `warning` — Rustrak `new_issue`/`regression` alerts should target `error` only (`INFRA_*`, `UNKNOWN_ERROR`) to avoid bot/scraper 400s. For full browser coverage set `PUBLIC_SENTRY_DSN` mirroring `SENTRY_DSN`, and make sure the page CSP `connect-src` allows the Rustrak host.
 
 ## Auth & Middleware
+
 - **Public routes** (prefix-matched): `/`, `/api/auth/login`, `/api/auth/register`, `/api/auth/sign-in/google`, `/api/auth/callback/google`, `/api/anime`, `/api/manga`, `/api/music`, `/api/search`, `/api/producers`, `/api/characters`, `/api/people`, `/api/health`, `/media`, `/showcase`, `/sitemap.xml`, `/sitemaps`, `/robots.txt`
 - Middleware populates `locals.user` / `locals.session` via `resolveAuthActor()` (swallows errors, returns null)
 - For strict auth in API routes: `sessionService.getSession()` throws typed errors
 
 ## Environment (matches `src/config/env.ts`)
+
 Validated eagerly at import via Zod in `src/config/env.ts` — missing required vars = immediate crash.
+
 - **Required**: `DATABASE_URL`, `REDIS_URL`, `APP_BASE_URL`, `BETTER_AUTH_SECRET` (≥32 chars)
 - **Optional**: `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (both or neither; enable Google sign-in, redirect URI `${APP_BASE_URL}/api/auth/callback/google`; without them the Google routes answer `404 PROVIDER_NOT_CONFIGURED`), `S3_ENDPOINT` + `S3_BUCKET` + `S3_ACCESS_KEY_ID` + `S3_SECRET_ACCESS_KEY` + `S3_PUBLIC_URL` (all or none; S3-compatible storage for profile avatar/banner uploads — Cloudflare R2 or self-hosted MinIO, see `.env.example`; `S3_REGION` defaults to `auto`, `S3_FORCE_PATH_STYLE` to `true` (set `false` for R2); without them the upload routes answer `404 STORAGE_NOT_CONFIGURED` and `S3_PUBLIC_URL`'s origin is not added to the CSP `img-src`), `SENTRY_DSN` (monitoring no-ops when absent), `PUBLIC_SENTRY_DSN` (client-exposed mirror of `SENTRY_DSN` for browser error capture; no-op when unset, not validated by `env.ts` — read via `import.meta.env` in `sentry.client.config.ts`), `LOG_LEVEL` (trace|debug|info|warn|error|fatal), `NODE_ENV` (defaults to `development`)
 - **Note**: `BETTER_AUTH_URL` is NOT a separate variable — the base URL is `APP_BASE_URL`.
 
 ## Skills & Key Guidelines
 
-| Skill | Key rules for this repo |
-|-------|------------------------|
-| **Clean Code** | Small functions (≤1 screen), single responsibility, meaningful names, no side effects, no boolean params in signatures |
-| **Composition Patterns** | Avoid boolean prop proliferation → compound components; prefer `children` over render props |
-| **React Best Practices** | No barrel imports from large modules; `Promise.all()` for parallel fetches; Suspense boundaries; hoist static I/O; minimize serialization; `React.cache()` for data |
-| **Zod** | `safeParse()` for user input; `z.infer` for type inference; `z.unknown()` not `z.any()`; validate at boundary; `strict()` for incoming data |
-| **Drizzle ORM** | Schema-first with `$inferSelect`/`$inferInsert`; drizzle-kit for migrations; relations for joins |
-| **Better Auth** | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password + optional Google (no implicit account linking — email is unverified; link only from a session via `/api/auth/link/google`). No Better Auth catch-all route: expose endpoints one by one |
-| **tailwind-css-patterns** | Mobile-first; component styles compose utilities directly; `@apply` is reserved for shared global utility classes in `global.css`; extract repeating patterns as components; CSS variables for themes |
-| **TypeScript** | `z.infer` over manual types; branded types for IDs; discriminated unions for states; `unknown` over `any` |
-| **JSDoc** | Follow the installed `jsdoc-typescript-docs` skill and the existing style (`@module`, `@remarks`, `@see`, `@example`, `@throws`) — codebase is heavily documented; keep it single-quote/no-semicolon |
-| **Frontend Design** | Avoid generic AI aesthetics (no Inter/Roboto, no purple gradients); distinctive typography, asymmetric layouts, CSS variables |
-| **Accessibility** | Semantic HTML, ARIA labels, focus management, skip links, color contrast ≥4.5:1, prefers-reduced-motion |
-| **SEO** | Structured JSON-LD, OG tags in `base-layout.astro`, canonical URLs, meta descriptions |
-| **Core Web Vitals** | Preload LCP image; `aspect-ratio` for CLS; no tasks >50ms for INP; `font-display: optional` |
-| **astro** | `astro:middleware` for session; `src/pages/` file-based routing; adapter configures output target |
-| **Frontend flow** | Load the repo skill `frontend` (rendering, composition, styling, living docs) and `presentational-container` (separation of concerns) before any UI task; see "Frontend & UI" above |
-| **UI/UX craft (impeccable)** | Load `impeccable` for design/layout/motion decisions; global tokens in `global.css` are the only source of color/typography |
-| **Web quality (audit/testing)** | `web-quality-audit` for perf/a11y/SEO on new pages; `webapp-testing` (Playwright) to verify UI against a browser |
-| **Component showcase** | Every presentational component needs an entry on `/showcase` — controls per prop, presets, `load` from the real domain service, `fixtures/` as fallback — plus JSDoc; see "Living documentation" above |
+| Skill                           | Key rules for this repo                                                                                                                                                                                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Clean Code**                  | Small functions (≤1 screen), single responsibility, meaningful names, no side effects, no boolean params in signatures                                                                                                                                                                        |
+| **Composition Patterns**        | Avoid boolean prop proliferation → compound components; prefer `children` over render props                                                                                                                                                                                                   |
+| **React Best Practices**        | No barrel imports from large modules; `Promise.all()` for parallel fetches; Suspense boundaries; hoist static I/O; minimize serialization; `React.cache()` for data                                                                                                                           |
+| **Zod**                         | `safeParse()` for user input; `z.infer` for type inference; `z.unknown()` not `z.any()`; validate at boundary; `strict()` for incoming data                                                                                                                                                   |
+| **Drizzle ORM**                 | Schema-first with `$inferSelect`/`$inferInsert`; drizzle-kit for migrations; relations for joins                                                                                                                                                                                              |
+| **Better Auth**                 | Config: `src/lib/auth/server.ts`; client: `authClient` from `src/lib/auth/client.ts`; email/password + optional Google (no implicit account linking — email is unverified; link only from a session via `/api/auth/link/google`). No Better Auth catch-all route: expose endpoints one by one |
+| **tailwind-css-patterns**       | Mobile-first; component styles compose utilities directly; `@apply` is reserved for shared global utility classes in `global.css`; extract repeating patterns as components; CSS variables for themes                                                                                         |
+| **TypeScript**                  | `z.infer` over manual types; branded types for IDs; discriminated unions for states; `unknown` over `any`                                                                                                                                                                                     |
+| **JSDoc**                       | Follow the installed `jsdoc-typescript-docs` skill and the existing style (`@module`, `@remarks`, `@see`, `@example`, `@throws`) — codebase is heavily documented; keep it single-quote/no-semicolon                                                                                          |
+| **Frontend Design**             | Avoid generic AI aesthetics (no Inter/Roboto, no purple gradients); distinctive typography, asymmetric layouts, CSS variables                                                                                                                                                                 |
+| **Accessibility**               | Semantic HTML, ARIA labels, focus management, skip links, color contrast ≥4.5:1, prefers-reduced-motion                                                                                                                                                                                       |
+| **SEO**                         | Structured JSON-LD, OG tags in `base-layout.astro`, canonical URLs, meta descriptions                                                                                                                                                                                                         |
+| **Core Web Vitals**             | Preload LCP image; `aspect-ratio` for CLS; no tasks >50ms for INP; `font-display: optional`                                                                                                                                                                                                   |
+| **astro**                       | `astro:middleware` for session; `src/pages/` file-based routing; adapter configures output target                                                                                                                                                                                             |
+| **Frontend flow**               | Load the repo skill `frontend` (rendering, composition, styling, living docs) and `presentational-container` (separation of concerns) before any UI task; see "Frontend & UI" above                                                                                                           |
+| **UI/UX craft (impeccable)**    | Load `impeccable` for design/layout/motion decisions; global tokens in `global.css` are the only source of color/typography                                                                                                                                                                   |
+| **Web quality (audit/testing)** | `web-quality-audit` for perf/a11y/SEO on new pages; `webapp-testing` (Playwright) to verify UI against a browser                                                                                                                                                                              |
+| **Component showcase**          | Every presentational component needs an entry on `/showcase` — controls per prop, presets, `load` from the real domain service, `fixtures/` as fallback — plus JSDoc; see "Living documentation" above                                                                                        |
 
 When a task references a library/framework, fetch its current docs first via `context7` or `find-docs` — do not rely on memory for API details.
 
@@ -443,7 +465,9 @@ When a task references a library/framework, fetch its current docs first via `co
 Formatting is enforced by **Biome** (`bun run format`) and lint by **Biome** (`bun run check`). Prettier is kept only for `.astro` files (`bun run format:astro`). Ink any new code to match the existing style below — do not reformat files that already comply.
 
 ### Variables
+
 - Full names, no abbreviations except where context makes the trick obvious:
+
   ```ts
   const selectedAnime
   const workspacePermissions
@@ -452,9 +476,11 @@ Formatting is enforced by **Biome** (`bun run format`) and lint by **Biome** (`b
 - Booleans use a prefix: `isLoading`, `isAuthenticated`, `hasPermission`, `canEdit`, `shouldRedirect`
 
 ### Functions
+
 - Verb first: `getWorkspace()`, `createSubmission()`, `updateParticipant()`, `validatePermissions()`
 
 ### Constants
+
 - Real global constants → `UPPER_SNAKE_CASE`: `DEFAULT_PAGE_SIZE`, `MAX_RETRIES`
 - Everything else → `camelCase`
 - **Define constants in a dedicated module, then import them** — a domain/unit
@@ -465,19 +491,22 @@ Formatting is enforced by **Biome** (`bun run format`) and lint by **Biome** (`b
   `@shared/errors/codes`.
 
 ### Naming by element
-| Element | Style |
-|---|---|
-| Variables / functions | `camelCase` |
-| Components / types / interfaces | `PascalCase` (no `I` prefix) |
-| Global constants | `UPPER_SNAKE_CASE` |
-| Files / folders | `kebab-case` |
-| React hooks | `use` + `PascalCase` (`useAuth`) |
-| Zustand stores | `use[Nombre]Store` |
+
+| Element                         | Style                            |
+| ------------------------------- | -------------------------------- |
+| Variables / functions           | `camelCase`                      |
+| Components / types / interfaces | `PascalCase` (no `I` prefix)     |
+| Global constants                | `UPPER_SNAKE_CASE`               |
+| Files / folders                 | `kebab-case`                     |
+| React hooks                     | `use` + `PascalCase` (`useAuth`) |
+| Zustand stores                  | `use[Nombre]Store`               |
 
 ### Nullability
+
 Explicit, never assumed: `if (!workspace)`, `if (participant == null)`. In repositories the pattern is to return `undefined`, never `null`.
 
 ### Conditionals — early return
+
 ```ts
 if (!user) return
 if (!workspace) throw errorFactory.notFound()
@@ -485,20 +514,25 @@ if (!workspace) throw errorFactory.notFound()
 Over nesting ifs.
 
 ### Destructuring & strings
+
 - Prefer destructuring over repeated access: `const { id, email, role } = user`
 - Use template strings, not concatenation: `` `${workspaceId}/${participantId}` ``
 
 ### Comments
+
 Few. When present they explain the **why**, not the **what**. Follow the JSDoc conventions in the skills table.
 
 ### Error handling
+
 Never `throw new Error(...)` generic, never `console.log(error)` as handling. Use `AppError` subclasses / the domain error factories and `mapErrorToHttp` (see API Route Patterns); repositories use `try/catch` + the error factory obligatorily. See `src/shared/errors/`.
 
 ## Formatting/Lint Config
+
 - **Biome** (`biome.json`): semi:false, **single quotes**, trailing commas `es5`, 80 col, 2-space indent, LF enforced via `.gitattributes`. Lint = recommended preset (import sorting disabled; `noSvgWithoutTitle`, `noImplicitAnyLet` relaxed). Config is authoritative — edit `biome.json`, do not reformat to tabs/double quotes.
 - **Prettier** (`.prettierignore` + `prettier.config.cjs`): only for `.astro` files; keep `prettier-plugin-astro`, `prettier-plugin-tailwindcss`.
 
 ## Important Constraints
+
 - Better Auth CLI commands are preconfigured with correct path: `--config src/lib/auth/server.ts` — do not change it
 - Cache TTL values in **seconds** (`CacheTtl` enum in `src/lib/cache/config.ts`)
 - No `.tsx` React components exist yet (React is configured but unused) — keep it that way unless a change requires it
@@ -509,22 +543,25 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 
 ## Releases & Versioning
 
-**Scheme:** SemVer driven by Conventional Commits via `standard-version` (`bun run release:*`).
+**Scheme:** SemVer computed automatically from Conventional Commits on every merge to `master`. **Git tags (`vX.Y.Z`) and GitHub Releases are the source of truth** for the version; `package.json` `version` and `CHANGELOG.md` are kept in sync with them by a `chore(release): vX.Y.Z` bot commit that CI pushes to `master` after each release.
 
-- `fix(scope):` → **patch** (`X.Y.Z` → `X.Y.(Z+1)`)
+- `fix(scope):` / `perf(scope):` / `revert:` → **patch** (`X.Y.Z` → `X.Y.(Z+1)`)
 - `feat(scope):` → **minor** (`X.Y.Z` → `X.(Y+1).0`)
 - `BREAKING CHANGE:` footer / `!` on the type → **major**
-- Pre-release: `bun run release:prerelease` → `X.Y.Z-<tag>`
+- Only `chore`/`docs`/`test`/`ci`/`refactor`/… since the last tag → **no release** (the image still deploys as `:latest`).
+- `[skip-release]` or `[no-release]` in a commit message excludes that commit from the bump.
 
-**Release flow (the RELEASE phase of the lifecycle):**
+**Release flow (automatic — `.github/workflows/deploy.yml`):**
 
-> **`master` is protected (PR required — no direct push).** This means a release/version-bump commit can never go straight to `master`; it must ride in a Pull Request like any other change. Do **not** run the release *after* the feature PR is already merged — you would then need a second throwaway branch/PR solely to carry the `chore(release):` bump. Instead, run the release **on the same feature branch before merging**, so the feature PR carries the version bump and tag together:
+1. Merge the PR to `master` (protected — PR required). Use Conventional Commits (or a conventional squash title): they decide the bump.
+2. `build-and-push` always builds the Docker image once and pushes `:latest` + `:<sha>`. It does not depend on the release, so a release failure never blocks a deploy, and it is serialized (`build-master`, non-cancelling) so `:latest` only moves forward.
+3. `release` (after the build, serialized with `concurrency: release-master`) computes the next `vX.Y.Z` from the commits since the last tag (`mathieudutour/github-tag-action`, pinned by SHA, `dry_run`). No releasable commit → it stops there.
+4. It creates the tag on the built commit together with the GitHub Release, then retags the already-pushed `:<sha>` image as `:vX.Y.Z` (no rebuild).
+5. It inserts the release notes into `CHANGELOG.md`, sets `package.json` `version`, and pushes `chore(release): vX.Y.Z [skip ci]` to `master` as `github-actions[bot]`. The push uses the **`RELEASE_DEPLOY_KEY` deploy key**, loaded only in that final step (write access, stored as an Actions secret): deploy keys are the only bypass actor of the `master` ruleset, because a personal repository cannot list the GitHub Actions app there. `[skip ci]` keeps it from triggering a rebuild, and `chore` never bumps. Rotate it by replacing the deploy key and the secret together.
+6. Every step is idempotent: "Re-run failed jobs" reuses the tag already on the commit and finishes a half-done release.
 
-1. On the **feature branch** (base `master`) and after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch`/`release:minor`/`release:major`/`release:prerelease`. Preview first: `bun run release:dry`, and confirm the bump type matches the commit set (a mix incl. `feat` → minor).
-2. `standard-version` bumps `package.json`, regenerates `CHANGELOG.md`, commits `chore(release): X.Y.Z`, and creates the local tag `vX.Y.Z`.
-3. Open/amend the feature PR including that release commit, get it green (`gate` + SonarQube + Vercel), and merge it.
-4. After merging, `git push origin vX.Y.Z` (tags are not restricted by the branch protection).
-5. CI `release.yml` (triggered on tag `v*`) builds the Docker image tagged `:<version>`, `:latest`, and `:<sha>` and deploys — so any published release is reproducible exactly.
+Do **not** create version tags, bump `package.json`, edit `CHANGELOG.md` releases, or write `chore(release):` commits by hand. `release.yml` remains only as the fallback path for a tag pushed manually by a maintainer (a tag created with `GITHUB_TOKEN` never triggers it).
 
 ## Commit Convention
+
 Conventional Commits with scopes: `type(scope): summary` (e.g., `fix(auth): Handle expired token`). See `.changeset/commit-all.md`.

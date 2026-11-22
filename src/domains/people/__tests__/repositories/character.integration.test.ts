@@ -99,6 +99,25 @@ describe.skipIf(!enabled)('character repositories (integration)', () => {
     expect(await search.count('Personaje 99900')).toBe(0)
   })
 
+  it('finds characters by the title of their anime', async () => {
+    const rows = await search.search({
+      query: 'probe safe anime',
+      page: 1,
+      limit: 10,
+    })
+    expect(rows.map((r) => r.malId)).toContain(CHARACTER_ID)
+    expect(await search.count('probe safe anime')).toBeGreaterThanOrEqual(1)
+  })
+
+  it('never exposes characters through an adult anime title', async () => {
+    const rows = await search.search({
+      query: 'Probe Adult Anime',
+      page: 1,
+      limit: 10,
+    })
+    expect(rows.map((r) => r.malId)).not.toContain(CHARACTER_ID)
+  })
+
   it('hides the provisional character profile', async () => {
     expect(await profile.getCharacter(PROVISIONAL_ID)).toBeUndefined()
     expect((await profile.getCharacter(CHARACTER_ID))?.name).toBe(NAME)

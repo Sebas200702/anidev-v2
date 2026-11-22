@@ -69,16 +69,16 @@ required value fails fast.
 
 ## Environment
 
-| Variable | Req | Notes |
-| --- | --- | --- |
-| `DATABASE_URL` | yes | PostgreSQL connection URL (`postgres://` / `postgresql://`) |
-| `REDIS_URL` | yes | Dragonfly/Redis connection URL (`redis://` / `rediss://`) |
-| `APP_BASE_URL` | yes | Base URL (also Better Auth API_BASE) |
-| `BETTER_AUTH_SECRET` | yes | ≥ 32 chars |
-| `SENTRY_DSN` | no | Monitoring no-ops when absent |
-| `PUBLIC_SENTRY_DSN` | no | Client-exposed mirror of `SENTRY_DSN` for browser capture |
-| `LOG_LEVEL` | no | `trace`\|`debug`\|`info`\|`warn`\|`error`\|`fatal` |
-| `NODE_ENV` | no | Defaults to `development` |
+| Variable             | Req | Notes                                                       |
+| -------------------- | --- | ----------------------------------------------------------- |
+| `DATABASE_URL`       | yes | PostgreSQL connection URL (`postgres://` / `postgresql://`) |
+| `REDIS_URL`          | yes | Dragonfly/Redis connection URL (`redis://` / `rediss://`)   |
+| `APP_BASE_URL`       | yes | Base URL (also Better Auth API_BASE)                        |
+| `BETTER_AUTH_SECRET` | yes | ≥ 32 chars                                                  |
+| `SENTRY_DSN`         | no  | Monitoring no-ops when absent                               |
+| `PUBLIC_SENTRY_DSN`  | no  | Client-exposed mirror of `SENTRY_DSN` for browser capture   |
+| `LOG_LEVEL`          | no  | `trace`\|`debug`\|`info`\|`warn`\|`error`\|`fatal`          |
+| `NODE_ENV`           | no  | Defaults to `development`                                   |
 
 There is **no** `BETTER_AUTH_URL` — the base URL is `APP_BASE_URL`.
 
@@ -90,24 +90,23 @@ Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
 
 ## Commands
 
-| Script | Purpose |
-| --- | --- |
-| `bun run dev` | Astro dev server |
-| `bun run build` | Production build (Vercel output) |
-| `bun run preview` | Run the built output locally |
-| `bun run format` | Biome format (excludes `.astro`) |
-| `bun run format:astro` | Prettier on `.astro` |
-| `bun run check` | Biome lint + format check |
-| `bun run check:write` | Biome lint + safe fixes |
-| `bun run check:types` | Astro/TS typecheck (`astro check`) |
-| `bun run astro sync` | Regenerate `.astro/types.d.ts` |
-| `bun run test` / `test:watch` / `test:coverage` | Vitest |
-| `bun run test:integration` | Integration specs against a real Postgres (`RUN_DB_TESTS=1`; needs the docker stack + migrate + seed) |
-| `bun run test:e2e` / `test:e2e:ui` / `test:e2e:install` | Playwright E2E (API + browser) |
-| `bun run db:seed:e2e` | Seed the deterministic rows E2E asserts against |
-| `bun run auth:generate` / `auth:migrate` | Better Auth schema/migrations |
-| `bun run db:generate` / `db:migrate` | Drizzle migrations (PostgreSQL) |
-| `bun run release:*` | `standard-version` release — see Versioning |
+| Script                                                  | Purpose                                                                                               |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `bun run dev`                                           | Astro dev server                                                                                      |
+| `bun run build`                                         | Production build (Vercel output)                                                                      |
+| `bun run preview`                                       | Run the built output locally                                                                          |
+| `bun run format`                                        | Biome format (excludes `.astro`)                                                                      |
+| `bun run format:astro`                                  | Prettier on `.astro`                                                                                  |
+| `bun run check`                                         | Biome lint + format check                                                                             |
+| `bun run check:write`                                   | Biome lint + safe fixes                                                                               |
+| `bun run check:types`                                   | TS 7 typecheck of `.ts` + `.astro` (`tsc` + `@astrojs/ts-content-mapper`)                             |
+| `bun run astro sync`                                    | Regenerate `.astro/types.d.ts`                                                                        |
+| `bun run test` / `test:watch` / `test:coverage`         | Vitest                                                                                                |
+| `bun run test:integration`                              | Integration specs against a real Postgres (`RUN_DB_TESTS=1`; needs the docker stack + migrate + seed) |
+| `bun run test:e2e` / `test:e2e:ui` / `test:e2e:install` | Playwright E2E (API + browser)                                                                        |
+| `bun run db:seed:e2e`                                   | Seed the deterministic rows E2E asserts against                                                       |
+| `bun run auth:generate` / `auth:migrate`                | Better Auth schema/migrations                                                                         |
+| `bun run db:generate` / `db:migrate`                    | Drizzle migrations (PostgreSQL)                                                                       |
 
 ## Development methodology — ODD + RDD
 
@@ -162,22 +161,22 @@ in `tsconfig.json`.
 
 ## API routes
 
-| Route | Description |
-| --- | --- |
-| `POST /api/auth/login` | Login (public) |
-| `POST /api/auth/register` | Register (public) |
-| `POST /api/auth/logout` | Logout (session) |
-| `GET /api/auth/session` | Current session |
-| `GET /api/anime` | Anime search/list (public; filters, sort, parental-safe floor) |
-| `GET /api/anime/:malId` | Anime detail |
-| `GET /api/anime/:malId/full` · `characters` · `staff` | Extra detail |
-| `GET /api/music` / `GET /api/music/:id` | Music (public) |
-| `GET /api/user/:userId` | User profile read (session) |
-| `POST /api/user` | Create own profile (session) |
-| `PATCH /api/user/:userId` | Update own profile identity fields (session) |
-| `GET /api/search-history` / `DELETE /api/search-history` | Read / clear own search history (session) |
-| `GET /api/health/readiness` | Dependency probes (db/cache) (public) |
-| `GET /api/health` | Liveness (public, no dependencies) |
+| Route                                                    | Description                                                    |
+| -------------------------------------------------------- | -------------------------------------------------------------- |
+| `POST /api/auth/login`                                   | Login (public)                                                 |
+| `POST /api/auth/register`                                | Register (public)                                              |
+| `POST /api/auth/logout`                                  | Logout (session)                                               |
+| `GET /api/auth/session`                                  | Current session                                                |
+| `GET /api/anime`                                         | Anime search/list (public; filters, sort, parental-safe floor) |
+| `GET /api/anime/:malId`                                  | Anime detail                                                   |
+| `GET /api/anime/:malId/full` · `characters` · `staff`    | Extra detail                                                   |
+| `GET /api/music` / `GET /api/music/:id`                  | Music (public)                                                 |
+| `GET /api/user/:userId`                                  | User profile read (session)                                    |
+| `POST /api/user`                                         | Create own profile (session)                                   |
+| `PATCH /api/user/:userId`                                | Update own profile identity fields (session)                   |
+| `GET /api/search-history` / `DELETE /api/search-history` | Read / clear own search history (session)                      |
+| `GET /api/health/readiness`                              | Dependency probes (db/cache) (public)                          |
+| `GET /api/health`                                        | Liveness (public, no dependencies)                             |
 
 Routes validate via `withZodValidation(schema)(withErrorHandling(handler, { responseSchema }))`
 and respond enveloped as `{ data, status, error?, code?, meta? }`; the wrapper
@@ -209,16 +208,25 @@ Ops docs: [alert rules](docs/alerts.md) ·
 
 ## Versioning
 
-**SemVer** by Conventional Commits via `standard-version`.
+**SemVer**, computed automatically from Conventional Commits on every merge
+to `master`. Git tags and GitHub Releases are the source of truth for the
+version; `package.json` and `CHANGELOG.md` follow them through a
+`chore(release): vX.Y.Z` bot commit pushed to `master` after each release.
 
-- `fix(scope):` → **patch** · `feat(scope):` → **minor** ·
-  `BREAKING CHANGE:`/`!` → **major** · pre-release → `X.Y.Z-<tag>`.
+- `fix`/`perf`/`revert` → **patch** · `feat` → **minor** ·
+  `BREAKING CHANGE:`/`!` → **major** · nothing releasable → no release.
 
-**Release flow (RELEASE phase):**
-1. On the **feature branch** (base `master`), after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch|minor|major|prerelease`. Preview first with `release:dry`.
-2. It bumps `package.json`, rewrites `CHANGELOG.md`, commits `chore(release): X.Y.Z`, tags `vX.Y.Z` — riding in the same feature PR (master is protected).
-3. Merge the PR, then `git push origin vX.Y.Z`.
-4. CI `release.yml` (tag `v*`) builds and pushes the Docker image `:<version>` + `:latest` + `:<sha>`.
+**Release flow (automatic, `.github/workflows/deploy.yml`):**
+
+1. Merge the PR to `master`.
+2. The Docker image is always built once and pushed as `:latest` + `:<sha>`.
+3. Then the release job computes `vX.Y.Z` if there is a releasable commit since the last tag.
+4. It creates the tag and its GitHub Release, and retags the image as `:vX.Y.Z`.
+5. It commits the updated `CHANGELOG.md` and `package.json` version back to
+   `master` with the `RELEASE_DEPLOY_KEY` deploy key (the `master` ruleset's
+   only bypass actor).
+
+Never tag or bump the version by hand.
 
 ## Branching & commits
 

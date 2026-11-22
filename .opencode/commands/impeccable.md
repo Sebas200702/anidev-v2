@@ -1,6 +1,6 @@
 ---
-description: Apply AniDev design craft (impeccable skill) to the given UI task
----
+
+## description: Apply AniDev design craft (impeccable skill) to the given UI task
 
 Load the `impeccable` skill via the skill tool and apply it to this task:
 

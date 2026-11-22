@@ -1,7 +1,7 @@
 {
   "name": "anidev-v2",
   "type": "module",
-  "version": "0.18.0",
+  "version": "0.19.2",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -12,7 +12,7 @@
     "auth:migrate": "bunx @better-auth/cli@latest migrate --config src/lib/auth/server.ts",
     "build": "astro build",
     "check": "biome check .",
-    "check:types": "astro check",
+    "check:types": "astro sync && tsc --noEmit --runExternalCode",
     "check:write": "biome check --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -22,13 +22,6 @@
     "format": "biome format --write .",
     "format:astro": "prettier --write \"src/**/*.astro\"",
     "preview": "astro preview",
-    "release": "standard-version",
-    "release:dry": "standard-version --dry-run",
-    "release:first": "standard-version --first-release",
-    "release:major": "standard-version --release-as major",
-    "release:minor": "standard-version --release-as minor",
-    "release:patch": "standard-version --release-as patch",
-    "release:prerelease": "standard-version --prerelease",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
@@ -62,7 +55,7 @@
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.12",
+    "@astrojs/ts-content-mapper": "0.2.0",
     "@biomejs/biome": "^2.5.7",
     "@playwright/test": "^1.62.1",
     "@types/pg": "^8.11.10",
@@ -75,9 +68,8 @@
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.6.12",
-    "standard-version": "9.5.0",
     "tsx": "4.21.0",
-    "typescript": "6",
+    "typescript": "7.1.0-beta",
     "vitest": "4.1.12"
   },
   "overrides": {
