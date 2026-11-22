@@ -24,7 +24,7 @@ bash scripts/db/cast-relink/run.sh stage --anilist-csv PATH --offline-db PATH
 bash scripts/db/cast-relink/run.sh audit    # dry run: rebuilds cast_relink.audit + summary
 bash scripts/db/cast-relink/run.sh fetch-list --out-dir DIR      # ids to ask AniList for
 bun scripts/db/cast-relink/fetch-anilist.ts DIR/pending-ids.txt --out DIR/anilist-api.jsonl \
-  --map DIR/anilist-map.tsv [--rpm 30] [--batch 10]
+  --map DIR/anilist-map.tsv [--rpm 30] [--batch 10] [--type ANIME|MANGA]
 bash scripts/db/cast-relink/run.sh merge-api --api-jsonl DIR/anilist-api.jsonl
 bash scripts/db/cast-relink/run.sh audit    # re-classifies with the API casts
 bash scripts/db/cast-relink/run.sh apply    # re-runs audit, then writes in ONE transaction
@@ -79,6 +79,10 @@ the fetch failed).
   that request is written with `found: false` and `error`.
 - **Resumable:** ids already in the output without `error` are skipped, so the command
   can be stopped and re-run; errored ids are fetched again on the next run.
+- **Media type:** `--type` (default `ANIME`) sets `type:` on every `Media` lookup;
+  `MANGA` fetches manga casts for `scripts/db/manga-cast-relink` (ids and map from its
+  `fetch-list`). The line keeps the `anime_id` key for the MAL media id. Any other value
+  exits 1 with `--type must be ANIME or MANGA`.
 - Sends only a generic `User-Agent` (`cast-relink/1.0`) and no credentials.
 
 `merge-api` loads the JSONL into `anilist_api_raw` and runs `sql/04-merge-api.sql`: for

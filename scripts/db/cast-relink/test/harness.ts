@@ -4,7 +4,7 @@
  *
  * @module scripts/db/cast-relink/test/harness
  */
-import { createAnilistClient } from '../anilist-client'
+import { createAnilistClient, type MediaType } from '../anilist-client'
 
 export type Reply = Response | Error
 
@@ -28,12 +28,17 @@ export const page = (ids: number[], hasNextPage: boolean) =>
     },
   })
 
-export const harness = (replies: Reply[] | Responder, rpm = 30) => {
+export const harness = (
+  replies: Reply[] | Responder,
+  rpm = 30,
+  mediaType?: MediaType
+) => {
   let clock = 0
   const requests: RecordedRequest[] = []
   const sleeps: number[] = []
   const client = createAnilistClient({
     rpm,
+    mediaType,
     now: () => clock,
     sleep: async (milliseconds) => {
       sleeps.push(milliseconds)

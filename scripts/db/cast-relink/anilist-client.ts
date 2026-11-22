@@ -7,10 +7,16 @@
  * @module scripts/db/cast-relink/anilist-client
  */
 import { createBatchFetch } from './anilist-batch'
-import { buildQuery, type CharacterPage, MAX_PAGES } from './anilist-query'
+import {
+  buildQuery,
+  type CharacterPage,
+  MAX_PAGES,
+  type MediaType,
+} from './anilist-query'
 import { type ClientDeps, createTransport } from './anilist-transport'
 
 export { DEFAULT_BATCH } from './anilist-batch'
+export { MEDIA_TYPES, type MediaType } from './anilist-query'
 export {
   ANILIST_ENDPOINT,
   type ClientDeps,
@@ -19,7 +25,10 @@ export {
   MAX_RETRIES,
 } from './anilist-transport'
 
-/** One output JSONL line, as merged by sql/04-merge-api.sql. */
+/**
+ * One output JSONL line, as merged by sql/04-merge-api.sql (anime) or
+ * manga-cast-relink/sql/02-merge-api.sql (manga): `anime_id` holds the MAL media id.
+ */
 export interface CastLine {
   anime_id: number
   found: boolean
@@ -27,16 +36,22 @@ export interface CastLine {
   error?: string
 }
 
-/** Builds a throttled client: at most `rpm` requests per minute across all calls. */
-export const createAnilistClient = (deps: ClientDeps) => {
+/**
+ * Builds a throttled client: at most `rpm` requests per minute across all calls. Every
+ * query asks for `mediaType` (default `ANIME`).
+ */
+export const createAnilistClient = (
+  deps: ClientDeps & { mediaType?: MediaType }
+) => {
   const post = createTransport(deps)
+  const mediaType = deps.mediaType ?? 'ANIME'
 
-  /** Fetches every cast page of a MAL anime (by AniList id when one is known). */
+  /** Fetches every cast page of a MAL anime/manga (by AniList id when one is known). */
   const fetchCast = async (
     malId: number,
     anilistId?: number
   ): Promise<CastLine> => {
-    const query = buildQuery(anilistId != null)
+    const query = buildQuery(anilistId != null, mediaType)
     const edges: unknown[] = []
     for (let page = 1; page <= MAX_PAGES; page += 1) {
       const result = await post({
@@ -73,5 +88,5 @@ export const createAnilistClient = (deps: ClientDeps) => {
     }
   }
 
-  return { fetchCast, fetchCasts: createBatchFetch(post) }
+  return { fetchCast, fetchCasts: createBatchFetch(post, mediaType) }
 }

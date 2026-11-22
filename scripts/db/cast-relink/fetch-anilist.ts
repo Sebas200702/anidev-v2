@@ -1,10 +1,13 @@
 /**
- * Fetches the full AniList cast of MAL anime ids into a resumable JSONL (cast relink T3).
+ * Fetches the full AniList cast of MAL anime (or manga) ids into a resumable JSONL
+ * (cast relink T3; manga cast relink, catalog rebuild T2).
  *
  * Usage:
  *   bun scripts/db/cast-relink/fetch-anilist.ts IDS_FILE --out OUT.jsonl
- *     [--map MAP.tsv] [--rpm 30] [--batch 10]
+ *     [--map MAP.tsv] [--rpm 30] [--batch 10] [--type ANIME|MANGA]
  *
+ * `--type` (default ANIME) selects the AniList media type; the output line keeps the
+ * `anime_id` key for the MAL media id either way.
  * Each HTTP request packs up to `--batch` aliased (anime, page) lookups. IDS_FILE holds one MAL anime id per line; MAP.tsv holds `mal_id<TAB>anilist_id` (both
  * from `run.sh fetch-list`). Lines are appended to OUT; ids already in OUT without an
  * `error` are skipped, so an interrupted run resumes and errored ids are retried.
@@ -17,10 +20,12 @@ import {
   createAnilistClient,
   DEFAULT_BATCH,
   DEFAULT_RPM,
+  MEDIA_TYPES,
+  type MediaType,
 } from './anilist-client'
 
 const USAGE =
-  'usage: fetch-anilist.ts IDS_FILE --out OUT.jsonl [--map MAP.tsv] [--rpm N] [--batch N]'
+  'usage: fetch-anilist.ts IDS_FILE --out OUT.jsonl [--map MAP.tsv] [--rpm N] [--batch N] [--type ANIME|MANGA]'
 
 const fail = (message: string): never => {
   process.stderr.write(`fetch-anilist: ${message}\n${USAGE}\n`)
@@ -67,6 +72,8 @@ if (!(rpm > 0)) fail('--rpm must be a positive number')
 const batchSize = Number(options.batch ?? DEFAULT_BATCH)
 if (!Number.isInteger(batchSize) || batchSize < 1)
   fail('--batch must be a positive integer')
+const mediaType = (options.type ?? 'ANIME') as MediaType
+if (!MEDIA_TYPES.includes(mediaType)) fail('--type must be ANIME or MANGA')
 
 const ids = [...new Set((await readLines(idsFile)).map(toId))].filter(
   (id): id is number => id != null
@@ -89,7 +96,7 @@ for (const line of await readLines(outFile, true)) {
 
 const pending = ids.filter((id) => !done.has(id))
 process.stderr.write(
-  `fetch-anilist: ${ids.length} ids, ${ids.length - pending.length} done, ${pending.length} to fetch at ≤${rpm} req/min, batch ${batchSize}\n`
+  `fetch-anilist: ${ids.length} ids, ${ids.length - pending.length} done, ${pending.length} to fetch at ≤${rpm} req/min, batch ${batchSize}, type ${mediaType}\n`
 )
 let requests = 0
 const startedAt = Date.now()
@@ -102,6 +109,7 @@ const client = createAnilistClient({
     new Promise((resolve) => setTimeout(resolve, milliseconds)),
   now: () => Date.now(),
   rpm,
+  mediaType,
 })
 const counts = { found: 0, missing: 0, errors: 0 }
 let written = 0

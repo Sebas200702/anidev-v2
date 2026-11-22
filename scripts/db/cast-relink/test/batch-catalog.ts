@@ -8,15 +8,19 @@ import type { CastLine } from '../anilist-client'
 import type { harness, RecordedRequest } from './harness'
 
 const ALIAS =
-  /(a\d+): Media\((id|idMal): (\d+), type: ANIME\) \{ characters\(page: (\d+)/g
+  /(a\d+): Media\((id|idMal): (\d+), type: (ANIME|MANGA)\) \{ characters\(page: (\d+)/g
 
 export const aliasesOf = (request: RecordedRequest) =>
-  [...request.body.query.matchAll(ALIAS)].map(([, alias, key, id, page]) => ({
+  [...request.body.query.matchAll(ALIAS)].map(([, alias, key, id, , page]) => ({
     alias,
     key,
     id: Number(id),
     page: Number(page),
   }))
+
+/** The media type (`ANIME` / `MANGA`) of every aliased lookup, in order. */
+export const typesOf = (request: RecordedRequest) =>
+  [...request.body.query.matchAll(ALIAS)].map(([, , , , type]) => type)
 
 type Override = (alias: string, id: number) => { error?: object } | undefined
 

@@ -1,5 +1,5 @@
 /**
- * AniList GraphQL documents for the cast relink: the single-anime paged query and the
+ * AniList GraphQL documents for the cast relink: the single-media paged query and the
  * batched query that packs several (anime, page) lookups as aliases `a0`, `a1`, …
  * Both select the same edge fields, so every output line has the same shape.
  *
@@ -7,6 +7,10 @@
  */
 
 export const MAX_PAGES = 200
+
+/** AniList media type: anime casts (default) or manga casts. */
+export type MediaType = 'ANIME' | 'MANGA'
+export const MEDIA_TYPES: readonly MediaType[] = ['ANIME', 'MANGA']
 const PER_PAGE = 25
 
 const CAST_FIELDS = `pageInfo { hasNextPage }
@@ -29,9 +33,10 @@ export interface CastLookup {
 }
 
 export const buildQuery = (
-  byAnilistId: boolean
+  byAnilistId: boolean,
+  mediaType: MediaType = 'ANIME'
 ) => `query ($id: Int, $page: Int) {
-  Media(${byAnilistId ? 'id' : 'idMal'}: $id, type: ANIME) {
+  Media(${byAnilistId ? 'id' : 'idMal'}: $id, type: ${mediaType}) {
     ${characters('$page')}
   }
 }`
@@ -39,10 +44,13 @@ export const buildQuery = (
 export const aliasOf = (index: number) => `a${index}`
 
 /** One request body holding every lookup as an aliased `Media` (ids are integers). */
-export const buildBatchQuery = (lookups: CastLookup[]) => {
+export const buildBatchQuery = (
+  lookups: CastLookup[],
+  mediaType: MediaType = 'ANIME'
+) => {
   const fields = lookups.map(({ malId, anilistId, page }, index) => {
     const key = anilistId != null ? `id: ${anilistId}` : `idMal: ${malId}`
-    return `  ${aliasOf(index)}: Media(${key}, type: ANIME) { ${characters(String(page))} }`
+    return `  ${aliasOf(index)}: Media(${key}, type: ${mediaType}) { ${characters(String(page))} }`
   })
   return `query {\n${fields.join('\n')}\n}`
 }

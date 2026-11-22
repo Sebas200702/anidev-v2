@@ -12,6 +12,7 @@ import {
   type CastLookup,
   type CharacterPage,
   MAX_PAGES,
+  type MediaType,
 } from './anilist-query'
 import {
   type GraphqlError,
@@ -44,9 +45,10 @@ const isNotFound = (error: GraphqlError) =>
 const isComplexity = (error: GraphqlError) =>
   /complexity/i.test(error.message ?? '')
 
-/** Fetches every target's full cast, emitting one line per anime via `onLine`. */
+/** Fetches every target's full cast, emitting one line per media via `onLine`. */
 export const createBatchFetch =
-  (post: Post) => async (targets: CastTarget[], options: BatchOptions) => {
+  (post: Post, mediaType: MediaType = 'ANIME') =>
+  async (targets: CastTarget[], options: BatchOptions) => {
     const fresh = targets.values()
     const queue: WorkItem[] = []
     let batchSize = Math.max(1, Math.floor(options.batchSize))
@@ -98,7 +100,7 @@ export const createBatchFetch =
     }
 
     for (let batch = takeBatch(); batch.length; batch = takeBatch()) {
-      const result = await post({ query: buildBatchQuery(batch) })
+      const result = await post({ query: buildBatchQuery(batch, mediaType) })
       if (!result.isOk) {
         for (const item of batch)
           await finish(item, { found: false, edges: [], error: result.error })
