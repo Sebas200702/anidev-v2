@@ -277,15 +277,17 @@ jobs:
           TAG: ${{ steps.resolve.outputs.tag }}
           # Bypass actor of the master ruleset; exposed to this step only.
           DEPLOY_KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           key_dir="$(mktemp -d)"
           trap 'rm -rf "$key_dir"' EXIT
           printf '%s\n' "$DEPLOY_KEY" > "$key_dir/key"
           chmod 600 "$key_dir/key"
-          # GitHub's SSH host keys from its HTTPS meta API (no TOFU keyscan).
-          curl -fsSL https://api.github.com/meta \
-            | jq -r '.ssh_keys[] | "github.com " + .' > "$key_dir/known_hosts"
+          # GitHub's SSH host keys from its HTTPS meta API (no TOFU keyscan);
+          # authenticated, so shared runner IPs are not rate-limited.
+          gh api meta --jq '.ssh_keys[] | "github.com " + .' \
+            > "$key_dir/known_hosts"
           export GIT_SSH_COMMAND="ssh -i $key_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$key_dir/known_hosts -o StrictHostKeyChecking=yes"
           remote="git@github.com:$GITHUB_REPOSITORY.git"
 
