@@ -64,4 +64,5 @@ export type {
   AnimeEpisodeItem,
   AnimeEpisodeDetail,
 } from './anime-episode.d-types'
+export type { AnimeMediaItem } from './anime-media.d-types'
 export type { AnimeMusicItem } from './anime-music.d-types'

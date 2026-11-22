@@ -29,7 +29,7 @@ cubre solo home, búsqueda y ficha de anime básica.
 | Dominio | Estado |
 |---|---|
 | **infra** | Health, error-handling, monitoring (Rustrak), resilience/degradación, cache multicapa (Dragonfly), response-schema validation en el wrapper, request-id, rate-limiting, CSP y cabeceras de seguridad, `pg.Pool` acotado. |
-| **anime** | Read: lista/detalle/`full`/characters/staff/episodios (`/api/anime/:malId/episodes`)/music (`/api/anime/:malId/music`, `/:musicId`). **Búsqueda avanzada**: filtros (season/score), sort whitelist, free-text indexado (`pg_trgm`, también sinónimos), floor parental safe-only. Páginas `/anime/[malId]/[slug]` y `/search?genre=` (taxonomía por género). El reparto omite personajes con nombre provisional. |
+| **anime** | Read: lista/detalle/`full`/characters/staff/episodios (`/api/anime/:malId/episodes`)/media (`/api/anime/:malId/media`, `/:mediaId`)/music (`/api/anime/:malId/music`, `/:musicId`). **Búsqueda avanzada**: filtros (season/score), sort whitelist, free-text indexado (`pg_trgm`, también sinónimos), floor parental safe-only. Páginas `/anime/[malId]/[slug]` y `/search?genre=` (taxonomía por género). El reparto omite personajes con nombre provisional. |
 | **search** | Historial por usuario (record best-effort + read/clear authed) y búsqueda de catálogo pública `GET /api/search?q=&type=anime\|manga`. |
 | **manga** | Obra impresa (manga, novela, one-shot): `/api/manga` (filtros, safe), `/api/manga/:malId` (reparto con voz) y `/full`. Sin páginas. |
 | **music** | Read: lista + detalle, nº de tema, rango de episodios y enlaces de tienda. Sin player. |

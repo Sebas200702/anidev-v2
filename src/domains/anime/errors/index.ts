@@ -12,6 +12,10 @@
 
 export { AnimeInvalidIdError, animeInvalidId } from './anime-invalid-id-error'
 export {
+  AnimeMediaNotFoundError,
+  animeMediaNotFound,
+} from './anime-media-not-found-error'
+export {
   AnimeMusicNotFoundError,
   animeMusicNotFound,
 } from './anime-music-not-found-error'
