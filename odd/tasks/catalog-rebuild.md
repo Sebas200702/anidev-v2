@@ -1,0 +1,39 @@
+# Catalog rebuild — phase 2 of the DB recomposition
+
+Rebuild and improve the local catalog with the downloaded datasets and other sources,
+after phase 1 (`odd/tasks/cast-relink.md`). Local DB only; production is applied by the
+maintainer. Same method as phase 1: dry-run audit, sampled validation, reversible apply.
+
+## Specs
+
+- **S1** — "continuemos con la reconstrucion y mejora de la base de datos usando los
+  datasets y otras fuentes". Scope chosen by the user (L2): manga cast, character kanji
+  and posters, anime relations, and a staff / voice-actor audit — "todo".
+- **S2** — Conflicts: "Aplicar la mayoría de fuentes" — when AniList and the
+  anime-offline-database agree against the stored (MAL) value, the value is corrected and
+  logged so it can be reverted. Empty fields are filled from the sources.
+- **S3** — Synthetic ids: replace the `1000000000 + AniList id` trick with a
+  `character_external` table "Ahora", before touching the manga cast.
+- **S4** — Manga cast: the 194,613 `manga_character` links come from the AniList import
+  that resolved characters by global name ("Narrator" in 140 mangas; Pedro and Kawashima
+  in Haikyuu!!). Re-resolve them against AniList manga casts without losing correct links.
+- **S5** — Characters: `name_kanji` holding romaji (27,637) gets AniList `name.native`;
+  AniList characters without a poster get their AniList image (46,651 fillable).
+- **S6** — Anime relations: add the missing ones (10,028 where both anime exist), typed
+  from AniList when available.
+- **S7** — Staff and voice actors: read-only audit first; fixes only after the numbers.
+
+## Tasks
+
+- **T1** (S3) — `character_external` schema + Drizzle migration 0016 + local backfill + twin merge (logged, reversible) + app docs. Route: gentle-ai-worker. Risk: items 1, 3. Commit: —
+- **T2** (S4) — Manga cast relink: fetch AniList manga casts (batched), audit, apply, rollback. Route: worker. Risk: item 1. Commit: —
+- **T3** (S5) — Kanji + posters fill, logged and reversible. Route: worker. Risk: item 1. Commit: —
+- **T4** (S2,S6) — Anime relations + field conflicts by source majority, logged and reversible. Route: worker. Risk: item 1. Commit: —
+- **T5** (S7) — Staff / voice-actor audit (read-only) → report → decide. Route: inline/explore. Commit: —
+- **T6** (S1) — Verify, docs, independent verify. Route: gentle-ai-verify. Commit: —
+
+## Log
+
+- **L1** — User: "bueno continuemos con la reconstrucion y mejora de la base de datos usando los datasets y otras fuentes"
+- **L2** — Measurements (local DB, read-only): 30,561 anime (all in offline-db, 19,344 in AniList CSV; 73 new titles available). Empty: synopsis 5,113 (AniList fills 470), banner 20,244 (AniList fills 4), year 718, season 2,862, episodes 265, type 26. Disagreements vs AniList: episodes 422, year 304, anilist_id 13; vs offline-db: episodes 88, year 23. Relations vs offline-db: 10,028 missing (both exist), 5,570 extra. manga_character: 194,613 rows, all UPPERCASE (AniList import, no Jikan twin), "Narrator" in 140 mangas, 95,479 synthetic links. character.name_kanji = name: 27,637. staff.anilist_id: 0/66,368. User answers: scope "todo" (all four options); conflicts "Aplicar la mayoría de fuentes"; character_external "Ahora".
+- **L3** — T1 design (parent, from explore map + DB checks). Keep `character.mal_id` as the opaque internal key (URLs, 5 cascading FKs, user avatar URLs and public `malId` stay stable). New `character_external` mirrors `anime_external_ids`: `character_id` PK + FK → `character.mal_id` ON DELETE CASCADE; nullable `mal_id`, `anilist_id`, `anidb_id`; timestamps; partial UNIQUE on `mal_id` and on `anilist_id` WHERE NOT NULL. `character.anilist_id` stays (deprecated, no readers) and is dropped in a later migration. Backfill: real rows (< 1e9) → `mal_id = character.mal_id`, `anilist_id = character.anilist_id`; synthetic rows → `mal_id` NULL, `anilist_id = id - 1e9`. DB facts: 105,898 synthetic characters (0 inconsistent); 0 staff ids ≥ 1e9; 27,684 real characters with anilist_id but only 27,172 distinct (34 groups share one) → those keep `anilist_id` NULL in `character_external` and are logged as conflicts; 11,285 twins (real MAL character with anilist_id X while synthetic 1e9+X exists; synthetic still holds 2,449 anime links + 5,708 manga links) → merge the synthetic into the real character: move anime_character / manga_character / character_voice_actor / character_nickname / character_media rows (skip ones already present), then delete the synthetic, all logged so a rollback restores it exactly. App: no character page/sitemap/JSON-LD exists; only fix docs/param names calling the key a "MyAnimeList character id" and the misleading `source: 'myanimelist'` at `anime-character/mapper.ts:91` only if a test proves no behavior change; public field `malId` stays.
