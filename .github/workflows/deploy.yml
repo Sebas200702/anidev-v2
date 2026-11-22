@@ -271,6 +271,23 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # The release commit is pushed with [skip ci], so CI never checks it:
+      # format what it writes with the repo's pinned Biome, or the next PR
+      # merged with master fails the gate on CHANGELOG.md.
+      - name: Set up Bun
+        if: steps.write-back.outputs.changed == 'true'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.4.5
+
+      - name: Format the release files with Biome
+        if: steps.write-back.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          bun install --frozen-lockfile --ignore-scripts
+          bunx biome format --write CHANGELOG.md package.json
+          bunx biome check CHANGELOG.md package.json
+
       - name: Commit and push the release to master
         if: steps.write-back.outputs.changed == 'true'
         env:
