@@ -83,7 +83,7 @@ jobs:
       S3_FORCE_PATH_STYLE: 'true'
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: anidev
           POSTGRES_PASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD }}
