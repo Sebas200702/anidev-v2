@@ -5,6 +5,7 @@
 #   bash scripts/db/cast-relink/run.sh audit   (dry run: rebuilds cast_relink.audit only)
 #   bash scripts/db/cast-relink/run.sh fetch-list --out-dir DIR   (pending-api ids + map)
 #   bash scripts/db/cast-relink/run.sh merge-api --api-jsonl PATH (then re-run audit)
+#   bash scripts/db/cast-relink/run.sh apply|rollback (audit + ONE-tx write | exact undo)
 #   bash scripts/db/cast-relink/run.sh test
 #   LOCAL_DATABASE_URL falls back to DATABASE_URL, then to POSTGRES_* on localhost.
 set -euo pipefail
@@ -94,6 +95,19 @@ merge_api() {
           FROM anilist_cast_source GROUP BY 1 ORDER BY 1"
 }
 
+# Writes public tables in one transaction; refused while a batch is not rolled back.
+apply() {
+  audit
+  sql -f "$HERE/sql/05-apply.sql"
+  sql -c "SELECT 'removed (' || decision || ')' AS action, count(*) FROM removed_links GROUP BY 1
+          UNION ALL SELECT 'inserted links', count(*) FROM inserted_links
+          UNION ALL SELECT 'created characters', count(*) FROM created_characters
+          UNION ALL SELECT 'created media', count(*) FROM created_media
+          UNION ALL SELECT 'anilist_id ' || status, count(*) FROM updated_characters GROUP BY 1
+          UNION ALL SELECT 'untouched (' || decision || ')', count(*) FROM audit
+            WHERE decision IN ('keep', 'pending-api') GROUP BY decision ORDER BY 1"
+}
+
 run_tests() {
   SCHEMA='cast_relink_test'
   sql -c "DROP SCHEMA IF EXISTS ${SCHEMA} CASCADE"
@@ -128,7 +142,9 @@ case "$COMMAND" in
   audit) audit ;;
   fetch-list) fetch_list ;;
   merge-api) merge_api ;;
+  apply) apply ;;
+  rollback) sql -f "$HERE/sql/06-rollback.sql" && echo 'cast-relink: batch rolled back' ;;
   test) run_tests ;;
-  *) die 'usage: run.sh <stage|audit|fetch-list|merge-api|test> [--anilist-csv PATH]
+  *) die 'usage: run.sh <stage|audit|fetch-list|merge-api|apply|rollback|test> [--anilist-csv PATH]
   [--offline-db PATH] [--out-dir DIR] [--api-jsonl PATH]' ;;
 esac

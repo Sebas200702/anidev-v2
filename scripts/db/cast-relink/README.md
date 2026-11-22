@@ -27,6 +27,8 @@ bun scripts/db/cast-relink/fetch-anilist.ts DIR/pending-ids.txt --out DIR/anilis
   --map DIR/anilist-map.tsv [--rpm 30]
 bash scripts/db/cast-relink/run.sh merge-api --api-jsonl DIR/anilist-api.jsonl
 bash scripts/db/cast-relink/run.sh audit    # re-classifies with the API casts
+bash scripts/db/cast-relink/run.sh apply    # re-runs audit, then writes in ONE transaction
+bash scripts/db/cast-relink/run.sh rollback # restores the applied batch exactly
 bun test scripts/db/cast-relink/test        # offline checks of the AniList client
 ```
 
@@ -73,5 +75,29 @@ every found anime (latest found line wins) its `anilist_cast` rows are replaced 
 animes keep their staging. Re-running it is idempotent. An `anilist-api` cast is complete,
 so the audit no longer treats it as truncated at 25. `stage` truncates staging, so run
 `merge-api` again after any re-stage.
+
+## Apply and rollback (T4)
+
+`apply` re-runs the audit, then `sql/05-apply.sql` acts on its decisions in one
+transaction and prints counts per action. Every change is logged in the `cast_relink`
+schema:
+
+| Decision | Effect | Log |
+|---|---|---|
+| `dedupe`, `quarantine` | the pair's UPPERCASE rows are deleted | `removed_links` |
+| `repoint` | old UPPERCASE rows deleted; `(anime, target, role)` inserted per role, skipped when the anime already has the target with a Title-case (Jikan) role or the row exists (sources sharing a target insert once) | `removed_links`, `inserted_links` |
+| `repoint` + `creates_character` | `"character"` row from the AniList cast (`name_full`, `name_native`, `anilist_id`) and, when `image_url` is set and is not the AniList `default.jpg` placeholder, a poster | `created_characters`, `created_media` |
+| `repoint` to a real MAL id | `anilist_id` set when NULL; a different existing value (or several candidates) is left as is | `updated_characters` (`set` / `conflict`) |
+| `keep`, `pending-api` | untouched | — |
+
+AniList posters: `media_type = 'poster'`, `size` NULL, `source = 'anilist'`,
+`priority = 30` — after the MAL posters (20/25), so a MAL image added later for the same
+character wins.
+
+`apply` is refused while the logs hold a batch. `rollback` (`sql/06-rollback.sql`, one
+transaction) deletes the inserted links, created media and created characters, restores
+`anilist_id` (only where it still holds the value the batch set), re-inserts the removed
+links and empties the logs. It refuses when a created character is referenced by a link
+or media row the batch did not create, since deleting it would cascade those rows away.
 
 The database URL comes from `LOCAL_DATABASE_URL`, then `DATABASE_URL`, then `POSTGRES_*`.

@@ -36,7 +36,7 @@ by the maintainer. Phase 1 of a wider DB recomposition (phase 2: rest of the cat
 - **T2** (S1,S2,S4,S5) — Classify into `cast_relink.audit` (dry run) + summary report; user checkpoint. Route: gentle-ai-worker + inline fix. Commit: see git log ✅ (220,429 pairs: dedupe 104,653 · repoint 54,764 · pending-api 38,492 · keep 19,834 · quarantine 2,686)
 - **T3** (S3) — AniList API fallback for missing/truncated casts → same staging. Route: gentle-ai-worker. Commit: see git log ✅ (2,458 pending animes)
 - **T3b** (S3) — AniDB tie-break, last resort: only quarantine rows still unresolved after T3; cached, ≤1 req/2s, registered client. Route: pending decision after T3 numbers. Commit: —
-- **T4** (S1,S4,S5) — Apply transaction + quarantine + rollback script. Route: inline. Commit: —
+- **T4** (S1,S4,S5) — Apply transaction + quarantine + rollback script. Route: gentle-ai-worker + inline fix (placeholder image). Commit: see git log ✅ code (tests 01–05); real apply pending T3 merge
 - **T5** (S2,S5) — Verify (Shoushimin, Narrator, no Main/MAIN pairs), docs, independent verify (Risk item 1). Route: inline + gentle-ai-verify. Commit: —
 
 ## Log
