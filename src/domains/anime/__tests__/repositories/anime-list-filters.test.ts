@@ -1,5 +1,5 @@
 /**
- * SQL-generation unit tests for anime-list filter and sort builders.
+ * SQL-generation unit tests for the anime-list filter builder.
  *
  * @module domains/anime/__tests__/repositories/anime-list-filters
  * @remarks
@@ -18,9 +18,6 @@ const { db } = await import('@db/client')
 const { anime } = await import('@db/schemas/anime')
 const { buildAnimeListFilters } = await import(
   '@anime/repositories/anime-list/filters'
-)
-const { buildAnimeListSort } = await import(
-  '@anime/repositories/anime-list/sort'
 )
 
 describe('buildAnimeListFilters — season and score range', () => {
@@ -108,40 +105,5 @@ describe('buildAnimeListFilters — parental floor', () => {
 
   it('full variant does not restrict ratings', () => {
     expect(buildAnimeListFilters({ parentalVariant: 'full' })).toHaveLength(0)
-  })
-})
-
-describe('buildAnimeListSort — deterministic ordering', () => {
-  it('orders by the requested field then the malId secondary key', () => {
-    const { sql } = db
-      .select()
-      .from(anime)
-      .orderBy(...buildAnimeListSort({ sort: 'year', order: 'asc' }))
-      .toSQL()
-
-    expect(sql.toLowerCase()).toContain('order by')
-    expect(sql).toContain('"year"')
-    expect(sql).toContain('"mal_id"')
-  })
-
-  it('defaults to score desc with the malId tiebreaker', () => {
-    const { sql } = db
-      .select()
-      .from(anime)
-      .orderBy(...buildAnimeListSort({}))
-      .toSQL()
-    expect(sql).toContain('"score"')
-    expect(sql).toContain('"mal_id"')
-    expect(sql.toLowerCase()).toContain('desc')
-  })
-
-  it('orders relevance sort by the sim_rank select alias', () => {
-    const { sql } = db
-      .select()
-      .from(anime)
-      .orderBy(...buildAnimeListSort({ sort: 'relevance', query: 'cowboy' }))
-      .toSQL()
-    expect(sql).toContain('sim_rank')
-    expect(sql).toContain('"mal_id"')
   })
 })

@@ -35,6 +35,8 @@ const sortColumn = {
  * @returns Ordered Drizzle `SQL` fragments for `.orderBy(...)`
  *
  * @remarks
+ * The primary field is always `NULLS LAST`, so rows missing the sorted value
+ * (e.g. unscored anime) trail the list instead of leading it.
  * `relevance` ranks by `pg_trgm` `similarity(title, query)` (always
  * most-similar-first, ignoring `order`) and relies on the GIN trigram index.
  */
@@ -55,7 +57,12 @@ export const buildAnimeListSort = ({
 
   const field = sort === 'relevance' ? 'score' : sort
   const column = sortColumn[field]
-  const primary = order === 'asc' ? asc(column) : desc(column)
+  // Postgres sorts NULL first under DESC, which would lead the default
+  // (score desc) list with unscored titles; pin them last in both directions.
+  const primary =
+    order === 'asc'
+      ? sql`${column} asc nulls last`
+      : sql`${column} desc nulls last`
 
   return [primary, asc(anime.malId)]
 }
