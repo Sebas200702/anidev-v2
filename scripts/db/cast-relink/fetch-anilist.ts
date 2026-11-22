@@ -3,19 +3,24 @@
  *
  * Usage:
  *   bun scripts/db/cast-relink/fetch-anilist.ts IDS_FILE --out OUT.jsonl
- *     [--map MAP.tsv] [--rpm 30]
+ *     [--map MAP.tsv] [--rpm 30] [--batch 10]
  *
- * IDS_FILE holds one MAL anime id per line; MAP.tsv holds `mal_id<TAB>anilist_id` (both
+ * Each HTTP request packs up to `--batch` aliased (anime, page) lookups. IDS_FILE holds one MAL anime id per line; MAP.tsv holds `mal_id<TAB>anilist_id` (both
  * from `run.sh fetch-list`). Lines are appended to OUT; ids already in OUT without an
  * `error` are skipped, so an interrupted run resumes and errored ids are retried.
  *
  * @module scripts/db/cast-relink/fetch-anilist
  */
 import { appendFile, readFile } from 'node:fs/promises'
-import { createAnilistClient, DEFAULT_RPM } from './anilist-client'
+import {
+  type CastLine,
+  createAnilistClient,
+  DEFAULT_BATCH,
+  DEFAULT_RPM,
+} from './anilist-client'
 
 const USAGE =
-  'usage: fetch-anilist.ts IDS_FILE --out OUT.jsonl [--map MAP.tsv] [--rpm N]'
+  'usage: fetch-anilist.ts IDS_FILE --out OUT.jsonl [--map MAP.tsv] [--rpm N] [--batch N]'
 
 const fail = (message: string): never => {
   process.stderr.write(`fetch-anilist: ${message}\n${USAGE}\n`)
@@ -59,6 +64,9 @@ const outFile = options.out
 if (!idsFile || !outFile) fail('IDS_FILE and --out are required')
 const rpm = Number(options.rpm ?? DEFAULT_RPM)
 if (!(rpm > 0)) fail('--rpm must be a positive number')
+const batchSize = Number(options.batch ?? DEFAULT_BATCH)
+if (!Number.isInteger(batchSize) || batchSize < 1)
+  fail('--batch must be a positive integer')
 
 const ids = [...new Set((await readLines(idsFile)).map(toId))].filter(
   (id): id is number => id != null
@@ -81,25 +89,40 @@ for (const line of await readLines(outFile, true)) {
 
 const pending = ids.filter((id) => !done.has(id))
 process.stderr.write(
-  `fetch-anilist: ${ids.length} ids, ${ids.length - pending.length} done, ${pending.length} to fetch at ≤${rpm} req/min\n`
+  `fetch-anilist: ${ids.length} ids, ${ids.length - pending.length} done, ${pending.length} to fetch at ≤${rpm} req/min, batch ${batchSize}\n`
 )
+let requests = 0
+const startedAt = Date.now()
 const client = createAnilistClient({
-  fetch: (url, init) => fetch(url, init),
+  fetch: (url, init) => {
+    requests += 1
+    return fetch(url, init)
+  },
   sleep: (milliseconds) =>
     new Promise((resolve) => setTimeout(resolve, milliseconds)),
   now: () => Date.now(),
   rpm,
 })
 const counts = { found: 0, missing: 0, errors: 0 }
-for (const [index, malId] of pending.entries()) {
-  const line = await client.fetchCast(malId, anilistIds.get(malId))
+let written = 0
+const report = () =>
+  process.stderr.write(
+    `fetch-anilist: ${written}/${pending.length} found=${counts.found} missing=${counts.missing} errors=${counts.errors} requests=${requests} ${Math.round((Date.now() - startedAt) / 1000)}s\n`
+  )
+const writeLine = async (line: CastLine) => {
   await appendFile(outFile, `${JSON.stringify(line)}\n`)
   if (line.error) counts.errors += 1
   else if (line.found) counts.found += 1
   else counts.missing += 1
-  if ((index + 1) % 25 === 0 || index + 1 === pending.length) {
-    process.stderr.write(
-      `fetch-anilist: ${index + 1}/${pending.length} found=${counts.found} missing=${counts.missing} errors=${counts.errors}\n`
-    )
-  }
+  written += 1
+  if (written % 25 === 0) report()
 }
+const result = await client.fetchCasts(
+  pending.map((malId) => ({ malId, anilistId: anilistIds.get(malId) })),
+  { batchSize, onLine: writeLine }
+)
+report()
+if (result.batchSize !== batchSize)
+  process.stderr.write(
+    `fetch-anilist: batch reduced to ${result.batchSize} (query complexity)\n`
+  )

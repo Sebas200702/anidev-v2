@@ -24,7 +24,7 @@ bash scripts/db/cast-relink/run.sh stage --anilist-csv PATH --offline-db PATH
 bash scripts/db/cast-relink/run.sh audit    # dry run: rebuilds cast_relink.audit + summary
 bash scripts/db/cast-relink/run.sh fetch-list --out-dir DIR      # ids to ask AniList for
 bun scripts/db/cast-relink/fetch-anilist.ts DIR/pending-ids.txt --out DIR/anilist-api.jsonl \
-  --map DIR/anilist-map.tsv [--rpm 30]
+  --map DIR/anilist-map.tsv [--rpm 30] [--batch 10]
 bash scripts/db/cast-relink/run.sh merge-api --api-jsonl DIR/anilist-api.jsonl
 bash scripts/db/cast-relink/run.sh audit    # re-classifies with the API casts
 bash scripts/db/cast-relink/run.sh apply    # re-runs audit, then writes in ONE transaction
@@ -60,11 +60,23 @@ rows) and `DIR/anilist-map.tsv` (`mal_id<TAB>anilist_id` for those ids, from
 `fetch-anilist.ts` (Bun, no dependencies) asks `https://graphql.anilist.co` for the full
 cast of each id — `Media(id:)` when the map has the AniList id, else `Media(idMal:)` —
 paging `characters(perPage: 25)` until `hasNextPage` is false. It appends one line per
-anime: `{"anime_id", "found", "edges"}` (plus `"error"` when the fetch failed).
+anime, once all its pages are in: `{"anime_id", "found", "edges"}` (plus `"error"` when
+the fetch failed).
 
-- **Rate limit:** at most `--rpm` requests per minute (default 30, one per page). HTTP
-  429 waits `Retry-After` (+1 s); 5xx and network errors are retried 3 times with
-  backoff, then the line is written with `found: false` and `error`.
+- **Batching:** each HTTP request packs up to `--batch` (default 10) GraphQL aliases
+  `a0: Media(...) { characters(page: P, ...) }`, one per (anime, page) from a work
+  queue: new animes start at page 1 and an anime with `hasNextPage` re-enters the queue
+  with its next page for a later request. AniList counts the whole request as one
+  against its rate limit, so a page-1-only run is ~`--batch` times faster; an anime with
+  many pages still needs one request per page (anime 21: 33 pages → 33 requests).
+- **Per-anime outcome:** a `null` alias (or a "Not Found" error on its path) is
+  `found: false` without `error`; any other error on an alias path is retried for that
+  anime (3 retries) and then written with `error`. A "query complexity" error halves the
+  batch size (down to 1) and re-sends the same lookups; the reduction is reported.
+- **Rate limit:** at most `--rpm` HTTP requests per minute (default 30; AniList's limit
+  is 30/min per IP, shared by every running fetch). HTTP 429 waits `Retry-After`
+  (+1 s); 5xx and network errors are retried 3 times with backoff, then every anime of
+  that request is written with `found: false` and `error`.
 - **Resumable:** ids already in the output without `error` are skipped, so the command
   can be stopped and re-run; errored ids are fetched again on the next run.
 - Sends only a generic `User-Agent` (`cast-relink/1.0`) and no credentials.

@@ -6,51 +6,7 @@
  */
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { createAnilistClient } from '../anilist-client'
-
-type Reply = Response | Error
-
-const page = (ids: number[], hasNextPage: boolean) =>
-  Response.json({
-    data: {
-      Media: {
-        characters: {
-          pageInfo: { hasNextPage },
-          edges: ids.map((id) => ({ role: 'MAIN', node: { id } })),
-        },
-      },
-    },
-  })
-
-const harness = (replies: Reply[], rpm = 30) => {
-  let clock = 0
-  const requests: {
-    body: { query: string; variables: { id: number; page: number } }
-    at: number
-    headers: Record<string, string>
-  }[] = []
-  const sleeps: number[] = []
-  const client = createAnilistClient({
-    rpm,
-    now: () => clock,
-    sleep: async (milliseconds) => {
-      sleeps.push(milliseconds)
-      clock += milliseconds
-    },
-    fetch: async (_url, init) => {
-      requests.push({
-        body: JSON.parse(String(init.body)),
-        at: clock,
-        headers: init.headers as Record<string, string>,
-      })
-      const reply = replies.shift()
-      if (!reply) throw new Error('unexpected request')
-      if (reply instanceof Error) throw reply
-      return reply
-    },
-  })
-  return { client, requests, sleeps }
-}
+import { harness, page } from './harness'
 
 test('paginates until hasNextPage is false and keeps every edge', async () => {
   const { client, requests } = harness([
