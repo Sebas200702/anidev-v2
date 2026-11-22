@@ -508,7 +508,7 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 
 ## Releases & Versioning
 
-**Scheme:** SemVer computed automatically from Conventional Commits on every merge to `master`. **Git tags (`vX.Y.Z`) and GitHub Releases are the source of truth** for the version; `package.json` `version` and `CHANGELOG.md` are frozen at `0.18.0` (history up to that release) and are not bumped anymore.
+**Scheme:** SemVer computed automatically from Conventional Commits on every merge to `master`. **Git tags (`vX.Y.Z`) and GitHub Releases are the source of truth** for the version; `package.json` `version` and `CHANGELOG.md` are kept in sync with them by a `chore(release): vX.Y.Z` bot commit that CI pushes to `master` after each release.
 
 - `fix(scope):` / `perf(scope):` / `revert:` → **patch** (`X.Y.Z` → `X.Y.(Z+1)`)
 - `feat(scope):` → **minor** (`X.Y.Z` → `X.(Y+1).0`)
@@ -519,12 +519,13 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 **Release flow (automatic — `.github/workflows/deploy.yml`):**
 
 1. Merge the PR to `master` (protected — PR required). Use Conventional Commits (or a conventional squash title): they decide the bump.
-2. The `version` job reads the commits since the last tag and computes the next `vX.Y.Z` (`mathieudutour/github-tag-action`, pinned by SHA, `dry_run` + `soft_fail`: an API error never blocks the deploy). Nothing is committed back to `master`.
-3. `build-and-push` builds the Docker image once and pushes `:latest`, `:<sha>` and, on a release, `:vX.Y.Z`.
-4. Only after the image is pushed, `github-release` creates the tag on the merged commit together with the GitHub Release and its generated changelog. A failed build leaves no tag, so the next merge releases those commits again.
-5. Runs are serialized (`concurrency: deploy-master`), so two quick merges never compute the same version.
+2. `build-and-push` always builds the Docker image once and pushes `:latest` + `:<sha>`. It does not depend on the release, so a release failure never blocks a deploy.
+3. `release` (after the build, serialized with `concurrency: release-master`) computes the next `vX.Y.Z` from the commits since the last tag (`mathieudutour/github-tag-action`, pinned by SHA, `dry_run`). No releasable commit → it stops there.
+4. It creates the tag on the built commit together with the GitHub Release, then retags the already-pushed `:<sha>` image as `:vX.Y.Z` (no rebuild).
+5. It inserts the release notes into `CHANGELOG.md`, sets `package.json` `version`, and pushes `chore(release): vX.Y.Z [skip ci]` to `master` as `github-actions[bot]`. The push uses the **`RELEASE_DEPLOY_KEY` deploy key** (write access, stored as an Actions secret): deploy keys are the only bypass actor of the `master` ruleset, because a personal repository cannot list the GitHub Actions app there. `[skip ci]` keeps it from triggering a rebuild, and `chore` never bumps. Rotate it by replacing the deploy key and the secret together.
+6. Every step is idempotent: "Re-run failed jobs" reuses the tag already on the commit and finishes a half-done release.
 
-Do **not** create version tags or `chore(release):` commits by hand. `release.yml` remains only as the fallback path for a tag pushed manually by a maintainer (a tag created with `GITHUB_TOKEN` never triggers it).
+Do **not** create version tags, bump `package.json`, edit `CHANGELOG.md` releases, or write `chore(release):` commits by hand. `release.yml` remains only as the fallback path for a tag pushed manually by a maintainer (a tag created with `GITHUB_TOKEN` never triggers it).
 
 ## Commit Convention
 Conventional Commits with scopes: `type(scope): summary` (e.g., `fix(auth): Handle expired token`). See `.changeset/commit-all.md`.
