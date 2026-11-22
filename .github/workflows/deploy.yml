@@ -285,8 +285,8 @@ jobs:
         run: |
           set -euo pipefail
           bun install --frozen-lockfile --ignore-scripts
-          bunx biome format --write CHANGELOG.md package.json
-          bunx biome check CHANGELOG.md package.json
+          ./node_modules/.bin/biome format --write CHANGELOG.md package.json
+          ./node_modules/.bin/biome check CHANGELOG.md package.json
 
       - name: Commit and push the release to master
         if: steps.write-back.outputs.changed == 'true'
