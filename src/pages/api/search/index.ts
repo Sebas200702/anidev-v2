@@ -3,11 +3,14 @@
  *
  * @module pages/api/search/index
  *
- * **Route:** `GET /api/search?q=&type=anime|manga`
+ * **Route:** `GET /api/search?q=&type=anime|manga|music|characters`
  *
  * **Authentication:** Public — no session required.
  *
- * Searches the anime or the printed-media catalog by title and synonyms.
+ * Searches anime, printed media (title and synonyms), music themes or
+ * characters. Music and characters match their own title/name **or** the
+ * title of a non-adult anime they belong to (`?q=bebop&type=music` lists the
+ * themes of Cowboy Bebop).
  *
  * @see {@link catalogSearchRequestSchema} — request validation schema
  * @see {@link catalogSearchResponseSchema} — response validation schema
@@ -33,22 +36,22 @@ import {
  *
  * | Source | Field | Type | Required | Description |
  * |--------|-------|------|----------|-------------|
- * | Query | `q` | `string` | Yes | Search term, 1–100 chars |
- * | Query | `type` | `anime \| manga` | No | Catalog, default `anime` |
+ * | Query | `q` | `string` | Yes | Search term, 1–100 chars (2+ for characters) |
+ * | Query | `type` | `anime \| manga \| music \| characters` | No | Catalog, default `anime` |
  * | Query | `page` / `limit` | `number` | No | Pagination (1–10000 / 1–100) |
  *
  * **Success response — `200 OK`**
  *
  * ```typescript
  * {
- *   data: AnimeCard[] | MangaCard[]
+ *   data: AnimeCard[] | MangaCard[] | MusicCard[] | CharacterCard[]
  *   status: 200
- *   meta: { type: 'anime' | 'manga', page, total, hasNext, stale }
+ *   meta: { type, page, total, hasNext, stale }
  * }
  * ```
  *
  * **Error responses:** `400 VALIDATION_ERROR` (missing `q`, unknown `type`,
- * bad pagination), `503` on infrastructure failure.
+ * `q` shorter than 2 chars for `characters`, bad pagination), `503` on infrastructure failure.
  *
  * @example
  * ```bash

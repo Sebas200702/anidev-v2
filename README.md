@@ -107,7 +107,6 @@ Dragonfly + Rustrak) run `docker compose up -d` and copy `.env.local.example`
 | `bun run db:seed:e2e` | Seed the deterministic rows E2E asserts against |
 | `bun run auth:generate` / `auth:migrate` | Better Auth schema/migrations |
 | `bun run db:generate` / `db:migrate` | Drizzle migrations (PostgreSQL) |
-| `bun run release:*` | `standard-version` release — see Versioning |
 
 ## Development methodology — ODD + RDD
 
@@ -209,16 +208,24 @@ Ops docs: [alert rules](docs/alerts.md) ·
 
 ## Versioning
 
-**SemVer** by Conventional Commits via `standard-version`.
+**SemVer**, computed automatically from Conventional Commits on every merge
+to `master`. Git tags and GitHub Releases are the source of truth for the
+version; `package.json` and `CHANGELOG.md` follow them through a
+`chore(release): vX.Y.Z` bot commit pushed to `master` after each release.
 
-- `fix(scope):` → **patch** · `feat(scope):` → **minor** ·
-  `BREAKING CHANGE:`/`!` → **major** · pre-release → `X.Y.Z-<tag>`.
+- `fix`/`perf`/`revert` → **patch** · `feat` → **minor** ·
+  `BREAKING CHANGE:`/`!` → **major** · nothing releasable → no release.
 
-**Release flow (RELEASE phase):**
-1. On the **feature branch** (base `master`), after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch|minor|major|prerelease`. Preview first with `release:dry`.
-2. It bumps `package.json`, rewrites `CHANGELOG.md`, commits `chore(release): X.Y.Z`, tags `vX.Y.Z` — riding in the same feature PR (master is protected).
-3. Merge the PR, then `git push origin vX.Y.Z`.
-4. CI `release.yml` (tag `v*`) builds and pushes the Docker image `:<version>` + `:latest` + `:<sha>`.
+**Release flow (automatic, `.github/workflows/deploy.yml`):**
+1. Merge the PR to `master`.
+2. The Docker image is always built once and pushed as `:latest` + `:<sha>`.
+3. Then the release job computes `vX.Y.Z` if there is a releasable commit since the last tag.
+4. It creates the tag and its GitHub Release, and retags the image as `:vX.Y.Z`.
+5. It commits the updated `CHANGELOG.md` and `package.json` version back to
+   `master` with the `RELEASE_DEPLOY_KEY` deploy key (the `master` ruleset's
+   only bypass actor).
+
+Never tag or bump the version by hand.
 
 ## Branching & commits
 

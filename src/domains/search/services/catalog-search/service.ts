@@ -1,11 +1,13 @@
 /**
- * Catalog search across anime and printed media.
+ * Catalog search across anime, printed media, music and characters.
  *
  * @module domains/search/services/catalog-search/service
  */
 import { animeListService } from '@anime/services/anime-list'
 import type { StaleResult } from '@lib/cache/cache-store-types'
 import { mangaListService } from '@manga/services/manga-service'
+import { musicListService } from '@music/services/music-list'
+import { characterService } from '@people/services/character'
 import type { CatalogSearchQuery, CatalogSearchResult } from './types'
 
 /**
@@ -14,7 +16,10 @@ import type { CatalogSearchQuery, CatalogSearchResult } from './types'
  * @remarks
  * Both lists match the query against titles **and** synonyms through their
  * `pg_trgm` indexes, keep the fail-closed parental floor and their own cache.
- * Anime results rank by trigram relevance; manga by score.
+ * Anime results rank by trigram relevance; manga by score. Music matches the
+ * theme title and characters their name (most favorited first); both also
+ * match the title of their (non-adult) anime, so searching an anime title
+ * lists its themes or its cast. Each goes through its own service and cache.
  */
 export const catalogSearchService = {
   /**
@@ -30,6 +35,24 @@ export const catalogSearchService = {
     page,
     limit,
   }: CatalogSearchQuery): Promise<StaleResult<CatalogSearchResult>> {
+    if (type === 'music') {
+      const { value, isStale } = await musicListService.getMusicList({
+        query: q,
+        page,
+        limit,
+      })
+      return { value: { type, ...value }, isStale }
+    }
+
+    if (type === 'characters') {
+      const { value, isStale } = await characterService.search({
+        query: q,
+        page,
+        limit,
+      })
+      return { value: { type, ...value }, isStale }
+    }
+
     if (type === 'manga') {
       const { value, isStale } = await mangaListService.getMangaList({
         query: q,

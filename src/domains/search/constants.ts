@@ -16,4 +16,9 @@ export const SEARCH_HISTORY_PER_USER_CAP = 50
 export const SEARCH_HISTORY_CACHE_CONTROL = 'private, no-store'
 
 /** Catalogs `GET /api/search` can search, selected with `?type=`. */
-export const CATALOG_SEARCH_TYPES = ['anime', 'manga'] as const
+export const CATALOG_SEARCH_TYPES = [
+  'anime',
+  'manga',
+  'music',
+  'characters',
+] as const

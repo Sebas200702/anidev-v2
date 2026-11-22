@@ -108,7 +108,7 @@ describe('mapAnimeToFullDetails', () => {
     expect(result.demographics).toEqual([{ name: 'Shounen', malId: 3 }])
   })
 
-  it('indexes assets 1-based within each type/size group', () => {
+  it('indexes assets 1-based within each type/size/source group', () => {
     const result = mapAnimeToFullDetails(
       baseInput({
         media: [

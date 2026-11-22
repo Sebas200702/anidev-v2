@@ -56,3 +56,17 @@ export {
   animeEpisodesResponseSchema,
   animeEpisodeResponseSchema,
 } from './anime-episode-schema'
+export {
+  animeMediaItemSchema,
+  getAnimeMediaListSchema,
+  getAnimeMediaItemSchema,
+  animeMediaListResponseSchema,
+  animeMediaItemResponseSchema,
+} from './anime-media-schema'
+export {
+  animeMusicItemSchema,
+  getAnimeMusicListSchema,
+  getAnimeMusicItemSchema,
+  animeMusicListResponseSchema,
+  animeMusicItemResponseSchema,
+} from './anime-music-schema'

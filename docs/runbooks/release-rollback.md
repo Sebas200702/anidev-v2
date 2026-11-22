@@ -2,14 +2,15 @@
 
 ## Rule
 
-Releases ship on the feature branch *before* merging (`bun run release:*`),
-so every merge carries its `chore(release):` bump + tag. Roll back by
-redeploying the previous image tag — never by reverting migrations.
+Releases are cut automatically on merge to `master` (`deploy.yml`): every
+releasable merge gets a `vX.Y.Z` tag, a GitHub Release and the image tag
+`:vX.Y.Z`. Roll back by redeploying the previous image tag — never by
+reverting migrations.
 
 ## Roll back a deploy
 
 ```bash
-# Tags are :<version>, :latest, :<sha> (see release.yml)
+# Tags are :vX.Y.Z, :latest, :<sha> (see deploy.yml)
 docker pull <user>/anidev-v2:<previous-version>
 # point the runtime at <previous-version> and restart
 ```

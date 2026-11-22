@@ -48,6 +48,9 @@ export enum CacheKeyPrefix {
   /** Single episode detail for an anime. Value: `'anime:episode'`. */
   AnimeEpisode = 'anime:episode',
 
+  /** Full media asset list for an anime. Value: `'anime:media'`. */
+  AnimeMedia = 'anime:media',
+
   /** Music track detail payloads. Value: `'music:details'`. */
   MusicDetails = 'music:details',
 
