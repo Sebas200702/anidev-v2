@@ -7,6 +7,11 @@ BEGIN
     'macrons normalize to doubled vowels';
   ASSERT norm_name('Jean-Pierre  Polnareff.') = norm_name('polnareff jean pierre'),
     'case, hyphens, dots and extra spaces are ignored';
+  ASSERT norm_name('Doujima, Kengo') = norm_name('Kengo Dojima')
+    AND norm_name('Monchi, Jouji') = norm_name('Joji Monchi')
+    AND norm_name('Houjou, Tomoko') = norm_name('Tomoko Hojo')
+    AND norm_name('Yuuko') = norm_name('Yuko'),
+    'MAL long vowels (ou, uu) match the AniList short spelling';
   ASSERT norm_name('Hayashi') <> norm_name('Hayata'), 'distinct names stay distinct';
   ASSERT norm_name(NULL) IS NULL AND norm_name(' , ') IS NULL, 'empty names have no key';
 END $$;

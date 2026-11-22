@@ -2,15 +2,16 @@
 -- below is created in the cast_relink schema (or cast_relink_test for the tests).
 
 -- Order-insensitive name key, so MAL "Honekawa, Suneo" matches AniList "Suneo Honekawa".
--- Macrons become doubled vowels, the MAL romanization ("Satō" → "satou").
+-- Long vowels collapse to one letter, so MAL "Doujima"/"Satō" match AniList "Dojima"/"Sato".
 CREATE OR REPLACE FUNCTION norm_name(name text) RETURNS text
 LANGUAGE sql IMMUTABLE PARALLEL SAFE AS $$
   SELECT nullif(array_to_string(ARRAY(
     SELECT token
     FROM regexp_split_to_table(
       regexp_replace(
-        replace(replace(replace(replace(replace(lower(name),
-          'ō', 'ou'), 'ū', 'uu'), 'ā', 'aa'), 'ē', 'ee'), 'ī', 'ii'),
+        regexp_replace(regexp_replace(
+          translate(lower(name), 'ōūāēī', 'ouaei'),
+          '(ou|oo)', 'o', 'g'), '([uaei])\1', '\1', 'g'),
         '[^[:alnum:]]+', ' ', 'g'),
       ' ') AS token
     WHERE token <> ''
