@@ -8,7 +8,9 @@ Let clients open a character, see who voices it and where it appears.
 
 ### Requirement: Character search
 The system SHALL serve `GET /api/characters` with a required `query`
-(trimmed, 2–100 chars) matched against the character name. Results SHALL be
+(trimmed, 2–100 chars) matched against the character name or the title
+(canonical, English, Japanese or synonym) of a non-adult anime the character
+appears in. Results SHALL be
 paginated (`page`, `limit` ≤ 100) and ordered by favorites (descending), then
 MAL id.
 
@@ -16,6 +18,11 @@ MAL id.
 - **WHEN** a client requests `/api/characters?query=lelouch`
 - **THEN** the response lists matching characters with `malId`, `name`,
   `nameKanji`, `imageUrl` and `favorites`, plus `meta.total` and `meta.hasNext`
+
+#### Scenario: Search by anime title
+- **WHEN** a client requests `/api/characters?query=cowboy bebop`
+- **THEN** the response lists the cast of the matching anime; the cast of an
+  adult-rated anime is never matched through its title
 
 #### Scenario: Missing or short query
 - **WHEN** `query` is absent or has fewer than 2 characters

@@ -6,6 +6,8 @@
 import type { z } from 'zod'
 import type { AnimeCard } from '@anime/types'
 import type { MangaCard } from '@manga/types'
+import type { MusicCard } from '@music/types'
+import type { CharacterCard } from '@people/types'
 import type { catalogSearchQuerySchema } from '@search/schemas/catalog-search-schema'
 
 /** Validated catalog search parameters. */
@@ -15,3 +17,5 @@ export type CatalogSearchQuery = z.infer<typeof catalogSearchQuerySchema>
 export type CatalogSearchResult =
   | { type: 'anime'; list: AnimeCard[]; total: number }
   | { type: 'manga'; list: MangaCard[]; total: number }
+  | { type: 'music'; list: MusicCard[]; total: number }
+  | { type: 'characters'; list: CharacterCard[]; total: number }

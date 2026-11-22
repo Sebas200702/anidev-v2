@@ -28,7 +28,8 @@ type Page<T> = { list: T[]; total: number }
 /** Coordinates the cached character reads. */
 export const characterService = {
   /**
-   * Searches characters by name, most favorited first.
+   * Searches characters by name or by the title of a non-adult anime they
+   * appear in, most favorited first.
    *
    * @param query - Validated `{ query, page, limit }`
    * @returns `{ value: { list, total }, isStale }`

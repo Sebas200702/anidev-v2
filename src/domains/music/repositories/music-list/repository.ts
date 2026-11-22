@@ -4,7 +4,9 @@
  * @module domains/music/repositories/music-list/repository
  */
 import { db } from '@db/client'
+import { animeMusic } from '@db/schemas/anime-entity-relations'
 import { music } from '@db/schemas/music'
+import { safeAnimeIdsByTitle } from '@anime/repositories/anime-title-match'
 import { musicArtist } from '@db/schemas/music-relations'
 import { dbError } from '@shared/errors/db-errors'
 import { normalizeString } from '@utils/string/normalize-string-util'
@@ -64,7 +66,15 @@ export const buildMusicListFilters = ({
     const queryPattern = `%${normalizedQuery}%`
     const normalizedTitle = sql`REPLACE(LOWER(COALESCE(${music.title}, '')), ' ', '')`
 
-    filters.push(sql`${normalizedTitle} LIKE ${queryPattern}`)
+    // A theme also matches by the title of any (non-adult) anime it belongs to.
+    const themesOfMatchingAnime = db
+      .select({ id: animeMusic.musicId })
+      .from(animeMusic)
+      .where(sql`${animeMusic.animeId} IN ${safeAnimeIdsByTitle(query)}`)
+
+    filters.push(
+      sql`(${normalizedTitle} LIKE ${queryPattern} OR ${inArray(music.id, themesOfMatchingAnime)})`
+    )
   }
 
   return filters

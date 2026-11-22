@@ -33,7 +33,10 @@ serialization, origin, score, popularity and cover artwork.
 #### Scenario: Catalog search by type
 - **WHEN** a client requests `GET /api/search?q=<term>&type=manga`
 - **THEN** the response returns the printed works whose title or synonyms
-  match the term, with the searched type in `meta.type` (default `anime`)
+  match the term, with the searched type in `meta.type` (default `anime`);
+  `type=music` matches theme titles and `type=characters` character names
+  (at least 2 characters); both also match the title of a non-adult anime
+  they belong to, so an anime title lists its themes or its cast
 
 #### Scenario: Unknown work
 - **WHEN** a client requests an id that does not exist

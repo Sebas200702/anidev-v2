@@ -4,7 +4,9 @@
  * @module domains/people/repositories/character-search/repository
  */
 import { db } from '@db/client'
+import { animeCharacter } from '@db/schemas/anime-entity-relations'
 import { character } from '@db/schemas/character'
+import { safeAnimeIdsByTitle } from '@anime/repositories/anime-title-match'
 import { dbError } from '@shared/errors/db-errors'
 import {
   containsPattern,
@@ -13,17 +15,37 @@ import {
 import type { CharacterCardRow, PeopleSearchQuery } from '@people/types'
 import { and, asc, count, desc, ilike, notLike, or, sql } from 'drizzle-orm'
 
+/**
+ * Characters whose name matches, plus the cast of the (non-adult) anime whose
+ * title matches. A `UNION` keeps each branch on its own trigram index; an
+ * `OR` across both would scan the whole character table.
+ */
+const matchingCharacterIds = (query: string) => sql`(
+  ${db
+    .select({ id: character.malId })
+    .from(character)
+    .where(
+      or(
+        ilike(character.name, containsPattern(query)),
+        ilike(character.nameKanji, containsPattern(query))
+      )
+    )}
+  UNION
+  ${db
+    .select({ id: animeCharacter.characterId })
+    .from(animeCharacter)
+    .where(sql`${animeCharacter.animeId} IN ${safeAnimeIdsByTitle(query)}`)}
+)`
+
 const searchWhere = (query: string) =>
   and(
-    or(
-      ilike(character.name, containsPattern(query)),
-      ilike(character.nameKanji, containsPattern(query))
-    ),
+    sql`${character.malId} IN ${matchingCharacterIds(query)}`,
     notLike(character.name, PROVISIONAL_NAME_PATTERN)
   )
 
 /**
- * Repository for searching characters by name (GIN `pg_trgm` on `name`).
+ * Repository for searching characters by name or by the title of a non-adult
+ * anime they appear in (GIN `pg_trgm` indexes on both).
  * Provisional names are never returned.
  */
 export const characterSearchRepository = {
