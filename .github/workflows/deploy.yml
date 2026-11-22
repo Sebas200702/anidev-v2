@@ -4,8 +4,10 @@ name: Deploy & Release
 #
 # - `build-and-push` runs on every push to master and only builds and pushes
 #   the Docker image as `:latest` + `:<sha>`. It never depends on version
-#   computation, so a release failure cannot block a deploy, and it is not
-#   serialized, so every intermediate commit keeps its own `:<sha>` image.
+#   computation, so a release failure cannot block a deploy. It is serialized
+#   (`build-master`, non-cancelling) so `:latest` only ever moves forward;
+#   GitHub keeps one pending run per group, so with 3+ merges inside one build
+#   the middle commit's `:<sha>` image may be skipped (master stays correct).
 #
 # - `release` runs after the build and is serialized (`release-master`) so two
 #   quick merges never compute the same version. When the pushed commits
@@ -34,6 +36,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    concurrency:
+      group: build-master
+      cancel-in-progress: false
     permissions:
       contents: read
 
@@ -76,12 +81,12 @@ jobs:
       - name: Checkout repository (full history and tags)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          # Tags are needed to resume a release. The write-back push to the
-          # protected master goes through this deploy key, the only bypass
-          # actor of the master ruleset (personal repos cannot list the
-          # GitHub Actions app as a bypass actor).
+          # Tags are needed to resume a release. No credentials persist: the
+          # repository is public (fetch works anonymously) and the deploy key
+          # is loaded only in the final push step, out of reach of the
+          # third-party action below.
           fetch-depth: 0
-          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          persist-credentials: false
 
       - name: Compute next version from Conventional Commits
         id: version
@@ -122,7 +127,9 @@ jobs:
           CHANGELOG: ${{ steps.version.outputs.changelog }}
         run: |
           set -euo pipefail
-          tag_sha="$(gh api "repos/$GH_REPO/commits/$TAG" --jq .sha 2>/dev/null || true)"
+          # Local refs from the full-history checkout: empty when the tag does
+          # not exist yet (the normal case for a new version).
+          tag_sha="$(git rev-parse -q --verify "refs/tags/$TAG^{commit}" || true)"
           if [ -n "$tag_sha" ] && [ "$tag_sha" != "$GITHUB_SHA" ]; then
             echo "::error::Tag $TAG points at $tag_sha, not at the built commit $GITHUB_SHA"
             exit 1
@@ -268,8 +275,20 @@ jobs:
         if: steps.write-back.outputs.changed == 'true'
         env:
           TAG: ${{ steps.resolve.outputs.tag }}
+          # Bypass actor of the master ruleset; exposed to this step only.
+          DEPLOY_KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
         run: |
           set -euo pipefail
+          key_dir="$(mktemp -d)"
+          trap 'rm -rf "$key_dir"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$key_dir/key"
+          chmod 600 "$key_dir/key"
+          # GitHub's SSH host keys from its HTTPS meta API (no TOFU keyscan).
+          curl -fsSL https://api.github.com/meta \
+            | jq -r '.ssh_keys[] | "github.com " + .' > "$key_dir/known_hosts"
+          export GIT_SSH_COMMAND="ssh -i $key_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$key_dir/known_hosts -o StrictHostKeyChecking=yes"
+          remote="git@github.com:$GITHUB_REPOSITORY.git"
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add CHANGELOG.md package.json
@@ -277,12 +296,14 @@ jobs:
           git commit -m "chore(release): $TAG [skip ci]"
 
           for attempt in 1 2 3; do
-            if git push origin HEAD:master; then
+            if git push "$remote" HEAD:master; then
               exit 0
             fi
             echo "Push attempt $attempt failed"
-            if [ "$attempt" -lt 3 ]; then
-              git pull --rebase origin master
+            if [ "$attempt" -lt 3 ] && ! git pull --rebase origin master; then
+              git rebase --abort || true
+              echo "::error::Rebasing chore(release): $TAG onto master conflicted"
+              exit 1
             fi
           done
           echo "::error::Could not push chore(release): $TAG to master"
