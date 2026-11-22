@@ -28,7 +28,7 @@ maintainer. Same method as phase 1: dry-run audit, sampled validation, reversibl
 - **T1** (S3) — `character_external` schema + Drizzle migration 0016 + local backfill + twin merge (logged, reversible) + app docs. Route: gentle-ai-worker. Risk: items 1, 3. Commit: see git log ✅ (code + local apply; independent verify in T6)
 - **T2** (S4) — Manga cast relink: fetch AniList manga casts (batched), audit, apply, rollback. Route: worker. Risk: item 1. Commit: see git log (code ✅; fetch/apply pending)
 - **T3** (S5) — Kanji + posters fill, logged and reversible. Route: worker. Risk: item 1. Commit: see git log (code ✅; dry run before manga staging: kanji 25,258, posters 37,250; apply after T2)
-- **T4** (S2,S6) — Anime relations + field conflicts by source majority, logged and reversible. Route: worker. Risk: item 1. Commit: see git log (code ✅; apply pending)
+- **T4** (S2,S6) — Anime relations + field conflicts by source majority, logged and reversible. Route: worker. Risk: item 1. Commit: see git log ✅ (applied: 509 field updates, 200 relations; relations 48,577 → 48,777; empty synopsis 5,113 → 4,649)
 - **T5** (S7) — Staff / voice-actor audit (read-only) → report → decide. Route: inline. Commit: n/a ✅ (no fix needed, L5)
 - **T6** (S1) — Verify, docs, independent verify. Route: gentle-ai-verify. Commit: —
 
