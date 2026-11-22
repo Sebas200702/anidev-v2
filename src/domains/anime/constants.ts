@@ -116,6 +116,20 @@ export const ANIME_MEDIA_MAX_PAGE = 1_000
 export const ANIME_MEDIA_TYPE_MAX_LENGTH = 32
 
 /**
+ * Pagination bounds for `GET /api/anime/:malId/music`.
+ *
+ * @remarks
+ * An anime has a handful of openings and endings, so the page is sliced in
+ * memory from the cached full list; the bounds only cap the request.
+ */
+export const ANIME_MUSIC_PAGE_DEFAULT_LIMIT = 24
+export const ANIME_MUSIC_PAGE_MAX_LIMIT = 100
+export const ANIME_MUSIC_MAX_PAGE = 1_000
+
+/** Accepted `?type=` filters for anime music (theme kinds). */
+export const ANIME_MUSIC_TYPES = ['opening', 'ending'] as const
+
+/**
  * Prefix of the provisional character names the scraper writes while a
  * character still lacks its real name (`Personaje <id>`).
  *

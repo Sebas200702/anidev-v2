@@ -15,6 +15,10 @@ export {
   AnimeMediaNotFoundError,
   animeMediaNotFound,
 } from './anime-media-not-found-error'
+export {
+  AnimeMusicNotFoundError,
+  animeMusicNotFound,
+} from './anime-music-not-found-error'
 export { AnimeNotFoundError, animeNotFound } from './anime-not-found-error'
 export {
   EpisodeNotFoundError,
