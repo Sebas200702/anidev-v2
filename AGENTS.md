@@ -135,7 +135,6 @@ add a Traefik domain for the storage compose (host `media.anidev.app`, service
 | `bun run db:generate` | Generate Drizzle migration (requirements) |
 | `bun run db:migrate` | Apply Drizzle migrations |
 | `bun run astro sync` | Regenerate `.astro/types.d.ts` (needed after schema changes) |
-| `bun run release:*` | `standard-version` (patch/minor/major/prerelease) |
 
 All verification scripts exist (`check`, `check:types`, `test`); code quality is `format` + `check` + `check:types` + `test` + `build` (see Verification below). `astro sync` is only needed after schema changes and is not part of the standard gate.
 
@@ -509,22 +508,23 @@ Never `throw new Error(...)` generic, never `console.log(error)` as handling. Us
 
 ## Releases & Versioning
 
-**Scheme:** SemVer driven by Conventional Commits via `standard-version` (`bun run release:*`).
+**Scheme:** SemVer computed automatically from Conventional Commits on every merge to `master`. **Git tags (`vX.Y.Z`) and GitHub Releases are the source of truth** for the version; `package.json` `version` and `CHANGELOG.md` are frozen at `0.18.0` (history up to that release) and are not bumped anymore.
 
-- `fix(scope):` → **patch** (`X.Y.Z` → `X.Y.(Z+1)`)
+- `fix(scope):` / `perf(scope):` / `revert:` → **patch** (`X.Y.Z` → `X.Y.(Z+1)`)
 - `feat(scope):` → **minor** (`X.Y.Z` → `X.(Y+1).0`)
 - `BREAKING CHANGE:` footer / `!` on the type → **major**
-- Pre-release: `bun run release:prerelease` → `X.Y.Z-<tag>`
+- Only `chore`/`docs`/`test`/`ci`/`refactor`/… since the last tag → **no release** (the image still deploys as `:latest`).
+- `[skip-release]` or `[no-release]` in a commit message excludes that commit from the bump.
 
-**Release flow (the RELEASE phase of the lifecycle):**
+**Release flow (automatic — `.github/workflows/deploy.yml`):**
 
-> **`master` is protected (PR required — no direct push).** This means a release/version-bump commit can never go straight to `master`; it must ride in a Pull Request like any other change. Do **not** run the release *after* the feature PR is already merged — you would then need a second throwaway branch/PR solely to carry the `chore(release):` bump. Instead, run the release **on the same feature branch before merging**, so the feature PR carries the version bump and tag together:
+1. Merge the PR to `master` (protected — PR required). Use Conventional Commits (or a conventional squash title): they decide the bump.
+2. The `version` job reads the commits since the last tag and computes the next `vX.Y.Z` (`mathieudutour/github-tag-action`, pinned by SHA, `dry_run` + `soft_fail`: an API error never blocks the deploy). Nothing is committed back to `master`.
+3. `build-and-push` builds the Docker image once and pushes `:latest`, `:<sha>` and, on a release, `:vX.Y.Z`.
+4. Only after the image is pushed, `github-release` creates the tag on the merged commit together with the GitHub Release and its generated changelog. A failed build leaves no tag, so the next merge releases those commits again.
+5. Runs are serialized (`concurrency: deploy-master`), so two quick merges never compute the same version.
 
-1. On the **feature branch** (base `master`) and after the Verification gate passes, pick the release: `bun run release` (auto bumps from commits) or force `release:patch`/`release:minor`/`release:major`/`release:prerelease`. Preview first: `bun run release:dry`, and confirm the bump type matches the commit set (a mix incl. `feat` → minor).
-2. `standard-version` bumps `package.json`, regenerates `CHANGELOG.md`, commits `chore(release): X.Y.Z`, and creates the local tag `vX.Y.Z`.
-3. Open/amend the feature PR including that release commit, get it green (`gate` + SonarQube + Vercel), and merge it.
-4. After merging, `git push origin vX.Y.Z` (tags are not restricted by the branch protection).
-5. CI `release.yml` (triggered on tag `v*`) builds the Docker image tagged `:<version>`, `:latest`, and `:<sha>` and deploys — so any published release is reproducible exactly.
+Do **not** create version tags or `chore(release):` commits by hand. `release.yml` remains only as the fallback path for a tag pushed manually by a maintainer (a tag created with `GITHUB_TOKEN` never triggers it).
 
 ## Commit Convention
 Conventional Commits with scopes: `type(scope): summary` (e.g., `fix(auth): Handle expired token`). See `.changeset/commit-all.md`.

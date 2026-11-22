@@ -1,11 +1,55 @@
-name: Build and Push Docker Image
+name: Deploy & Release
+
+# Every push to master builds and pushes the Docker image (`:latest` +
+# `:<sha>`). When the pushed commits include a releasable Conventional Commit
+# (`feat` → minor, `fix`/`perf` → patch, `!`/`BREAKING CHANGE` → major), the
+# next SemVer version is computed, the image also gets `:vX.Y.Z`, and only
+# after the image is pushed is the tag created together with its GitHub
+# Release. Tags are the source of truth for the version; nothing is committed
+# back to the protected master.
+#
+# The tag is created last on purpose: if the build fails, no orphan tag is
+# left and the next push to master releases those commits again.
+#
+# A tag created with GITHUB_TOKEN does not trigger other workflows, so the
+# release image and GitHub Release are produced here, not by release.yml
+# (which stays as the path for a tag pushed manually).
 
 on:
   push:
     branches: ["master"]
 
+# Serialize runs so two quick merges never compute the same next version.
+concurrency:
+  group: deploy-master
+  cancel-in-progress: false
+
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      new_tag: ${{ steps.tag.outputs.new_tag }}
+      changelog: ${{ steps.tag.outputs.changelog }}
+    steps:
+      - name: Compute next version from Conventional Commits
+        id: tag
+        uses: mathieudutour/github-tag-action@af99e60ce8132224b8e6ebab5023449fe256ed46 # v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # No feat/fix/perf/breaking commit since the last tag → no release.
+          default_bump: false
+          release_branches: ^master$
+          tag_prefix: v
+          # Only compute; the tag is created with the release after the build.
+          dry_run: true
+          # An API error must never block the :latest/:<sha> deploy: outputs
+          # are cleared, the build runs and the release is retried next push.
+          soft_fail: true
+
   build-and-push:
+    needs: version
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,4 +78,36 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/anidev-v2:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/anidev-v2:${{ github.sha }}
+            ${{ needs.version.outputs.new_tag && format('{0}/anidev-v2:{1}', secrets.DOCKERHUB_USERNAME, needs.version.outputs.new_tag) }}
           platforms: linux/amd64
+
+  github-release:
+    needs: [version, build-and-push]
+    if: needs.version.outputs.new_tag != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.version.outputs.new_tag }}
+          CHANGELOG: ${{ needs.version.outputs.changelog }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists — skipping"
+            exit 0
+          fi
+
+          notes_file="$RUNNER_TEMP/release-notes.md"
+          printf '%s\n' "$CHANGELOG" > "$notes_file"
+
+          # --target creates the tag on the built commit.
+          if grep -q '[^[:space:]]' "$notes_file"; then
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" \
+              --notes-file "$notes_file"
+          else
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" \
+              --generate-notes
+          fi
