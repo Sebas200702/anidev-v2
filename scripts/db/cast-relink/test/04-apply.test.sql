@@ -45,6 +45,12 @@ INSERT INTO anime_character (anime_id, character_id, role) VALUES
   (100, 22, 'MAIN'),                                   -- → new 1e9+504, no image
   (200, 41, 'MAIN');                                   -- → Jikan 40, anilist_id conflict
 
+-- Empty test copies of the other tables that cascade from "character", so the rollback
+-- guard never reads the real public ones.
+CREATE TABLE character_voice_actor (character_id integer NOT NULL, staff_id integer);
+CREATE TABLE character_nickname (character_id integer NOT NULL, nickname text);
+CREATE TABLE manga_character (manga_id integer, character_id integer NOT NULL);
+
 CREATE TABLE links_before AS SELECT * FROM anime_character;
 CREATE TABLE characters_before AS SELECT * FROM "character";
 CREATE TABLE media_before AS SELECT * FROM character_media;

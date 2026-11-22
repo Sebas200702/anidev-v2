@@ -110,6 +110,8 @@ character wins.
 transaction) deletes the inserted links, created media and created characters, restores
 `anilist_id` (only where it still holds the value the batch set), re-inserts the removed
 links and empties the logs. It refuses when a created character is referenced by a link
-or media row the batch did not create, since deleting it would cascade those rows away.
+or media row the batch did not create, or by any `character_voice_actor`,
+`character_nickname` or `manga_character` row, since deleting it would cascade those
+rows away.
 
 The database URL comes from `LOCAL_DATABASE_URL`, then `DATABASE_URL`, then `POSTGRES_*`.

@@ -1,6 +1,7 @@
 -- T4: reverses the batch logged by 05-apply.sql in ONE transaction and empties the logs.
 -- Touches only rows the batch logged: it refuses when a created character is referenced
--- by a link or media row the batch did not create (deleting it would cascade them away).
+-- by a link or media row the batch did not create, or by any other table that cascades
+-- from "character" (the batch never writes those), since deleting it would cascade them.
 SELECT coalesce((
   SELECT c.mal_id FROM created_characters c
   WHERE EXISTS (
@@ -15,6 +16,9 @@ SELECT coalesce((
     WHERE m.character_id = c.mal_id
       AND NOT EXISTS (SELECT 1 FROM created_media cm WHERE cm.id = m.id)
   )
+  OR EXISTS (SELECT 1 FROM character_voice_actor v WHERE v.character_id = c.mal_id)
+  OR EXISTS (SELECT 1 FROM character_nickname n WHERE n.character_id = c.mal_id)
+  OR EXISTS (SELECT 1 FROM manga_character mc WHERE mc.character_id = c.mal_id)
   ORDER BY c.mal_id LIMIT 1
 ), 0) AS referenced \gset
 SELECT :referenced <> 0 AS is_referenced \gset

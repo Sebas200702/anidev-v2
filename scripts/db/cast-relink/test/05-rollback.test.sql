@@ -68,6 +68,23 @@ BEGIN
     'a refused rollback deletes nothing';
 END $$;
 DELETE FROM anime_character WHERE (anime_id, character_id, role) = (200, 1000000503, 'Main');
+
+-- The same holds for the other tables that cascade from "character" (voice actors here;
+-- nicknames and manga_character use the same check).
+INSERT INTO character_voice_actor VALUES (1000000503, 1);
+\echo '(expected: one cast-relink rollback error below)'
+\set ON_ERROR_STOP 0
+\ir ../sql/06-rollback.sql
+\set ON_ERROR_STOP 1
+SELECT set_config('cast_relink.rollback', :'LAST_ERROR_MESSAGE', false) \g /dev/null
+DO $$
+BEGIN
+  ASSERT current_setting('cast_relink.rollback') LIKE 'cast-relink: created character % is referenced%',
+    current_setting('cast_relink.rollback');
+  ASSERT EXISTS (SELECT 1 FROM "character" WHERE mal_id = 1000000503),
+    'a voice-actor reference also blocks the rollback';
+END $$;
+DELETE FROM character_voice_actor;
 \ir ../sql/06-rollback.sql
 DO $$
 BEGIN
