@@ -53,6 +53,7 @@ export {
   accountRelations,
 } from './auth-relations'
 export { character, characterNickname } from './character'
+export { characterExternal } from './character-external'
 export { characterMedia } from './character-media'
 export { characterVoiceActor } from './character-relations'
 export { episode, episodeSource, episodeSubtitle } from './episode'

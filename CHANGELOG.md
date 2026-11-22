@@ -3,18 +3,33 @@
 Updated automatically on every release by `.github/workflows/deploy.yml`
 (`chore(release): vX.Y.Z` commit on `master`). Do not edit by hand.
 
-## [0.19.2](https://github.com/Sebas200702/anidev-v2/compare/v0.19.1...v0.19.2) (2026-11-22)
+## [0.20.0](https://github.com/Sebas200702/anidev-v2/compare/v0.19.2...v0.20.0) (2026-11-22)
 
 
-### Bug Fixes
+### Features
 
-* **deploy:** Align Docker Bun version with lockfile ([13f9067](https://github.com/Sebas200702/anidev-v2/commit/13f9067d6071b72cd413550c3c5cf9a7adde6dd5))
+* **db:** add character_external table for real character ids ([01f35c1](https://github.com/Sebas200702/anidev-v2/commit/01f35c15e06ab4fb28191c481c336e83865063b1))
 
 
 ### Continuous Integration
 
-* **deps:** align Bun version with lockfile format ([d8b6801](https://github.com/Sebas200702/anidev-v2/commit/d8b680163afb173085e2f9d22bb8bb6441a0c5e3))
+* re-run checks after merging master ([1c0d443](https://github.com/Sebas200702/anidev-v2/commit/1c0d44311298b62cdcce767622650d530e4fec15))
 
+
+### Styles
+
+* **changelog:** format release notes for Biome 2.6 ([e1cb983](https://github.com/Sebas200702/anidev-v2/commit/e1cb983b11b41ef70100a7b792d9d495df8778b9))
+
+
+## [0.19.2](https://github.com/Sebas200702/anidev-v2/compare/v0.19.1...v0.19.2) (2026-11-22)
+
+### Bug Fixes
+
+- **deploy:** Align Docker Bun version with lockfile ([13f9067](https://github.com/Sebas200702/anidev-v2/commit/13f9067d6071b72cd413550c3c5cf9a7adde6dd5))
+
+### Continuous Integration
+
+- **deps:** align Bun version with lockfile format ([d8b6801](https://github.com/Sebas200702/anidev-v2/commit/d8b680163afb173085e2f9d22bb8bb6441a0c5e3))
 
 ## [0.19.1](https://github.com/Sebas200702/anidev-v2/compare/v0.19.0...v0.19.1) (2026-11-22)
 
