@@ -74,3 +74,7 @@ CREATE TABLE IF NOT EXISTS removed_links (
   batch_id integer NOT NULL DEFAULT current_setting('manga_cast_dedupe.batch_id')::integer,
   PRIMARY KEY (batch_id, manga_id, character_id, role)
 );
+-- Kind A on anime_character (whole rows): an UPPERCASE row this batch moved from S to R
+-- whose (anime, R) has a Title-case row. Only moved rows: no other anime row is touched.
+CREATE TABLE IF NOT EXISTS removed_anime_links (LIKE anime_character,
+  batch_id integer NOT NULL DEFAULT current_setting('manga_cast_dedupe.batch_id')::integer);

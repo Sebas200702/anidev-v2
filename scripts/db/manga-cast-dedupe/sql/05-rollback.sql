@@ -34,7 +34,9 @@ SELECT CASE
   WHEN EXISTS (
     SELECT 1 FROM moved_anime_character m WHERE m.batch_id = :batch_id
       AND NOT EXISTS (SELECT 1 FROM anime_character t
-        WHERE (t.anime_id, t.character_id, t.role) = (m.anime_id, m.real_id, m.role)))
+        WHERE (t.anime_id, t.character_id, t.role) = (m.anime_id, m.real_id, m.role))
+      AND NOT EXISTS (SELECT 1 FROM removed_anime_links r WHERE r.batch_id = :batch_id
+        AND (r.anime_id, r.character_id, r.role) = (m.anime_id, m.real_id, m.role)))
   THEN 'a moved anime_character row changed since the apply'
   WHEN EXISTS (
     SELECT 1 FROM moved_character_voice_actor m WHERE m.batch_id = :batch_id
@@ -56,6 +58,11 @@ SELECT CASE
       ON (t.manga_id, t.character_id, t.role) = (r.manga_id, r.character_id, r.role)
     WHERE r.batch_id = :batch_id)
   THEN 'a removed manga_character row was written again'
+  WHEN EXISTS (
+    SELECT 1 FROM removed_anime_links r JOIN anime_character t
+      ON (t.anime_id, t.character_id, t.role) = (r.anime_id, r.character_id, r.role)
+    WHERE r.batch_id = :batch_id)
+  THEN 'a removed anime_character row was written again'
   ELSE '' END AS drift \gset
 SELECT :'drift' <> '' AS has_drift \gset
 \if :has_drift
@@ -69,6 +76,8 @@ END $$;
 -- Reverse order of 04-apply.sql: A, then R's external, then S and its moved rows.
 INSERT INTO manga_character (manga_id, character_id, role)
 SELECT manga_id, character_id, role FROM removed_links WHERE batch_id = :batch_id;
+INSERT INTO anime_character SELECT (jsonb_populate_record(NULL::anime_character,
+  to_jsonb(r))).* FROM removed_anime_links r WHERE r.batch_id = :batch_id;
 
 INSERT INTO "character"
 SELECT (jsonb_populate_record(NULL::"character", to_jsonb(d))).*
@@ -111,6 +120,7 @@ INSERT INTO character_media SELECT (jsonb_populate_record(NULL::character_media,
   to_jsonb(s))).* FROM skipped_character_media s WHERE s.batch_id = :batch_id;
 
 DELETE FROM removed_links WHERE batch_id = :batch_id;
+DELETE FROM removed_anime_links WHERE batch_id = :batch_id;
 DELETE FROM merged_pairs WHERE batch_id = :batch_id;
 DELETE FROM updated_externals WHERE batch_id = :batch_id;
 DELETE FROM deleted_characters WHERE batch_id = :batch_id;

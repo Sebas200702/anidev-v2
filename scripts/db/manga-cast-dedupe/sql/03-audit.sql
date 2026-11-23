@@ -19,6 +19,9 @@ SELECT CASE WHEN via_merge THEN 'remove (after B merge)' ELSE 'remove' END AS st
   count(DISTINCT manga_id) AS mangas
 FROM a_row GROUP BY 1 ORDER BY 1;
 
+\qecho 'Kind A: UPPERCASE anime_character rows moved by B, then removed'
+SELECT count(*) AS uppercase_rows, count(DISTINCT anime_id) AS animes FROM a_anime_row;
+
 \qecho 'Kind B: (R, S) pairs by status'
 SELECT status, count(*) AS pairs, count(DISTINCT real_id) AS real_characters,
   count(DISTINCT synthetic_id) AS synthetic_characters
@@ -39,6 +42,14 @@ SELECT a.manga_id, a.target_id AS character_id, c.name, a.role AS removed_role,
      AND t.role <> upper(t.role)) AS kept_role
 FROM a_row a JOIN "character" c ON c.mal_id = a.target_id
 ORDER BY a.manga_id, a.target_id LIMIT 5;
+
+\qecho 'Examples, kind A on anime_character (5)'
+SELECT a.anime_id, a.character_id, c.name, a.role AS removed_role,
+  (SELECT string_agg(t.role, ',') FROM anime_character t
+   WHERE t.anime_id = a.anime_id AND t.character_id = a.character_id
+     AND t.role <> upper(t.role)) AS kept_role
+FROM a_anime_row a JOIN "character" c ON c.mal_id = a.character_id
+ORDER BY a.anime_id, a.character_id LIMIT 5;
 
 \qecho 'Examples, kind B merge (5) and left alone (5)'
 (SELECT p.status, p.real_id, r.name AS real_name, p.synthetic_id, s.name AS synthetic_name,

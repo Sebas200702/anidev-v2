@@ -51,6 +51,8 @@ apply() {
       WHERE batch_id = (SELECT max(batch_id) FROM batches)
     UNION ALL SELECT 'removed manga_character (' || reason || ')', count(*)
       FROM removed_links WHERE batch_id = (SELECT max(batch_id) FROM batches) GROUP BY 1
+    UNION ALL SELECT 'removed anime_character (merged-pair)', count(*)
+      FROM removed_anime_links WHERE batch_id = (SELECT max(batch_id) FROM batches)
     UNION ALL SELECT 'moved manga_character', count(*) FROM moved_manga_character
       WHERE batch_id = (SELECT max(batch_id) FROM batches)
     UNION ALL SELECT 'skipped manga_character', count(*) FROM skipped_manga_character

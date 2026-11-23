@@ -51,7 +51,9 @@ INSERT INTO manga_character (manga_id, character_id, role) VALUES
   (30, 7, 'Main'), (30, 8, 'Supporting'), (30, 1000000970, 'MAIN');
 INSERT INTO anime_character (anime_id, character_id, role) VALUES
   (50, 1, 'Main'), (50, 1000000950, 'Main'),  -- skipped
-  (50, 1000000950, 'MAIN'), (51, 1000000507, 'MAIN'); -- moved
+  (50, 1000000950, 'MAIN'),                   -- moved, then anime kind A (merged-pair)
+  (51, 1000000507, 'MAIN'),                   -- moved
+  (52, 6, 'Main'), (52, 6, 'MAIN');           -- pre-existing pair: never touched
 INSERT INTO character_voice_actor (character_id, staff_id, language) VALUES
   (1, 900, 'Japanese'), (1000000950, 900, 'Japanese'), (1000000950, 901, 'English');
 INSERT INTO character_nickname (id, character_id, nickname) VALUES

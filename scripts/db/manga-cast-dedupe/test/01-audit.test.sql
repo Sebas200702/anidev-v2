@@ -20,6 +20,10 @@ BEGIN
       '20/1000000507/SUPPORTING>2:t'],
     format('a_row: %s', (SELECT string_agg(format('%s/%s/%s>%s:%s', manga_id,
       character_id, role, target_id, via_merge), ' ') FROM a_row));
+  ASSERT (SELECT array_agg(format('%s/%s/%s', anime_id, character_id, role))
+          FROM a_anime_row) = ARRAY['50/1/MAIN'],
+    format('a_anime_row: %s', (SELECT string_agg(format('%s/%s/%s', anime_id,
+      character_id, role), ' ') FROM a_anime_row));
 END $$;
 ROLLBACK;
 

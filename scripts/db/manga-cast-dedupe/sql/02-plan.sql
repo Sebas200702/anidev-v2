@@ -12,6 +12,8 @@
 --     id), 'anilist-taken' (a third character holds X).
 --   a_row (kind A): UPPERCASE rows whose (manga, character) — after the merge — also has
 --     a Title-case row; the merge itself drops a moved row whose key R already holds.
+--   a_anime_row (kind A, anime_character): only UPPERCASE rows the merge moves from S to
+--     R whose (anime, R) has a Title-case row after the merge.
 
 CREATE TEMP TABLE title_pair ON COMMIT DROP AS
 SELECT DISTINCT mc.manga_id, mc.character_id,
@@ -74,3 +76,21 @@ WHERE u.role = upper(u.role)
     SELECT 1 FROM manga_character d
     WHERE (d.manga_id, d.character_id, d.role) = (u.manga_id, p.real_id, u.role)
   ));
+
+CREATE TEMP TABLE a_anime_row ON COMMIT DROP AS
+WITH moving AS (
+  SELECT a.anime_id, p.real_id AS character_id, a.role
+  FROM anime_character a JOIN b_pair p ON p.synthetic_id = a.character_id
+    AND p.status = 'merge'
+  WHERE NOT EXISTS (SELECT 1 FROM anime_character d
+    WHERE (d.anime_id, d.character_id, d.role) = (a.anime_id, p.real_id, a.role))
+)
+SELECT DISTINCT u.anime_id, u.character_id, u.role
+FROM moving u
+WHERE u.role = upper(u.role) AND (
+  EXISTS (SELECT 1 FROM anime_character t
+    WHERE (t.anime_id, t.character_id) = (u.anime_id, u.character_id)
+      AND t.role <> upper(t.role))
+  OR EXISTS (SELECT 1 FROM moving t
+    WHERE (t.anime_id, t.character_id) = (u.anime_id, u.character_id)
+      AND t.role <> upper(t.role)));

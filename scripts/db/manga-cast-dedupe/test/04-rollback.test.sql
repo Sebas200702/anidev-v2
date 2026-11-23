@@ -55,10 +55,27 @@ BEGIN
   ASSERT all_same('applied_') AND (SELECT count(*) FROM batches) = 1,
     'a refused rollback writes nothing';
 END $$;
+
+-- Drift: a removed anime_character row was written again → refused.
+INSERT INTO anime_character VALUES (50, 1, 'MAIN');
+\echo '(expected: one manga-cast-dedupe rollback error below)'
+\set ON_ERROR_STOP 0
+\ir ../sql/05-rollback.sql
+\set ON_ERROR_STOP 1
+SELECT set_config('manga_cast_dedupe.guard', :'LAST_ERROR_MESSAGE', false) \g /dev/null
+DELETE FROM anime_character WHERE (anime_id, character_id, role) = (50, 1, 'MAIN');
+DO $$
+BEGIN
+  ASSERT current_setting('manga_cast_dedupe.guard') LIKE
+    'manga-cast-dedupe: rollback refused: a removed anime_character row was written again',
+    current_setting('manga_cast_dedupe.guard');
+  ASSERT all_same('applied_'), 'a refused rollback writes nothing';
+END $$;
 \ir ../sql/05-rollback.sql
 DO $$
 BEGIN
   ASSERT all_same('before_'), 'rollback of batch 1 restores all seven tables exactly';
+  ASSERT NOT EXISTS (SELECT 1 FROM removed_anime_links), 'anime removed-links log emptied';
   ASSERT NOT EXISTS (SELECT 1 FROM batches) AND NOT EXISTS (SELECT 1 FROM removed_links)
     AND NOT EXISTS (SELECT 1 FROM merged_pairs) AND NOT EXISTS (SELECT 1 FROM moved_manga_character)
     AND NOT EXISTS (SELECT 1 FROM skipped_character_media)

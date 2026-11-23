@@ -9,7 +9,8 @@ INSERT INTO expected_manga VALUES (10, 1, 'Main'), (11, 1, 'Main'), (12, 1, 'SUP
   (10, 1000000960, 'MAIN'), (10, 6, 'Supporting'), (30, 7, 'Main'), (30, 8, 'Supporting'),
   (30, 1000000970, 'MAIN');
 CREATE TEMP TABLE expected_anime (anime_id integer, character_id integer, role text);
-INSERT INTO expected_anime VALUES (50, 1, 'Main'), (50, 1, 'MAIN'), (51, 2, 'MAIN');
+INSERT INTO expected_anime VALUES (50, 1, 'Main'), (51, 2, 'MAIN'), (52, 6, 'Main'),
+  (52, 6, 'MAIN');
 CREATE TEMP TABLE expected_voice (character_id integer, staff_id integer, language text);
 INSERT INTO expected_voice VALUES (1, 900, 'Japanese'), (1, 901, 'English');
 CREATE TEMP TABLE expected_nickname (id integer, character_id integer, nickname text);
@@ -20,7 +21,12 @@ BEGIN
   ASSERT same_rows('manga_character', 'expected_manga'), format('manga_character: %s',
     (SELECT string_agg(format('(%s,%s,%s)', manga_id, character_id, role), ' ')
      FROM manga_character));
-  ASSERT same_rows('anime_character', 'expected_anime'), 'anime_character moved';
+  ASSERT same_rows('anime_character', 'expected_anime'), format('anime_character: %s',
+    (SELECT string_agg(format('(%s,%s,%s)', anime_id, character_id, role), ' ')
+     FROM anime_character));
+  ASSERT (SELECT array_agg(format('%s/%s/%s:%s', anime_id, character_id, role, batch_id))
+          FROM removed_anime_links) = ARRAY['50/1/MAIN:1'],
+    'only the moved UPPERCASE anime row next to R''s Title-case row is removed, logged';
   ASSERT same_rows('character_voice_actor', 'expected_voice'), 'voice actors moved';
   ASSERT same_rows('character_nickname', 'expected_nickname'), 'nicknames moved, ids kept';
   ASSERT (SELECT array_agg(format('%s:%s:%s:%s', id, character_id, src, size) ORDER BY id)

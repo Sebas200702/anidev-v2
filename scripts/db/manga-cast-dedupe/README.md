@@ -38,6 +38,11 @@ skipped and deleted, S and its `character_external` row are deleted, and R's
 `character_external.anilist_id` becomes X. Kind A runs after the merge, so S's moved
 UPPERCASE row next to R's MAL row is removed too (`merged-pair`).
 
+**Kind A on `anime_character`** — only for rows this batch's merge moved from S to R: a
+moved UPPERCASE row whose `(anime, R)` has a Title-case row is removed. No other
+`anime_character` row is touched: a pair that already had both cases before the batch, or
+R's own UPPERCASE row next to a moved Title-case row, stays as it is.
+
 Pairs left untouched and counted by `audit`:
 
 | Status | Meaning |
@@ -57,15 +62,15 @@ pairs (left-alone pairs are listed again) and `apply` writes them as a new batch
 
 Every changed row is logged with its `batch_id`: `merged_pairs`, `updated_externals`
 (previous `anilist_id` and `updated_at`), `deleted_characters`, `deleted_externals`,
-`moved_*`, `skipped_*` (whole rows) and `removed_links` (kind A, reason `same-pair` or
-`merged-pair`).
+`moved_*`, `skipped_*` (whole rows), `removed_links` (kind A, reason `same-pair` or
+`merged-pair`) and `removed_anime_links` (kind A on `anime_character`, whole rows).
 
 ## rollback
 
 Undoes the **last** batch (run it again for the previous one) and deletes its logs,
 restoring the seven tables exactly. It is refused, writing nothing, on drift: a row the
 batch moved to R is gone, R's `character_external` row no longer holds the id the batch
-set, a deleted synthetic id or a removed link exists again. Rows added later that
+set, a deleted synthetic id or a removed link (manga or anime) exists again. Rows added later that
 reference R stay with R.
 
 Order with the other scripts: roll back every batch of this one before rolling back

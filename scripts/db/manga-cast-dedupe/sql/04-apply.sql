@@ -5,7 +5,8 @@
 --      already holds is skipped and deleted), deletes S with its character_external row
 --      and sets R's character_external.anilist_id to X.
 --   A: then every UPPERCASE manga_character row whose (manga, character) has a
---      Title-case row is removed (cast-relink 'dedupe' / 'jikan-same-pair').
+--      Title-case row is removed (cast-relink 'dedupe' / 'jikan-same-pair'), and so is
+--      every UPPERCASE anime_character row this batch moved to R next to a Title-case row.
 -- Every changed row is logged with the batch id for 05-rollback.sql. The written tables
 -- are locked against concurrent writers (a running load makes it fail after 10s). Guard:
 -- a plan with nothing to do is refused, so applying twice never writes a second batch;
@@ -73,6 +74,19 @@ SELECT r.manga_id, r.character_id, r.role,
       AND (m.manga_id, m.real_id, m.role) = (r.manga_id, r.character_id, r.role)
   ) THEN 'merged-pair' ELSE 'same-pair' END
 FROM removed r;
+
+-- A on anime_character: only rows this batch moved from S to R.
+WITH removed AS (
+  DELETE FROM anime_character u USING moved_anime_character m
+  WHERE m.batch_id = :batch_id
+    AND (u.anime_id, u.character_id, u.role) = (m.anime_id, m.real_id, m.role)
+    AND u.role = upper(u.role) AND EXISTS (
+      SELECT 1 FROM anime_character t
+      WHERE t.anime_id = u.anime_id AND t.character_id = u.character_id
+        AND t.role <> upper(t.role))
+  RETURNING u.*
+)
+INSERT INTO removed_anime_links SELECT * FROM removed;
 
 COMMIT;
 \else
