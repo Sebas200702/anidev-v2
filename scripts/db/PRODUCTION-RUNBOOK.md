@@ -23,6 +23,7 @@ differ slightly: the scraper kept writing after the clone.
 ```bash
 export LOCAL_DATABASE_URL='postgres://USER:PASS@localhost:5432/DB'   # production, via localhost
 C=.cast-relink-cache
+export PSQL_PAGER=cat PAGER=cat
 ```
 
 ## 1. Back up
@@ -44,12 +45,13 @@ error — nothing after it has run, and the logged batches can be rolled back.
 | # | Step | Commands |
 |---|---|---|
 | 1 | Stage sources | `bash scripts/db/cast-relink/run.sh stage --anilist-csv $C/anilist_anime_data_complete.csv --offline-db $C/anime-offline-database.jsonl` |
-| 2 | Anime casts the CSV lacks | `bash scripts/db/cast-relink/run.sh fetch-list --out-dir $C` · `bun scripts/db/cast-relink/fetch-anilist.ts $C/pending-ids.txt --out $C/anilist-api.jsonl --map $C/anilist-map.tsv --batch 20` · `bash scripts/db/cast-relink/run.sh merge-api --api-jsonl $C/anilist-api.jsonl` |
-| 3 | Anime cast relink | `bash scripts/db/cast-relink/run.sh audit` → `apply` |
+| 2 | Anime casts the CSV lacks | `bash scripts/db/cast-relink/run.sh audit` (fetch-list reads the audit) · `bash scripts/db/cast-relink/run.sh fetch-list --out-dir $C` · `bun scripts/db/cast-relink/fetch-anilist.ts $C/pending-ids.txt --out $C/anilist-api.jsonl --map $C/anilist-map.tsv --batch 20` · `bash scripts/db/cast-relink/run.sh merge-api --api-jsonl $C/anilist-api.jsonl` |
+| 3 | Anime cast relink | `bash scripts/db/cast-relink/run.sh audit` (again, with the API casts) → `apply` |
 | 4 | Real character ids + merge twins | `bash scripts/db/character-external/run.sh backfill` → `merge-twins` |
 | 5 | Manga casts | `bash scripts/db/manga-cast-relink/run.sh fetch-list --out-dir $C` · `bun scripts/db/cast-relink/fetch-anilist.ts $C/manga-ids.txt --type MANGA --out $C/manga-api.jsonl --map $C/manga-anilist-map.tsv --batch 20` · `bash scripts/db/manga-cast-relink/run.sh merge-api --api-jsonl $C/manga-api.jsonl` → `audit` → `apply` |
 | 6 | Kanji + portraits | `bash scripts/db/character-fill/run.sh audit` → `apply` |
 | 7 | Anime relations + fields | `bash scripts/db/anime-rebuild/run.sh audit` → `apply` |
+| 8 | Manga casts from MAL (optional, after the scraper's MAL manga load in Mode A and `promote --only=character,character_media,manga_character`) | insert the missing `character_external` rows, then `bash scripts/db/manga-cast-dedupe/run.sh audit` → `apply` |
 
 The fetcher is resumable: it skips ids already in the `.jsonl`, so the files
 copied from the local run are reused and only ids new on production are
@@ -83,6 +85,7 @@ Latest batch first; each command restores its tables exactly.
 
 ```bash
 bash scripts/db/anime-rebuild/run.sh rollback      # independent of the others
+bash scripts/db/manga-cast-dedupe/run.sh rollback  # once per batch, before the rest
 bash scripts/db/character-fill/run.sh rollback
 bash scripts/db/manga-cast-relink/run.sh rollback
 bash scripts/db/character-external/run.sh rollback
